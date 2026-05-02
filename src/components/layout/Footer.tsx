@@ -1,15 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, Globe, Mail, ArrowUpRight } from "lucide-react";
+import { Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function Footer({ content }: { content: any }) {
   const { contatti } = content.pages;
 
-  const socialIcons: Record<string, any> = {
-    "Instagram": Camera,
-    "Facebook": Globe
+  const SocialIcon = ({ platform }: { platform: string }) => {
+    if (platform === "Facebook") {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+        </svg>
+      );
+    }
+    if (platform === "Instagram") {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      );
+    }
+    return <ArrowUpRight size={20} />;
   };
 
   return (
@@ -38,7 +53,6 @@ export function Footer({ content }: { content: any }) {
             </p>
             <div className="flex gap-4">
               {contatti.socials.map((social: any, idx: number) => {
-                const Icon = socialIcons[social.platform] || ArrowUpRight;
                 return (
                   <Link 
                     key={idx}
@@ -47,7 +61,7 @@ export function Footer({ content }: { content: any }) {
                     rel="noopener noreferrer"
                     className="w-12 h-12 rounded-full border border-foreground/10 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
                   >
-                    <Icon size={20} />
+                    <SocialIcon platform={social.platform} />
                   </Link>
                 );
               })}

@@ -97,7 +97,7 @@ export default function AdminConsole() {
     { id: "chi_siamo", label: "Chi Siamo", icon: Users },
     { id: "attori", label: "Cast & Staff", icon: Users },
     { id: "spettacoli", label: "Spettacoli", icon: Theater },
-    { id: "parlano_di_noi", label: "Stampa", icon: Newspaper },
+    { id: "parlano_di_noi", label: "Dicono di noi", icon: Newspaper },
     { id: "contatti", label: "Contatti", icon: Mail },
   ];
 
@@ -841,7 +841,7 @@ function PressSettings({ content, updateContent }: any) {
         <ArrayEditor 
           label="Articoli & Recensioni"
           items={p.press}
-          onAdd={() => updateContent('pages.parlano_di_noi.press', [...p.press, { source: "Nuova Fonte", quote: "" }])}
+          onAdd={() => updateContent('pages.parlano_di_noi.press', [...p.press, { source: "Nuova Fonte", quote: "Inserisci qui la citazione...", date: "2024", source_href: "", badge_label: "Recensione" }])}
           onRemove={(idx) => updateContent('pages.parlano_di_noi.press', p.press.filter((_: any, i: number) => i !== idx))}
           onMove={(idx, dir) => {
             const newList = [...p.press];

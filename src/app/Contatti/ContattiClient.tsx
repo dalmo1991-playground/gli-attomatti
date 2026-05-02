@@ -2,15 +2,30 @@
 
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
-import { Mail, Camera, Globe, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function ContattiClient({ content }: { content: any }) {
   const { contatti } = content.pages;
 
-  const socialIcons: Record<string, any> = {
-    "Instagram": Camera,
-    "Facebook": Globe
+  const SocialIcon = ({ platform }: { platform: string }) => {
+    if (platform === "Facebook") {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+        </svg>
+      );
+    }
+    if (platform === "Instagram") {
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      );
+    }
+    return <ArrowRight size={40} />;
   };
 
   return (
@@ -68,7 +83,6 @@ export default function ContattiClient({ content }: { content: any }) {
 
           {/* Social Cards */}
           {contatti.socials.map((social: any, idx: number) => {
-            const Icon = socialIcons[social.platform] || ArrowRight;
             return (
               <motion.div
                 key={idx}
@@ -79,7 +93,7 @@ export default function ContattiClient({ content }: { content: any }) {
                 className="p-12 bg-muted/20 rounded-[3rem] border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
               >
                 <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                  <Icon size={40} />
+                  <SocialIcon platform={social.platform} />
                 </div>
                 <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">{social.platform}</h2>
                 <Link 
@@ -96,23 +110,6 @@ export default function ContattiClient({ content }: { content: any }) {
         </div>
       </Section>
 
-      {/* Newsletter / Join Us CTA */}
-      <Section className="py-24 bg-primary text-white rounded-t-[4rem] text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-black mb-8 uppercase italic">
-            "Sali sul palco con noi"
-          </h2>
-          <p className="text-xl opacity-80 mb-12 font-medium">
-            Siamo sempre aperti a nuove collaborazioni e talenti. Non essere timido, scrivi una mail e raccontaci chi sei!
-          </p>
-          <Link 
-            href={`mailto:${contatti.email}`}
-            className="px-12 py-6 bg-white text-primary rounded-full font-black text-xl hover:bg-opacity-90 transition-all shadow-2xl hover:-translate-y-1 inline-block"
-          >
-            Inviaci una Mail
-          </Link>
-        </div>
-      </Section>
     </div>
   );
 }
