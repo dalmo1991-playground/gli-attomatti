@@ -473,7 +473,7 @@ function HomeSettings({ content, updateContent }: any) {
         <ArrayEditor 
           label="Card Spettacoli"
           items={home.upcoming_shows}
-          onAdd={() => updateContent('pages.home.upcoming_shows', [...home.upcoming_shows, { active: true, title: "Nuovo Show" }])}
+          onAdd={() => updateContent('pages.home.upcoming_shows', [...home.upcoming_shows, { active: true, title: "Nuovo Show", presenter: "", tagline: "", date: "", location: "", cta: "Biglietti", cta_href: "", secondary_cta: "", secondary_cta_href: "", image: "/images/show1.png" }])}
           onRemove={(idx) => updateContent('pages.home.upcoming_shows', home.upcoming_shows.filter((_: any, i: number) => i !== idx))}
           onMove={(idx, dir) => {
             const newList = [...home.upcoming_shows];
@@ -522,14 +522,26 @@ function HomeSettings({ content, updateContent }: any) {
                 }} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Testo Ticket" value={show.cta} onChange={(v) => {
+                <Field label="Testo Bottone (Ticket)" value={show.cta} onChange={(v) => {
                   const newList = [...home.upcoming_shows];
                   newList[idx].cta = v;
                   updateContent('pages.home.upcoming_shows', newList);
                 }} />
-                <Field label="URL Ticket" value={show.cta_href} onChange={(v) => {
+                <Field label="URL Bottone (Ticket)" value={show.cta_href} onChange={(v) => {
                   const newList = [...home.upcoming_shows];
                   newList[idx].cta_href = v;
+                  updateContent('pages.home.upcoming_shows', newList);
+                }} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Testo 2° Bottone (Opzionale)" value={show.secondary_cta} onChange={(v) => {
+                  const newList = [...home.upcoming_shows];
+                  newList[idx].secondary_cta = v;
+                  updateContent('pages.home.upcoming_shows', newList);
+                }} />
+                <Field label="URL 2° Bottone (Opzionale)" value={show.secondary_cta_href} onChange={(v) => {
+                  const newList = [...home.upcoming_shows];
+                  newList[idx].secondary_cta_href = v;
                   updateContent('pages.home.upcoming_shows', newList);
                 }} />
               </div>

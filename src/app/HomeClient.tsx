@@ -174,18 +174,18 @@ export default function HomeClient({ content }: { content: any }) {
                       )}
                       
                       {/* Button 2 */}
-                      {activeShows[currentShowIndex].details_label && (
-                        activeShows[currentShowIndex].details_href ? (
+                      {activeShows[currentShowIndex].secondary_cta && (
+                        activeShows[currentShowIndex].secondary_cta_href ? (
                           <Link
-                            href={activeShows[currentShowIndex].details_href}
+                            href={activeShows[currentShowIndex].secondary_cta_href}
                             className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[280px]"
                           >
-                            {activeShows[currentShowIndex].details_label}
+                            {activeShows[currentShowIndex].secondary_cta}
                           </Link>
                         ) : (
                           <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
                             <Info size={18} className="mr-3 text-primary opacity-80" />
-                            {activeShows[currentShowIndex].details_label}
+                            {activeShows[currentShowIndex].secondary_cta}
                           </div>
                         )
                       )}
@@ -277,7 +277,7 @@ export default function HomeClient({ content }: { content: any }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-4xl font-bold mb-6">{introduction.title}</h2>
-            <p className="text-lg text-foreground/70 leading-relaxed mb-8">
+            <p className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
               {introduction.text}
             </p>
             <Link

@@ -69,7 +69,7 @@ export default function AttoriClient({ content }: { content: any }) {
                 <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
                   {person.role}
                 </div>
-                <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5">
+                <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
                   {person.bio}
                 </p>
               </div>

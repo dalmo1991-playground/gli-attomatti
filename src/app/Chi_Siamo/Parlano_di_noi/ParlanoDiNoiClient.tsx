@@ -41,7 +41,7 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
           {parlano_di_noi.press.map((item: any, idx: number) => {
             const CardContent = (
               <div className="relative z-10">
-                <blockquote className="text-3xl md:text-4xl font-serif italic text-foreground/80 leading-snug mb-10">
+                <blockquote className="text-3xl md:text-4xl font-serif italic text-foreground/80 leading-snug mb-10 whitespace-pre-wrap">
                   {item.quote}
                 </blockquote>
                 
