@@ -1,11 +1,10 @@
 "use client";
 
-import content from "@/data/content.json";
 import Link from "next/link";
 import { Camera, Globe, Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function Footer() {
+export function Footer({ content }: { content: any }) {
   const { contatti } = content.pages;
 
   const socialIcons: Record<string, any> = {
@@ -38,7 +37,7 @@ export function Footer() {
               Portiamo la passione del teatro italiano nel cuore di Zurigo. Ogni palco è una nuova storia.
             </p>
             <div className="flex gap-4">
-              {contatti.socials.map((social, idx) => {
+              {contatti.socials.map((social: any, idx: number) => {
                 const Icon = socialIcons[social.platform] || ArrowUpRight;
                 return (
                   <Link 
@@ -59,7 +58,7 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-8">
             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Sito</h4>
             <ul className="space-y-4">
-              {content.navigation.map((link) => (
+              {content.navigation.map((link: any) => (
                 <li key={link.href}>
                   <Link 
                     href={link.href}
@@ -76,7 +75,7 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-8">
             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Chi Siamo</h4>
             <ul className="space-y-4">
-              {content.navigation.find(n => n.label === "Chi Siamo")?.sublinks?.map((sub) => (
+              {content.navigation.find((n: any) => n.label === "Chi Siamo")?.sublinks?.map((sub: any) => (
                 <li key={sub.href}>
                   <Link 
                     href={sub.href}

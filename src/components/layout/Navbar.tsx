@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import content from "@/data/content.json";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function Navbar() {
+export function Navbar({ content }: { content: any }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -45,7 +44,7 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-8 items-center">
-          {content.navigation.map((link) => (
+          {content.navigation.map((link: any) => (
             <div 
               key={link.href}
               className="relative py-2"
@@ -79,9 +78,9 @@ export function Navbar() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 mt-2 w-56 bg-background/90 backdrop-blur-2xl border border-foreground/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-50"
+                    className="absolute top-full left-0 mt-2 w-48 bg-background border border-foreground/5 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                   >
-                    {link.sublinks.map((sub) => (
+                    {link.sublinks.map((sub: any) => (
                       <Link
                         key={sub.href}
                         href={sub.href}
@@ -118,9 +117,9 @@ export function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-background/95 backdrop-blur-xl border-t border-foreground/10 overflow-hidden"
           >
-            <div className="flex flex-col p-6 space-y-4">
-              {content.navigation.map((link) => (
-                <div key={link.href} className="space-y-2">
+            <nav className="flex flex-col gap-6 mt-12">
+            {content.navigation.map((link: any) => (
+              <div key={link.href} className="space-y-4 px-6">
                   <Link
                     href={link.href}
                     onClick={() => !link.sublinks && setIsOpen(false)}
@@ -132,14 +131,14 @@ export function Navbar() {
                     {link.label}
                   </Link>
                   {link.sublinks && (
-                    <div className="pl-4 space-y-2 border-l border-foreground/10 ml-1">
-                      {link.sublinks.map((sub) => (
+                    <div className="flex flex-col gap-4 pl-6 border-l border-foreground/5">
+                      {link.sublinks.map((sub: any) => (
                         <Link
                           key={sub.href}
                           href={sub.href}
                           onClick={() => setIsOpen(false)}
                           className={cn(
-                            "block text-lg font-medium",
+                            "text-lg font-medium",
                             pathname === sub.href ? "text-primary" : "text-foreground/60"
                           )}
                         >
@@ -150,7 +149,7 @@ export function Navbar() {
                   )}
                 </div>
               ))}
-            </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
