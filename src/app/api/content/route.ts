@@ -20,8 +20,9 @@ export async function POST(request: Request) {
     const json = await request.json();
     
     // Upload the new content to Vercel Blob
-    // We remove the explicit 'public' access so it follows the Store's default setting
+    // 'public' access is mandatory. Ensure your Vercel Blob store has "Public Access" enabled.
     const blob = await put('content.json', JSON.stringify(json, null, 2), {
+      access: 'public',
       contentType: 'application/json',
       cacheControlMaxAge: 0
     });
