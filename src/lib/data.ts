@@ -15,7 +15,12 @@ export async function getContent() {
       // Sort by date descending to get the absolute latest version
       const latestBlob = blobs.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime())[0];
       
-      const response = await fetch(latestBlob.url, { cache: 'no-store' });
+      const response = await fetch(latestBlob.url, { 
+        cache: 'no-store',
+        headers: {
+          'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+        }
+      });
       if (response.ok) {
         return await response.json();
       }

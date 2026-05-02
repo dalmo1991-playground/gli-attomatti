@@ -20,9 +20,8 @@ export async function POST(request: Request) {
     const json = await request.json();
     
     // Upload the new content to Vercel Blob
-    // We allow random suffix to keep a history of all versions
+    // We remove the explicit 'public' access so it follows the Store's default setting
     const blob = await put('content.json', JSON.stringify(json, null, 2), {
-      access: 'public',
       contentType: 'application/json',
       cacheControlMaxAge: 0
     });
