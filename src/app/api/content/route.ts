@@ -1,5 +1,6 @@
 import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getContent } from '@/lib/data';
 
 export async function GET() {
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
       contentType: 'application/json',
       cacheControlMaxAge: 0
     });
+
+    revalidatePath('/', 'layout');
 
     return NextResponse.json({ success: true, url: blob.url });
   } catch (error) {

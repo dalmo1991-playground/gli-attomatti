@@ -4,6 +4,8 @@ import "./globals.css";
 import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 import { getContent } from "@/lib/data";
 
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
