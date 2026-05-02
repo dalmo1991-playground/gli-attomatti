@@ -21,9 +21,10 @@ export async function POST(request: Request) {
     const json = await request.json();
     
     // Upload the new content to Vercel Blob
-    // 'public' access is mandatory. Ensure your Vercel Blob store has "Public Access" enabled.
+    // 'addRandomSuffix: true' ensures we keep a history of all versions
     const blob = await put('content.json', JSON.stringify(json, null, 2), {
       access: 'public',
+      addRandomSuffix: true,
       contentType: 'application/json',
       cacheControlMaxAge: 0
     });
