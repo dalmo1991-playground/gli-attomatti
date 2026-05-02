@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const { hero, upcoming_shows, introduction, featured_images } = content.pages.home;
+  const { hero, upcoming_shows, introduction } = content.pages.home;
   
   // Filter active shows
   const activeShows = upcoming_shows.filter(show => show.active);
