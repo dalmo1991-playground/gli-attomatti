@@ -69,7 +69,8 @@
           "cta_href": "",
           "details_label": "Scopri lo spettacolo",
           "details_href": "/Spettacoli/una-cenerentola",
-          "image": "/images/show3.png"
+          "image": "/images/show3.png",
+          "visible": true
         },
         {
           "active": false,
@@ -83,7 +84,8 @@
           "cta_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
           "details_label": "Scopri lo spettacolo",
           "details_href": "/Spettacoli/4_Gatti",
-          "image": "/images/show1.png"
+          "image": "/images/show1.png",
+          "visible": true
         }
       ],
       "introduction": {
@@ -121,7 +123,8 @@
               "url": "/images/show2.png",
               "alt": "Storia 2"
             }
-          ]
+          ],
+          "visible": true
         },
         {
           "title": "La Nostra Missione",
@@ -131,23 +134,27 @@
               "url": "/images/show3.png",
               "alt": "Missione 1"
             }
-          ]
+          ],
+          "visible": true
         },
         {
           "title": "Verso l'infinito e oltre",
-          "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+          "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "visible": true
         }
       ],
       "navigation_links": [
         {
           "label": "Le Persone",
           "href": "/Chi_Siamo/Attori",
-          "icon": "users"
+          "icon": "users",
+          "visible": true
         },
         {
           "label": "Dicono di Noi",
           "href": "/Chi_Siamo/Parlano_di_noi",
-          "icon": "message-square"
+          "icon": "message-square",
+          "visible": true
         }
       ]
     },
@@ -158,79 +165,92 @@
           "name": "Domenico Scotti di Carlo",
           "role": "Presidente - Regista - Attore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 2",
           "role": "Regista",
           "image": "/images/show2.png",
-          "bio": "Consectetur adipiscing elit."
+          "bio": "Consectetur adipiscing elit.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 1",
           "role": "Fondatore",
           "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet."
+          "bio": "Lorem ipsum dolor sit amet.",
+          "visible": true
         },
         {
           "name": "Attore 3",
           "role": "Protagonista",
           "image": "/images/show3.png",
-          "bio": "Sed do eiusmod tempor."
+          "bio": "Sed do eiusmod tempor.",
+          "visible": true
         }
       ],
       "join_us": {
@@ -249,7 +269,8 @@
           "source_href": "https://example.com/article1",
           "quote": "Qualcosa sulla RSI",
           "date": "2023",
-          "badge_label": "Rassegna Stampa"
+          "badge_label": "Rassegna Stampa",
+          "visible": true
         }
       ],
       "press_contact": {
@@ -275,31 +296,38 @@
               "date": "21 Giugno 2026, ore 18:30",
               "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
               "ticket_label": "Biglietti",
-              "ticket_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html"
+              "ticket_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
+              "visible": true
             }
           ],
           "details": [
             {
               "label": "Regia",
-              "value": "Domenico Scotti di Carlo"
+              "value": "Domenico Scotti di Carlo",
+              "visible": true
             },
             {
               "label": "Autore",
-              "value": "De Filippo"
+              "value": "De Filippo",
+              "visible": true
             },
             {
               "label": "Durata",
-              "value": "90 min"
+              "value": "90 min",
+              "visible": true
             },
             {
               "label": "Genere",
-              "value": "Commedia"
+              "value": "Commedia",
+              "visible": true
             },
             {
               "label": "Cast",
-              "value": "Gli Attomatti"
+              "value": "Gli Attomatti",
+              "visible": true
             }
-          ]
+          ],
+          "visible": true
         },
         {
           "slug": "una-cenerentola",
@@ -313,51 +341,61 @@
               "date": "9 Maggio 2026, ore 20:30",
               "location": "Oratorio di San Giovanni Bosco, Tenero-Contra",
               "ticket_label": "Ingresso Libero",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             },
             {
               "date": "22 Febbraio 2026",
               "location": "Wetzikon",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             },
             {
               "date": "25 Gennaio 2026",
               "location": "Wollishofen",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             },
             {
               "date": "24 Gennaio 2026",
               "location": "Wollishofen",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             },
             {
               "date": "18 Gennaio 2026",
               "location": "Bruder Klaus, Zurigo",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             }
           ],
           "details": [
             {
               "label": "Regia",
-              "value": "Domenico Scotti di Carlo"
+              "value": "Domenico Scotti di Carlo",
+              "visible": true
             },
             {
               "label": "Durata",
-              "value": "150 min"
+              "value": "150 min",
+              "visible": true
             },
             {
               "label": "Genere",
-              "value": "Commedia"
+              "value": "Commedia",
+              "visible": true
             },
             {
               "label": "Cast",
-              "value": "Gli Attomatti"
+              "value": "Gli Attomatti",
+              "visible": true
             }
-          ]
+          ],
+          "visible": true
         },
         {
           "slug": "ditegli-sempre-di-si",
@@ -387,33 +425,40 @@
               "date": "12 Aprile 2025",
               "location": "Wollishofen",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             },
             {
               "date": "13 Aprile 2025",
               "location": "Wollishofen",
               "ticket_label": "",
-              "ticket_href": ""
+              "ticket_href": "",
+              "visible": true
             }
           ],
           "details": [
             {
               "label": "Regia",
-              "value": "Domenico Scotti di Carlo"
+              "value": "Domenico Scotti di Carlo",
+              "visible": true
             },
             {
               "label": "Durata",
-              "value": "90 min"
+              "value": "90 min",
+              "visible": true
             },
             {
               "label": "Genere",
-              "value": "Commedia"
+              "value": "Commedia",
+              "visible": true
             },
             {
               "label": "Cast",
-              "value": "Gli Attomatti"
+              "value": "Gli Attomatti",
+              "visible": true
             }
-          ]
+          ],
+          "visible": true
         }
       ]
     },
@@ -425,12 +470,14 @@
         {
           "platform": "Instagram",
           "href": "https://www.instagram.com/gliattomatti/",
-          "handle": "@gliattomatti"
+          "handle": "@gliattomatti",
+          "visible": true
         },
         {
           "platform": "Facebook",
           "href": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
-          "handle": "Gli Attomatti"
+          "handle": "Gli Attomatti",
+          "visible": true
         }
       ]
     }
