@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext, useRef } from "react";
 import contentData from "@/data/content.json";
 import { 
   Save, Download, Plus, Trash2, Globe, Menu as MenuIcon, Home as HomeIcon, 
   Users, Newspaper, Theater, Mail, Settings, Image as ImageIcon, 
-  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info
+  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info, Upload
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const AdminContext = createContext({ adminSecret: "" });
 
 export default function AdminConsole() {
   const [content, setContent] = useState(contentData);
@@ -102,6 +104,7 @@ export default function AdminConsole() {
   ];
 
   return (
+    <AdminContext.Provider value={{ adminSecret }}>
     <div className="min-h-screen bg-muted/30 flex font-sans selection:bg-primary/20 selection:text-primary">
       {isLoading && (
         <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center space-y-6">
@@ -225,12 +228,55 @@ export default function AdminConsole() {
         </div>
       </main>
     </div>
+    </AdminContext.Provider>
   );
 }
 
 // --- REUSABLE COMPONENTS ---
 
 function Field({ label, value, onChange, type = "text", placeholder = "" }: { label: string, value: string, onChange: (v: string) => void, type?: string, placeholder?: string }) {
+  const { adminSecret } = useContext(AdminContext);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!adminSecret) {
+      alert("Per favore, inserisci la Password di Amministrazione prima di caricare immagini.");
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "x-admin-secret": adminSecret
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        onChange(data.url);
+      } else {
+        const err = await res.json();
+        alert(`Errore di caricamento: ${err.error}`);
+      }
+    } catch (err) {
+      alert("Errore di connessione durante il caricamento");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <div className="space-y-3 w-full">
       <label className="text-xs font-black uppercase tracking-[0.2em] text-foreground/30 flex items-center gap-2">
@@ -243,6 +289,31 @@ function Field({ label, value, onChange, type = "text", placeholder = "" }: { la
           placeholder={placeholder}
           className="w-full p-5 rounded-3xl bg-background border border-foreground/5 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 outline-none transition-all font-medium text-lg min-h-[160px] resize-none"
         />
+      ) : type === "image" ? (
+        <div className="flex gap-2 items-center">
+          <input 
+            type="text" 
+            value={value || ""} 
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className="flex-1 p-5 rounded-full bg-background border border-foreground/5 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 outline-none transition-all font-medium text-lg"
+          />
+          <input 
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleUpload}
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            title="Carica Immagine"
+            className="h-[68px] w-[68px] shrink-0 bg-primary/10 text-primary rounded-full flex items-center justify-center hover:bg-primary/20 transition-all shadow-sm disabled:opacity-50"
+          >
+            {isUploading ? <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" /> : <Upload size={24} />}
+          </button>
+        </div>
       ) : (
         <input 
           type={type} 
@@ -336,7 +407,7 @@ function ImageListEditor({ images, onChange }: { images: any[], onChange: (newIm
       onMove={moveItem}
       renderItem={(img, idx) => (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="URL Immagine" value={img.url} onChange={(v) => {
+          <Field type="image" label="URL Immagine" value={img.url} onChange={(v) => {
             const newList = [...images];
             newList[idx].url = v;
             onChange(newList);
@@ -545,7 +616,7 @@ function HomeSettings({ content, updateContent }: any) {
                   updateContent('pages.home.upcoming_shows', newList);
                 }} />
               </div>
-              <Field label="Percorso Immagine" value={show.image} onChange={(v) => {
+              <Field type="image" label="Percorso Immagine" value={show.image} onChange={(v) => {
                 const newList = [...home.upcoming_shows];
                 newList[idx].image = v;
                 updateContent('pages.home.upcoming_shows', newList);
@@ -671,7 +742,7 @@ function AttoriSettings({ content, updateContent }: any) {
                 newList[idx].role = v;
                 updateContent('pages.attori.list', newList);
               }} />
-              <Field label="Immagine" value={p.image} onChange={(v) => {
+              <Field type="image" label="Immagine" value={p.image} onChange={(v) => {
                 const newList = [...attori.list];
                 newList[idx].image = v;
                 updateContent('pages.attori.list', newList);
