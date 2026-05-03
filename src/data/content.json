@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "Gli Attomatti",
-    "description": "Compagnia teatrale amatoriale di Zurigo",
+    "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
     "language": "it"
   },
   "navigation": [
@@ -72,7 +72,7 @@
           "image": "/images/show3.png"
         },
         {
-          "active": true,
+          "active": false,
           "title": "4 Gatti",
           "presenter": "Missione Cattolica di Lingua Italiana presenta",
           "tagline": "Uno spettacolo all'insegna della comicità e dell'intrattenimento",
@@ -88,7 +88,7 @@
       ],
       "introduction": {
         "title": "Gli Attomatti",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "text": "La compagnia teatrale \"Gli Attomatti\" è stata fondata a Zurigo nel 2025, con la missione di promuovere l'attività teatrale in lingua italiana.\nLa compagnia è attiva nella realizzazione di un paio di spettacoli all'anno e di altre attività (sketch, seminari, etc.) nel Zurighese e non solo!",
         "images": [
           {
             "url": "/images/show2.png",
@@ -132,6 +132,10 @@
               "alt": "Missione 1"
             }
           ]
+        },
+        {
+          "title": "Verso l'infinito e oltre",
+          "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
         }
       ],
       "navigation_links": [
@@ -256,7 +260,7 @@
       }
     },
     "spettacoli": {
-      "title": "I Nostri Spettacoli",
+      "title": "I Nostri fantastici show",
       "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
       "archive_sections": [
         {
@@ -279,6 +283,10 @@
               "value": "Domenico Scotti di Carlo"
             },
             {
+              "label": "Autore",
+              "value": "De Filippo"
+            },
+            {
               "label": "Durata",
               "value": "90 min"
             },
@@ -297,7 +305,12 @@
           "title": "Una Cenerentola",
           "year": "2026",
           "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          "images": [],
+          "images": [
+            {
+              "url": "https://jccfhfnuikjnh13m.public.blob.vercel-storage.com/DSC_0955-R5VHLM7tKNm6Qih4nvpCCCPr9vGIuV.JPG",
+              "alt": "Palmizio"
+            }
+          ],
           "dates": [
             {
               "date": "9 Maggio 2026, ore 20:30",
@@ -410,16 +423,16 @@
     "contatti": {
       "title": "Contattaci",
       "description": "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
-      "email": "info@attomatti.ch",
+      "email": "email@attomatti.com",
       "socials": [
         {
           "platform": "Instagram",
-          "href": "https://instagram.com/attomatti",
-          "handle": "@attomatti"
+          "href": "https://www.instagram.com/gliattomatti/",
+          "handle": "@gliattomatti"
         },
         {
           "platform": "Facebook",
-          "href": "https://facebook.com/attomatti",
+          "href": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
           "handle": "Gli Attomatti"
         }
       ]
