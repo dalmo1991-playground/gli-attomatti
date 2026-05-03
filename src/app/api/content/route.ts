@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     await put('latest.json', JSON.stringify({ url: blob.url }), {
       access: 'public',
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: 'application/json',
       cacheControlMaxAge: 0
     });
