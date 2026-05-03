@@ -35,13 +35,13 @@ export function Footer({ content }: { content: any }) {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 mb-20">
-          
+
           {/* Brand Column */}
           <div className="lg:col-span-5 space-y-8">
             <Link href="/" className="flex items-center gap-3 group">
-              <img 
-                src="/logo_attomatti.svg" 
-                alt={content.site.name} 
+              <img
+                src="/logo_attomatti.svg"
+                alt={content.site.name}
                 className="h-12 w-auto group-hover:scale-110 transition-transform duration-500"
               />
               <span className="text-2xl font-black tracking-tighter uppercase text-primary">
@@ -49,12 +49,12 @@ export function Footer({ content }: { content: any }) {
               </span>
             </Link>
             <p className="text-xl text-foreground/60 leading-relaxed max-w-sm font-medium">
-              Portiamo la passione del teatro italiano nel cuore di Zurigo. Ogni palco è una nuova storia.
+              {content.site.description}
             </p>
             <div className="flex gap-4">
               {contatti.socials.map((social: any, idx: number) => {
                 return (
-                  <Link 
+                  <Link
                     key={idx}
                     href={social.href}
                     target="_blank"
@@ -69,12 +69,12 @@ export function Footer({ content }: { content: any }) {
           </div>
 
           {/* Navigation Columns */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Sito</h4>
             <ul className="space-y-4">
               {content.navigation.map((link: any) => (
                 <li key={link.href}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
                   >
@@ -86,33 +86,17 @@ export function Footer({ content }: { content: any }) {
             </ul>
           </div>
 
-          <div className="lg:col-span-2 space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Chi Siamo</h4>
-            <ul className="space-y-4">
-              {content.navigation.find((n: any) => n.label === "Chi Siamo")?.sublinks?.map((sub: any) => (
-                <li key={sub.href}>
-                  <Link 
-                    href={sub.href}
-                    className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors"
-                  >
-                    {sub.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Contact CTA Column */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-4 space-y-8">
             <div className="p-8 border-2 border-primary/10 rounded-[2.5rem] space-y-6 bg-primary/5">
               <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Contattaci</h4>
-              <Link 
+              <Link
                 href={`mailto:${contatti.email}`}
                 className="block text-xl font-black hover:text-primary transition-colors break-all"
               >
                 {contatti.email}
               </Link>
-              <Link 
+              <Link
                 href="/Contatti"
                 className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-primary group"
               >
@@ -128,10 +112,6 @@ export function Footer({ content }: { content: any }) {
           <p className="text-sm text-foreground/40 font-medium">
             © {new Date().getFullYear()} {content.site.name}. All rights reserved.
           </p>
-          <div className="flex gap-8 text-xs font-black uppercase tracking-widest text-foreground/30">
-            <span className="hover:text-primary cursor-default transition-colors">Zurigo, Svizzera</span>
-            <span className="hover:text-primary cursor-default transition-colors">Teatro Italiano</span>
-          </div>
         </div>
       </div>
     </footer>
