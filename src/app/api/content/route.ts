@@ -29,6 +29,14 @@ export async function POST(request: Request) {
       cacheControlMaxAge: 0
     });
 
+    // Create a pointer file that always points to the latest version's URL
+    await put('latest.json', JSON.stringify({ url: blob.url }), {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: 'application/json',
+      cacheControlMaxAge: 0
+    });
+
     revalidatePath('/', 'layout');
 
     return NextResponse.json({ success: true, url: blob.url });
