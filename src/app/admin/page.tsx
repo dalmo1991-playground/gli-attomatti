@@ -5,7 +5,7 @@ import contentData from "@/data/content.json";
 import { 
   Save, Download, Plus, Trash2, Globe, Menu as MenuIcon, Home as HomeIcon, 
   Users, Newspaper, Theater, Mail, Settings, Image as ImageIcon, 
-  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info, Upload
+  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info, Upload, Code
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ export default function AdminConsole() {
   const [activeTab, setActiveTab] = useState("site");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchLiveContent() {
@@ -82,16 +83,6 @@ export default function AdminConsole() {
     }
   };
 
-  const handleDownload = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(content, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "content.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
-
   const tabs = [
     { id: "site", label: "Sito & Meta", icon: Globe },
     { id: "navigation", label: "Menu", icon: MenuIcon },
@@ -101,6 +92,7 @@ export default function AdminConsole() {
     { id: "spettacoli", label: "Spettacoli", icon: Theater },
     { id: "parlano_di_noi", label: "Dicono di noi", icon: Newspaper },
     { id: "contatti", label: "Contatti", icon: Mail },
+    { id: "json", label: "Sorgente JSON", icon: Code },
   ];
 
   return (
@@ -181,14 +173,6 @@ export default function AdminConsole() {
               )}
             </div>
           )}
-
-          <button 
-            onClick={handleDownload}
-            className="w-full flex items-center justify-center gap-3 p-5 bg-foreground text-background rounded-3xl font-black hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl"
-          >
-            <Download size={22} />
-            {isSidebarOpen && <span>Scarica configurazione</span>}
-          </button>
         </div>
       </aside>
 
@@ -220,6 +204,7 @@ export default function AdminConsole() {
             {activeTab === "spettacoli" && <SpettacoliSettings content={content} updateContent={updateContent} />}
             {activeTab === "parlano_di_noi" && <PressSettings content={content} updateContent={updateContent} />}
             {activeTab === "contatti" && <ContactSettings content={content} updateContent={updateContent} />}
+            {activeTab === "json" && <JsonSettings content={content} setContent={setContent} />}
           </div>
           
           <div className="mt-24 pt-12 border-t border-foreground/5 text-center text-foreground/20 font-bold uppercase tracking-widest text-xs">
@@ -1002,6 +987,99 @@ function ContactSettings({ content, updateContent }: any) {
           </div>
         )}
       />
+    </SectionCard>
+  );
+}
+
+function JsonSettings({ content, setContent }: any) {
+  const [jsonText, setJsonText] = useState(JSON.stringify(content, null, 2));
+  const [error, setError] = useState<string | null>(null);
+  const preRef = useRef<HTMLPreElement>(null);
+
+  useEffect(() => {
+    setJsonText(JSON.stringify(content, null, 2));
+  }, [content]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newVal = e.target.value;
+    setJsonText(newVal);
+    try {
+      const parsed = JSON.parse(newVal);
+      setContent(parsed);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (preRef.current) {
+      preRef.current.scrollTop = e.currentTarget.scrollTop;
+      preRef.current.scrollLeft = e.currentTarget.scrollLeft;
+    }
+  };
+
+  const handleDownload = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonText);
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "content.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const highlightJSON = (jsonString: string) => {
+    const escaped = jsonString.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escaped.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+      let cls = 'text-green-400';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'text-blue-400 font-bold';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'text-purple-400';
+      } else if (/null/.test(match)) {
+        cls = 'text-red-400';
+      } else {
+        cls = 'text-orange-400';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    });
+  };
+
+  return (
+    <SectionCard title="Configurazione Raw" icon={Code} description="Modifica direttamente il JSON sorgente con validazione in tempo reale.">
+      <div className="flex justify-end mb-4">
+        <button 
+          onClick={handleDownload} 
+          className="flex items-center gap-2 bg-foreground text-background px-5 py-3 rounded-2xl font-black text-sm uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
+        >
+          <Download size={18} /> Scarica JSON
+        </button>
+      </div>
+      
+      {error && (
+        <div className="p-5 bg-red-500/10 text-red-500 font-bold rounded-2xl mb-6 text-sm border border-red-500/20 flex items-center gap-3">
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          {error}
+        </div>
+      )}
+      
+      <div className="relative bg-gray-950 rounded-[2.5rem] overflow-hidden shadow-2xl border border-foreground/10 h-[700px] group">
+        <pre 
+          ref={preRef}
+          className="absolute inset-0 p-8 m-0 font-mono text-[13px] leading-loose whitespace-pre overflow-hidden pointer-events-none"
+          dangerouslySetInnerHTML={{ __html: highlightJSON(jsonText) }}
+        />
+        <textarea
+          value={jsonText}
+          onChange={handleChange}
+          onScroll={handleScroll}
+          spellCheck={false}
+          className="absolute inset-0 w-full h-full p-8 font-mono text-[13px] leading-loose bg-transparent text-transparent caret-white outline-none resize-none whitespace-pre z-10 custom-scrollbar"
+        />
+      </div>
     </SectionCard>
   );
 }
