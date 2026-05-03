@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
 export default function SpettacoliClient({ content }: { content: any }) {
   const { spettacoli } = content.pages;
 
@@ -68,33 +67,9 @@ export default function SpettacoliClient({ content }: { content: any }) {
             
             <div className="md:col-span-8">
               <div className="prose prose-xl prose-invert max-w-none">
-                <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap mb-12">
-                  {section.text}
+                <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap mb-8">
+                  {section.short_description || section.text}
                 </p>
-                
-                {section.images && section.images.length > 0 && (
-                  <div className={cn(
-                    "grid gap-6",
-                    section.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
-                  )}>
-                    {section.images.map((img: any, imgIdx: number) => (
-                      <Link 
-                        key={imgIdx} 
-                        href={`/Spettacoli/${section.slug}`}
-                        className={cn(
-                          "rounded-3xl overflow-hidden bg-muted shadow-lg block",
-                          section.images.length > 1 && imgIdx % 2 !== 0 && "mt-12"
-                        )}
-                      >
-                        <img 
-                          src={img.url} 
-                          alt={img.alt} 
-                          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105" 
-                        />
-                      </Link>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           </div>

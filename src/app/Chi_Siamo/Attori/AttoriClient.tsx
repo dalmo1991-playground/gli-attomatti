@@ -4,10 +4,21 @@ import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { useState, useMemo } from "react";
+import { Lightbox } from "@/components/ui/Lightbox";
 
 export default function AttoriClient({ content }: { content: any }) {
   const { attori } = content.pages;
   const { join_us } = attori;
+
+  const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
+
+  const galleryImages = useMemo(() => {
+    return attori.list.map((person: any) => ({
+      url: person.image,
+      alt: person.name
+    }));
+  }, [attori.list]);
 
   return (
     <div className="pt-20">
@@ -56,7 +67,8 @@ export default function AttoriClient({ content }: { content: any }) {
                   <img 
                     src={person.image} 
                     alt={person.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onClick={() => setLightbox({ isOpen: true, index: idx })}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
                   />
                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
                 </div>
@@ -97,6 +109,13 @@ export default function AttoriClient({ content }: { content: any }) {
           </div>
         </Section>
       )}
+
+      <Lightbox 
+        images={galleryImages}
+        initialIndex={lightbox.index}
+        isOpen={lightbox.isOpen}
+        onClose={() => setLightbox({ ...lightbox, isOpen: false })}
+      />
     </div>
   );
 }

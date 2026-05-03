@@ -761,7 +761,7 @@ function SpettacoliSettings({ content, updateContent }: any) {
         <ArrayEditor 
           label="Produzioni"
           items={spet.archive_sections}
-          onAdd={() => updateContent('pages.spettacoli.archive_sections', [...spet.archive_sections, { title: "Nuovo Spettacolo", slug: "nuovo-slug", dates: [], details: [], images: [] }])}
+          onAdd={() => updateContent('pages.spettacoli.archive_sections', [...spet.archive_sections, { title: "Nuovo Spettacolo", slug: "nuovo-slug", year: new Date().getFullYear().toString(), short_description: "", text: "", dates: [], details: [], images: [] }])}
           onRemove={(idx) => updateContent('pages.spettacoli.archive_sections', spet.archive_sections.filter((_: any, i: number) => i !== idx))}
           onMove={(idx, dir) => {
             const newList = [...spet.archive_sections];
@@ -788,6 +788,11 @@ function SpettacoliSettings({ content, updateContent }: any) {
                 newList[idx].year = v;
                 updateContent('pages.spettacoli.archive_sections', newList);
               }} />
+              <Field label="Breve Descrizione (Mostrata nell'elenco)" value={s.short_description} onChange={(v) => {
+                const newList = [...spet.archive_sections];
+                newList[idx].short_description = v;
+                updateContent('pages.spettacoli.archive_sections', newList);
+              }} type="textarea" />
               <Field label="Testo Descrittivo" value={s.text} onChange={(v) => {
                 const newList = [...spet.archive_sections];
                 newList[idx].text = v;

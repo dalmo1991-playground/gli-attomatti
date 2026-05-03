@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Users, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 
 export default function ChiSiamoClient({ content }: { content: any }) {
   const { chi_siamo } = content.pages;
@@ -13,6 +15,12 @@ export default function ChiSiamoClient({ content }: { content: any }) {
     "users": Users,
     "message-square": MessageSquare
   };
+
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
+    isOpen: false,
+    index: 0,
+    images: []
+  });
 
   return (
     <div className="pt-20">
@@ -79,7 +87,8 @@ export default function ChiSiamoClient({ content }: { content: any }) {
                         <img 
                           src={img.url} 
                           alt={img.alt} 
-                          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105" 
+                          onClick={() => setLightbox({ isOpen: true, index: imgIdx, images: section.images })}
+                          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
                         />
                       </div>
                     ))}
@@ -116,6 +125,13 @@ export default function ChiSiamoClient({ content }: { content: any }) {
           </div>
         </div>
       </Section>
+
+      <Lightbox 
+        images={lightbox.images}
+        initialIndex={lightbox.index}
+        isOpen={lightbox.isOpen}
+        onClose={() => setLightbox({ ...lightbox, isOpen: false })}
+      />
     </div>
   );
 }

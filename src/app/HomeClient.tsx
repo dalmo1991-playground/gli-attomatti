@@ -6,6 +6,7 @@ import { ArrowRight, Calendar, MapPin, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 
 export default function HomeClient({ content }: { content: any }) {
   const { hero, upcoming_shows, introduction } = content.pages.home;
@@ -19,6 +20,13 @@ export default function HomeClient({ content }: { content: any }) {
 
   // For Introduction Carousel
   const [introIndex, setIntroIndex] = useState(0);
+
+  // Lightbox State
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
+    isOpen: false,
+    index: 0,
+    images: []
+  });
 
   useEffect(() => {
     if (showMode && activeShows.length > 1) {
@@ -301,17 +309,25 @@ export default function HomeClient({ content }: { content: any }) {
                   key={introIndex}
                   src={introduction.images[introIndex].url}
                   alt={introduction.images[introIndex].alt}
-                  initial={{ x: "100%", opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: "-100%", opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0 w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-700"
+                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
                 />
               </AnimatePresence>
             )}
           </div>
         </div>
       </Section>
+
+      <Lightbox 
+        images={lightbox.images}
+        initialIndex={lightbox.index}
+        isOpen={lightbox.isOpen}
+        onClose={() => setLightbox({ ...lightbox, isOpen: false })}
+      />
     </div>
   );
 }

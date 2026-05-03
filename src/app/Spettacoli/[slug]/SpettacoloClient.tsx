@@ -5,9 +5,17 @@ import Link from "next/link";
 import { ChevronLeft, Calendar, MapPin, Ticket } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 
 export default function SpettacoloDettaglioClient({ content, slug }: { content: any, slug: string }) {
   const show = content.pages.spettacoli.archive_sections.find((s: any) => s.slug === slug);
+
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
+    isOpen: false,
+    index: 0,
+    images: []
+  });
 
   if (!show) {
     return (
@@ -74,7 +82,8 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                       <img 
                         src={img.url} 
                         alt={img.alt} 
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105" 
+                        onClick={() => setLightbox({ isOpen: true, index: idx, images: show.images })}
+                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
                       />
                     </div>
                   ))}
@@ -143,6 +152,13 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
           </div>
         </div>
       </Section>
+
+      <Lightbox 
+        images={lightbox.images}
+        initialIndex={lightbox.index}
+        isOpen={lightbox.isOpen}
+        onClose={() => setLightbox({ ...lightbox, isOpen: false })}
+      />
     </div>
   );
 }
