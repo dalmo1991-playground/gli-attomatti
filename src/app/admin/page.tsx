@@ -86,6 +86,18 @@ export default function AdminConsole() {
     }
   };
 
+  const handleDownloadJson = () => {
+    const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `content-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const tabs = [
     { id: "site", label: "Sito & Meta", icon: Globe },
     { id: "navigation", label: "Menu", icon: MenuIcon },
@@ -166,6 +178,15 @@ export default function AdminConsole() {
               >
                 {isPublishing ? "Pubblicazione..." : "Pubblica sul Sito"}
               </button>
+
+              <button 
+                onClick={handleDownloadJson}
+                className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all bg-muted/30 text-foreground/60 hover:bg-muted hover:text-foreground border border-foreground/5"
+              >
+                <Download size={14} />
+                Scarica Backup JSON
+              </button>
+
               {publishStatus && (
                 <div className={cn(
                   "p-4 rounded-2xl text-xs font-bold text-center animate-in fade-in zoom-in duration-300 break-words",

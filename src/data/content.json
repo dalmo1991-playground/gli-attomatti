@@ -58,7 +58,7 @@
       },
       "upcoming_shows": [
         {
-          "active": false,
+          "active": true,
           "title": "4 Gatti",
           "presenter": "Missione Cattolica di Lingua Italiana presenta",
           "tagline": "Uno spettacolo all'insegna della comicità e dell'intrattenimento",
