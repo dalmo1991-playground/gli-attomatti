@@ -58,21 +58,6 @@
       },
       "upcoming_shows": [
         {
-          "active": true,
-          "title": "Una Cenerentola",
-          "presenter": "FFSI e Comuni di Tenero-Contra e Gordola presentano",
-          "tagline": "Commedia teatrale in tre atti scritta e diretta da Domenico Scotti di Carlo",
-          "date": "9 Maggio 2026, ore 20:30",
-          "location": "Oratorio di San Giovanni Bosco, Tenero-Contra",
-          "location_href": "https://maps.app.goo.gl/4BKjnDaZPwHvnhYf9",
-          "cta": "Ingresso Gratuito",
-          "cta_href": "",
-          "details_label": "Scopri lo spettacolo",
-          "details_href": "/Spettacoli/una-cenerentola",
-          "image": "/images/show3.png",
-          "visible": true
-        },
-        {
           "active": false,
           "title": "4 Gatti",
           "presenter": "Missione Cattolica di Lingua Italiana presenta",
