@@ -1,7 +1,7 @@
-import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getContent } from '@/lib/data';
+import { commitToGitHub } from '@/lib/github';
 
 export async function GET() {
   const content = await getContent();
@@ -9,10 +9,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { searchParams } = new URL(request.url);
   const secret = request.headers.get('x-admin-secret');
 
-  // Basic security check using an environment variable
+  // Basic security check
   if (secret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -20,28 +19,19 @@ export async function POST(request: Request) {
   try {
     const json = await request.json();
     
-    // Upload the new content to Vercel Blob
-    // 'addRandomSuffix: true' ensures we keep a history of all versions
-    const blob = await put('content.json', JSON.stringify(json, null, 2), {
-      access: 'public',
-      addRandomSuffix: true,
-      contentType: 'application/json',
-      cacheControlMaxAge: 0
-    });
-
-    // Create a pointer file that always points to the latest version's URL
-    await put('latest.json', JSON.stringify({ url: blob.url }), {
-      access: 'public',
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: 'application/json',
-      cacheControlMaxAge: 0
+    // Commit the new content to GitHub
+    await commitToGitHub({
+      path: 'src/data/content.json',
+      content: JSON.stringify(json, null, 2),
+      message: 'Update site content via Admin Console',
+      isBinary: false
     });
 
     revalidatePath('/', 'layout');
 
-    return NextResponse.json({ success: true, url: blob.url });
+    return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('Content update error:', error);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

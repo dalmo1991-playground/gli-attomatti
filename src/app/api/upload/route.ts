@@ -1,10 +1,10 @@
-import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
+import { commitToGitHub } from '@/lib/github';
 
 export async function POST(request: Request) {
   const secret = request.headers.get('x-admin-secret');
 
-  // Basic security check using an environment variable
+  // Basic security check
   if (secret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -17,14 +17,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Upload the file to Vercel Blob
-    const blob = await put(file.name, file, {
-      access: 'public',
-      addRandomSuffix: true,
+    const buffer = Buffer.from(await file.arrayBuffer());
+    
+    // Create a unique filename to avoid collisions
+    const timestamp = Date.now();
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-0.\-_]/g, '_');
+    const fileName = `${timestamp}-${sanitizedName}`;
+    const filePath = `public/images/${fileName}`;
+
+    // Commit the image to GitHub
+    await commitToGitHub({
+      path: filePath,
+      content: buffer,
+      message: `Upload image: ${fileName} via Admin Console`,
+      isBinary: true
     });
 
-    return NextResponse.json({ success: true, url: blob.url });
+    // In production, the file will be available at /images/fileName after the next build.
+    // However, the JSON update (which happens later when "Publish" is clicked)
+    // will use this relative path.
+    const publicUrl = `/images/${fileName}`;
+
+    return NextResponse.json({ 
+      success: true, 
+      url: publicUrl 
+    });
   } catch (error) {
+    console.error('Upload error:', error);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
