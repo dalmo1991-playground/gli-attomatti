@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ImageProps {
+
   url: string;
   alt: string;
 }
@@ -66,11 +68,13 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
           className="absolute inset-0"
         >
           <div className="w-full h-full relative">
-            <img
+            <Image
               src={images[currentIndex].url}
               alt={images[currentIndex].alt}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
+
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-8">
               <p className="text-white text-lg font-medium drop-shadow-md">
                 {images[currentIndex].alt}

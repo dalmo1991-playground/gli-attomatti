@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import Image from "next/image";
+
 
 export default function SpettacoloDettaglioClient({ content, slug }: { content: any, slug: string }) {
   const show = content.pages.spettacoli.archive_sections.find((s: any) => s.slug === slug);
@@ -79,12 +81,14 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                         idx % 3 === 0 ? "md:col-span-2 aspect-video" : "aspect-square"
                       )}
                     >
-                      <img 
+                      <Image 
                         src={img.url} 
                         alt={img.alt} 
+                        fill
                         onClick={() => setLightbox({ isOpen: true, index: idx, images: show.images })}
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
+                        className="object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
                       />
+
                     </div>
                   ))}
                 </div>

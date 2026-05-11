@@ -6,6 +6,8 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Lightbox } from "@/components/ui/Lightbox";
+import Image from "next/image";
+
 
 export default function AttoriClient({ content }: { content: any }) {
   const { attori } = content.pages;
@@ -63,15 +65,44 @@ export default function AttoriClient({ content }: { content: any }) {
                 <div className="absolute inset-0 rounded-full border-2 border-primary/20 scale-110 group-hover:scale-125 group-hover:border-primary/50 transition-all duration-700" />
                 
                 {/* Profile Pic */}
-                <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-primary/10 transition-all duration-700">
-                  <img 
+                <motion.div 
+                  whileHover="hover"
+                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-primary/10 transition-all duration-700"
+                >
+                  <Image 
                     src={person.image} 
                     alt={person.name} 
+                    fill
                     onClick={() => setLightbox({ isOpen: true, index: idx })}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
+                    className="object-cover cursor-pointer"
                   />
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
-                </div>
+
+                  {/* Curtains */}
+                  <motion.div 
+                    variants={{
+                      hover: { x: "-100%" }
+                    }}
+                    className="absolute inset-y-0 left-0 w-1/2 bg-primary z-20 origin-left border-r border-white/10 pointer-events-none"
+                    initial={{ x: 0 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  >
+                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+                  </motion.div>
+                  <motion.div 
+                    variants={{
+                      hover: { x: "100%" }
+                    }}
+                    className="absolute inset-y-0 right-0 w-1/2 bg-primary z-20 origin-right border-l border-white/10 pointer-events-none"
+                    initial={{ x: 0 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  >
+                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+                  </motion.div>
+
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay z-10" />
+                </motion.div>
+
+
               </div>
               
               <div className="space-y-3">

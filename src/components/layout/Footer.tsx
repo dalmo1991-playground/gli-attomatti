@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+
 
 export function Footer({ content }: { content: any }) {
   const { contatti } = content.pages;
@@ -39,15 +41,18 @@ export function Footer({ content }: { content: any }) {
           {/* Brand Column */}
           <div className="lg:col-span-5 space-y-8">
             <Link href="/" className="flex items-center gap-3 group">
-              <img
+              <Image
                 src="/logo_attomatti.svg"
                 alt={content.site.name}
+                width={48}
+                height={48}
                 className="h-12 w-auto group-hover:scale-110 transition-transform duration-500"
               />
               <span className="text-2xl font-black tracking-tighter uppercase text-primary">
                 {content.site.name}
               </span>
             </Link>
+
             <p className="text-xl text-foreground/60 leading-relaxed max-w-sm font-medium">
               {content.site.description}
             </p>

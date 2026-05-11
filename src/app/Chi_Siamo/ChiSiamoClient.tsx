@@ -7,6 +7,8 @@ import { ArrowRight, Users, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import Image from "next/image";
+
 
 export default function ChiSiamoClient({ content }: { content: any }) {
   const { chi_siamo } = content.pages;
@@ -84,12 +86,16 @@ export default function ChiSiamoClient({ content }: { content: any }) {
                           section.images.length > 1 && imgIdx % 2 !== 0 && "mt-12"
                         )}
                       >
-                        <img 
-                          src={img.url} 
-                          alt={img.alt} 
-                          onClick={() => setLightbox({ isOpen: true, index: imgIdx, images: section.images })}
-                          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
-                        />
+                        <div className="relative aspect-video">
+                          <Image 
+                            src={img.url} 
+                            alt={img.alt} 
+                            fill
+                            onClick={() => setLightbox({ isOpen: true, index: imgIdx, images: section.images })}
+                            className="object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
+                          />
+                        </div>
+
                       </div>
                     ))}
                   </div>

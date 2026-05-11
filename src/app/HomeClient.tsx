@@ -7,6 +7,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import Image from "next/image";
+
+const MotionImage = motion.create(Image);
+
 
 export default function HomeClient({ content }: { content: any }) {
   const { hero, upcoming_shows, introduction } = content.pages.home;
@@ -85,11 +89,14 @@ export default function HomeClient({ content }: { content: any }) {
                 }}
                 className="absolute inset-0"
               >
-                <img
+                <Image
                   src={activeShows[currentShowIndex].image}
                   alt={activeShows[currentShowIndex].title}
-                  className="w-full h-full object-cover opacity-40"
+                  fill
+                  className="object-cover opacity-40"
+                  priority
                 />
+
               </motion.div>
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
@@ -97,11 +104,14 @@ export default function HomeClient({ content }: { content: any }) {
         ) : (
           /* Mode 2: Generic Background */
           <div className="absolute inset-0 z-0">
-            <img
+            <Image
               src="/images/show1.png"
               alt="Hero Background"
-              className="w-full h-full object-cover opacity-30 scale-105"
+              fill
+              className="object-cover opacity-30 scale-105"
+              priority
             />
+
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background" />
           </div>
         )}
@@ -206,13 +216,16 @@ export default function HomeClient({ content }: { content: any }) {
             /* Mode 2: Generic Content */
             <div className="space-y-8">
               <div className="flex flex-col items-center">
-                <motion.img 
+                <MotionImage 
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   src="/logo_attomatti.svg" 
                   alt={content.site.name} 
+                  width={192}
+                  height={192}
                   className="h-32 md:h-48 w-auto mb-12 animate-float"
                 />
+
                 <p className="text-xl md:text-2xl text-foreground/70 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
                   {hero.subtitle}
                 </p>
@@ -305,7 +318,7 @@ export default function HomeClient({ content }: { content: any }) {
             {/* Concurrent transition for fluidity */}
             {introduction.images.length > 0 && (
               <AnimatePresence mode="popLayout">
-                <motion.img
+                <MotionImage
                   key={introIndex}
                   src={introduction.images[introIndex].url}
                   alt={introduction.images[introIndex].alt}
@@ -313,9 +326,11 @@ export default function HomeClient({ content }: { content: any }) {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="absolute inset-0 w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-700"
+                  fill
+                  className="object-cover cursor-pointer hover:scale-105 transition-transform duration-700"
                   onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
                 />
+
               </AnimatePresence>
             )}
           </div>

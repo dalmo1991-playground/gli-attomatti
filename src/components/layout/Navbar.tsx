@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+
 
 export function Navbar({ content }: { content: any }) {
   const pathname = usePathname();
@@ -32,11 +34,15 @@ export function Navbar({ content }: { content: any }) {
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center gap-3 group">
-          <img 
+          <Image 
             src="/logo_attomatti.svg" 
             alt={content.site.name} 
+            width={40}
+            height={40}
             className="h-10 w-auto group-hover:scale-110 transition-transform duration-300"
+            priority
           />
+
           <span className="text-xl font-black tracking-tighter uppercase text-primary">
             {content.site.name}
           </span>
