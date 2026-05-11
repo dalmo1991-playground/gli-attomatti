@@ -3,3 +3,4 @@
 - add download json to admin console
 - We don't have anymore the second button on the hero
 - change logic. no more blob but usage of github api to upload new json and redeploy
+- get rid of darkmode and lightmode. make it all darkmode
