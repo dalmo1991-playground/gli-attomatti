@@ -328,8 +328,8 @@
           "dates": [
             {
               "date": "9 Maggio 2026, ore 20:30",
-              "location": "Oratorio di San Giovanni Bosco, Tenero-Contra",
-              "ticket_label": "Ingresso Libero",
+              "location": "Tenero-Contra",
+              "ticket_label": "",
               "ticket_href": "",
               "visible": true
             },
