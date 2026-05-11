@@ -74,10 +74,13 @@ export default function AdminConsole() {
         setPublishStatus({ type: 'success', msg: 'Sito aggiornato con successo!' });
       } else {
         const err = await res.json();
-        setPublishStatus({ type: 'error', msg: `Errore: ${err.error || 'Invio fallito'}` });
+        const detail = err.error || 'Invio fallito';
+        setPublishStatus({ type: 'error', msg: `ERRORE: ${detail}` });
+        console.error("Publish Error Details:", err);
       }
     } catch (e) {
-      setPublishStatus({ type: 'error', msg: 'Errore di connessione' });
+      setPublishStatus({ type: 'error', msg: `Errore di connessione: ${(e as Error).message}` });
+      console.error("Publish Connection Error:", e);
     } finally {
       setIsPublishing(false);
     }
@@ -165,8 +168,8 @@ export default function AdminConsole() {
               </button>
               {publishStatus && (
                 <div className={cn(
-                  "text-[10px] font-bold text-center animate-in fade-in zoom-in duration-300",
-                  publishStatus.type === 'success' ? "text-green-500" : "text-red-500"
+                  "p-4 rounded-2xl text-xs font-bold text-center animate-in fade-in zoom-in duration-300 break-words",
+                  publishStatus.type === 'success' ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500 border border-red-500/20"
                 )}>
                   {publishStatus.msg}
                 </div>
@@ -250,10 +253,12 @@ function Field({ label, value, onChange, type = "text", placeholder = "" }: { la
         onChange(data.url);
       } else {
         const err = await res.json();
-        alert(`Errore di caricamento: ${err.error}`);
+        alert(`ERRORE DI CARICAMENTO:\n${err.error || 'Errore sconosciuto'}`);
+        console.error("Upload error details:", err);
       }
     } catch (err) {
-      alert("Errore di connessione durante il caricamento");
+      alert(`Errore di connessione durante il caricamento:\n${(err as Error).message}`);
+      console.error("Upload connection error:", err);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
