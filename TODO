@@ -1,5 +1,2 @@
 - Add toggle to each element to control visibility
-- Optimize images - downsize and render properly. Use next js special element that is optimized
-- add download json to admin console
-- We don't have anymore the second button on the hero
 - Animation that when you hover over an actor pic the curtains open

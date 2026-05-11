@@ -192,21 +192,22 @@ export default function HomeClient({ content }: { content: any }) {
                       )}
                       
                       {/* Button 2 */}
-                      {activeShows[currentShowIndex].secondary_cta && (
-                        activeShows[currentShowIndex].secondary_cta_href ? (
+                      {activeShows[currentShowIndex].details_label && (
+                        activeShows[currentShowIndex].details_href ? (
                           <Link
-                            href={activeShows[currentShowIndex].secondary_cta_href}
+                            href={activeShows[currentShowIndex].details_href}
                             className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[280px]"
                           >
-                            {activeShows[currentShowIndex].secondary_cta}
+                            {activeShows[currentShowIndex].details_label}
                           </Link>
                         ) : (
                           <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
                             <Info size={18} className="mr-3 text-primary opacity-80" />
-                            {activeShows[currentShowIndex].secondary_cta}
+                            {activeShows[currentShowIndex].details_label}
                           </div>
                         )
                       )}
+
                     </div>
                   </div>
                 </motion.div>
