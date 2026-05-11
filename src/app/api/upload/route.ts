@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { commitToGitHub } from '@/lib/github';
+import sharp from 'sharp';
 
 export async function POST(request: Request) {
   const secret = request.headers.get('x-admin-secret');
@@ -17,25 +18,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const inputBuffer = Buffer.from(await file.arrayBuffer());
     
-    // Create a unique filename to avoid collisions
+    // Process image with Sharp
+    // 1. Resize to max 1920px width (keeping aspect ratio)
+    // 2. Convert to WebP (better compression)
+    // 3. Auto-rotate based on EXIF
+    const optimizedBuffer = await sharp(inputBuffer)
+      .rotate() // Handles EXIF orientation
+      .resize({
+        width: 1920,
+        withoutEnlargement: true, // Don't upscale small images
+        fit: 'inside'
+      })
+      .webp({ quality: 80 })
+      .toBuffer();
+
+    // Create a unique filename with .webp extension
     const timestamp = Date.now();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-0.\-_]/g, '_');
-    const fileName = `${timestamp}-${sanitizedName}`;
+    const originalName = file.name.split('.').slice(0, -1).join('.'); // Remove original extension
+    const sanitizedName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const fileName = `${timestamp}-${sanitizedName}.webp`;
     const filePath = `public/images/${fileName}`;
 
-    // Commit the image to GitHub
+    // Commit the optimized image to GitHub
     await commitToGitHub({
       path: filePath,
-      content: buffer,
-      message: `Upload image: ${fileName} via Admin Console`,
+      content: optimizedBuffer,
+      message: `Upload optimized image: ${fileName} via Admin Console`,
       isBinary: true
     });
 
-    // In production, the file will be available at /images/fileName after the next build.
-    // However, the JSON update (which happens later when "Publish" is clicked)
-    // will use this relative path.
     const publicUrl = `/images/${fileName}`;
 
     return NextResponse.json({ 
