@@ -20,6 +20,9 @@ export async function commitToGitHub({
     throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
   }
 
+  const maskedToken = `${token.substring(0, 4)}...${token.substring(token.length - 4)}`;
+  console.log(`[GitHub API] Config: Repo=${repo}, Branch=${branch}, Token=${maskedToken} (len: ${token.length})`);
+
   // Sanitize repo: remove https://github.com/ and trailing slashes
   repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
 
@@ -31,12 +34,12 @@ export async function commitToGitHub({
   let sha: string | undefined;
   try {
     const res = await fetch(`${baseUrl}?ref=${branch}`, {
+      cache: 'no-store',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'Attomatti-CMS'
       },
-
     });
     if (res.ok) {
       const data = await res.json();
