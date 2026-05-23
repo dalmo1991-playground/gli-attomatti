@@ -763,6 +763,55 @@ function AttoriSettings({ content, updateContent }: any) {
                 newList[idx].bio = v;
                 updateContent('pages.attori.list', newList);
               }} />
+              <div className="col-span-2">
+                <Field type="textarea" label="Descrizione Estesa" value={p.description} onChange={(v) => {
+                  const newList = [...attori.list];
+                  newList[idx].description = v;
+                  updateContent('pages.attori.list', newList);
+                }} />
+              </div>
+              <div className="col-span-2 mt-6">
+                <ArrayEditor 
+                  label="Spettacoli a cui ha partecipato"
+                  items={p.shows || []}
+                  onAdd={() => {
+                    const newList = [...attori.list];
+                    if (!newList[idx].shows) newList[idx].shows = [];
+                    newList[idx].shows.push({ title: "Nuovo Spettacolo", role: "", slug: "" });
+                    updateContent('pages.attori.list', newList);
+                  }}
+                  onRemove={(sIdx) => {
+                    const newList = [...attori.list];
+                    newList[idx].shows = newList[idx].shows.filter((_: any, i: number) => i !== sIdx);
+                    updateContent('pages.attori.list', newList);
+                  }}
+                  onMove={(sIdx, dir) => {
+                    const newList = [...attori.list];
+                    const targetIdx = sIdx + dir;
+                    [newList[idx].shows[sIdx], newList[idx].shows[targetIdx]] = [newList[idx].shows[targetIdx], newList[idx].shows[sIdx]];
+                    updateContent('pages.attori.list', newList);
+                  }}
+                  renderItem={(show, sIdx) => (
+                    <div className="grid grid-cols-3 gap-4">
+                      <Field label="Titolo Spettacolo" value={show.title} onChange={(v) => {
+                        const newList = [...attori.list];
+                        newList[idx].shows[sIdx].title = v;
+                        updateContent('pages.attori.list', newList);
+                      }} />
+                      <Field label="Ruolo nello Spettacolo" value={show.role} onChange={(v) => {
+                        const newList = [...attori.list];
+                        newList[idx].shows[sIdx].role = v;
+                        updateContent('pages.attori.list', newList);
+                      }} />
+                      <Field label="Slug Spettacolo (opzionale)" value={show.slug} onChange={(v) => {
+                        const newList = [...attori.list];
+                        newList[idx].shows[sIdx].slug = v;
+                        updateContent('pages.attori.list', newList);
+                      }} />
+                    </div>
+                  )}
+                />
+              </div>
             </div>
           )}
         />

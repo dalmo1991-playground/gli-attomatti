@@ -1,8 +1,8 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
-import { motion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Lightbox } from "@/components/ui/Lightbox";
@@ -14,6 +14,7 @@ export default function AttoriClient({ content }: { content: any }) {
   const { join_us } = attori;
 
   const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
+  const [selectedActor, setSelectedActor] = useState<any | null>(null);
 
   const galleryImages = useMemo(() => {
     return attori.list.map((person: any) => ({
@@ -58,55 +59,53 @@ export default function AttoriClient({ content }: { content: any }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="group text-center"
+              whileHover="hover"
+              onClick={() => setSelectedActor(person)}
+              className="group text-center cursor-pointer"
             >
               <div className="relative w-64 h-64 mx-auto mb-8">
                 {/* Decorative Ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-primary/20 scale-110 group-hover:scale-125 group-hover:border-primary/50 transition-all duration-700" />
+                <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
                 
-                {/* Profile Pic */}
+                {/* Profile Pic Container */}
                 <motion.div 
-                  whileHover="hover"
-                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-primary/10 transition-all duration-700"
+                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/20 transition-all duration-700 pointer-events-none"
                 >
-                  <Image 
-                    src={person.image} 
-                    alt={person.name} 
-                    fill
-                    onClick={() => setLightbox({ isOpen: true, index: idx })}
-                    className="object-cover cursor-pointer"
-                  />
+                  {/* Background (Stage Standby): Grayscale, Dimmed Image */}
+                  <div className="absolute inset-0 bg-black">
+                    <Image 
+                      src={person.image} 
+                      alt={person.name} 
+                      fill
+                      className="object-cover opacity-80 filter grayscale brightness-95 contrast-110 transition-all duration-700 scale-100 group-hover:scale-105"
+                    />
+                  </div>
 
-                  {/* Curtains */}
-                  <motion.div 
+                  {/* Spotlight Foreground (Color and Brightness) */}
+                  <motion.div
+                    className="absolute inset-0 z-10 pointer-events-none"
+                    initial={{ clipPath: "circle(0% at 50% 50%)" }}
                     variants={{
-                      hover: { x: "-100%" }
+                      hover: { 
+                        clipPath: "circle(100% at 50% 50%)" 
+                      }
                     }}
-                    className="absolute inset-y-0 left-0 w-1/2 bg-primary z-20 origin-left border-r border-white/10 pointer-events-none"
-                    initial={{ x: 0 }}
-                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                    transition={{ type: "tween", ease: "easeInOut", duration: 0.6 }}
                   >
-                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+                    <Image 
+                      src={person.image} 
+                      alt={person.name} 
+                      fill
+                      className="object-cover filter brightness-110 contrast-100 scale-105"
+                    />
                   </motion.div>
-                  <motion.div 
-                    variants={{
-                      hover: { x: "100%" }
-                    }}
-                    className="absolute inset-y-0 right-0 w-1/2 bg-primary z-20 origin-right border-l border-white/10 pointer-events-none"
-                    initial={{ x: 0 }}
-                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                  >
-                     <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
-                  </motion.div>
-
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay z-10" />
                 </motion.div>
 
 
               </div>
               
               <div className="space-y-3">
-                <h3 className="text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors">
+                <h3 className="text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[4.5rem]">
                   {person.name}
                 </h3>
                 <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
@@ -147,6 +146,106 @@ export default function AttoriClient({ content }: { content: any }) {
         isOpen={lightbox.isOpen}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
+
+      <AnimatePresence>
+        {selectedActor && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedActor(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
+            />
+
+            {/* Modal Dialog Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative w-full max-w-4xl bg-background border border-foreground/10 rounded-3xl overflow-hidden shadow-2xl z-10 p-6 md:p-10 max-h-[90vh] md:max-h-none flex flex-col justify-center"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedActor(null)}
+                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground/75 hover:text-foreground transition-colors cursor-pointer z-20"
+              >
+                <X size={20} className="md:w-6 md:h-6" />
+              </button>
+
+              {/* Pop-up Content */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center md:items-start overflow-y-auto md:overflow-visible max-h-[70vh] md:max-h-none pr-1 md:pr-0 custom-scrollbar w-full pt-8 md:pt-0">
+                {/* Profile Pic Column */}
+                <div className="md:col-span-5 flex justify-center md:sticky md:top-0">
+                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl ring-8 ring-muted border border-foreground/5 shrink-0">
+                    <Image
+                      src={selectedActor.image}
+                      alt={selectedActor.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Info Column */}
+                <div className="md:col-span-7 space-y-6 text-center md:text-left md:overflow-y-auto md:max-h-[520px] md:pr-4 custom-scrollbar">
+                  <div>
+                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-3">
+                      {selectedActor.name}
+                    </h2>
+                    <div className="inline-block px-5 py-2 bg-primary/10 text-primary rounded-full text-sm font-bold uppercase tracking-wider mb-6">
+                      {selectedActor.role}
+                    </div>
+                    {selectedActor.description && (
+                      <p className="text-foreground/75 leading-relaxed text-lg whitespace-pre-wrap border-t border-foreground/5 pt-6">
+                        {selectedActor.description}
+                      </p>
+                    )}
+                    {selectedActor.shows && selectedActor.shows.length > 0 && (
+                      <div className="border-t border-foreground/5 pt-6 mt-6 space-y-4">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-foreground/45">
+                          Spettacoli e Ruoli
+                        </h4>
+                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                          {selectedActor.shows.map((show: any, sIdx: number) => {
+                            const badgeContent = (
+                              <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-foreground/[0.03] text-foreground hover:bg-primary/10 hover:text-primary rounded-xl text-sm font-semibold transition-all border border-foreground/5 cursor-pointer">
+                                <span>{show.title}</span>
+                                {show.role && (
+                                  <>
+                                    <span className="opacity-30 font-normal">|</span>
+                                    <span className="text-xs uppercase tracking-wider opacity-75 font-normal">{show.role}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+
+                            return show.slug ? (
+                              <Link 
+                                key={sIdx} 
+                                href={`/Spettacoli/${show.slug}`}
+                                onClick={() => setSelectedActor(null)}
+                              >
+                                {badgeContent}
+                              </Link>
+                            ) : (
+                              <span key={sIdx}>
+                                {badgeContent}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

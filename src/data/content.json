@@ -155,6 +155,24 @@
           "role": "Presidente - Regista - Attore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -162,6 +180,14 @@
           "role": "Regista",
           "image": "/images/show2.png",
           "bio": "Consectetur adipiscing elit.",
+          "description": "Regista associato con una profonda comprensione della commedia dell'arte. Supervisiona i dettagli scenici per garantire il massimo realismo e coinvolgimento del pubblico.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Aiuto Regia",
+              "slug": "4-gatti"
+            }
+          ],
           "visible": true
         },
         {
@@ -239,6 +265,14 @@
           "role": "Protagonista",
           "image": "/images/show3.png",
           "bio": "Sed do eiusmod tempor.",
+          "description": "Attore carismatico specializzato in ruoli comici e drammatici di spicco. Ha calcato numerosi palcoscenici portando freschezza, spontaneità e una grande energia scenica.",
+          "shows": [
+            {
+              "title": "Una Cenerentola",
+              "role": "Cenerentola",
+              "slug": "una-cenerentola"
+            }
+          ],
           "visible": true
         }
       ],
