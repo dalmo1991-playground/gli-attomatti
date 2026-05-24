@@ -14,11 +14,11 @@ const MotionImage = motion.create(Image);
 
 export default function HomeClient({ content }: { content: any }) {
   const { hero, upcoming_shows, introduction } = content.pages.home;
-  
+
   // Filter active shows
   const activeShows = upcoming_shows.filter((show: any) => show.active);
   const showMode = activeShows.length > 0;
-  
+
   const [currentShowIndex, setCurrentShowIndex] = useState(0);
   const [heroDirection, setHeroDirection] = useState(1);
 
@@ -165,11 +165,11 @@ export default function HomeClient({ content }: { content: any }) {
                         </span>
                       </Link>
                     </div>
-                    
+
                     {/* Buttons / Tags Area */}
                     <div className={cn(
-                      "flex gap-6 justify-center items-center w-full",
-                      (!!activeShows[currentShowIndex].cta_href === !!activeShows[currentShowIndex].details_href) 
+                      "mt-10 flex gap-6 justify-center items-center w-full",
+                      (!!activeShows[currentShowIndex].cta_href === !!activeShows[currentShowIndex].details_href)
                         ? "flex-col sm:flex-row" // Same type (both buttons or both tags) -> side-by-side
                         : "flex-col" // Different type -> stacked
                     )}>
@@ -190,7 +190,7 @@ export default function HomeClient({ content }: { content: any }) {
                           </div>
                         )
                       )}
-                      
+
                       {/* Button 2 */}
                       {activeShows[currentShowIndex].details_label && (
                         activeShows[currentShowIndex].details_href ? (
@@ -217,11 +217,11 @@ export default function HomeClient({ content }: { content: any }) {
             /* Mode 2: Generic Content */
             <div className="space-y-8">
               <div className="flex flex-col items-center">
-                <MotionImage 
+                <MotionImage
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  src="/logo_attomatti.svg" 
-                  alt={content.site.name} 
+                  src="/logo_attomatti.svg"
+                  alt={content.site.name}
                   width={192}
                   height={192}
                   className="h-32 md:h-48 w-auto mb-12 animate-float"
@@ -315,7 +315,7 @@ export default function HomeClient({ content }: { content: any }) {
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
             </div>
-            
+
             {/* Concurrent transition for fluidity */}
             {introduction.images.length > 0 && (
               <AnimatePresence mode="popLayout">
@@ -338,7 +338,7 @@ export default function HomeClient({ content }: { content: any }) {
         </div>
       </Section>
 
-      <Lightbox 
+      <Lightbox
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
