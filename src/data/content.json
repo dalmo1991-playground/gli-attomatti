@@ -152,7 +152,7 @@
       "list": [
         {
           "name": "Domenico Scotti di Carlo",
-          "role": "Presidente - Regista - Attore",
+          "role": "Presidente - Regista - Autore - Attore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
@@ -176,8 +176,8 @@
           "visible": true
         },
         {
-          "name": "Attore 2",
-          "role": "Regista",
+          "name": "Andrea Guatteri",
+          "role": "Attore",
           "image": "/images/show2.png",
           "bio": "Consectetur adipiscing elit.",
           "description": "Regista associato con una profonda comprensione della commedia dell'arte. Supervisiona i dettagli scenici per garantire il massimo realismo e coinvolgimento del pubblico.",
@@ -191,10 +191,128 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Ausilia Ofrè",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
+          "visible": true
+        },
+        {
+          "name": "Carla Persello",
+          "role": "Fondatore",
+          "image": "/images/show1.png",
+          "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
+          "visible": true
+        },
+        {
+          "name": "Delia Della Porta",
+          "role": "Fondatore",
+          "image": "/images/show1.png",
+          "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
+          "visible": true
+        },
+        {
+          "name": "Florinda Fusco",
+          "role": "Fondatore",
+          "image": "/images/show1.png",
+          "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
+          "visible": true
+        },
+        {
+          "name": "Gerardo Risoli",
+          "role": "Fondatore",
+          "image": "/images/show1.png",
+          "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -202,6 +320,24 @@
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -209,6 +345,24 @@
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -216,6 +370,24 @@
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -223,6 +395,24 @@
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
@@ -230,34 +420,24 @@
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
-          "visible": true
-        },
-        {
-          "name": "Attore 1",
-          "role": "Fondatore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
-          "visible": true
-        },
-        {
-          "name": "Attore 1",
-          "role": "Fondatore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
-          "visible": true
-        },
-        {
-          "name": "Attore 1",
-          "role": "Fondatore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
-          "visible": true
-        },
-        {
-          "name": "Attore 1",
-          "role": "Fondatore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
+          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "shows": [
+            {
+              "title": "4 Gatti",
+              "role": "Regista",
+              "slug": "4-gatti"
+            },
+            {
+              "title": "Una Cenerentola",
+              "role": "Regista",
+              "slug": "una-cenerentola"
+            },
+            {
+              "title": "Ditegli sempre di si",
+              "role": "Regista",
+              "slug": "ditegli-sempre-di-si"
+            }
+          ],
           "visible": true
         },
         {
