@@ -316,7 +316,7 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Lucrezia Ottaviano",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -341,7 +341,7 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Ludovica Zobi",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -366,7 +366,7 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Marco Dal Molin",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -391,7 +391,7 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Margherita Atzei",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -416,7 +416,7 @@
           "visible": true
         },
         {
-          "name": "Attore 1",
+          "name": "Matteo Ghilotti",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -441,7 +441,7 @@
           "visible": true
         },
         {
-          "name": "Attore 3",
+          "name": "Mauro Porcu",
           "role": "Protagonista",
           "image": "/images/show3.png",
           "bio": "Sed do eiusmod tempor.",
@@ -454,6 +454,10 @@
             }
           ],
           "visible": true
+        },
+        {
+          "name": "Monica Moreo",
+          "role": ""
         }
       ],
       "join_us": {
