@@ -77,7 +77,7 @@
       ],
       "introduction": {
         "title": "Gli Attomatti",
-        "text": "La compagnia teatrale \"Gli Attomatti\" è stata fondata a Zurigo nel 2025, con la missione di promuovere l'attività teatrale in lingua italiana.\nLa compagnia è attiva nella realizzazione di un paio di spettacoli all'anno e di altre attività (sketch, seminari, etc.) nel Zurighese e non solo!",
+        "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall’incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\nLa compagnia spazia da serate di sketch e comicità a commedie d’autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l’obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi.",
         "images": [
           {
             "url": "/images/show2.png",
@@ -499,12 +499,7 @@
           "year": "2026",
           "short_description": "Uno spettacolo all'insegna della comicità e dell'intrattenimento.",
           "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          "images": [
-            {
-              "url": "/images/1779615309812-20260629_locandinaMissione.webp",
-              "alt": "Locandina"
-            }
-          ],
+          "images": [],
           "dates": [
             {
               "date": "21 Giugno 2026, ore 18:30",
@@ -619,24 +614,7 @@
           "title": "Ditegli sempre di si",
           "year": "2025",
           "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          "images": [
-            {
-              "url": "/images/show3.png",
-              "alt": "Missione 1"
-            },
-            {
-              "url": "/images/show3.png",
-              "alt": "Missione 1"
-            },
-            {
-              "url": "/images/show3.png",
-              "alt": "Missione 1"
-            },
-            {
-              "url": "/images/show3.png",
-              "alt": "Missione 1"
-            }
-          ],
+          "images": [],
           "dates": [
             {
               "date": "12 Aprile 2025",
