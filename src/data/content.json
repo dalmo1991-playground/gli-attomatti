@@ -60,8 +60,8 @@
         {
           "active": true,
           "title": "4 Gatti",
-          "presenter": "Missione Cattolica di Lingua Italiana presenta",
-          "tagline": "Uno spettacolo all'insegna della comicità e dell'intrattenimento",
+          "presenter": "Gli Attomatti presentano",
+          "tagline": "Spettacolo in sketch all'insegna della comicità e della riflessione",
           "date": "21 Giugno 2026, ore 18:30",
           "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
           "location_href": "https://maps.app.goo.gl/WvTxrSCR7L11aERh6",
@@ -69,8 +69,10 @@
           "cta_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
           "details_label": "Scopri lo spettacolo",
           "details_href": "/Spettacoli/4-gatti",
-          "image": "/images/show1.png",
-          "visible": true
+          "image": "/images/1779613546229-20260629_locandinaMissione.webp",
+          "visible": true,
+          "secondary_cta": "Scopri di più",
+          "secondary_cta_href": "/Spettacoli/4-gatti"
         }
       ],
       "introduction": {
