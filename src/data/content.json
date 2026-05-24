@@ -471,12 +471,12 @@
     },
     "parlano_di_noi": {
       "title": "Dicono di Noi",
-      "description": "Quello che dicono di noi i giornali e la critica.",
+      "description": "Gli attomatti nella stampa",
       "press": [
         {
-          "source": "Corriere di Zurigo",
-          "source_href": "https://example.com/article1",
-          "quote": "Qualcosa sulla RSI",
+          "source": "RSI",
+          "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo",
+          "quote": "Servizio della RSI sul corso di teatro a guida Attomatti dedicato a Dario Fo, nel centenario della sua nascita\n",
           "date": "2023",
           "badge_label": "Rassegna Stampa",
           "visible": true
