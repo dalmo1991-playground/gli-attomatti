@@ -305,6 +305,7 @@ export default function HomeClient({ content }: { content: any }) {
             <Link
               href="/Chi_Siamo"
               className="text-primary font-bold inline-flex items-center group"
+              style={{display: 'none'}}
             >
               La nostra storia
               <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
