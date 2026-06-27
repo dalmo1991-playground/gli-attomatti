@@ -6,6 +6,10 @@
   },
   "navigation": [
     {
+      "label": "Dicono di noi",
+      "href": "Chi_Siamo/Parlano_di_noi"
+    },
+    {
       "label": "Contatti",
       "href": "/Contatti"
     }
@@ -66,7 +70,26 @@
     },
     "chi_siamo": {},
     "attori": {},
-    "parlano_di_noi": {},
+    "parlano_di_noi": {
+      "title": "Dicono di Noi",
+      "description": "Gli attomatti nella stampa",
+      "press": [
+        {
+          "source": "RSI",
+          "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
+          "quote": "Servizio della RSI sul corso di teatro a guida Attomatti dedicato a Dario Fo, nel centenario della sua nascita\n",
+          "date": "2026",
+          "badge_label": "Servizi TV",
+          "visible": true
+        }
+      ],
+      "press_contact": {
+        "title": "Area Stampa",
+        "text": "Sei un giornalista o un blogger e vuoi parlare della nostra compagnia? Contattaci per ricevere il press kit o per fissare un'intervista.",
+        "cta_label": "Contattaci",
+        "cta_href": "/Contatti"
+      }
+    },
     "spettacoli": {},
     "contatti": {
       "title": "Contattaci",
