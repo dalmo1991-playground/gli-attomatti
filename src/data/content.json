@@ -174,9 +174,9 @@
       "list": [
         {
           "name": "Domenico Scotti di Carlo",
-          "role": "Presidente - Regista - Autore - Attore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
+          "role": "Presidente - Regista - Attore",
+          "image": "/images/1782553964559-DSC_1764.webp",
+          "bio": "Qualcosa di buffo",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
             {
@@ -389,25 +389,20 @@
         },
         {
           "name": "Marco Dal Molin",
-          "role": "Fondatore",
-          "image": "/images/show1.png",
-          "bio": "Lorem ipsum dolor sit amet.",
-          "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+          "role": "Attore - Tech - Videomaker",
+          "image": "/images/1778523241763-DSC_0954.webp",
+          "bio": "L'uomo dietro la camera; fa in modo che tutto funzioni",
+          "description": "Marco è finito su un palco quasi per sbaglio, colpa di un workshop a cui è sopravvissuto così bene da non scendere più. Dal 2022 calca le scene con costanza, collezionando persino un'esperienza internazionale al Festival Fringe di Edimburgo nel 2025.\n\nApprodato negli Attomatti nel 2025, ha capito subito che recitare non gli bastava: oggi è l'anima tecnica della compagnia, l'uomo dietro la telecamera che cattura foto, video e cura il blog. Se durante lo spettacolo le luci funzionano o le musiche non partono, la colpa è quasi sicuramente sua.",
           "shows": [
             {
               "title": "4 Gatti",
-              "role": "Regista",
-              "slug": "4-gatti"
+              "role": "Ascanio",
+              "slug": ""
             },
             {
               "title": "Una Cenerentola",
-              "role": "Regista",
-              "slug": "una-cenerentola"
-            },
-            {
-              "title": "Ditegli sempre di si",
-              "role": "Regista",
-              "slug": "ditegli-sempre-di-si"
+              "role": "Palmizio",
+              "slug": ""
             }
           ],
           "visible": true
