@@ -1,0 +1,680 @@
+{
+    "site": {
+        "name": "Gli Attomatti",
+        "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
+        "language": "it"
+    },
+    "navigation": [
+        {
+            "label": "Home",
+            "href": "/"
+        },
+        {
+            "label": "Chi Siamo",
+            "href": "/Chi_Siamo",
+            "sublinks": [
+                {
+                    "label": "Le Persone",
+                    "href": "/Chi_Siamo/Attori"
+                },
+                {
+                    "label": "Dicono di Noi",
+                    "href": "/Chi_Siamo/Parlano_di_noi"
+                }
+            ]
+        },
+        {
+            "label": "Spettacoli",
+            "href": "/Spettacoli",
+            "sublinks": [
+                {
+                    "label": "4 Gatti",
+                    "href": "/Spettacoli/4-gatti"
+                },
+                {
+                    "label": "Una Cenerentola",
+                    "href": "/Spettacoli/una-cenerentola"
+                },
+                {
+                    "label": "Ditegli sempre di si",
+                    "href": "/Spettacoli/ditegli-sempre-di-si"
+                }
+            ]
+        },
+        {
+            "label": "Contatti",
+            "href": "/Contatti"
+        }
+    ],
+    "pages": {
+        "home": {
+            "hero": {
+                "title": "",
+                "subtitle": "Compagnia teatrale amatoriale di lingua italiana a Zurigo.",
+                "primary_cta_label": "Spettacoli",
+                "primary_cta_href": "/Spettacoli",
+                "secondary_cta_label": "Chi Siamo",
+                "secondary_cta_href": "/Chi_Siamo"
+            },
+            "upcoming_shows": [
+                {
+                    "active": true,
+                    "title": "4 Gatti",
+                    "presenter": "Gli Attomatti presentano",
+                    "tagline": "Spettacolo in sketch all'insegna della comicità e della riflessione",
+                    "date": "21 Giugno 2026, ore 18:30",
+                    "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
+                    "location_href": "https://maps.app.goo.gl/WvTxrSCR7L11aERh6",
+                    "cta": "Acquista Biglietti",
+                    "cta_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
+                    "details_label": "Scopri lo spettacolo",
+                    "details_href": "/Spettacoli/4-gatti",
+                    "image": "/images/1779613546229-20260629_locandinaMissione.webp",
+                    "visible": true,
+                    "secondary_cta": "Scopri di più",
+                    "secondary_cta_href": "/Spettacoli/4-gatti"
+                }
+            ],
+            "introduction": {
+                "title": "Gli Attomatti",
+                "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall’incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\nLa compagnia spazia da serate di sketch e comicità a commedie d’autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l’obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi.",
+                "images": [
+                    {
+                        "url": "/images/show2.png",
+                        "alt": "Backstage 1"
+                    },
+                    {
+                        "url": "/images/show1.png",
+                        "alt": "Backstage 2"
+                    },
+                    {
+                        "url": "/images/show3.png",
+                        "alt": "Backstage 3"
+                    },
+                    {
+                        "url": "/images/1778523241763-DSC_0954.webp",
+                        "alt": "Palmizio"
+                    }
+                ]
+            }
+        },
+        "chi_siamo": {
+            "title": "Chi Siamo",
+            "description": "Portiamo la passione del teatro italiano nel cuore di Zurigo.",
+            "content_sections": [
+                {
+                    "title": "La Nostra Storia",
+                    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                    "images": [
+                        {
+                            "url": "/images/show1.png",
+                            "alt": "Storia 1"
+                        },
+                        {
+                            "url": "/images/show2.png",
+                            "alt": "Storia 2"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "title": "La Nostra Missione",
+                    "text": "La missione degli Attomatti è creare un ponte culturale attraverso il teatro. Vogliamo offrire agli italiani a Zurigo e agli amanti della nostra lingua un punto di incontro dove l'arte diventa comunità.\n\nOgni nostra produzione è frutto di mesi di prove, passione e dedizione, con l'obiettivo di emozionare e far riflettere il nostro pubblico.",
+                    "images": [
+                        {
+                            "url": "/images/show3.png",
+                            "alt": "Missione 1"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "title": "Verso l'infinito e oltre",
+                    "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                    "visible": true
+                }
+            ],
+            "navigation_links": [
+                {
+                    "label": "Le Persone",
+                    "href": "/Chi_Siamo/Attori",
+                    "icon": "users",
+                    "visible": true
+                },
+                {
+                    "label": "Dicono di Noi",
+                    "href": "/Chi_Siamo/Parlano_di_noi",
+                    "icon": "message-square",
+                    "visible": true
+                }
+            ]
+        },
+        "attori": {
+            "title": "Persone",
+            "list": [
+                {
+                    "name": "Domenico Scotti di Carlo",
+                    "role": "Presidente - Regista - Autore - Attore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Andrea Guatteri",
+                    "role": "Attore",
+                    "image": "/images/show2.png",
+                    "bio": "Consectetur adipiscing elit.",
+                    "description": "Regista associato con una profonda comprensione della commedia dell'arte. Supervisiona i dettagli scenici per garantire il massimo realismo e coinvolgimento del pubblico.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Aiuto Regia",
+                            "slug": "4-gatti"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Ausilia Ofrè",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Carla Persello",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Delia Della Porta",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Florinda Fusco",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Gerardo Risoli",
+                    "role": "Aiuto regista - tecnico",
+                    "image": "/images/1779612515544-DSC_0872.webp",
+                    "bio": "La risposta a tutte le domande",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Lucrezia Ottaviano",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Ludovica Zobi",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Marco Dal Molin",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Margherita Atzei",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Matteo Ghilotti",
+                    "role": "Fondatore",
+                    "image": "/images/show1.png",
+                    "bio": "Lorem ipsum dolor sit amet.",
+                    "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
+                    "shows": [
+                        {
+                            "title": "4 Gatti",
+                            "role": "Regista",
+                            "slug": "4-gatti"
+                        },
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Regista",
+                            "slug": "una-cenerentola"
+                        },
+                        {
+                            "title": "Ditegli sempre di si",
+                            "role": "Regista",
+                            "slug": "ditegli-sempre-di-si"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Mauro Porcu",
+                    "role": "Protagonista",
+                    "image": "/images/show3.png",
+                    "bio": "Sed do eiusmod tempor.",
+                    "description": "Attore carismatico specializzato in ruoli comici e drammatici di spicco. Ha calcato numerosi palcoscenici portando freschezza, spontaneità e una grande energia scenica.",
+                    "shows": [
+                        {
+                            "title": "Una Cenerentola",
+                            "role": "Cenerentola",
+                            "slug": "una-cenerentola"
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "name": "Monica Moreo",
+                    "role": ""
+                }
+            ],
+            "join_us": {
+                "title": "Vuoi unirti a noi?",
+                "text": "Siamo sempre alla ricerca di nuovi talenti, sia sul palco che dietro le quinte. Se hai passione per il teatro e voglia di metterti in gioco, contattaci!",
+                "cta_label": "Diventa un Attomatto",
+                "cta_href": "/Contatti"
+            }
+        },
+        "parlano_di_noi": {
+            "title": "Dicono di Noi",
+            "description": "Gli attomatti nella stampa",
+            "press": [
+                {
+                    "source": "RSI",
+                    "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
+                    "quote": "Servizio della RSI sul corso di teatro a guida Attomatti dedicato a Dario Fo, nel centenario della sua nascita\n",
+                    "date": "2026",
+                    "badge_label": "Servizi TV",
+                    "visible": true
+                }
+            ],
+            "press_contact": {
+                "title": "Area Stampa",
+                "text": "Sei un giornalista o un blogger e vuoi parlare della nostra compagnia? Contattaci per ricevere il press kit o per fissare un'intervista.",
+                "cta_label": "Contattaci",
+                "cta_href": "/Contatti"
+            }
+        },
+        "spettacoli": {
+            "title": "I Nostri fantastici show",
+            "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
+            "archive_sections": [
+                {
+                    "slug": "4-gatti",
+                    "title": "4 Gatti",
+                    "year": "2026",
+                    "short_description": "Uno spettacolo all'insegna della comicità e dell'intrattenimento.",
+                    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                    "images": [],
+                    "dates": [
+                        {
+                            "date": "21 Giugno 2026, ore 18:30",
+                            "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
+                            "ticket_label": "Biglietti",
+                            "ticket_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
+                            "visible": true
+                        }
+                    ],
+                    "details": [
+                        {
+                            "label": "Genere",
+                            "value": "Commedia",
+                            "visible": true
+                        },
+                        {
+                            "label": "Durata",
+                            "value": "90 min",
+                            "visible": true
+                        },
+                        {
+                            "label": "Regia",
+                            "value": "Domenico Scotti di Carlo",
+                            "visible": true
+                        },
+                        {
+                            "label": "Testi",
+                            "value": "Gli Attomatti"
+                        },
+                        {
+                            "label": "Cast",
+                            "value": "Gli Attomatti",
+                            "visible": true
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "slug": "una-cenerentola",
+                    "title": "Una Cenerentola",
+                    "year": "2026",
+                    "short_description": "Un divertente riadattamento del celebre classico, con la magia della compagnia teatrale Gli Attomatti.",
+                    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                    "images": [],
+                    "dates": [
+                        {
+                            "date": "9 Maggio 2026",
+                            "location": "Tenero-Contra",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        },
+                        {
+                            "date": "22 Febbraio 2026",
+                            "location": "Wetzikon",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        },
+                        {
+                            "date": "25 Gennaio 2026",
+                            "location": "Wollishofen",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        },
+                        {
+                            "date": "24 Gennaio 2026",
+                            "location": "Wollishofen",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        },
+                        {
+                            "date": "18 Gennaio 2026",
+                            "location": "Bruder Klaus, Zurigo",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        }
+                    ],
+                    "details": [
+                        {
+                            "label": "Genere",
+                            "value": "Commedia",
+                            "visible": true
+                        },
+                        {
+                            "label": "Durata",
+                            "value": "150 min",
+                            "visible": true
+                        },
+                        {
+                            "label": "Regia",
+                            "value": "Domenico Scotti di Carlo",
+                            "visible": true
+                        },
+                        {
+                            "label": "Testi",
+                            "value": "Domenico Scotti di Carlo"
+                        },
+                        {
+                            "label": "Cast",
+                            "value": "Gli Attomatti",
+                            "visible": true
+                        }
+                    ],
+                    "visible": true
+                },
+                {
+                    "slug": "ditegli-sempre-di-si",
+                    "title": "Ditegli sempre di si",
+                    "year": "2025",
+                    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                    "images": [],
+                    "dates": [
+                        {
+                            "date": "12 Aprile 2025",
+                            "location": "Wollishofen",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        },
+                        {
+                            "date": "13 Aprile 2025",
+                            "location": "Wollishofen",
+                            "ticket_label": "",
+                            "ticket_href": "",
+                            "visible": true
+                        }
+                    ],
+                    "details": [
+                        {
+                            "label": "Regia",
+                            "value": "Domenico Scotti di Carlo",
+                            "visible": true
+                        },
+                        {
+                            "label": "Durata",
+                            "value": "90 min",
+                            "visible": true
+                        },
+                        {
+                            "label": "Genere",
+                            "value": "Commedia",
+                            "visible": true
+                        },
+                        {
+                            "label": "Cast",
+                            "value": "Gli Attomatti",
+                            "visible": true
+                        }
+                    ],
+                    "visible": true
+                }
+            ]
+        },
+        "contatti": {
+            "title": "Contattaci",
+            "description": "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
+            "email": "compagniateatralegliattomatti@gmail.com",
+            "socials": [
+                {
+                    "platform": "Instagram",
+                    "href": "https://www.instagram.com/gliattomatti/",
+                    "handle": "@gliattomatti",
+                    "visible": true
+                },
+                {
+                    "platform": "Facebook",
+                    "href": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
+                    "handle": "Gli Attomatti",
+                    "visible": true
+                }
+            ]
+        }
+    }
+}
