@@ -1,3 +1,15 @@
+import { execSync } from 'child_process';
+
+function getLocalGitBranch(): string | undefined {
+  try {
+    return execSync('git rev-parse --abbrev-ref HEAD', { stdio: 'pipe' })
+      .toString()
+      .trim();
+  } catch (e) {
+    return undefined;
+  }
+}
+
 /**
  * Commits a file to GitHub via the REST API.
  */
@@ -14,7 +26,14 @@ export async function commitToGitHub({
 }) {
   const token = process.env.GITHUB_TOKEN;
   let repo = process.env.GITHUB_REPO; // e.g. "owner/repo"
-  const branch = process.env.GITHUB_BRANCH || 'main';
+  const branch =
+    process.env.GITHUB_BRANCH ||
+    process.env.VERCEL_GIT_COMMIT_REF ||
+    process.env.CF_PAGES_BRANCH ||
+    process.env.BRANCH ||
+    getLocalGitBranch() ||
+    'dev';
+
 
   if (!token || !repo) {
     throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
