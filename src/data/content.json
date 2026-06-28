@@ -173,7 +173,7 @@
       "title": "Persone",
       "list": [
         {
-          "name": "Domenico Scotti di Carlo",
+          "name": "Domenico",
           "role": "Presidente - Regista - Attore",
           "image": "/images/1782553964559-DSC_1764.webp",
           "bio": "Qualcosa di buffo",
@@ -198,7 +198,7 @@
           "visible": true
         },
         {
-          "name": "Andrea Guatteri",
+          "name": "Andrea",
           "role": "Attore",
           "image": "/images/show2.png",
           "bio": "Consectetur adipiscing elit.",
@@ -213,7 +213,7 @@
           "visible": true
         },
         {
-          "name": "Ausilia Ofrè",
+          "name": "Ausilia",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -238,7 +238,7 @@
           "visible": true
         },
         {
-          "name": "Carla Persello",
+          "name": "Carla",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -288,7 +288,7 @@
           "visible": true
         },
         {
-          "name": "Florinda Fusco",
+          "name": "Florinda",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -313,7 +313,7 @@
           "visible": true
         },
         {
-          "name": "Gerardo Risoli",
+          "name": "Gerardo",
           "role": "Aiuto regista - tecnico",
           "image": "/images/1779612515544-DSC_0872.webp",
           "bio": "La risposta a tutte le domande",
@@ -338,7 +338,7 @@
           "visible": true
         },
         {
-          "name": "Lucrezia Ottaviano",
+          "name": "Lucrezia",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -363,7 +363,7 @@
           "visible": true
         },
         {
-          "name": "Ludovica Zobi",
+          "name": "Ludovica",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -388,7 +388,7 @@
           "visible": true
         },
         {
-          "name": "Marco Dal Molin",
+          "name": "Marco",
           "role": "Attore - Tech - Videomaker",
           "image": "/images/1778523241763-DSC_0954.webp",
           "bio": "L'uomo dietro la camera - fa in modo che tutto fili liscio",
@@ -408,7 +408,7 @@
           "visible": true
         },
         {
-          "name": "Margherita Atzei",
+          "name": "Margherita",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -433,7 +433,7 @@
           "visible": true
         },
         {
-          "name": "Matteo Ghilotti",
+          "name": "Matteo",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -458,7 +458,7 @@
           "visible": true
         },
         {
-          "name": "Mauro Porcu",
+          "name": "Mauro",
           "role": "Protagonista",
           "image": "/images/show3.png",
           "bio": "Sed do eiusmod tempor.",
@@ -473,7 +473,7 @@
           "visible": true
         },
         {
-          "name": "Monica Moreo",
+          "name": "Monica",
           "role": ""
         }
       ],
