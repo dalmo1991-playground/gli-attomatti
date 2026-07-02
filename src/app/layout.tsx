@@ -21,6 +21,9 @@ export async function generateMetadata() {
   return {
     title: content.site.name,
     description: content.site.description,
+    icons: {
+      icon: "/logo_attomatti.svg",
+    },
   };
 }
 
