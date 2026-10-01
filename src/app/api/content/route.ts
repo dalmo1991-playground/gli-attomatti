@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const json = await request.json();
     
     // Commit the new content to GitHub
-    await commitToGitHub({
+    const commitResult = await commitToGitHub({
       path: 'src/data/content.json',
       content: JSON.stringify(json, null, 2),
       message: 'Update site content via Admin Console',
@@ -29,7 +29,14 @@ export async function POST(request: Request) {
 
     revalidatePath('/', 'layout');
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ 
+      success: true,
+      branch: commitResult.branch,
+      repo: commitResult.repo,
+      commitSha: commitResult.commitSha,
+      shortSha: commitResult.shortSha,
+      commitUrl: commitResult.commitUrl
+    });
   } catch (error) {
     console.error('Content update error:', error);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });

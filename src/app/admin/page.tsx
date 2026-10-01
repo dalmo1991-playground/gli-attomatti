@@ -49,7 +49,13 @@ export default function AdminConsole() {
 
   const [isPublishing, setIsPublishing] = useState(false);
   const [adminSecret, setAdminSecret] = useState("");
-  const [publishStatus, setPublishStatus] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
+  const [publishStatus, setPublishStatus] = useState<{ 
+    type: 'success' | 'error', 
+    msg: string,
+    branch?: string,
+    commitUrl?: string,
+    shortSha?: string
+  } | null>(null);
 
   const handlePublish = async () => {
     if (!adminSecret) {
@@ -71,7 +77,14 @@ export default function AdminConsole() {
       });
 
       if (res.ok) {
-        setPublishStatus({ type: 'success', msg: 'Sito aggiornato con successo!' });
+        const data = await res.json();
+        setPublishStatus({ 
+          type: 'success', 
+          msg: 'Sito aggiornato con successo!',
+          branch: data.branch,
+          commitUrl: data.commitUrl,
+          shortSha: data.shortSha
+        });
       } else {
         const err = await res.json();
         const detail = err.error || 'Invio fallito';
@@ -189,10 +202,29 @@ export default function AdminConsole() {
 
               {publishStatus && (
                 <div className={cn(
-                  "p-4 rounded-2xl text-xs font-bold text-center animate-in fade-in zoom-in duration-300 break-words",
-                  publishStatus.type === 'success' ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500 border border-red-500/20"
+                  "p-4 rounded-2xl text-xs font-bold text-center animate-in fade-in zoom-in duration-300 break-words space-y-1.5",
+                  publishStatus.type === 'success' 
+                    ? "bg-green-500/10 text-green-500 border border-green-500/20" 
+                    : "bg-red-500/10 text-red-500 border border-red-500/20"
                 )}>
-                  {publishStatus.msg}
+                  <div>{publishStatus.msg}</div>
+                  {publishStatus.branch && (
+                    <div className="text-[11px] font-semibold opacity-90">
+                      Branch: <span className="font-mono font-bold bg-green-500/20 px-1.5 py-0.5 rounded">{publishStatus.branch}</span>
+                    </div>
+                  )}
+                  {publishStatus.commitUrl && (
+                    <div className="pt-1">
+                      <a 
+                        href={publishStatus.commitUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] underline underline-offset-2 hover:opacity-80 transition-opacity"
+                      >
+                        Vedi commit {publishStatus.shortSha ? `(${publishStatus.shortSha})` : ''} su GitHub ↗
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -10,6 +10,30 @@ function getLocalGitBranch(): string | undefined {
   }
 }
 
+function resolveTargetBranch(): string {
+  // 1. If running on Vercel with a known commit ref (e.g. 'dev' or 'main')
+  if (process.env.VERCEL_GIT_COMMIT_REF) {
+    return process.env.VERCEL_GIT_COMMIT_REF;
+  }
+
+  // 2. Distinguish by Vercel environment
+  if (process.env.VERCEL_ENV === 'preview') {
+    return 'dev';
+  }
+  if (process.env.VERCEL_ENV === 'production') {
+    return process.env.GITHUB_BRANCH || 'main';
+  }
+
+  // 3. Fallback for local development or other hosting environments
+  return (
+    process.env.CF_PAGES_BRANCH ||
+    process.env.BRANCH ||
+    getLocalGitBranch() ||
+    process.env.GITHUB_BRANCH ||
+    'dev'
+  );
+}
+
 /**
  * Commits a file to GitHub via the REST API.
  */
@@ -17,22 +41,18 @@ export async function commitToGitHub({
   path,
   content,
   message,
+  branch: overrideBranch,
   isBinary = false
 }: {
   path: string;
   content: string | Buffer;
   message: string;
+  branch?: string;
   isBinary?: boolean;
 }) {
   const token = process.env.GITHUB_TOKEN;
   let repo = process.env.GITHUB_REPO; // e.g. "owner/repo"
-  const branch =
-    process.env.GITHUB_BRANCH ||
-    process.env.VERCEL_GIT_COMMIT_REF ||
-    process.env.CF_PAGES_BRANCH ||
-    process.env.BRANCH ||
-    getLocalGitBranch() ||
-    'dev';
+  const branch = overrideBranch || resolveTargetBranch();
 
 
   if (!token || !repo) {
@@ -106,5 +126,20 @@ export async function commitToGitHub({
   }
 
 
-  return await pushRes.json();
+  const data = await pushRes.json();
+  const commitSha: string | undefined = data.commit?.sha || data.sha;
+  const shortSha = commitSha ? commitSha.substring(0, 7) : undefined;
+  const commitUrl: string | undefined =
+    data.commit?.html_url ||
+    data.html_url ||
+    (commitSha ? `https://github.com/${repo}/commit/${commitSha}` : undefined);
+
+  return {
+    ...data,
+    branch,
+    repo,
+    commitSha,
+    shortSha,
+    commitUrl
+  };
 }
