@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 
 export default function IniziativaDettaglioClient({ content, slug }: { content: any, slug: string }) {
@@ -80,9 +81,10 @@ export default function IniziativaDettaglioClient({ content, slug }: { content: 
           <div className="lg:col-span-7 xl:col-span-8">
             <h2 className="text-3xl font-black uppercase tracking-tight mb-8">L'Iniziativa</h2>
             <div className="prose prose-xl prose-invert max-w-none">
-              <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                {initiative.text}
-              </p>
+              <RichText
+                content={initiative.text}
+                className="text-xl text-foreground/80 leading-relaxed"
+              />
             </div>
 
             {/* Gallery with dynamic bento layout that fills the space seamlessly */}

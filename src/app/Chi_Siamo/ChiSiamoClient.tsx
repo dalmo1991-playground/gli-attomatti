@@ -7,6 +7,7 @@ import { ArrowRight, Users, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 
 const MotionImage = motion.create(Image);
@@ -118,14 +119,14 @@ export default function ChiSiamoClient({ content }: { content: any }) {
             transition={{ delay: 0.2 }}
             className="w-20 h-1 bg-primary mx-auto mb-8"
           />
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-foreground/70 leading-relaxed font-medium"
           >
-            {chi_siamo.description}
-          </motion.p>
+            <RichText content={chi_siamo.description} />
+          </motion.div>
         </div>
       </Section>
 
@@ -142,9 +143,10 @@ export default function ChiSiamoClient({ content }: { content: any }) {
 
             <div className="md:col-span-8">
               <div className="prose prose-xl prose-invert max-w-none">
-                <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap mb-12">
-                  {section.text}
-                </p>
+                <RichText
+                  content={section.text}
+                  className="text-xl text-foreground/80 leading-relaxed mb-12"
+                />
 
                 {section.images && section.images.length > 0 && (
                   <SectionPhotoCarousel

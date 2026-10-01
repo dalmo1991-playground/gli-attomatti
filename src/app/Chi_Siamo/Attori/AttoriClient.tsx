@@ -6,6 +6,7 @@ import { ChevronLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 
 
@@ -199,9 +200,10 @@ export default function AttoriClient({ content }: { content: any }) {
                       {selectedActor.role}
                     </div>
                     {selectedActor.description && (
-                      <p className="text-foreground/75 leading-relaxed text-lg whitespace-pre-wrap border-t border-foreground/5 pt-6">
-                        {selectedActor.description}
-                      </p>
+                      <RichText
+                        content={selectedActor.description}
+                        className="text-foreground/75 leading-relaxed text-lg border-t border-foreground/5 pt-6"
+                      />
                     )}
                     {selectedActor.shows && selectedActor.shows.length > 0 && (
                       <div className="border-t border-foreground/5 pt-6 mt-6 space-y-4">

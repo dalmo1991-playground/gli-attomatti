@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,14 +30,14 @@ export default function SpettacoliClient({ content }: { content: any }) {
             transition={{ delay: 0.2 }}
             className="w-20 h-1 bg-primary mx-auto mb-8"
           />
-          <motion.p 
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-foreground/70 leading-relaxed font-medium"
           >
-            {spettacoli.description}
-          </motion.p>
+            <RichText content={spettacoli.description} />
+          </motion.div>
         </div>
       </Section>
 
@@ -67,9 +68,10 @@ export default function SpettacoliClient({ content }: { content: any }) {
             
             <div className="md:col-span-8">
               <div className="prose prose-xl prose-invert max-w-none">
-                <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap mb-8">
-                  {section.short_description || section.text}
-                </p>
+                <RichText
+                  content={section.short_description || section.text}
+                  className="text-xl text-foreground/80 leading-relaxed mb-8"
+                />
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -47,14 +48,14 @@ export default function ContattiClient({ content }: { content: any }) {
             transition={{ delay: 0.2 }}
             className="w-20 h-1 bg-primary mx-auto mb-8"
           />
-          <motion.p 
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-foreground/70 leading-relaxed font-medium"
           >
-            {contatti.description}
-          </motion.p>
+            <RichText content={contatti.description} />
+          </motion.div>
         </div>
       </Section>
 

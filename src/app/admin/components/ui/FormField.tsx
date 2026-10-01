@@ -2,12 +2,13 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface FormFieldProps {
   label: string;
   value: any;
   onChange: (value: any) => void;
-  type?: "text" | "textarea" | "number" | "switch" | "select" | "email" | "url" | "tel" | "password" | "date" | "time" | string;
+  type?: "text" | "textarea" | "richtext" | "number" | "switch" | "select" | "email" | "url" | "tel" | "password" | "date" | "time" | string;
   placeholder?: string;
   helpText?: string;
   className?: string;
@@ -55,15 +56,12 @@ export function FormField({
         )}
       </div>
 
-      {type === "textarea" ? (
-        <textarea
-          value={value ?? ""}
-          onChange={(e) => onChange(e.target.value)}
+      {type === "textarea" || type === "richtext" ? (
+        <RichTextEditor
+          value={typeof value === "string" ? value : String(value ?? "")}
+          onChange={onChange}
           placeholder={placeholder}
-          rows={rows}
-          required={required}
           disabled={disabled}
-          className="w-full p-4 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground resize-y leading-relaxed placeholder:text-foreground/20 disabled:opacity-50"
         />
       ) : type === "select" ? (
         <select

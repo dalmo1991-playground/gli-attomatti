@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { ChevronLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -29,9 +30,10 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
             {parlano_di_noi.title}
           </motion.h1>
           <div className="w-20 h-1 bg-primary mx-auto mb-8" />
-          <p className="text-xl text-foreground/70 font-medium">
-            {parlano_di_noi.description}
-          </p>
+          <RichText
+            content={parlano_di_noi.description}
+            className="text-xl text-foreground/70 font-medium"
+          />
         </div>
       </Section>
 
