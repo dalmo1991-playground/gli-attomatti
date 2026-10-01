@@ -219,8 +219,9 @@ export function ImageUploadField({
 
       {value && (
         <Lightbox
-          images={[{ src: value, alt: label || "Foto" }]}
+          images={[{ url: value, alt: label || "Foto" }]}
           initialIndex={0}
+          isOpen={isLightboxOpen}
           onClose={() => setIsLightboxOpen(false)}
         />
       )}

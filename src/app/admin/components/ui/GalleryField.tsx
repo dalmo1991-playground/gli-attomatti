@@ -253,8 +253,9 @@ export function GalleryField({
       {/* Lightbox for Preview */}
       {lightboxIndex !== null && (
         <Lightbox
-          images={images.map((im) => ({ src: im.url, alt: im.alt || "" }))}
+          images={images.map((im) => ({ url: im.url, alt: im.alt || "" }))}
           initialIndex={lightboxIndex}
+          isOpen={true}
           onClose={() => setLightboxIndex(null)}
         />
       )}

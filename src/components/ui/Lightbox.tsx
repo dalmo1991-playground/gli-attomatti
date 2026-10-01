@@ -5,18 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface LightboxImage {
-  url: string;
+  url?: string;
+  src?: string;
   alt?: string;
 }
 
 interface LightboxProps {
   images: LightboxImage[];
   initialIndex: number;
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
 }
 
-export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProps) {
+export function Lightbox({ images, initialIndex, isOpen = true, onClose }: LightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   useEffect(() => {
@@ -95,8 +96,8 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.2 }}
-                src={images[currentIndex].url}
-                alt={images[currentIndex].alt || `Image ${currentIndex + 1}`}
+                src={images[currentIndex]?.url || images[currentIndex]?.src || ""}
+                alt={images[currentIndex]?.alt || `Image ${currentIndex + 1}`}
                 className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               />
             </AnimatePresence>
