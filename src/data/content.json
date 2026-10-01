@@ -512,6 +512,13 @@
           "date": "2026",
           "badge_label": "Servizi TV",
           "visible": true
+        },
+        {
+          "source": "laRegione.ch",
+          "quote": "Articolo sulla Federazione filodrammatiche della Svizzera italiana di cui gli Attomatti fanno parte dal 2026",
+          "date": "2026",
+          "source_href": "https://www.laregione.ch/ticino7/ticino7/1935465/compagnie-teatro-amatoriale-ffsi-responsabile-camponovo-quinte",
+          "badge_label": "Articolo di Giornale"
         }
       ],
       "press_contact": {
