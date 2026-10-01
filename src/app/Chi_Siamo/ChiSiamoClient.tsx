@@ -16,7 +16,7 @@ function SectionPhotoCarousel({
   images,
   onImageClick
 }: {
-  images: Array<{ url: string; alt?: string }>;
+  images: Array<{ url: string; alt?: string; no_crop?: boolean }>;
   onImageClick: (index: number) => void;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
