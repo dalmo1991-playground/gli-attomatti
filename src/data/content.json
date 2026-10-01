@@ -72,23 +72,6 @@
       },
       "upcoming_shows": [
         {
-          "active": false,
-          "title": "4 Gatti",
-          "presenter": "Gli Attomatti presentano",
-          "tagline": "Spettacolo in sketch all'insegna della comicità e della riflessione",
-          "date": "21 Giugno 2026, ore 18:30",
-          "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
-          "location_href": "https://maps.app.goo.gl/WvTxrSCR7L11aERh6",
-          "cta": "Acquista Biglietti",
-          "cta_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
-          "details_label": "Scopri lo spettacolo",
-          "details_href": "/Spettacoli/4-gatti",
-          "image": "/images/1779613546229-20260629_locandinaMissione.webp",
-          "visible": true,
-          "secondary_cta": "Scopri di più",
-          "secondary_cta_href": "/Spettacoli/4-gatti"
-        },
-        {
           "active": true,
           "title": "Non Sottovalutare i 40",
           "presenter": "La Biennale Svizzera di Teatro Amatoriale presenta",
@@ -99,7 +82,7 @@
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
           "secondary_cta": "Scopri di più",
           "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
-          "image": ""
+          "image": "/images/1790869266263-non-sottovalutare-40.webp"
         }
       ],
       "introduction": {
