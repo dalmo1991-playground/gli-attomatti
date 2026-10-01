@@ -32,9 +32,25 @@ export default function IniziativaDettaglioClient({ content, slug }: { content: 
   return (
     <div className="pt-20 min-h-screen">
       {/* Header Section */}
-      <Section className="bg-muted/30 py-24 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <Section className="bg-muted/30 py-24 sm:py-32 relative overflow-hidden flex items-center justify-center min-h-[380px] sm:min-h-[440px]">
+        {initiative.hero_image?.trim() ? (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={initiative.hero_image.trim()}
+              alt={initiative.title || "Hero Iniziativa"}
+              fill
+              priority
+              className="object-cover object-center"
+            />
+            {/* Cinematic dark gradients to guarantee text legibility */}
+            <div className="absolute inset-0 bg-background/75 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/70" />
+          </div>
+        ) : (
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+        )}
+
+        <div className="max-w-4xl mx-auto text-center relative z-10 w-full px-4">
           <Link 
             href="/Iniziative" 
             className="inline-flex items-center text-primary font-bold mb-12 hover:gap-2 transition-all group"
@@ -46,12 +62,12 @@ export default function IniziativaDettaglioClient({ content, slug }: { content: 
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-4"
+            className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-4 text-white drop-shadow-sm"
           >
             {initiative.title}
           </motion.h1>
-          <div className="w-20 h-1 bg-primary mx-auto mb-8" />
-          <p className="text-2xl text-foreground/40 font-bold uppercase tracking-[0.3em]">
+          <div className="w-20 h-1 bg-primary mx-auto mb-8 shadow-sm" />
+          <p className="text-2xl text-foreground/60 font-bold uppercase tracking-[0.3em]">
             Edizione {initiative.year}
           </p>
         </div>

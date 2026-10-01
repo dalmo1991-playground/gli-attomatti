@@ -7,6 +7,7 @@ import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
 import { AccordionCard } from "../components/ui/AccordionCard";
 import { GalleryField } from "../components/ui/GalleryField";
+import { ImageUploadField } from "../components/ui/ImageUploadField";
 
 export function SpettacoliTab() {
   const { content, updateContent } = useAdmin();
@@ -29,6 +30,7 @@ export function SpettacoliTab() {
         year: currentYear,
         short_description: "",
         text: "",
+        hero_image: "",
         dates: [],
         details: [
           { label: "Regia", value: "" },
@@ -222,6 +224,16 @@ export function SpettacoliTab() {
                     type="textarea"
                     rows={5}
                   />
+
+                  {/* Hero Image (Optional) */}
+                  <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
+                    <ImageUploadField
+                      label="Immagine Hero / Copertina di Testata (Opzionale)"
+                      value={show.hero_image || ""}
+                      onChange={(url) => updateShow(actualIdx, "hero_image", url)}
+                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata con un elegante filtro scuro e gradiente per garantire la leggibilità del titolo."
+                    />
+                  </div>
 
                   {/* Photo Gallery */}
                   <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
