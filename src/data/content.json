@@ -28,6 +28,10 @@
       "href": "/Spettacoli",
       "sublinks": [
         {
+          "label": "Non Sottovalutare i 40",
+          "href": "/Spettacoli/non-sottovalutare-i-40"
+        },
+        {
           "label": "4 Gatti",
           "href": "/Spettacoli/4-gatti"
         },
@@ -83,8 +87,8 @@
           "location": "Scuol",
           "cta": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
-          "secondary_cta": "",
-          "secondary_cta_href": "",
+          "secondary_cta": "Scopri di più",
+          "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
           "image": ""
         }
       ],
