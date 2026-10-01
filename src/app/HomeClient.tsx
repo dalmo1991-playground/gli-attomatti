@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
+import { InstagramFeed } from "@/components/home/InstagramFeed";
 
 const MotionImage = motion.create(Image);
 
@@ -349,6 +350,9 @@ export default function HomeClient({ content }: { content: any }) {
           </div>
         </div>
       </Section>
+
+      {/* Instagram Feed Section (Modalità B - Embed) */}
+      <InstagramFeed data={content.pages?.home?.instagram_feed} />
 
       <Lightbox
         images={lightbox.images}

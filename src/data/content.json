@@ -126,6 +126,36 @@
             "alt": "Principe"
           }
         ]
+      },
+      "instagram_feed": {
+        "enabled": true,
+        "title": "Seguici su Instagram",
+        "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
+        "handle": "@gliattomatti",
+        "profile_url": "https://www.instagram.com/gliattomatti/",
+        "cta_label": "Segui @gliattomatti su Instagram",
+        "posts": [
+          {
+            "id": "ig-1790872348856",
+            "url": "https://www.instagram.com/gliattomatti/reel/Ddg97mBISvv/",
+            "title": ""
+          },
+          {
+            "id": "ig-1790872389603",
+            "url": "https://www.instagram.com/gliattomatti/reel/DdQ85ikIh5u/",
+            "title": ""
+          },
+          {
+            "id": "ig-1790872403841",
+            "url": "https://www.instagram.com/gliattomatti/reel/DdJXoSGo-ca/",
+            "title": ""
+          },
+          {
+            "id": "ig-1790872430852",
+            "url": "https://www.instagram.com/gliattomatti/p/DcgCuHCoxwz/",
+            "title": ""
+          }
+        ]
       }
     },
     "chi_siamo": {

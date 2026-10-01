@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Plus, Home as HomeIcon, Image as ImageIcon } from "lucide-react";
+import { Plus, Home as HomeIcon, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { InstagramIcon } from "@/components/home/InstagramFeed";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -13,11 +14,22 @@ export function HomeTab() {
   const home = content?.pages?.home || {
     hero: {},
     upcoming_shows: [],
-    introduction: { images: [] }
+    introduction: { images: [] },
+    instagram_feed: { posts: [] }
   };
 
   const upcoming = home.upcoming_shows || [];
   const introImages = home.introduction?.images || [];
+  const igFeed = home.instagram_feed || {
+    enabled: true,
+    title: "Seguici su Instagram",
+    subtitle: "Dietro le quinte, prove e momenti di scena della nostra compagnia",
+    handle: "@gliattomatti",
+    profile_url: "https://www.instagram.com/gliattomatti/",
+    cta_label: "Segui @gliattomatti",
+    posts: []
+  };
+  const igPosts = igFeed.posts || [];
 
   const addUpcomingShow = () => {
     updateContent("pages.home.upcoming_shows", [
@@ -76,6 +88,38 @@ export function HomeTab() {
     const newList = [...introImages];
     newList[idx] = { ...newList[idx], [field]: value };
     updateContent("pages.home.introduction.images", newList);
+  };
+
+  const addIgPost = () => {
+    updateContent("pages.home.instagram_feed.posts", [
+      ...igPosts,
+      {
+        id: `ig-${Date.now()}`,
+        url: "",
+        title: ""
+      }
+    ]);
+  };
+
+  const removeIgPost = (idx: number) => {
+    updateContent(
+      "pages.home.instagram_feed.posts",
+      igPosts.filter((_: any, i: number) => i !== idx)
+    );
+  };
+
+  const updateIgPost = (idx: number, field: string, value: any) => {
+    const newList = [...igPosts];
+    newList[idx] = { ...newList[idx], [field]: value };
+    updateContent("pages.home.instagram_feed.posts", newList);
+  };
+
+  const moveIgPost = (idx: number, dir: -1 | 1) => {
+    const newList = [...igPosts];
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= newList.length) return;
+    [newList[idx], newList[targetIdx]] = [newList[targetIdx], newList[idx]];
+    updateContent("pages.home.instagram_feed.posts", newList);
   };
 
   return (
@@ -304,6 +348,148 @@ export function HomeTab() {
               </AccordionCard>
             ))}
           </div>
+        </div>
+      </AdminSection>
+
+      {/* Instagram Feed Section (Modalità B - Embed) */}
+      <AdminSection
+        title="Feed Instagram (Embed Ufficiale)"
+        description="Mostra post o reel ufficiali di Instagram direttamente nella Home Page dopo la sezione Gli Attomatti."
+        icon={InstagramIcon}
+        action={
+          <button
+            type="button"
+            onClick={addIgPost}
+            className="px-4 py-2 bg-primary text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md shadow-primary/20"
+          >
+            <Plus size={14} /> Aggiungi Post Instagram
+          </button>
+        }
+      >
+        <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-foreground/5 mb-6">
+          <span className="text-xs font-black uppercase tracking-wider text-foreground/70">
+            Attiva Sezione Instagram in Home Page
+          </span>
+          <FormField
+            label=""
+            type="switch"
+            value={igFeed.enabled !== false}
+            onChange={(v) => updateContent("pages.home.instagram_feed.enabled", v)}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <FormField
+            label="Titolo Sezione"
+            value={igFeed.title}
+            onChange={(v) => updateContent("pages.home.instagram_feed.title", v)}
+            placeholder="Seguici su Instagram"
+          />
+          <FormField
+            label="Handle Profilo"
+            value={igFeed.handle}
+            onChange={(v) => updateContent("pages.home.instagram_feed.handle", v)}
+            placeholder="@gliattomatti"
+          />
+        </div>
+
+        <FormField
+          label="Sottotitolo"
+          value={igFeed.subtitle}
+          onChange={(v) => updateContent("pages.home.instagram_feed.subtitle", v)}
+          placeholder="Dietro le quinte, prove e momenti di scena della nostra compagnia"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-foreground/5">
+          <FormField
+            label="URL Profilo Instagram"
+            value={igFeed.profile_url}
+            onChange={(v) => updateContent("pages.home.instagram_feed.profile_url", v)}
+            placeholder="https://www.instagram.com/gliattomatti/"
+          />
+          <FormField
+            label="Testo Pulsante Segui"
+            value={igFeed.cta_label}
+            onChange={(v) => updateContent("pages.home.instagram_feed.cta_label", v)}
+            placeholder="Segui @gliattomatti"
+          />
+        </div>
+
+        {/* Posts list */}
+        <div className="space-y-4 pt-6 border-t border-foreground/5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="text-xs font-black uppercase tracking-wider text-foreground/70">
+                Post e Reel in Vetrina
+              </h5>
+              <p className="text-[11px] text-foreground/40 mt-0.5">
+                Incolla il link di qualsiasi post o reel pubblico (es. https://www.instagram.com/p/... o /reel/...).
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={addIgPost}
+              className="text-xs text-primary font-bold hover:underline flex items-center gap-1"
+            >
+              <Plus size={12} /> Aggiungi Post
+            </button>
+          </div>
+
+          {igPosts.length === 0 ? (
+            <div className="p-6 text-center rounded-2xl border border-dashed border-foreground/10 text-foreground/40 text-xs">
+              Nessun post inserito. Clicca su &quot;Aggiungi Post&quot; per inserire il link di un post o reel Instagram.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {igPosts.map((post: any, pIdx: number) => (
+                <AccordionCard
+                  key={post.id || pIdx}
+                  index={pIdx}
+                  total={igPosts.length}
+                  title={post.title || `Post ${pIdx + 1}`}
+                  subtitle={post.url || "Nessun URL inserito"}
+                  badge="Instagram Embed"
+                  badgeColor="primary"
+                  onMoveUp={() => moveIgPost(pIdx, -1)}
+                  onMoveDown={() => moveIgPost(pIdx, 1)}
+                  onDelete={() => removeIgPost(pIdx)}
+                  defaultOpen={pIdx === 0}
+                >
+                  <div className="space-y-4">
+                    <FormField
+                      label="Link Post o Reel Instagram"
+                      value={post.url}
+                      onChange={(v) => updateIgPost(pIdx, "url", v)}
+                      placeholder="https://www.instagram.com/reel/..."
+                      helpText="Incolla l'URL completo del post o reel pubblico."
+                      required
+                    />
+
+                    <FormField
+                      label="Titolo / Nota Interna (Opzionale)"
+                      value={post.title}
+                      onChange={(v) => updateIgPost(pIdx, "title", v)}
+                      placeholder="es. Reel prove di danza"
+                    />
+
+                    {post.url && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <a
+                          href={post.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
+                        >
+                          <ExternalLink size={13} />
+                          <span>Verifica post su Instagram</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </AccordionCard>
+              ))}
+            </div>
+          )}
         </div>
       </AdminSection>
     </div>
