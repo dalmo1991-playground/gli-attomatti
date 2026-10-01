@@ -1040,8 +1040,8 @@
   ],
   "integrations": {
     "google_analytics": {
-      "enabled": false,
-      "measurement_id": ""
+      "enabled": true,
+      "measurement_id": "G-T6HKKT5LG6"
     },
     "meta_pixel": {
       "enabled": false,
