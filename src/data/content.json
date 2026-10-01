@@ -616,8 +616,8 @@
             {
               "date": "21 Giugno 2026, ore 18:30",
               "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
-              "ticket_label": "Biglietti",
-              "ticket_href": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
+              "ticket_label": "",
+              "ticket_href": "",
               "visible": true
             }
           ],
