@@ -69,38 +69,16 @@ export default function AttoriClient({ content }: { content: any }) {
                 <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
                 
                 {/* Profile Pic Container */}
-                <motion.div 
-                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/20 transition-all duration-700 pointer-events-none"
+                <div 
+                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
                 >
-                  {/* Background (Stage Standby): Grayscale, Dimmed Image */}
-                  <div className="absolute inset-0 bg-black">
-                    <Image 
-                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                      alt={person.name} 
-                      fill
-                      className="object-cover opacity-80 filter grayscale brightness-95 contrast-110 transition-all duration-700 scale-100 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* Spotlight Foreground (Color and Brightness) */}
-                  <motion.div
-                    className="absolute inset-0 z-10 pointer-events-none"
-                    initial={{ clipPath: "circle(0% at 50% 50%)" }}
-                    variants={{
-                      hover: { 
-                        clipPath: "circle(100% at 50% 50%)" 
-                      }
-                    }}
-                    transition={{ type: "tween", ease: "easeInOut", duration: 0.6 }}
-                  >
-                    <Image 
-                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                      alt={person.name} 
-                      fill
-                      className="object-cover filter brightness-110 contrast-100 scale-105"
-                    />
-                  </motion.div>
-                </motion.div>
+                  <Image 
+                    src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                    alt={person.name} 
+                    fill
+                    className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
+                  />
+                </div>
 
 
               </div>

@@ -147,7 +147,7 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                           alt={img.alt || show.title || "Foto spettacolo"} 
                           fill
                           sizes="(max-width: 768px) 100vw, 50vw"
-                          className={`grayscale hover:grayscale-0 transition-all duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
+                          className={`transition-all duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
                         />
 
                         {/* Glassmorphic expand icon badge */}
