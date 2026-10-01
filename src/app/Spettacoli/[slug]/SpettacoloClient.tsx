@@ -5,14 +5,21 @@ import Link from "next/link";
 import { ChevronLeft, Calendar, MapPin, Ticket, Maximize2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
+import { trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
 
 
 export default function SpettacoloDettaglioClient({ content, slug }: { content: any, slug: string }) {
   const show = (content?.pages?.spettacoli?.archive_sections || []).find((s: any) => s?.slug === slug);
+
+  useEffect(() => {
+    if (show?.title) {
+      trackViewContent(show.title, "Spettacolo");
+    }
+  }, [show?.title]);
 
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
     isOpen: false,
@@ -174,11 +181,12 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                           <span>{d.location}</span>
                         </div>
                         {d.ticket_label && (
-                          d.ticket_href ? (
+                          d.ticket_href?.trim() ? (
                             <Link 
-                              href={d.ticket_href}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                              href={d.ticket_href.trim()}
+                              target={d.ticket_href.trim().startsWith("http") ? "_blank" : undefined}
+                              rel={d.ticket_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
+                              onClick={() => trackInitiateCheckout(show.title, d.ticket_href)}
                               className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-full text-sm font-black hover:bg-primary/90 transition-all w-full justify-center shadow-lg shadow-primary/20"
                             >
                               <Ticket size={16} className="mr-2" />

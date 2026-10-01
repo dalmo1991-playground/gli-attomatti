@@ -1024,5 +1024,39 @@
         "muted": "#e2e8f0"
       }
     }
-  ]
+  ],
+  "ticketing_pages": [
+    {
+      "id": "cassa-4-gatti",
+      "title": "4 Gatti",
+      "slug": "4-gatti",
+      "category": "Spettacolo Teatrale",
+      "description": "Acquisto biglietti per lo spettacolo teatrale 4 Gatti della compagnia Gli Attomatti.",
+      "eventfrog_url": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
+      "back_link_label": "Torna allo Spettacolo",
+      "back_link_href": "/Spettacoli/4-gatti",
+      "active": true
+    }
+  ],
+  "integrations": {
+    "google_analytics": {
+      "enabled": false,
+      "measurement_id": ""
+    },
+    "meta_pixel": {
+      "enabled": false,
+      "pixel_id": ""
+    },
+    "eventfrog": {
+      "enabled": false
+    },
+    "cookie_consent": {
+      "version": 1
+    },
+    "events": {
+      "view_content": true,
+      "initiate_checkout": true,
+      "contact": true
+    }
+  }
 }

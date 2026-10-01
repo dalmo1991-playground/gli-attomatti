@@ -13,7 +13,9 @@ import {
   Code,
   ChevronRight,
   Rocket,
-  Images
+  Images,
+  Sliders,
+  Ticket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +33,8 @@ const navSections = [
       { id: "site", label: "Sito & Meta", icon: Globe },
       { id: "navigation", label: "Menu Navigazione", icon: MenuIcon },
       { id: "home", label: "Home Page", icon: HomeIcon },
-      { id: "gallery", label: "Galleria Immagini", icon: Images }
+      { id: "gallery", label: "Galleria Immagini", icon: Images },
+      { id: "integrations", label: "Marketing & Privacy", icon: Sliders }
     ]
   },
   {
@@ -41,6 +44,7 @@ const navSections = [
       { id: "attori", label: "Cast & Staff", icon: Users },
       { id: "spettacoli", label: "Spettacoli", icon: Theater },
       { id: "iniziative", label: "Iniziative & Corsi", icon: Compass },
+      { id: "ticketing", label: "Biglietti & Casse", icon: Ticket },
       { id: "landing", label: "Landing Pages", icon: Rocket },
       { id: "parlano_di_noi", label: "Dicono di Noi", icon: Newspaper },
       { id: "contatti", label: "Contatti & Social", icon: Mail }

@@ -12,11 +12,14 @@ import {
   Star,
   ExternalLink,
   ChevronRight,
-  Maximize2
+  Maximize2,
+  Info,
+  ShieldCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
+import { trackInitiateCheckout } from "@/lib/tracking";
 
 interface LandingClientProps {
   landing: any;
@@ -505,6 +508,100 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                         );
                       })}
                     </div>
+                  </div>
+                </section>
+              );
+            }
+
+            /* ================= EVENTFROG TICKETING BLOCK ================= */
+            case "eventfrog": {
+              const rawUrl = block.eventfrog_url?.trim() || "";
+              let embedUrl = rawUrl;
+              if (rawUrl) {
+                try {
+                  const u = new URL(rawUrl);
+                  u.protocol = "https:";
+                  embedUrl = u.toString();
+                } catch {
+                  embedUrl = rawUrl;
+                }
+              }
+
+              return (
+                <section key={bIdx} id="biglietti" className="py-20 px-4 sm:px-6 relative overflow-hidden">
+                  <div className="max-w-4xl mx-auto space-y-8">
+                    {/* Header */}
+                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-wider">
+                        <Ticket size={14} />
+                        Biglietteria Ufficiale
+                      </div>
+                      <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
+                        {block.title || "Acquista Biglietti"}
+                      </h2>
+                      {block.subtitle && (
+                        <p className="text-base sm:text-lg text-foreground/70 font-medium leading-relaxed">
+                          {block.subtitle}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Embed Iframe Container */}
+                    {embedUrl ? (
+                      <div className="space-y-4">
+                        <div className="w-full bg-white rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 min-h-[680px] relative">
+                          <iframe
+                            src={embedUrl}
+                            title={block.title || "Biglietti Eventfrog"}
+                            className="w-full h-[720px] sm:h-[760px] border-0"
+                            allow="payment"
+                          />
+                        </div>
+
+                        {/* Fallback button */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/60">
+                          <div className="flex items-center gap-2">
+                            <Info size={16} className="text-primary shrink-0" />
+                            <span>Problemi con il riquadro? Puoi completare l'acquisto anche sul portale esterno:</span>
+                          </div>
+                          <a
+                            href={embedUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => trackInitiateCheckout(landing.title, embedUrl)}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs uppercase tracking-wider transition-colors shrink-0"
+                          >
+                            <span>{block.fallback_label || "Apri su Eventfrog"}</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-12 rounded-3xl bg-muted/20 border border-foreground/5 text-center space-y-3 glass">
+                        <Ticket size={36} className="mx-auto text-foreground/30" />
+                        <p className="text-foreground/60 font-medium">
+                          La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell'Admin.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Safety note */}
+                    {block.show_terms_note !== false && (
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground/40 font-medium">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck size={16} className="text-emerald-400" />
+                          <span>Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <Link href="/Termini" className="hover:text-foreground transition-colors underline">
+                            Termini di Biglietteria
+                          </Link>
+                          <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
+                            Informativa Privacy
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </section>
               );

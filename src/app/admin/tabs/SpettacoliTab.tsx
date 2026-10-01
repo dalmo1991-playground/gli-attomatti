@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, Ticket, ExternalLink, Info, CheckCircle2 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -202,12 +202,28 @@ export function SpettacoliTab() {
                     </div>
                   </div>
 
-                  <FormField
-                    label="Slug URL (identificativo per il link)"
-                    value={show.slug || ""}
-                    onChange={(v) => updateShow(actualIdx, "slug", v)}
-                    helpText="Verrà visualizzato come /Spettacoli/{slug}"
-                  />
+                  <div className="space-y-2">
+                    <FormField
+                      label="Slug URL (identificativo univoco dello spettacolo)"
+                      value={show.slug || ""}
+                      onChange={(v) => updateShow(actualIdx, "slug", v.toLowerCase().replace(/[^a-z0-9-_]/g, "-"))}
+                      helpText="Usato negli indirizzi web del sito (es. l-eredita-di-zio-felice)"
+                    />
+                    {show.slug && (
+                      <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70">
+                        <span className="font-bold text-foreground/40 uppercase tracking-wider text-[10px]">Percorso scheda:</span>
+                        <a
+                          href={`/Spettacoli/${show.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground font-semibold transition-colors"
+                        >
+                          <span>/Spettacoli/{show.slug}</span>
+                          <ExternalLink size={10} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
 
                   <FormField
                     label="Breve Descrizione (anteprima card nell'elenco)"
@@ -246,75 +262,169 @@ export function SpettacoliTab() {
                   </div>
 
                   {/* Dates & Tickets */}
-                  <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
-                    <div className="flex justify-between items-center">
+                  <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-5">
+                    <div className="flex justify-between items-start">
                       <div>
                         <h4 className="text-xs font-black uppercase tracking-wider text-foreground/80 flex items-center gap-2">
-                          <Calendar size={14} className="text-secondary" /> Date & Biglietti
+                          <Calendar size={14} className="text-secondary" /> Date, Repliche & Biglietti
                         </h4>
-                        <p className="text-[11px] text-foreground/40">
-                          Repliche programmate e link alle prevendite.
+                        <p className="text-[11px] text-foreground/50 mt-0.5">
+                          Definisci le singole repliche e lo stato dei biglietti (in vendita, a breve o esauriti).
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => addShowDate(actualIdx)}
-                        className="px-3 py-1.5 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                        className="px-3 py-1.5 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shrink-0"
                       >
                         <Plus size={13} /> Aggiungi Replica
                       </button>
                     </div>
 
+                    {/* How tickets work helper box */}
+                    <div className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70 space-y-2">
+                      <div className="flex items-center gap-2 font-bold text-foreground">
+                        <Info size={14} className="text-primary shrink-0" />
+                        <span>Gestione link e biglietti:</span>
+                      </div>
+                      <ul className="list-disc pl-5 space-y-1 text-[11px] leading-relaxed">
+                        <li>
+                          <strong>Link esterno (es. Eventfrog, festival, prevendita):</strong> Incolla l&apos;URL completo (es. <code>https://eventfrog.ch/...</code>). Il pulsante sul sito aprirà direttamente la pagina esterna.
+                        </li>
+                        <li>
+                          <strong>Cassa interna del sito:</strong> Se hai creato una pagina dedicata nella sezione <em>Biglietti &amp; Casse</em>, puoi inserire qui il link interno (es. <code>/Biglietti/4-gatti</code>).
+                        </li>
+                        <li>
+                          <strong>Prevendita a breve o Sold Out:</strong> Lascia vuoto il campo link. Sul sito apparirà un badge informativo non cliccabile con l&apos;etichetta che hai inserito.
+                        </li>
+                      </ul>
+                    </div>
+
                     {(show.dates || []).length === 0 ? (
                       <p className="text-xs text-foreground/30 italic py-2">
-                        Nessuna data attualmente configurata.
+                        Nessuna data attualmente configurata per questo spettacolo.
                       </p>
                     ) : (
-                      <div className="space-y-3">
-                        {show.dates.map((d: any, dIdx: number) => (
-                          <div
-                            key={dIdx}
-                            className="p-4 bg-background/50 border border-foreground/5 rounded-2xl space-y-3"
-                          >
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <FormField
-                                label="Data e Ora"
-                                value={d.date || ""}
-                                onChange={(v) => updateShowDate(actualIdx, dIdx, "date", v)}
-                                placeholder="9 Maggio 2026, ore 20:30"
-                              />
-                              <FormField
-                                label="Luogo / Teatro"
-                                value={d.location || ""}
-                                onChange={(v) => updateShowDate(actualIdx, dIdx, "location", v)}
-                                placeholder="Teatro Dimitri, Verscio"
-                              />
+                      <div className="space-y-4">
+                        {show.dates.map((d: any, dIdx: number) => {
+                          const hasLink = Boolean(d.ticket_href?.trim());
+                          const isHttp = Boolean(hasLink && d.ticket_href.trim().startsWith("http"));
+                          const isInternal = Boolean(hasLink && d.ticket_href.trim().startsWith("/"));
+
+                          return (
+                            <div
+                              key={dIdx}
+                              className="p-4 bg-background/50 border border-foreground/5 rounded-2xl space-y-3"
+                            >
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <FormField
+                                  label="Data e Ora"
+                                  value={d.date || ""}
+                                  onChange={(v) => updateShowDate(actualIdx, dIdx, "date", v)}
+                                  placeholder="es. 21 Giugno 2026, ore 18:30"
+                                />
+                                <FormField
+                                  label="Luogo / Teatro"
+                                  value={d.location || ""}
+                                  onChange={(v) => updateShowDate(actualIdx, dIdx, "location", v)}
+                                  placeholder="es. Missione Cattolica, Zurigo"
+                                />
+                              </div>
+
+                              {/* State Presets */}
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider mr-1">
+                                  Preset Rapidi:
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateShowDate(actualIdx, dIdx, "ticket_label", "Acquista Biglietto");
+                                  }}
+                                  className="px-2 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/20 transition-all"
+                                >
+                                  🎟️ In vendita
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateShowDate(actualIdx, dIdx, "ticket_label", "Prevendita a breve");
+                                    updateShowDate(actualIdx, dIdx, "ticket_href", "");
+                                  }}
+                                  className="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-[11px] font-bold border border-amber-500/20 transition-all"
+                                >
+                                  ⏳ Prevendita a breve
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateShowDate(actualIdx, dIdx, "ticket_label", "Sold Out");
+                                    updateShowDate(actualIdx, dIdx, "ticket_href", "");
+                                  }}
+                                  className="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-[11px] font-bold border border-rose-500/20 transition-all"
+                                >
+                                  🚫 Sold Out
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateShowDate(actualIdx, dIdx, "ticket_label", "Ingresso Libero");
+                                    updateShowDate(actualIdx, dIdx, "ticket_href", "");
+                                  }}
+                                  className="px-2 py-1 rounded-lg bg-foreground/10 hover:bg-foreground/15 text-foreground/70 text-[11px] font-bold transition-all"
+                                >
+                                  🎪 Ingresso Libero
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                <FormField
+                                  label="Etichetta Bottone (testo visibile)"
+                                  value={d.ticket_label || ""}
+                                  onChange={(v) => updateShowDate(actualIdx, dIdx, "ticket_label", v)}
+                                  placeholder="es. Acquista Biglietto"
+                                />
+                                <FormField
+                                  label="Link Biglietti (Opzionale: URL esterno o link cassa interna)"
+                                  value={d.ticket_href || ""}
+                                  onChange={(v) => updateShowDate(actualIdx, dIdx, "ticket_href", v)}
+                                  placeholder="https://eventfrog.ch/... oppure /Biglietti/nome-cassa"
+                                />
+                              </div>
+
+                              {/* State Preview Indicator */}
+                              <div className="pt-1 text-[11px]">
+                                {isHttp && (
+                                  <div className="text-indigo-400 font-semibold flex items-center gap-1.5">
+                                    <ExternalLink size={12} />
+                                    <span>Link diretto esterno: il pulsante apre l&apos;indirizzo in una nuova scheda</span>
+                                  </div>
+                                )}
+                                {isInternal && (
+                                  <div className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                                    <CheckCircle2 size={12} />
+                                    <span>Link interno al sito: naviga a <code>{d.ticket_href}</code></span>
+                                  </div>
+                                )}
+                                {!hasLink && (
+                                  <div className="text-foreground/40 font-medium">
+                                    <span>Nessun link: sul sito viene mostrato solo il badge &quot;{d.ticket_label || 'A breve'}&quot; (non cliccabile)</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex justify-end pt-1 border-t border-foreground/5">
+                                <button
+                                  type="button"
+                                  onClick={() => removeShowDate(actualIdx, dIdx)}
+                                  className="text-xs text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1"
+                                >
+                                  <Trash2 size={12} /> Rimuovi Data
+                                </button>
+                              </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <FormField
-                                label="Etichetta Bottone"
-                                value={d.ticket_label || ""}
-                                onChange={(v) => updateShowDate(actualIdx, dIdx, "ticket_label", v)}
-                                placeholder="Prenota Biglietto"
-                              />
-                              <FormField
-                                label="Link Biglietti / Prenotazione"
-                                value={d.ticket_href || ""}
-                                onChange={(v) => updateShowDate(actualIdx, dIdx, "ticket_href", v)}
-                                placeholder="https://eventfrog.ch/..."
-                              />
-                            </div>
-                            <div className="flex justify-end pt-1">
-                              <button
-                                type="button"
-                                onClick={() => removeShowDate(actualIdx, dIdx)}
-                                className="text-xs text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1"
-                              >
-                                <Trash2 size={12} /> Rimuovi Data
-                              </button>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>

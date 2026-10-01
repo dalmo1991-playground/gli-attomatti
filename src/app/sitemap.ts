@@ -62,6 +62,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    {
+      url: `${BASE_URL}/Termini`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 
   // Dynamic show pages: /Spettacoli/[slug]
@@ -99,10 +105,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
+  // Dynamic standalone ticketing pages: /Biglietti/[slug]
+  const ticketingPages: { slug: string; active?: boolean }[] =
+    content?.ticketing_pages ?? [];
+  const ticketingRoutes: MetadataRoute.Sitemap = ticketingPages
+    .filter((page) => page.active !== false && page.slug)
+    .map((page) => ({
+      url: `${BASE_URL}/Biglietti/${page.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
+
   return [
     ...staticRoutes,
     ...showRoutes,
     ...iniziativeRoutes,
     ...landingRoutes,
+    ...ticketingRoutes,
   ];
 }

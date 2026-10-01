@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { trackContact } from "@/lib/tracking";
 
 
 export function Footer({ content }: { content: any }) {
@@ -97,6 +98,7 @@ export function Footer({ content }: { content: any }) {
               <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Contattaci</h4>
               <Link
                 href={`mailto:${contatti.email}`}
+                onClick={() => trackContact("email", contatti.email)}
                 className="block text-xl font-black hover:text-primary transition-colors break-all"
               >
                 {contatti.email}
@@ -118,6 +120,9 @@ export function Footer({ content }: { content: any }) {
             © {new Date().getFullYear()} {content.site.name}. Tutti i diritti riservati.
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
+            <Link href="/Termini" className="hover:text-primary transition-colors">
+              Termini
+            </Link>
             <Link href="/Impressum" className="hover:text-primary transition-colors">
               Impressum
             </Link>

@@ -15,10 +15,12 @@ import { ChiSiamoTab } from "./tabs/ChiSiamoTab";
 import { AttoriTab } from "./tabs/AttoriTab";
 import { SpettacoliTab } from "./tabs/SpettacoliTab";
 import { IniziativeTab } from "./tabs/IniziativeTab";
+import { TicketingTab } from "./tabs/TicketingTab";
 import { PressTab } from "./tabs/PressTab";
 import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
 import { GalleryTab } from "./tabs/GalleryTab";
+import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { JsonTab } from "./tabs/JsonTab";
 
 function AdminContent() {
@@ -58,10 +60,12 @@ function AdminContent() {
               {activeTab === "navigation" && <NavigationTab />}
               {activeTab === "home" && <HomeTab />}
               {activeTab === "gallery" && <GalleryTab onNavigateTab={(tab) => setActiveTab(tab)} />}
+              {activeTab === "integrations" && <IntegrationsTab />}
               {activeTab === "chi_siamo" && <ChiSiamoTab />}
               {activeTab === "attori" && <AttoriTab />}
               {activeTab === "spettacoli" && <SpettacoliTab />}
               {activeTab === "iniziative" && <IniziativeTab />}
+              {activeTab === "ticketing" && <TicketingTab />}
               {activeTab === "landing" && <LandingTab />}
               {activeTab === "parlano_di_noi" && <PressTab />}
               {activeTab === "contatti" && <ContactTab />}

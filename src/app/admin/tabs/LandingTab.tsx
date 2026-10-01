@@ -16,7 +16,8 @@ import {
   Image as ImageIcon,
   MessageSquare,
   HelpCircle,
-  Megaphone
+  Megaphone,
+  Ticket
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -32,6 +33,7 @@ import { cn } from "@/lib/utils";
 const BLOCK_TYPES = [
   { type: "hero", label: "Hero Header", icon: Sparkles, desc: "Titolo d'impatto, sfondo e CTA principale" },
   { type: "event_details", label: "Data, Orario & Luogo", icon: Calendar, desc: "Card con dettagli data, mappa e prezzo" },
+  { type: "eventfrog", label: "Cassa Biglietti Eventfrog", icon: Ticket, desc: "Embed ufficiale di Eventfrog per acquistare i biglietti direttamente sulla landing" },
   { type: "synopsis", label: "Trama & Sinossi", icon: BookOpen, desc: "Descrizione narrativa, citazione e foto" },
   { type: "gallery", label: "Galleria Fotografica", icon: ImageIcon, desc: "Scatti di scena con lightbox" },
   { type: "reviews", label: "Recensioni & Critica", icon: MessageSquare, desc: "Social proof e stelle di gradimento" },
@@ -144,6 +146,15 @@ export function LandingTab() {
         location: "Luogo dello spettacolo",
         price: "CHF 25.-",
         cta_label: "Prenota"
+      };
+    } else if (type === "eventfrog") {
+      newBlock = {
+        ...newBlock,
+        title: "Biglietti & Prenotazioni Online",
+        subtitle: "Seleziona i posti e acquista i tuoi biglietti direttamente qui in totale sicurezza.",
+        eventfrog_url: "",
+        fallback_label: "Apri su Eventfrog",
+        show_terms_note: true
       };
     } else if (type === "synopsis") {
       newBlock = {
@@ -597,6 +608,76 @@ export function LandingTab() {
                                         onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
                                       />
                                     </div>
+                                  </div>
+                                )}
+
+                                {block.type === "eventfrog" && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Titolo della Sezione"
+                                        value={block.title || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                        placeholder="es. Acquista i Biglietti Online"
+                                      />
+                                      <FormField
+                                        label="Sottotitolo / Didascalia"
+                                        value={block.subtitle || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "subtitle", v)}
+                                        placeholder="es. Prenota comodamente in pochi secondi..."
+                                      />
+                                    </div>
+
+                                    <FormField
+                                      label="URL Evento Eventfrog (Link Prevendita Ufficiale)"
+                                      value={block.eventfrog_url || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "eventfrog_url", v.trim())}
+                                      placeholder="https://eventfrog.ch/it/p/teatro-arte-cultura/teatro/..."
+                                      helpText="Incolla l'indirizzo del tuo evento Eventfrog. Verrà incorporato a tutta larghezza in un elegante riquadro di acquisto sicuro."
+                                    />
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Testo Pulsante di Riserva / Fallback"
+                                        value={block.fallback_label || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "fallback_label", v)}
+                                        placeholder="Apri su Eventfrog"
+                                        helpText="Pulsante mostrato sotto il riquadro per chi preferisce aprire Eventfrog all'esterno."
+                                      />
+
+                                      <div className="flex items-center pt-6">
+                                        <label className="flex items-center gap-3 cursor-pointer select-none">
+                                          <input
+                                            type="checkbox"
+                                            checked={block.show_terms_note !== false}
+                                            onChange={(e) => updateBlock(actualIdx, bIdx, "show_terms_note", e.target.checked)}
+                                            className="w-4 h-4 rounded accent-primary cursor-pointer"
+                                          />
+                                          <span className="text-xs font-bold text-foreground">
+                                            Mostra avviso di sicurezza e link ai Termini
+                                          </span>
+                                        </label>
+                                      </div>
+                                    </div>
+
+                                    {block.eventfrog_url ? (
+                                      <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between gap-2">
+                                        <span>✓ Riquadro Eventfrog configurato: la cassa sarà visibile sulla landing page.</span>
+                                        <a
+                                          href={block.eventfrog_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 font-bold underline shrink-0"
+                                        >
+                                          <span>Verifica link</span>
+                                          <ExternalLink size={12} />
+                                        </a>
+                                      </div>
+                                    ) : (
+                                      <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                                        <span>⚠️ Incolla un URL di Eventfrog sopra per visualizzare il widget di acquisto sulla landing page.</span>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 

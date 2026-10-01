@@ -5,6 +5,7 @@ import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { trackContact } from "@/lib/tracking";
 
 export default function ContattiClient({ content }: { content: any }) {
   const { contatti } = content.pages;
@@ -75,6 +76,7 @@ export default function ContattiClient({ content }: { content: any }) {
             <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">Email</h2>
             <Link 
               href={`mailto:${contatti.email}`}
+              onClick={() => trackContact("email", contatti.email)}
               className="text-2xl md:text-3xl font-black hover:text-primary transition-colors break-all"
             >
               {contatti.email}
