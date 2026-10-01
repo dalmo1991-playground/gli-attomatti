@@ -11,7 +11,8 @@ import {
   Newspaper,
   Mail,
   Code,
-  ChevronRight
+  ChevronRight,
+  Rocket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,7 @@ const navSections = [
       { id: "attori", label: "Cast & Staff", icon: Users },
       { id: "spettacoli", label: "Spettacoli", icon: Theater },
       { id: "iniziative", label: "Iniziative & Corsi", icon: Compass },
+      { id: "landing", label: "Landing Pages", icon: Rocket },
       { id: "parlano_di_noi", label: "Dicono di Noi", icon: Newspaper },
       { id: "contatti", label: "Contatti & Social", icon: Mail }
     ]

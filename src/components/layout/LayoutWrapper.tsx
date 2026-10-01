@@ -7,8 +7,9 @@ import { Footer } from "@/components/layout/Footer";
 export function LayoutWrapper({ children, content }: { children: React.ReactNode, content: any }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  const isLanding = pathname?.startsWith("/landing");
 
-  if (isAdmin) {
+  if (isAdmin || isLanding) {
     return <main className="min-h-screen">{children}</main>;
   }
 

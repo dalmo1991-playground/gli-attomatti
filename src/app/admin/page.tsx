@@ -17,6 +17,7 @@ import { SpettacoliTab } from "./tabs/SpettacoliTab";
 import { IniziativeTab } from "./tabs/IniziativeTab";
 import { PressTab } from "./tabs/PressTab";
 import { ContactTab } from "./tabs/ContactTab";
+import { LandingTab } from "./tabs/LandingTab";
 import { JsonTab } from "./tabs/JsonTab";
 
 function AdminContent() {
@@ -59,6 +60,7 @@ function AdminContent() {
               {activeTab === "attori" && <AttoriTab />}
               {activeTab === "spettacoli" && <SpettacoliTab />}
               {activeTab === "iniziative" && <IniziativeTab />}
+              {activeTab === "landing" && <LandingTab />}
               {activeTab === "parlano_di_noi" && <PressTab />}
               {activeTab === "contatti" && <ContactTab />}
               {activeTab === "json" && <JsonTab />}
