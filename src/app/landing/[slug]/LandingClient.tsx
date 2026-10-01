@@ -393,7 +393,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                               alt={img.alt || "Scena"}
                               fill
                               sizes="(max-width: 768px) 100vw, 50vw"
-                              className="object-cover group-hover:scale-105 transition-transform duration-700"
+                              className={`transition-transform duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
                             />
                             <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
                               <Maximize2 size={14} />

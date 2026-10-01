@@ -341,7 +341,7 @@ export default function HomeClient({ content }: { content: any }) {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                   fill
-                  className="object-cover cursor-pointer hover:scale-105 transition-transform duration-700"
+                  className={`cursor-pointer transition-transform duration-700 ${introduction.images[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
                   onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
                 />
 

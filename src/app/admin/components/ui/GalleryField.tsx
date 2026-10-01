@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2, FolderOpen } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2, FolderOpen, Crop, Maximize } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
@@ -12,6 +12,7 @@ import { compressImageClient } from "@/lib/clientImageCompress";
 export interface GalleryImage {
   url: string;
   alt: string;
+  no_crop?: boolean;
 }
 
 interface GalleryFieldProps {
@@ -50,7 +51,7 @@ export function GalleryField({
     onChange(next);
   };
 
-  const updateImage = (idx: number, field: keyof GalleryImage, value: string) => {
+  const updateImage = (idx: number, field: keyof GalleryImage, value: string | boolean) => {
     const next = [...images];
     next[idx] = { ...next[idx], [field]: value };
     onChange(next);
@@ -280,6 +281,22 @@ export function GalleryField({
                 </span>
 
                 <div className="flex items-center gap-1">
+                  {/* no_crop toggle */}
+                  <button
+                    type="button"
+                    onClick={() => updateImage(idx, "no_crop", !img.no_crop)}
+                    title={img.no_crop ? "Ritaglia (attualmente: mostra intero)" : "Mostra intero (attualmente: ritaglia)"}
+                    className={cn(
+                      "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide border transition-all",
+                      img.no_crop
+                        ? "bg-secondary/20 border-secondary/40 text-secondary"
+                        : "bg-muted/30 border-foreground/10 text-foreground/40 hover:text-foreground/70"
+                    )}
+                  >
+                    {img.no_crop ? <Maximize size={11} /> : <Crop size={11} />}
+                    <span className="hidden sm:inline">{img.no_crop ? "Intero" : "Ritaglia"}</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => moveImage(idx, -1)}
