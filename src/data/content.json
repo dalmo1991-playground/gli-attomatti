@@ -899,7 +899,8 @@
           "images": [
             {
               "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-              "alt": "Locandina"
+              "alt": "Locandina",
+              "no_crop": true
             }
           ]
         }
