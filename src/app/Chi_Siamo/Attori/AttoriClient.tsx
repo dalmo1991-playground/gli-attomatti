@@ -74,7 +74,7 @@ export default function AttoriClient({ content }: { content: any }) {
                   {/* Background (Stage Standby): Grayscale, Dimmed Image */}
                   <div className="absolute inset-0 bg-black">
                     <Image 
-                      src={person.image} 
+                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
                       alt={person.name} 
                       fill
                       className="object-cover opacity-80 filter grayscale brightness-95 contrast-110 transition-all duration-700 scale-100 group-hover:scale-105"
@@ -93,7 +93,7 @@ export default function AttoriClient({ content }: { content: any }) {
                     transition={{ type: "tween", ease: "easeInOut", duration: 0.6 }}
                   >
                     <Image 
-                      src={person.image} 
+                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
                       alt={person.name} 
                       fill
                       className="object-cover filter brightness-110 contrast-100 scale-105"
@@ -181,7 +181,7 @@ export default function AttoriClient({ content }: { content: any }) {
                 <div className="md:col-span-5 flex justify-center md:sticky md:top-0">
                   <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl ring-8 ring-muted border border-foreground/5 shrink-0">
                     <Image
-                      src={selectedActor.image}
+                      src={selectedActor.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
                       alt={selectedActor.name}
                       fill
                       className="object-cover"

@@ -71,7 +71,7 @@ export default function HomeClient({ content }: { content: any }) {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[90vh] py-24 md:py-32 flex items-center justify-center overflow-hidden">
         {showMode ? (
           /* Mode 1: Upcoming Shows Slideshow */
           <div className="absolute inset-0 z-0">
@@ -90,8 +90,8 @@ export default function HomeClient({ content }: { content: any }) {
                 className="absolute inset-0"
               >
                 <Image
-                  src={activeShows[currentShowIndex].image}
-                  alt={activeShows[currentShowIndex].title}
+                  src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                  alt={activeShows[currentShowIndex].title || "Spettacolo"}
                   fill
                   className="object-cover opacity-40"
                   priority
@@ -119,7 +119,7 @@ export default function HomeClient({ content }: { content: any }) {
         <div className="relative z-20 text-center px-6 max-w-5xl w-full">
           {showMode ? (
             /* Mode 1: Upcoming Show Content */
-            <div className="relative w-full flex flex-col items-center justify-center min-h-[500px] overflow-hidden">
+            <div className="relative w-full flex flex-col items-center justify-center py-4">
               <AnimatePresence initial={false} custom={heroDirection} mode="popLayout">
                 <motion.div
                   key={currentShowIndex}
@@ -132,83 +132,95 @@ export default function HomeClient({ content }: { content: any }) {
                     x: { type: "spring", stiffness: 300, damping: 30 },
                     opacity: { duration: 0.5 }
                   }}
-                  className="space-y-8 w-full"
+                  className="w-full flex flex-col items-center max-w-4xl mx-auto"
                 >
-                  <div className="flex flex-col items-center">
-                    <p className="text-primary font-bold tracking-[0.3em] uppercase text-sm mb-4 opacity-80">
+                  {/* Presenter */}
+                  {activeShows[currentShowIndex].presenter && (
+                    <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-3 md:mb-5 opacity-90 drop-shadow-sm">
                       {activeShows[currentShowIndex].presenter}
                     </p>
-                    <div className="h-[200px] flex flex-col items-center justify-center">
-                      <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none text-center">
-                        {activeShows[currentShowIndex].title}
-                      </h1>
-                      {activeShows[currentShowIndex].tagline && (
-                        <p className="mt-4 text-xl md:text-2xl font-medium text-primary/80 tracking-tight italic">
-                          {activeShows[currentShowIndex].tagline}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-6 text-lg font-medium text-foreground/80 mb-10 h-8">
-                      <div className="flex items-center">
-                        <Calendar size={20} className="mr-2 text-primary" />
-                        {activeShows[currentShowIndex].date}
-                      </div>
-                      <Link
-                        href={activeShows[currentShowIndex].location_href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center transition-colors"
-                      >
-                        <MapPin size={20} className="mr-2 text-primary" />
-                        <span>
-                          {activeShows[currentShowIndex].location}
-                        </span>
-                      </Link>
-                    </div>
+                  )}
 
-                    {/* Buttons / Tags Area */}
-                    <div className={cn(
-                      "mt-10 flex gap-6 justify-center items-center w-full",
-                      (!!activeShows[currentShowIndex].cta_href === !!activeShows[currentShowIndex].details_href)
-                        ? "flex-col sm:flex-row" // Same type (both buttons or both tags) -> side-by-side
-                        : "flex-col" // Different type -> stacked
-                    )}>
-                      {/* Button 1 */}
-                      {activeShows[currentShowIndex].cta && (
-                        activeShows[currentShowIndex].cta_href ? (
+                  {/* Title */}
+                  <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md">
+                    {activeShows[currentShowIndex].title}
+                  </h1>
+
+                  {/* Tagline */}
+                  {activeShows[currentShowIndex].tagline && (
+                    <p className="mt-4 md:mt-5 text-lg sm:text-xl md:text-2xl font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm">
+                      {activeShows[currentShowIndex].tagline}
+                    </p>
+                  )}
+
+                  {/* Date & Location Badges */}
+                  {(activeShows[currentShowIndex].date || activeShows[currentShowIndex].location) && (
+                    <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-sm sm:text-base md:text-lg font-medium text-foreground/90 mt-6 md:mt-8">
+                      {activeShows[currentShowIndex].date && (
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
+                          <Calendar size={18} className="text-primary shrink-0" />
+                          <span>{activeShows[currentShowIndex].date}</span>
+                        </div>
+                      )}
+                      {activeShows[currentShowIndex].location && (
+                        activeShows[currentShowIndex].location_href ? (
                           <Link
-                            href={activeShows[currentShowIndex].cta_href}
-                            className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:-translate-y-1 flex items-center justify-center min-w-[280px]"
+                            href={activeShows[currentShowIndex].location_href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
                           >
-                            {activeShows[currentShowIndex].cta}
-                            <ArrowRight size={20} className="ml-2" />
+                            <MapPin size={18} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                            <span className="group-hover:text-primary transition-colors">
+                              {activeShows[currentShowIndex].location}
+                            </span>
                           </Link>
                         ) : (
-                          <div className="px-8 py-3 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-lg flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
-                            <Info size={18} className="mr-3 opacity-80" />
-                            {activeShows[currentShowIndex].cta}
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
+                            <MapPin size={18} className="text-primary shrink-0" />
+                            <span>{activeShows[currentShowIndex].location}</span>
                           </div>
                         )
                       )}
-
-                      {/* Button 2 */}
-                      {activeShows[currentShowIndex].details_label && (
-                        activeShows[currentShowIndex].details_href ? (
-                          <Link
-                            href={activeShows[currentShowIndex].details_href}
-                            className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[280px]"
-                          >
-                            {activeShows[currentShowIndex].details_label}
-                          </Link>
-                        ) : (
-                          <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
-                            <Info size={18} className="mr-3 text-primary opacity-80" />
-                            {activeShows[currentShowIndex].details_label}
-                          </div>
-                        )
-                      )}
-
                     </div>
+                  )}
+
+                  {/* Buttons / Actions Area */}
+                  <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full">
+                    {/* Button 1 */}
+                    {activeShows[currentShowIndex].cta && (
+                      activeShows[currentShowIndex].cta_href ? (
+                        <Link
+                          href={activeShows[currentShowIndex].cta_href}
+                          className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:-translate-y-1 flex items-center justify-center min-w-[260px] sm:min-w-[280px]"
+                        >
+                          {activeShows[currentShowIndex].cta}
+                          <ArrowRight size={20} className="ml-2" />
+                        </Link>
+                      ) : (
+                        <div className="px-8 py-3 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-lg flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
+                          <Info size={18} className="mr-3 opacity-80" />
+                          {activeShows[currentShowIndex].cta}
+                        </div>
+                      )
+                    )}
+
+                    {/* Button 2 */}
+                    {(activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label) && (
+                      (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
+                        <Link
+                          href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
+                          className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[260px] sm:min-w-[280px]"
+                        >
+                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
+                        </Link>
+                      ) : (
+                        <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
+                          <Info size={18} className="mr-3 text-primary opacity-80" />
+                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
+                        </div>
+                      )
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -317,13 +329,12 @@ export default function HomeClient({ content }: { content: any }) {
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
             </div>
 
-            {/* Concurrent transition for fluidity */}
-            {introduction.images.length > 0 && (
+            {introduction.images && introduction.images.length > 0 && (
               <AnimatePresence mode="popLayout">
                 <MotionImage
                   key={introIndex}
-                  src={introduction.images[introIndex].url}
-                  alt={introduction.images[introIndex].alt}
+                  src={introduction.images[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                  alt={introduction.images[introIndex]?.alt || "Introduzione"}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
