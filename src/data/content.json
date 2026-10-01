@@ -522,6 +522,40 @@
       "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
       "archive_sections": [
         {
+          "title": "Non Sottovalutare i 40",
+          "slug": "non-sottovalutare-i-40",
+          "year": "2026",
+          "short_description": "Scritta per la Biennale Svizzera di Teatro Amatoriale, lo spettacolo racconta la storia di Dario e la sua famiglia alle porte di un'importante soglia: i 40!",
+          "text": "Scritta per la Biennale Svizzera di Teatro Amatoriale, lo spettacolo racconta la storia di Dario e la sua famiglia alle porte di un'importante soglia: i 40!",
+          "dates": [
+            {
+              "date": "24 Ottobre 2026, ore 15:00",
+              "location": "Scuol",
+              "ticket_label": "Info & Biglietti",
+              "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
+            }
+          ],
+          "details": [
+            {
+              "label": "Genere",
+              "value": "Commedia"
+            },
+            {
+              "label": "Durata",
+              "value": "30 minuti"
+            },
+            {
+              "label": "Regia",
+              "value": "Domenico Scotti di Carlo"
+            },
+            {
+              "label": "Testo",
+              "value": "Domenico Scotti di Carlo"
+            }
+          ],
+          "images": []
+        },
+        {
           "slug": "4-gatti",
           "title": "4 Gatti",
           "year": "2026",
