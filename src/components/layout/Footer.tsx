@@ -115,8 +115,16 @@ export function Footer({ content }: { content: any }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-foreground/40 font-medium">
-            © {new Date().getFullYear()} {content.site.name}. All rights reserved.
+            © {new Date().getFullYear()} {content.site.name}. Tutti i diritti riservati.
           </p>
+          <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
+            <Link href="/Impressum" className="hover:text-primary transition-colors">
+              Impressum
+            </Link>
+            <Link href="/Privacy" className="hover:text-primary transition-colors">
+              Privacy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
