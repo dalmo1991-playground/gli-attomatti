@@ -5,7 +5,7 @@ import contentData from "@/data/content.json";
 import { 
   Save, Download, Plus, Trash2, Globe, Menu as MenuIcon, Home as HomeIcon, 
   Users, Newspaper, Theater, Mail, Settings, Image as ImageIcon, 
-  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info, Upload, Code
+  Calendar, ExternalLink, ChevronDown, ChevronUp, Link as LinkIcon, Info, Upload, Code, Compass
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -118,6 +118,7 @@ export default function AdminConsole() {
     { id: "chi_siamo", label: "Chi Siamo", icon: Users },
     { id: "attori", label: "Cast & Staff", icon: Users },
     { id: "spettacoli", label: "Spettacoli", icon: Theater },
+    { id: "iniziative", label: "Iniziative", icon: Compass },
     { id: "parlano_di_noi", label: "Dicono di noi", icon: Newspaper },
     { id: "contatti", label: "Contatti", icon: Mail },
     { id: "json", label: "Sorgente JSON", icon: Code },
@@ -258,6 +259,7 @@ export default function AdminConsole() {
             {activeTab === "chi_siamo" && <ChiSiamoSettings content={content} updateContent={updateContent} />}
             {activeTab === "attori" && <AttoriSettings content={content} updateContent={updateContent} />}
             {activeTab === "spettacoli" && <SpettacoliSettings content={content} updateContent={updateContent} />}
+            {activeTab === "iniziative" && <IniziativeSettings content={content} updateContent={updateContent} />}
             {activeTab === "parlano_di_noi" && <PressSettings content={content} updateContent={updateContent} />}
             {activeTab === "contatti" && <ContactSettings content={content} updateContent={updateContent} />}
             {activeTab === "json" && <JsonSettings content={content} setContent={setContent} />}
@@ -987,6 +989,151 @@ function SpettacoliSettings({ content, updateContent }: any) {
                       const newList = [...spet.archive_sections];
                       newList[idx].details[detIdx].value = v;
                       updateContent('pages.spettacoli.archive_sections', newList);
+                    }} />
+                  </div>
+                )}
+              />
+            </div>
+          )}
+        />
+      </SectionCard>
+    </div>
+  );
+}
+
+function IniziativeSettings({ content, updateContent }: any) {
+  const iniz = content?.pages?.iniziative || { title: "", description: "", archive_sections: [] };
+  const archive = iniz.archive_sections || [];
+  return (
+    <div className="space-y-12">
+      <SectionCard title="Gestione Iniziative & Corsi">
+        <Field label="Titolo Pagina" value={iniz.title} onChange={(v) => updateContent('pages.iniziative.title', v)} />
+        <Field label="Descrizione" value={iniz.description} onChange={(v) => updateContent('pages.iniziative.description', v)} type="textarea" />
+        
+        <ArrayEditor 
+          label="Iniziative"
+          items={archive}
+          onAdd={() => updateContent('pages.iniziative.archive_sections', [...archive, { title: "Nuova Iniziativa", slug: "nuova-iniziativa", year: new Date().getFullYear().toString(), short_description: "", text: "", dates: [], details: [], images: [] }])}
+          onRemove={(idx) => updateContent('pages.iniziative.archive_sections', archive.filter((_: any, i: number) => i !== idx))}
+          onMove={(idx, dir) => {
+            const newList = [...archive];
+            const targetIdx = idx + dir;
+            [newList[idx], newList[targetIdx]] = [newList[targetIdx], newList[idx]];
+            updateContent('pages.iniziative.archive_sections', newList);
+          }}
+          renderItem={(s, idx) => (
+            <div className="p-8 bg-muted/5 rounded-[2.5rem] border border-foreground/5 space-y-8">
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Titolo" value={s.title} onChange={(v) => {
+                  const newList = [...archive];
+                  newList[idx].title = v;
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }} />
+                <Field label="Slug (URL)" value={s.slug} onChange={(v) => {
+                  const newList = [...archive];
+                  newList[idx].slug = v;
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }} />
+              </div>
+              <Field label="Anno / Periodo" value={s.year} onChange={(v) => {
+                const newList = [...archive];
+                newList[idx].year = v;
+                updateContent('pages.iniziative.archive_sections', newList);
+              }} />
+              <Field label="Breve Descrizione (Mostrata nell'elenco)" value={s.short_description} onChange={(v) => {
+                const newList = [...archive];
+                newList[idx].short_description = v;
+                updateContent('pages.iniziative.archive_sections', newList);
+              }} type="textarea" />
+              <Field label="Testo Descrittivo" value={s.text} onChange={(v) => {
+                const newList = [...archive];
+                newList[idx].text = v;
+                updateContent('pages.iniziative.archive_sections', newList);
+              }} type="textarea" />
+              
+              <ImageListEditor images={s.images} onChange={(newImgs) => {
+                const newList = [...archive];
+                newList[idx].images = newImgs;
+                updateContent('pages.iniziative.archive_sections', newList);
+              }} />
+
+              <ArrayEditor 
+                label="Date & Iscrizioni"
+                items={s.dates || []}
+                onAdd={() => {
+                  const newList = [...archive];
+                  newList[idx].dates = newList[idx].dates || [];
+                  newList[idx].dates.push({ date: "", location: "", ticket_label: "", ticket_href: "" });
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                onRemove={(dIdx) => {
+                  const newList = [...archive];
+                  newList[idx].dates = newList[idx].dates.filter((_: any, i: number) => i !== dIdx);
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                onMove={(dIdx, dir) => {
+                  const newList = [...archive];
+                  const targetIdx = dIdx + dir;
+                  [newList[idx].dates[dIdx], newList[idx].dates[targetIdx]] = [newList[idx].dates[targetIdx], newList[idx].dates[dIdx]];
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                renderItem={(d, dIdx) => (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Data / Frequenza" value={d.date} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].dates[dIdx].date = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
+                    }} />
+                    <Field label="Luogo" value={d.location} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].dates[dIdx].location = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
+                    }} />
+                    <Field label="Etichetta Bottone" value={d.ticket_label} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].dates[dIdx].ticket_label = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
+                    }} />
+                    <Field label="URL Bottone / Info" value={d.ticket_href} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].dates[dIdx].ticket_href = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
+                    }} />
+                  </div>
+                )}
+              />
+
+              <ArrayEditor 
+                label="Info Iniziativa (Livello, Lingua, etc)"
+                items={s.details || []}
+                onAdd={() => {
+                  const newList = [...archive];
+                  newList[idx].details = newList[idx].details || [];
+                  newList[idx].details.push({ label: "Livello", value: "" });
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                onRemove={(detIdx) => {
+                  const newList = [...archive];
+                  newList[idx].details = newList[idx].details.filter((_: any, i: number) => i !== detIdx);
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                onMove={(detIdx, dir) => {
+                  const newList = [...archive];
+                  const targetIdx = detIdx + dir;
+                  [newList[idx].details[detIdx], newList[idx].details[targetIdx]] = [newList[idx].details[targetIdx], newList[idx].details[detIdx]];
+                  updateContent('pages.iniziative.archive_sections', newList);
+                }}
+                renderItem={(det, detIdx) => (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Etichetta" value={det.label} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].details[detIdx].label = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
+                    }} />
+                    <Field label="Valore" value={det.value} onChange={(v) => {
+                      const newList = [...archive];
+                      newList[idx].details[detIdx].value = v;
+                      updateContent('pages.iniziative.archive_sections', newList);
                     }} />
                   </div>
                 )}
