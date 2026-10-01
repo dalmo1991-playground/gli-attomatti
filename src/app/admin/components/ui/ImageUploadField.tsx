@@ -2,10 +2,11 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Upload, X, Eye, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, Eye, Image as ImageIcon, Loader2, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { MediaLibraryModal } from "./MediaLibraryModal";
 
 interface ImageUploadFieldProps {
   label?: string;
@@ -31,6 +32,7 @@ export function ImageUploadField({
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   const handleUploadFile = async (file: File) => {
     if (!file) return;
@@ -139,8 +141,16 @@ export function ImageUploadField({
                 </button>
                 <button
                   type="button"
+                  onClick={() => setIsLibraryOpen(true)}
+                  title="Scegli dalla galleria del sito"
+                  className="p-2 bg-secondary hover:bg-secondary/90 rounded-full text-white transition-colors"
+                >
+                  <FolderOpen size={16} />
+                </button>
+                <button
+                  type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  title="Cambia immagine"
+                  title="Carica nuovo file da PC"
                   className="p-2 bg-primary hover:bg-primary/90 rounded-full text-white transition-colors"
                 >
                   <Upload size={16} />
@@ -150,12 +160,17 @@ export function ImageUploadField({
           ) : (
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full h-full min-h-[120px] flex flex-col items-center justify-center text-foreground/30 hover:text-primary transition-colors p-4 text-center cursor-pointer"
+              onClick={() => setIsLibraryOpen(true)}
+              className="w-full h-full min-h-[120px] flex flex-col items-center justify-center text-foreground/40 hover:text-primary transition-all p-4 text-center cursor-pointer group/btn"
             >
-              <ImageIcon size={26} className="mb-1" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">
-                Carica foto
+              <div className="w-10 h-10 rounded-2xl bg-foreground/5 group-hover/btn:bg-primary/15 flex items-center justify-center mb-1.5 transition-colors">
+                <FolderOpen size={20} className="text-foreground/50 group-hover/btn:text-primary transition-colors" />
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/80 group-hover/btn:text-primary transition-colors">
+                Scegli Foto
+              </span>
+              <span className="text-[9px] text-foreground/40 mt-0.5">
+                Galleria sito o PC
               </span>
             </button>
           )}
@@ -192,9 +207,18 @@ export function ImageUploadField({
             />
             <button
               type="button"
+              onClick={() => setIsLibraryOpen(true)}
+              title="Sfoglia tutte le foto caricate nel sito"
+              className="px-3 py-2 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
+            >
+              <FolderOpen size={13} />
+              <span>Galleria</span>
+            </button>
+            <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              title="Carica file WebP"
+              title="Carica file WebP da PC"
               className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 disabled:opacity-50"
             >
               <Upload size={13} />
@@ -212,7 +236,7 @@ export function ImageUploadField({
             )}
           </div>
           <p className="text-[10px] text-foreground/40 font-medium leading-snug">
-            {helpText || "Trascina qui un file oppure clicca su Upload per ottimizzare in WebP."}
+            {helpText || "Scegli una foto dalla Galleria per riutilizzarla, oppure trascina/carica un nuovo file."}
           </p>
         </div>
       </div>
@@ -225,6 +249,16 @@ export function ImageUploadField({
           onClose={() => setIsLightboxOpen(false)}
         />
       )}
+
+      <MediaLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        onSelect={(urls) => {
+          if (urls.length > 0) onChange(urls[0]);
+        }}
+        currentValue={value}
+        title={label ? `Libreria Foto: ${label}` : "Libreria Multimediale"}
+      />
     </div>
   );
 }

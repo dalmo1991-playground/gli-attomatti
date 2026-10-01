@@ -12,7 +12,8 @@ import {
   Mail,
   Code,
   ChevronRight,
-  Rocket
+  Rocket,
+  Images
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,11 +26,12 @@ interface AdminSidebarProps {
 
 const navSections = [
   {
-    category: "Configurazione",
+    category: "Configurazione & Media",
     items: [
       { id: "site", label: "Sito & Meta", icon: Globe },
       { id: "navigation", label: "Menu Navigazione", icon: MenuIcon },
-      { id: "home", label: "Home Page", icon: HomeIcon }
+      { id: "home", label: "Home Page", icon: HomeIcon },
+      { id: "gallery", label: "Galleria Immagini", icon: Images }
     ]
   },
   {

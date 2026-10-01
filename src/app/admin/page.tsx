@@ -18,6 +18,7 @@ import { IniziativeTab } from "./tabs/IniziativeTab";
 import { PressTab } from "./tabs/PressTab";
 import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
+import { GalleryTab } from "./tabs/GalleryTab";
 import { JsonTab } from "./tabs/JsonTab";
 
 function AdminContent() {
@@ -56,6 +57,7 @@ function AdminContent() {
               {activeTab === "site" && <SiteTab />}
               {activeTab === "navigation" && <NavigationTab />}
               {activeTab === "home" && <HomeTab />}
+              {activeTab === "gallery" && <GalleryTab onNavigateTab={(tab) => setActiveTab(tab)} />}
               {activeTab === "chi_siamo" && <ChiSiamoTab />}
               {activeTab === "attori" && <AttoriTab />}
               {activeTab === "spettacoli" && <SpettacoliTab />}

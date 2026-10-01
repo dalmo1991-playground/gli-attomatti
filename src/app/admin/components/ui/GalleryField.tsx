@@ -2,10 +2,11 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { MediaLibraryModal } from "./MediaLibraryModal";
 
 export interface GalleryImage {
   url: string;
@@ -29,6 +30,8 @@ export function GalleryField({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [targetReplaceIdx, setTargetReplaceIdx] = useState<number | null>(null);
 
   const addImage = (url: string = "/images/show1.png", alt: string = "") => {
     onChange([...images, { url, alt }]);
@@ -122,6 +125,16 @@ export function GalleryField({
           />
           <button
             type="button"
+            onClick={() => {
+              setTargetReplaceIdx(null);
+              setIsLibraryOpen(true);
+            }}
+            className="px-3 py-1.5 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+          >
+            <FolderOpen size={13} /> Scegli da Libreria
+          </button>
+          <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
             className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
@@ -187,13 +200,27 @@ export function GalleryField({
                     <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider block">
                       URL Immagine
                     </span>
-                    <input
-                      type="text"
-                      value={img.url}
-                      onChange={(e) => updateImage(idx, "url", e.target.value)}
-                      placeholder="/images/..."
-                      className="w-full px-2.5 py-1.5 bg-background/50 border border-foreground/10 rounded-lg text-xs font-mono text-foreground focus:border-primary focus:outline-none"
-                    />
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={img.url}
+                        onChange={(e) => updateImage(idx, "url", e.target.value)}
+                        placeholder="/images/..."
+                        className="flex-1 min-w-0 px-2.5 py-1.5 bg-background/50 border border-foreground/10 rounded-lg text-xs font-mono text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTargetReplaceIdx(idx);
+                          setIsLibraryOpen(true);
+                        }}
+                        title="Scegli dalla galleria del sito"
+                        className="px-2 py-1 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 shrink-0"
+                      >
+                        <FolderOpen size={12} />
+                        <span className="hidden sm:inline">Libreria</span>
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider block">
@@ -259,6 +286,35 @@ export function GalleryField({
           onClose={() => setLightboxIndex(null)}
         />
       )}
+
+      {/* Media Library Modal for choosing existing images */}
+      <MediaLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => {
+          setIsLibraryOpen(false);
+          setTargetReplaceIdx(null);
+        }}
+        onSelect={(urls) => {
+          if (targetReplaceIdx !== null) {
+            if (urls.length > 0) {
+              updateImage(targetReplaceIdx, "url", urls[0]);
+            }
+          } else {
+            const newItems = urls.map((url) => {
+              const filename = url.split("/").pop() || "";
+              const cleanAlt = filename
+                .replace(/^(\d{10,14})-/, "")
+                .replace(/\.[^.]+$/, "")
+                .replace(/[-_]/g, " ");
+              return { url, alt: cleanAlt };
+            });
+            onChange([...images, ...newItems]);
+          }
+        }}
+        multiple={targetReplaceIdx === null}
+        currentValue={targetReplaceIdx !== null ? images[targetReplaceIdx]?.url : images.map((i) => i.url)}
+        title={targetReplaceIdx !== null ? "Sostituisci Immagine da Libreria" : "Seleziona Immagini dalla Libreria"}
+      />
     </div>
   );
 }

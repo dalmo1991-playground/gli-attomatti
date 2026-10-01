@@ -143,3 +143,49 @@ export async function commitToGitHub({
     commitUrl
   };
 }
+
+/**
+ * Lists images stored under public/images in GitHub repository via REST API.
+ */
+export async function listGitHubImages(branchOverride?: string): Promise<Array<{ url: string; name: string; size?: number }>> {
+  const token = process.env.GITHUB_TOKEN;
+  let repo = process.env.GITHUB_REPO;
+  const branch = branchOverride || resolveTargetBranch();
+
+  if (!token || !repo) {
+    return [];
+  }
+
+  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
+  const url = `https://api.github.com/repos/${repo}/contents/public/images?ref=${branch}`;
+
+  try {
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Attomatti-CMS'
+      }
+    });
+
+    if (!res.ok) {
+      console.warn(`[GitHub API] List images failed with status ${res.status}`);
+      return [];
+    }
+
+    const items = await res.json();
+    if (!Array.isArray(items)) return [];
+
+    return items
+      .filter((item: any) => item.type === 'file' && /\.(webp|jpg|jpeg|png|gif|svg)$/i.test(item.name))
+      .map((item: any) => ({
+        url: `/images/${item.name}`,
+        name: item.name,
+        size: item.size
+      }));
+  } catch (err) {
+    console.warn('[GitHub API] List images error:', err);
+    return [];
+  }
+}
