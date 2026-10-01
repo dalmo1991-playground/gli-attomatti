@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Loader2, ShieldCheck, Eye } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
 
@@ -65,16 +65,81 @@ interface InstagramFeedProps {
 
 function InstagramEmbedCard({
   post,
-  index
+  index,
+  globalConsent,
+  onGrantGlobalConsent
 }: {
   post: InstagramPost;
   index: number;
+  globalConsent: boolean;
+  onGrantGlobalConsent: () => void;
 }) {
   const info = parseInstagramUrl(post.url);
   const [loaded, setLoaded] = useState(false);
+  const [singleConsent, setSingleConsent] = useState(false);
 
   if (!info) return null;
 
+  const isConsentGiven = globalConsent || singleConsent;
+
+  // 2-Click Solution: If consent is NOT yet granted, show compliant privacy placeholder
+  if (!isConsentGiven) {
+    return (
+      <div className="snap-start shrink-0 w-[326px] sm:w-[340px] md:w-[350px] h-[630px] rounded-none overflow-hidden bg-slate-900 border border-foreground/10 flex flex-col justify-between p-6 text-center shadow-2xl relative">
+        <div className="space-y-4 pt-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+            <InstagramIcon size={28} />
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold uppercase tracking-wider text-foreground/70">
+            <ShieldCheck size={12} className="text-emerald-400" />
+            <span>Protezione Privacy (2-Click)</span>
+          </div>
+          <h3 className="text-lg font-bold text-foreground">
+            {post.title || "Post Instagram"}
+          </h3>
+          <p className="text-xs text-foreground/60 leading-relaxed max-w-[280px] mx-auto font-medium">
+            Per tutelare la tua privacy, i contenuti esterni di Meta sono bloccati. Cliccando accetti il caricamento dell'incorporamento da Instagram e la trasmissione del tuo indirizzo IP a Meta Platforms Ireland Ltd.
+          </p>
+        </div>
+
+        <div className="space-y-3 pb-2">
+          <button
+            type="button"
+            onClick={() => setSingleConsent(true)}
+            className="w-full py-3 px-4 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md active:scale-95"
+          >
+            <Eye size={15} />
+            <span>Carica questo post</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onGrantGlobalConsent}
+            className="w-full py-2.5 px-4 rounded-xl bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/80 font-bold text-[11px] tracking-wider transition-all"
+          >
+            Mostra tutti i post
+          </button>
+
+          <div className="pt-2 flex justify-center items-center gap-3 text-[11px] text-foreground/40 font-medium">
+            <Link href="/Privacy" className="hover:text-primary transition-colors underline">
+              Informativa Privacy
+            </Link>
+            <span>•</span>
+            <Link
+              href={info.canonicalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors inline-flex items-center gap-0.5"
+            >
+              Apri su Instagram <ArrowUpRight size={11} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Once consent is given, render the iframe
   return (
     <div className="snap-start shrink-0 w-[326px] sm:w-[340px] md:w-[350px] h-[630px] rounded-none overflow-hidden bg-white shadow-2xl relative border-0">
       {/* Discreet loading spinner until iframe renders */}
@@ -115,6 +180,28 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [globalConsent, setGlobalConsent] = useState(false);
+
+  // Check saved consent in browser storage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("attomatti_instagram_consent");
+      if (saved === "true") {
+        setGlobalConsent(true);
+      }
+    } catch {
+      // ignore storage access errors
+    }
+  }, []);
+
+  const handleGrantGlobalConsent = () => {
+    setGlobalConsent(true);
+    try {
+      localStorage.setItem("attomatti_instagram_consent", "true");
+    } catch {
+      // ignore
+    }
+  };
 
   // Filter valid instagram posts
   const validPosts = rawPosts.filter((p) => p?.url && parseInstagramUrl(p.url) !== null);
@@ -137,7 +224,7 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
     }
   };
 
-  // Optional auto-cycle timer (loops every 5 seconds, pauses on hover)
+  // Optional auto-cycle timer (loops every 5 seconds, pauses on hover or if not consented)
   useEffect(() => {
     if (isPaused || validPosts.length <= 1) return;
     const timer = setInterval(() => {
@@ -189,27 +276,39 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
             </motion.p>
           </div>
 
-          {/* Carousel Arrows */}
-          {validPosts.length > 1 && (
-            <div className="flex items-center gap-3">
+          {/* Carousel Arrows & Global Consent Button */}
+          <div className="flex items-center gap-3">
+            {!globalConsent && (
               <button
                 type="button"
-                onClick={() => handleScroll(-1)}
-                className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
-                aria-label="Precedente"
+                onClick={handleGrantGlobalConsent}
+                className="px-4 py-2.5 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white text-xs font-bold transition-all shadow-md active:scale-95"
               >
-                <ChevronLeft size={22} />
+                Abilita tutti i post
               </button>
-              <button
-                type="button"
-                onClick={() => handleScroll(1)}
-                className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
-                aria-label="Successivo"
-              >
-                <ChevronRight size={22} />
-              </button>
-            </div>
-          )}
+            )}
+
+            {validPosts.length > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleScroll(-1)}
+                  className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
+                  aria-label="Precedente"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleScroll(1)}
+                  className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
+                  aria-label="Successivo"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Scrollable Track (Squadrato, Non tagliato, 3-4 visibili a ciclo) */}
@@ -224,6 +323,8 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
               key={post.id || `${post.url}-${index}`}
               post={post}
               index={index}
+              globalConsent={globalConsent}
+              onGrantGlobalConsent={handleGrantGlobalConsent}
             />
           ))}
         </div>
