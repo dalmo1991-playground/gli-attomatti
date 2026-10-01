@@ -989,6 +989,23 @@
           ]
         },
         {
+          "id": "b-1790880921959",
+          "type": "reviews",
+          "title": "",
+          "items": [
+            {
+              "quote": "<p>Mai visto nulla del genere</p>",
+              "author": "Critico",
+              "rating": 3
+            },
+            {
+              "quote": "<p>Comprensibile</p>",
+              "author": "Pubblico",
+              "rating": 5
+            }
+          ]
+        },
+        {
           "id": "b-1790871150994",
           "type": "closing_cta",
           "title": "Unisciti a Noi",
