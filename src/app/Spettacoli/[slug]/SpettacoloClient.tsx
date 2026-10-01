@@ -11,7 +11,7 @@ import Image from "next/image";
 
 
 export default function SpettacoloDettaglioClient({ content, slug }: { content: any, slug: string }) {
-  const show = content.pages.spettacoli.archive_sections.find((s: any) => s.slug === slug);
+  const show = (content?.pages?.spettacoli?.archive_sections || []).find((s: any) => s?.slug === slug);
 
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
     isOpen: false,
@@ -67,28 +67,37 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                 {show.text}
               </p>
             </div>
-            
             {/* Gallery */}
             {show.images && show.images.length > 0 && (
-              <div className="mt-20">
+              <div className="mt-16">
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-8">Galleria</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={cn(
+                  "grid gap-6 items-start",
+                  show.images.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
+                )}>
                   {show.images.map((img: any, idx: number) => (
                     <div 
                       key={idx} 
                       className={cn(
-                        "rounded-3xl overflow-hidden bg-muted shadow-xl",
-                        idx % 3 === 0 ? "md:col-span-2 aspect-video" : "aspect-square"
+                        "rounded-3xl overflow-hidden bg-muted shadow-xl border border-foreground/5 transition-all duration-500 hover:shadow-2xl hover:border-primary/20",
+                        show.images.length > 1 && idx % 2 !== 0 && "sm:mt-12"
                       )}
                     >
-                      <Image 
-                        src={img.url} 
-                        alt={img.alt} 
-                        fill
+                      <div 
+                        className={cn(
+                          "relative cursor-pointer group",
+                          idx % 3 === 0 ? "aspect-[16/10]" : idx % 2 === 0 ? "aspect-[4/3]" : "aspect-video"
+                        )}
                         onClick={() => setLightbox({ isOpen: true, index: idx, images: show.images })}
-                        className="object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-105 cursor-pointer" 
-                      />
-
+                      >
+                        <Image 
+                          src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                          alt={img.alt || show.title || "Foto spettacolo"} 
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover grayscale hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
