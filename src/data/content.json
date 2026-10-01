@@ -823,98 +823,72 @@
   },
   "landings": [
     {
-      "id": "landing-non-sottovalutare-i-40",
+      "id": "landing-1790870877640",
       "slug": "non-sottovalutare-i-40",
-      "title": "Non Sottovalutare i 40 — Spettacolo Teatrale",
+      "title": "Non Sottovalutare i 40",
       "active": true,
       "theme_color": "primary",
       "header": {
         "logo_text": "Gli Attomatti",
-        "cta_label": "Acquista Biglietti",
+        "cta_label": "Info & Biglietti",
         "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
       },
       "sticky_bar": {
         "enabled": true,
-        "text": "Non Sottovalutare i 40 • 28 Maggio 2026",
+        "text": "Non Sottovalutare i 40",
         "cta_label": "Biglietti",
         "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
       },
       "blocks": [
         {
-          "id": "b1",
+          "id": "b-1790870877640-1",
           "type": "hero",
-          "badge": "La Biennale Svizzera presenta",
+          "badge": "La Biennale Svizzera di Teatro Amatoriale presenta",
           "title": "Non Sottovalutare i 40",
-          "tagline": "Una commedia brillante e toccante sulle tappe, le crisi e le rinascite della vita.",
-          "hero_image": "/images/1790869266263-non-sottovalutare-40.webp",
-          "primary_cta_label": "Acquista Biglietti",
+          "tagline": "40, un numero importante...",
+          "hero_image": "/Spettacoli/non-sottovalutare-i-40",
+          "primary_cta_label": "Info & Biglietti",
           "primary_cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
-          "secondary_cta_label": "Scopri lo Spettacolo",
-          "secondary_cta_href": "#dettagli"
+          "secondary_cta_label": "Scopri di più",
+          "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40"
         },
         {
-          "id": "b2",
+          "id": "b-1790870877640-2",
           "type": "event_details",
-          "title": "Data, Orario e Luogo",
-          "date": "28 Maggio 2026, ore 20:00",
-          "location": "Scuol (Engadina) — Biennale Svizzera di Teatro",
-          "location_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
-          "price": "CHF 25.-",
-          "info_badge": "Posti limitati",
-          "cta_label": "Prenota il tuo posto",
+          "title": "Data e Informazioni",
+          "date": "24 Ottobre 2026, ore 15:00",
+          "location": "Scuol",
+          "location_href": "",
+          "price": "CHF 15.-",
+          "info_badge": "",
+          "cta_label": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
         },
         {
-          "id": "b3",
+          "id": "b-1790871109611",
           "type": "synopsis",
           "title": "La Trama",
-          "text": "Cosa succede quando il traguardo dei quarant'anni smette di essere un miraggio lontano e bussa improvvisamente alla porta? Tra bilanci inevitabili, sogni rimasti nel cassetto e la travolgente energia del teatro, Gli Attomatti portano in scena uno spettacolo corale ad alto tasso di comicità ed emozione.",
-          "quote": "Un viaggio esilarante e commovente che parla a chiunque abbia mai fatto i conti con il tempo che passa.",
-          "quote_author": "Domenico Scotti di Carlo, Regia",
-          "image": "/images/1782553964559-DSC_1764.webp"
+          "text": "In \"Non sottovalutare i 40\", lo stressato Dario ha dimenticato il suo quarantesimo compleanno, ma la sua eccentrica famiglia è pronta a rinfrescargli la memoria trasformando la giornata in un esilarante incubo domestico. Tra sedie di design dal costo folle, cruciverba incomprensibili e surreali teorie complottiste sugli scioglilingua, riuscirà il protagonista a sopravvivere alla diabolica sorpresa organizzata alle sue spalle?",
+          "quote": "40...",
+          "quote_author": "Regia"
         },
         {
-          "id": "b4",
-          "type": "reviews",
-          "title": "Dicono di Noi",
-          "items": [
-            {
-              "quote": "Uno spettacolo intelligente, divertente e recitato con un ritmo impeccabile.",
-              "author": "La Critica Teatrale",
-              "rating": 5
-            },
-            {
-              "quote": "Si ride dall'inizio alla fine, ma con momenti di sincera commozione.",
-              "author": "Pubblico in sala",
-              "rating": 5
-            }
-          ]
-        },
-        {
-          "id": "b5",
+          "id": "b-1790871175316",
           "type": "faq",
           "title": "Domande Frequenti",
           "items": [
             {
-              "question": "Come posso acquistare i biglietti?",
-              "answer": "Puoi acquistare i biglietti direttamente online cliccando sui pulsanti presenti in questa pagina, che ti reindirizzeranno al portale ufficiale di prevendita."
-            },
-            {
-              "question": "I posti a sedere sono numerati?",
-              "answer": "La scelta del posto è libera all'ingresso in sala. Ti consigliamo di arrivare con circa 20 minuti di anticipo."
-            },
-            {
-              "question": "Lo spettacolo è adatto a tutti?",
-              "answer": "Sì, è una commedia per un pubblico di tutte le età, con temi accessibili e divertenti per giovani e adulti."
+              "question": "Chi organizza?",
+              "answer": "Questo evento fa parte della biennale"
             }
           ]
         },
         {
-          "id": "b6",
+          "id": "b-1790871150994",
           "type": "closing_cta",
-          "title": "Non perdere l'occasione",
-          "text": "Unisciti a noi per una serata indimenticabile di teatro e divertimento.",
-          "cta_label": "Riserva i tuoi Biglietti Ora",
+          "title": "Unisciti a Noi",
+          "text": "Prenota ora prima dell'esaurimento posti.",
+          "cta_label": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
         }
       ]
