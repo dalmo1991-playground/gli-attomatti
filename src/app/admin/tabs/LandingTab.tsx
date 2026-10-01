@@ -24,6 +24,8 @@ import { FormField } from "../components/ui/FormField";
 import { AccordionCard } from "../components/ui/AccordionCard";
 import { ImageUploadField } from "../components/ui/ImageUploadField";
 import { GalleryField } from "../components/ui/GalleryField";
+import { LandingThemeEditor } from "../components/ui/LandingThemeEditor";
+import { DEFAULT_THEME_PRESET } from "@/lib/landingThemes";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +53,10 @@ export function LandingTab() {
       title: "Nuova Landing Page",
       active: true,
       theme_color: "primary",
+      theme: {
+        preset: "default",
+        ...DEFAULT_THEME_PRESET.colors
+      },
       header: {
         logo_text: "Gli Attomatti",
         cta_label: "Acquista Biglietti",
@@ -332,6 +338,12 @@ export function LandingTab() {
                         />
                       </div>
                     </div>
+
+                    {/* Theme & Palette Customizer */}
+                    <LandingThemeEditor
+                      landing={landing}
+                      onChange={(themeData) => updateLanding(actualIdx, "theme", themeData)}
+                    />
 
                     {/* Sticky Bottom Bar on Mobile */}
                     <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">

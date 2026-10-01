@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
 
 interface LandingClientProps {
   landing: any;
@@ -26,6 +27,9 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
   const blocks = landing.blocks || [];
   const header = landing.header || {};
   const stickyBar = landing.sticky_bar || {};
+
+  const theme = getLandingTheme(landing);
+  const themeStyles = getLandingThemeStyles(theme);
 
   const [faqOpen, setFaqOpen] = useState<Record<number, boolean>>({ 0: true });
   const [lightbox, setLightbox] = useState<{
@@ -43,7 +47,10 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+    <div
+      style={themeStyles}
+      className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary transition-colors duration-300"
+    >
       {/* 1. Standalone Minimal Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-foreground/5 h-20 transition-all">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
@@ -129,7 +136,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
-                      className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.95] text-white drop-shadow-md"
+                      className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.95] text-foreground drop-shadow-md"
                     >
                       {block.title}
                     </motion.h1>
@@ -508,7 +515,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
               return (
                 <section key={bIdx} className="py-24 px-4 sm:px-6 relative overflow-hidden">
                   <div className="max-w-4xl mx-auto text-center relative z-10 p-12 sm:p-16 rounded-[3rem] bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 space-y-6 shadow-2xl">
-                    <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">
+                    <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
                       {block.title || "Non Perdere lo Spettacolo"}
                     </h2>
                     {block.text && (
