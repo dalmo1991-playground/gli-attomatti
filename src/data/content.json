@@ -557,7 +557,12 @@
               "value": "Domenico Scotti di Carlo"
             }
           ],
-          "images": []
+          "images": [
+            {
+              "url": "/images/1790869266263-non-sottovalutare-40.webp",
+              "alt": "Locandina"
+            }
+          ]
         },
         {
           "slug": "4-gatti",
