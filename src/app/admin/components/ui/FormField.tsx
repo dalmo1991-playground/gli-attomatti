@@ -7,12 +7,14 @@ interface FormFieldProps {
   label: string;
   value: any;
   onChange: (value: any) => void;
-  type?: "text" | "textarea" | "number" | "switch" | "select";
+  type?: "text" | "textarea" | "number" | "switch" | "select" | "email" | "url" | "tel" | "password" | "date" | "time" | string;
   placeholder?: string;
   helpText?: string;
   className?: string;
   rows?: number;
   options?: { label: string; value: string }[];
+  required?: boolean;
+  disabled?: boolean;
 }
 
 export function FormField({
@@ -24,7 +26,9 @@ export function FormField({
   helpText,
   className,
   rows = 4,
-  options = []
+  options = [],
+  required,
+  disabled
 }: FormFieldProps) {
   return (
     <div className={cn("space-y-2 w-full", className)}>
@@ -57,13 +61,17 @@ export function FormField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          className="w-full p-4 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground resize-y leading-relaxed placeholder:text-foreground/20"
+          required={required}
+          disabled={disabled}
+          className="w-full p-4 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground resize-y leading-relaxed placeholder:text-foreground/20 disabled:opacity-50"
         />
       ) : type === "select" ? (
         <select
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full p-3.5 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground cursor-pointer"
+          required={required}
+          disabled={disabled}
+          className="w-full p-3.5 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground cursor-pointer disabled:opacity-50"
         >
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -77,7 +85,9 @@ export function FormField({
           value={value ?? ""}
           onChange={(e) => onChange(type === "number" ? Number(e.target.value) : e.target.value)}
           placeholder={placeholder}
-          className="w-full p-3.5 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground placeholder:text-foreground/20"
+          required={required}
+          disabled={disabled}
+          className="w-full p-3.5 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground placeholder:text-foreground/20 disabled:opacity-50"
         />
       )}
 

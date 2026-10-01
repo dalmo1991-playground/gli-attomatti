@@ -9,7 +9,8 @@ interface AccordionCardProps {
   title: string;
   subtitle?: string;
   badge?: string;
-  badgeColor?: "primary" | "secondary" | "accent" | "muted";
+  badgeColor?: "primary" | "secondary" | "accent" | "muted" | "rose" | "indigo" | "amber" | string;
+  thumbnail?: string;
   index: number;
   total: number;
   onMoveUp?: () => void;
@@ -24,6 +25,7 @@ export function AccordionCard({
   subtitle,
   badge,
   badgeColor = "primary",
+  thumbnail,
   index,
   total,
   onMoveUp,
@@ -34,12 +36,16 @@ export function AccordionCard({
 }: AccordionCardProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const badgeColorClass = {
-    primary: "bg-primary/10 text-primary border-primary/20",
-    secondary: "bg-secondary/10 text-secondary border-secondary/20",
-    accent: "bg-accent/10 text-accent border-accent/20",
-    muted: "bg-muted text-foreground/60 border-foreground/10"
-  }[badgeColor];
+  const badgeColorClass =
+    ({
+      primary: "bg-primary/10 text-primary border-primary/20",
+      secondary: "bg-secondary/10 text-secondary border-secondary/20",
+      accent: "bg-accent/10 text-accent border-accent/20",
+      muted: "bg-muted text-foreground/60 border-foreground/10",
+      rose: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+      indigo: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+      amber: "bg-amber-500/10 text-amber-400 border-amber-500/20"
+    } as Record<string, string>)[badgeColor] || "bg-primary/10 text-primary border-primary/20";
 
   return (
     <div className="bg-background/80 border border-foreground/10 rounded-2xl overflow-hidden transition-all duration-300 hover:border-foreground/20">
@@ -52,6 +58,20 @@ export function AccordionCard({
           <div className="w-8 h-8 rounded-xl bg-muted/60 flex items-center justify-center font-mono font-bold text-xs text-foreground/40 shrink-0">
             {index + 1}
           </div>
+
+          {thumbnail && (
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-muted/60 shrink-0 border border-foreground/10 relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={thumbnail}
+                alt={title || ""}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            </div>
+          )}
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
