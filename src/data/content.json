@@ -996,7 +996,16 @@
           "cta_label": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
         }
-      ]
+      ],
+      "theme": {
+        "preset": "light_chic",
+        "background": "#f8fafc",
+        "foreground": "#0f172a",
+        "primary": "#e11d48",
+        "secondary": "#4f46e5",
+        "accent": "#d97706",
+        "muted": "#e2e8f0"
+      }
     }
   ]
 }
