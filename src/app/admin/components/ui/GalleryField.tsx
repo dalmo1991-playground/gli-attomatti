@@ -66,28 +66,33 @@ export function GalleryField({
     const newItems: GalleryImage[] = [];
 
     try {
+      const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+      }
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "x-admin-secret": adminSecret
+        },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante il caricamento");
+      }
+
+      const data = await res.json();
+      const urls: string[] = data.urls || (data.url ? [data.url] : []);
+      for (let i = 0; i < urls.length; i++) {
         const file = files[i];
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "x-admin-secret": adminSecret
-          },
-          body: formData
+        const cleanName = file ? file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ") : "Foto";
+        newItems.push({
+          url: urls[i],
+          alt: cleanName
         });
-
-        if (res.ok) {
-          const data = await res.json();
-          // Derive a friendly alt text from filename
-          const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-          newItems.push({
-            url: data.url,
-            alt: cleanName
-          });
-        }
       }
 
       if (newItems.length > 0) {
@@ -95,7 +100,7 @@ export function GalleryField({
       }
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Errore durante il caricamento delle immagini.");
+      alert(`Errore durante il caricamento delle immagini: ${(err as Error).message}`);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

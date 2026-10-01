@@ -19,12 +19,62 @@ import {
   Layers,
   Sparkles,
   Info,
-  Loader2
+  Loader2,
+  X,
+  Trash2,
+  Plus,
+  CheckCircle2
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { findAllImageReferences, ImageReference } from "../utils/imageReferences";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaImage } from "../components/ui/MediaLibraryModal";
+
+function StagedThumbnail({
+  file,
+  onRemove
+}: {
+  file: File;
+  onRemove: () => void;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  return (
+    <div className="relative group rounded-xl overflow-hidden border border-foreground/10 bg-muted/40 p-2.5 flex items-center gap-3 hover:border-foreground/25 transition-all">
+      <div className="w-11 h-11 rounded-lg overflow-hidden bg-background relative shrink-0 border border-foreground/10">
+        {previewUrl ? (
+          <img src={previewUrl} alt={file.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-foreground/30">
+            <ImageIcon size={16} />
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-bold text-foreground truncate" title={file.name}>
+          {file.name}
+        </p>
+        <p className="text-[10px] text-foreground/50 mt-0.5 font-medium">
+          {(file.size / 1024).toFixed(1)} KB
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="w-7 h-7 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center transition-all shrink-0"
+        title="Rimuovi dal buffer"
+      >
+        <X size={14} />
+      </button>
+    </div>
+  );
+}
 
 interface GalleryTabProps {
   onNavigateTab?: (tabId: string) => void;
@@ -40,6 +90,16 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [stagedFiles, setStagedFiles] = useState<File[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
+  const [deleteModalData, setDeleteModalData] = useState<{
+    urls: string[];
+    names: string[];
+    references: ImageReference[];
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Compute live image references from current admin draft content
@@ -73,41 +133,153 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
     fetchImages();
   }, [adminSecret]);
 
-  // Direct upload handler
-  const handleUploadFiles = async (files: FileList | null) => {
+  // Add files to staging buffer
+  const handleSelectFilesToBuffer = (files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
+    const array = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (array.length === 0) {
+      alert("Seleziona solo file immagine validi (JPG, PNG, WebP, etc.).");
+      return;
+    }
+
+    setStagedFiles((prev) => {
+      const existingKeys = new Set(prev.map((f) => `${f.name}-${f.size}`));
+      const toAdd = array.filter((f) => !existingKeys.has(`${f.name}-${f.size}`));
+      return [...prev, ...toAdd];
+    });
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleRemoveStagedFile = (index: number) => {
+    setStagedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Upload all staged files in 1 single commit
+  const handleUploadStaged = async () => {
+    if (stagedFiles.length === 0) return;
     if (!adminSecret) {
-      alert("Per favore, inserisci prima la Password di Amministrazione in alto per caricare nuove immagini.");
+      alert("Per favore, inserisci prima la Password di Amministrazione in alto per procedere al salvataggio.");
       return;
     }
 
     setIsUploading(true);
     try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "x-admin-secret": adminSecret
-          },
-          body: formData
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          alert(`Errore nel caricamento di ${file.name}: ${err.error || "Errore sconosciuto"}`);
-        }
+      const formData = new FormData();
+      for (const file of stagedFiles) {
+        formData.append("files", file);
       }
-      // Refresh list
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "x-admin-secret": adminSecret
+        },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante il caricamento");
+      }
+
+      const data = await res.json();
+      const count = data.count || stagedFiles.length;
+      setStagedFiles([]);
+      setSuccessMessage(`${count} ${count === 1 ? "foto caricata" : "foto caricate"} con successo con 1 solo commit Git!`);
+      setTimeout(() => setSuccessMessage(null), 6000);
       await fetchImages();
     } catch (err) {
-      alert(`Errore di rete: ${(err as Error).message}`);
+      alert(`Errore di caricamento: ${(err as Error).message}`);
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  // Toggle selection for an image
+  const toggleSelectUrl = (url: string) => {
+    setSelectedUrls((prev) =>
+      prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
+    );
+  };
+
+  // Select all currently visible images
+  const handleSelectAllDisplayed = () => {
+    if (selectedUrls.length === displayedImages.length && displayedImages.length > 0) {
+      setSelectedUrls([]);
+    } else {
+      setSelectedUrls(displayedImages.map((img) => img.url));
+    }
+  };
+
+  // Select all unused images
+  const handleSelectAllUnused = () => {
+    const unused = enrichedImages.filter((img) => !img.isUsed).map((img) => img.url);
+    setSelectedUrls(unused);
+  };
+
+  // Request deletion of a single image
+  const handleRequestSingleDelete = (img: typeof enrichedImages[0]) => {
+    setDeleteModalData({
+      urls: [img.url],
+      names: [img.name],
+      references: img.references
+    });
+  };
+
+  // Request deletion of selected images (batch)
+  const handleRequestBatchDelete = () => {
+    if (selectedUrls.length === 0) return;
+    const selected = enrichedImages.filter((img) => selectedUrls.includes(img.url));
+    const allRefs = selected.flatMap((img) => img.references);
+    setDeleteModalData({
+      urls: selectedUrls,
+      names: selected.map((img) => img.name),
+      references: allRefs
+    });
+  };
+
+  // Confirm and execute deletion via API
+  const handleConfirmDelete = async () => {
+    if (!deleteModalData || deleteModalData.urls.length === 0) return;
+    if (!adminSecret) {
+      alert("Per favore, inserisci prima la Password di Amministrazione in alto per procedere all'eliminazione.");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch("/api/images", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret
+        },
+        body: JSON.stringify({ urls: deleteModalData.urls })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante l'eliminazione");
+      }
+
+      const data = await res.json();
+      const count = data.count || deleteModalData.urls.length;
+      const deletedSet = new Set(deleteModalData.urls);
+
+      setImages((prev) => prev.filter((img) => !deletedSet.has(img.url)));
+      setSelectedUrls((prev) => prev.filter((u) => !deletedSet.has(u)));
+      setDeleteModalData(null);
+
+      setSuccessMessage(
+        `${count} ${count === 1 ? "foto eliminata" : "foto eliminate"} con successo (1 solo commit Git)!`
+      );
+      setTimeout(() => setSuccessMessage(null), 6000);
+      await fetchImages();
+    } catch (err) {
+      alert(`Errore di eliminazione: ${(err as Error).message}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -209,7 +381,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
           <input
             type="file"
             ref={fileInputRef}
-            onChange={(e) => handleUploadFiles(e.target.files)}
+            onChange={(e) => handleSelectFilesToBuffer(e.target.files)}
             accept="image/*"
             multiple
             className="hidden"
@@ -218,11 +390,19 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-primary/20 hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
+            className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 ${
+              stagedFiles.length > 0
+                ? "bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30"
+                : "bg-primary text-white shadow-primary/20 hover:bg-primary/90"
+            }`}
           >
             {isUploading ? (
               <>
                 <Loader2 size={14} className="animate-spin" /> Caricamento...
+              </>
+            ) : stagedFiles.length > 0 ? (
+              <>
+                <Plus size={14} /> Aggiungi al Buffer ({stagedFiles.length})
               </>
             ) : (
               <>
@@ -241,6 +421,132 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
           </button>
         </div>
       </div>
+
+      {/* Upload Success Alert */}
+      {successMessage && (
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-between animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 size={18} className="shrink-0" />
+            <span className="text-xs sm:text-sm font-bold">{successMessage}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSuccessMessage(null)}
+            className="p-1 hover:bg-emerald-500/20 rounded-lg transition-all"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
+      {/* Staged Upload Buffer Area */}
+      {stagedFiles.length > 0 ? (
+        <div className="p-5 rounded-2xl border-2 border-primary/40 bg-primary/5 shadow-xl shadow-primary/5 backdrop-blur-sm space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary shrink-0 mt-0.5">
+                <Upload size={18} />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                    Buffer di Caricamento ({stagedFiles.length} {stagedFiles.length === 1 ? "foto in attesa" : "foto in attesa"})
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                    1 Solo Commit Git
+                  </span>
+                </div>
+                <p className="text-xs text-foreground/60 mt-1">
+                  Le immagini sono in attesa nel buffer locale. Clicca su &ldquo;Carica Tutte&rdquo; per ottimizzarle in WebP e salvarle insieme in un <strong>unico commit</strong> su GitHub (1 sola build Vercel).
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end md:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="px-3 py-2 bg-muted/60 hover:bg-muted text-foreground/80 hover:text-foreground rounded-xl text-xs font-bold transition-all border border-foreground/10 flex items-center gap-1.5"
+              >
+                <Plus size={14} /> Aggiungi Altre
+              </button>
+              <button
+                type="button"
+                onClick={() => setStagedFiles([])}
+                disabled={isUploading}
+                className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-xs font-bold transition-all border border-red-500/20 flex items-center gap-1.5"
+                title="Svuota il buffer"
+              >
+                <Trash2 size={14} /> Svuota
+              </button>
+              <button
+                type="button"
+                onClick={handleUploadStaged}
+                disabled={isUploading}
+                className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-primary/25 hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" /> Caricamento in corso...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={15} /> Carica Tutte ({stagedFiles.length})
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Grid of staged thumbnails */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 pt-2 border-t border-foreground/10">
+            {stagedFiles.map((file, idx) => (
+              <StagedThumbnail
+                key={`${file.name}-${file.size}-${idx}`}
+                file={file}
+                onRemove={() => handleRemoveStagedFile(idx)}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            if (e.dataTransfer.files) {
+              handleSelectFilesToBuffer(e.dataTransfer.files);
+            }
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
+            isDragging
+              ? "border-primary bg-primary/10 scale-[1.005]"
+              : "border-foreground/15 hover:border-primary/50 bg-muted/10 hover:bg-muted/20"
+          }`}
+        >
+          <div className="flex flex-col items-center justify-center gap-2 max-w-md mx-auto pointer-events-none">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <Upload size={18} />
+            </div>
+            <p className="text-xs sm:text-sm font-bold text-foreground">
+              Trascina qui le immagini o clicca per caricarle nel buffer
+            </p>
+            <p className="text-[11px] text-foreground/50">
+              Aggiungi quante foto desideri: verranno raggruppate in un buffer locale e salvate con <strong>1 solo commit Git</strong>.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* KPI Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -360,6 +666,28 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
             <AlertTriangle size={12} />
             Non mostrate ({unusedCount})
           </button>
+
+          {unusedCount > 0 && (
+            <button
+              type="button"
+              onClick={handleSelectAllUnused}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all shrink-0 flex items-center gap-1.5"
+              title="Seleziona tutte le foto non utilizzate per eliminarle insieme"
+            >
+              <Trash2 size={12} />
+              Seleziona orfane ({unusedCount})
+            </button>
+          )}
+
+          {displayedImages.length > 0 && (
+            <button
+              type="button"
+              onClick={handleSelectAllDisplayed}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-foreground/60 hover:text-foreground bg-muted/30 hover:bg-muted/50 border border-foreground/10 transition-all shrink-0"
+            >
+              {selectedUrls.length === displayedImages.length ? "Deseleziona tutte" : "Seleziona tutte"}
+            </button>
+          )}
         </div>
 
         {/* Search & Sort */}
@@ -416,13 +744,16 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {displayedImages.map((img) => {
             const isCopied = copiedUrl === img.url;
+            const isSelected = selectedUrls.includes(img.url);
             const refCount = img.references.length;
 
             return (
               <div
                 key={img.url}
                 className={`rounded-2xl border transition-all overflow-hidden flex flex-col bg-background/40 group ${
-                  !img.isUsed
+                  isSelected
+                    ? "border-primary ring-2 ring-primary/40 shadow-xl shadow-primary/10 bg-primary/[0.03]"
+                    : !img.isUsed
                     ? "border-amber-500/40 hover:border-amber-500/70 shadow-lg shadow-amber-500/5 bg-amber-500/[0.02]"
                     : "border-foreground/10 hover:border-foreground/25 hover:shadow-xl"
                 }`}
@@ -437,6 +768,29 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
+
+                  {/* Selection Checkbox */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSelectUrl(img.url);
+                    }}
+                    className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-xl flex items-center justify-center transition-all ${
+                      isSelected
+                        ? "bg-primary text-white shadow-lg ring-2 ring-white/50 opacity-100 scale-105"
+                        : selectedUrls.length > 0
+                        ? "bg-black/70 text-white/50 border border-white/30 opacity-100 hover:scale-105 hover:bg-black/90"
+                        : "bg-black/60 text-white/40 border border-white/20 opacity-0 group-hover:opacity-100 hover:scale-105"
+                    }`}
+                    title={isSelected ? "Deseleziona foto" : "Seleziona foto"}
+                  >
+                    {isSelected ? (
+                      <Check size={14} strokeWidth={3} />
+                    ) : (
+                      <div className="w-3 h-3 rounded-[3px] border border-white/60" />
+                    )}
+                  </button>
 
                   {/* Top-Right Badge: Highlight Used / Unused */}
                   <div className="absolute top-3 right-3 z-10">
@@ -455,7 +809,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
 
                   {/* Folder badge if nested */}
                   {img.folder && (
-                    <div className="absolute top-3 left-3 z-10 px-2.5 py-0.5 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-bold text-foreground/80 border border-white/10">
+                    <div className="absolute bottom-3 left-3 z-10 px-2.5 py-0.5 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-bold text-foreground/80 border border-white/10">
                       {img.folder}
                     </div>
                   )}
@@ -477,6 +831,14 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
                       className="p-2.5 bg-primary hover:bg-primary/90 text-white rounded-full transition-all hover:scale-110 shadow-lg"
                     >
                       {isCopied ? <Check size={18} strokeWidth={3} /> : <Copy size={18} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRequestSingleDelete(img)}
+                      title="Elimina immagine dal server"
+                      className="p-2.5 bg-red-500/80 hover:bg-red-500 text-white rounded-full transition-all hover:scale-110 shadow-lg"
+                    >
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </div>
@@ -575,10 +937,149 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
                       </div>
                     )}
                   </div>
+
+                  {/* Card Footer Actions */}
+                  <div className="pt-3 border-t border-foreground/10 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleRequestSingleDelete(img)}
+                      className="text-[11px] font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 px-2.5 py-1.5 rounded-xl border border-red-500/20 transition-all flex items-center gap-1.5"
+                      title="Elimina foto dal server"
+                    >
+                      <Trash2 size={12} />
+                      Elimina
+                    </button>
+
+                    {img.isUsed && onNavigateTab && img.references[0] && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateTab(img.references[0].tabId)}
+                        className="text-[11px] font-medium text-foreground/50 hover:text-primary transition-colors flex items-center gap-1 truncate max-w-[170px]"
+                        title={`Vai a ${img.references[0].page}`}
+                      >
+                        <span className="truncate">Vai a {img.references[0].page}</span>
+                        <ExternalLink size={11} className="shrink-0" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Floating Batch Actions Bar */}
+      {selectedUrls.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-background/95 backdrop-blur-xl border border-foreground/20 rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">
+              {selectedUrls.length}
+            </span>
+            <span className="text-xs font-bold text-foreground">
+              {selectedUrls.length === 1 ? "foto selezionata" : "foto selezionate"}
+            </span>
+          </div>
+
+          <div className="h-4 w-px bg-foreground/20" />
+
+          <button
+            type="button"
+            onClick={() => setSelectedUrls([])}
+            className="text-xs font-medium text-foreground/60 hover:text-foreground transition-colors"
+          >
+            Deseleziona
+          </button>
+
+          <button
+            type="button"
+            onClick={handleRequestBatchDelete}
+            className="px-3.5 py-1.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-red-500/25 transition-all"
+          >
+            <Trash2 size={13} />
+            Elimina Selezionate (1 commit)
+          </button>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-background border border-foreground/15 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                <Trash2 size={20} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-black uppercase tracking-tight text-foreground">
+                  Elimina {deleteModalData.urls.length === 1 ? "Immagine" : `${deleteModalData.urls.length} Immagini`}
+                </h3>
+                <p className="text-xs text-foreground/60 mt-1">
+                  {deleteModalData.urls.length === 1
+                    ? `Sei sicuro di voler eliminare definitivamente "${deleteModalData.names[0]}"?`
+                    : `Sei sicuro di voler eliminare ${deleteModalData.urls.length} immagini in un unico commit Git?`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteModalData(null)}
+                disabled={isDeleting}
+                className="p-1 text-foreground/40 hover:text-foreground rounded-lg"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {deleteModalData.references.length > 0 && (
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2 text-amber-300">
+                <div className="flex items-center gap-2 font-bold text-xs text-amber-400">
+                  <AlertTriangle size={15} />
+                  <span>Attenzione: presenza di collegamenti nel sito!</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-amber-200/80">
+                  Questa/e immagine/i risultano utilizzate in <strong>{deleteModalData.references.length}</strong> punto/i del sito. Se le elimini, tali pagine mostreranno immagini interrotte:
+                </p>
+                <div className="max-h-28 overflow-y-auto custom-scrollbar space-y-1 pr-1 text-[11px]">
+                  {deleteModalData.references.map((r, i) => (
+                    <div key={i} className="flex items-center gap-1.5 text-amber-200">
+                      <span className="font-bold text-amber-400">[{r.page}]</span> {r.section}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p className="text-[11px] text-foreground/40">
+              L&apos;operazione cancellerà i file dal server e creerà un commit su GitHub. L&apos;azione non può essere annullata.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-foreground/10">
+              <button
+                type="button"
+                onClick={() => setDeleteModalData(null)}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-foreground/70 hover:text-foreground hover:bg-muted/40 transition-all"
+              >
+                Annulla
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Eliminazione in corso...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={14} /> Conferma Eliminazione
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

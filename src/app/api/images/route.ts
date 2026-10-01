@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { listGitHubImages } from '@/lib/github';
+import { listGitHubImages, deleteMultipleFromGitHub } from '@/lib/github';
 import contentData from '@/data/content.json';
 
 export interface MediaImage {
@@ -165,4 +165,96 @@ export async function GET(request: Request) {
     total: sortedImages.length,
     images: sortedImages
   });
+}
+
+export async function DELETE(request: Request) {
+  const secret = request.headers.get('x-admin-secret')?.trim();
+  const configuredSecret = process.env.ADMIN_SECRET?.trim();
+
+  // If ADMIN_SECRET is not configured on the server
+  if (!configuredSecret) {
+    return NextResponse.json(
+      { error: 'ADMIN_SECRET non è configurato sul server.' },
+      { status: 500 }
+    );
+  }
+
+  // Security check
+  if (secret !== configuredSecret) {
+    return NextResponse.json(
+      { error: 'Password non autorizzata.' },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const urls: string[] = Array.isArray(body.urls)
+      ? body.urls
+      : body.url
+      ? [body.url]
+      : [];
+
+    if (urls.length === 0) {
+      return NextResponse.json(
+        { error: 'Nessun URL fornito per l\'eliminazione.' },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize and resolve repo paths and local paths
+    const filesToDelete = urls.map((url) => {
+      const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+      const subPath = cleanUrl.replace(/^images\//, '').replace(/\.\./g, '');
+      const repoPath = `public/images/${subPath}`;
+      const localPath = path.join(process.cwd(), repoPath);
+      return { url, repoPath, localPath };
+    });
+
+    // 1. Delete from local filesystem
+    for (const item of filesToDelete) {
+      try {
+        if (fs.existsSync(item.localPath)) {
+          await fs.promises.unlink(item.localPath);
+        }
+      } catch (fsErr) {
+        console.warn(`[Images API] Local fs unlink error for ${item.localPath}:`, fsErr);
+      }
+    }
+
+    // 2. Delete from GitHub in 1 single commit
+    try {
+      const commitMessage =
+        filesToDelete.length === 1
+          ? `Delete image: ${path.basename(filesToDelete[0].repoPath)} via Admin Console`
+          : `Delete batch of ${filesToDelete.length} images via Admin Console`;
+
+      await deleteMultipleFromGitHub({
+        paths: filesToDelete.map((f) => f.repoPath),
+        message: commitMessage
+      });
+    } catch (githubErr: any) {
+      // In development, if GITHUB_TOKEN is not configured, local files are already deleted
+      if (
+        process.env.NODE_ENV === 'development' &&
+        (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
+      ) {
+        return NextResponse.json({
+          success: true,
+          count: filesToDelete.length,
+          deletedUrls: filesToDelete.map((f) => f.url)
+        });
+      }
+      throw githubErr;
+    }
+
+    return NextResponse.json({
+      success: true,
+      count: filesToDelete.length,
+      deletedUrls: filesToDelete.map((f) => f.url)
+    });
+  } catch (error) {
+    console.error('Delete error in /api/images:', error);
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  }
 }

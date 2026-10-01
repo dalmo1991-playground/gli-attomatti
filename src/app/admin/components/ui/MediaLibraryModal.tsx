@@ -13,7 +13,8 @@ import {
   Calendar,
   Layers,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Trash2
 } from "lucide-react";
 import { useAdmin } from "../../context/AdminContext";
 
@@ -91,12 +92,14 @@ export function MediaLibraryModal({
     }
   }, [isOpen, adminSecret]);
 
-  // Handle uploading a new photo directly inside the modal
-  const handleDirectUpload = async (file: File) => {
-    if (!file || !adminSecret) return;
+  // Handle uploading new photos directly inside the modal
+  const handleDirectUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !adminSecret) return;
     setIsUploading(true);
     const formData = new FormData();
-    formData.append("file", file);
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
 
     try {
       const res = await fetch("/api/upload", {
@@ -109,24 +112,26 @@ export function MediaLibraryModal({
 
       if (res.ok) {
         const data = await res.json();
-        const uploadedUrl = data.url;
-        // Derive friendly name
-        const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-        const newImg: MediaImage = {
-          url: uploadedUrl,
-          name: cleanName,
-          timestamp: Date.now()
-        };
+        const urls: string[] = data.urls || (data.url ? [data.url] : []);
+        const newImages: MediaImage[] = urls.map((uploadedUrl, idx) => {
+          const file = files[idx];
+          const cleanName = file ? file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ") : "Nuova foto";
+          return {
+            url: uploadedUrl,
+            name: cleanName,
+            timestamp: Date.now()
+          };
+        });
 
-        // Add to images list and select it
-        setImages((prev) => [newImg, ...prev.filter((i) => i.url !== uploadedUrl)]);
+        // Add to images list and select them
+        setImages((prev) => [...newImages, ...prev.filter((i) => !urls.includes(i.url))]);
         if (multiple) {
-          setSelectedUrls((prev) => [...prev, uploadedUrl]);
-        } else {
-          setSelectedUrls([uploadedUrl]);
+          setSelectedUrls((prev) => [...prev, ...urls]);
+        } else if (urls.length > 0) {
+          setSelectedUrls([urls[0]]);
         }
       } else {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         alert(`Errore di caricamento: ${err.error || "Errore sconosciuto"}`);
       }
     } catch (err) {
@@ -217,10 +222,10 @@ export function MediaLibraryModal({
               type="file"
               ref={fileInputRef}
               accept="image/*"
+              multiple={multiple}
               className="hidden"
               onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleDirectUpload(file);
+                if (e.target.files) handleDirectUpload(e.target.files);
               }}
             />
             <button
@@ -235,7 +240,7 @@ export function MediaLibraryModal({
                 </>
               ) : (
                 <>
-                  <Upload size={14} /> Carica Nuova
+                  <Upload size={14} /> {multiple ? "Carica Foto" : "Carica Nuova"}
                 </>
               )}
             </button>
@@ -370,6 +375,38 @@ export function MediaLibraryModal({
                           {img.folder}
                         </div>
                       )}
+
+                      {/* Delete button on hover */}
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!confirm(`Eliminare definitivamente "${img.name}" dal server?`)) return;
+                          try {
+                            const res = await fetch("/api/images", {
+                              method: "DELETE",
+                              headers: {
+                                "Content-Type": "application/json",
+                                "x-admin-secret": adminSecret || ""
+                              },
+                              body: JSON.stringify({ urls: [img.url] })
+                            });
+                            if (res.ok) {
+                              setImages((prev) => prev.filter((i) => i.url !== img.url));
+                              setSelectedUrls((prev) => prev.filter((u) => u !== img.url));
+                            } else {
+                              const err = await res.json().catch(() => ({}));
+                              alert(`Errore di eliminazione: ${err.error || "Errore sconosciuto"}`);
+                            }
+                          } catch (err) {
+                            alert(`Errore di eliminazione: ${(err as Error).message}`);
+                          }
+                        }}
+                        className="absolute bottom-2.5 right-2.5 w-6 h-6 rounded-lg bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md z-10"
+                        title="Elimina immagine"
+                      >
+                        <Trash2 size={12} />
+                      </button>
                     </div>
 
                     {/* Metadata Footer */}
