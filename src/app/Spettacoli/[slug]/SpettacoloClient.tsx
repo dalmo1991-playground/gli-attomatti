@@ -2,7 +2,7 @@
 
 import { Section } from "@/components/ui/Section";
 import Link from "next/link";
-import { ChevronLeft, Calendar, MapPin, Ticket } from "lucide-react";
+import { ChevronLeft, Calendar, MapPin, Ticket, Maximize2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -57,53 +57,91 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
       </Section>
 
       {/* Description & Dates Section */}
-      <Section className="py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <Section className="py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-16 items-start">
           {/* Main Content */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-7 xl:col-span-8">
             <h2 className="text-3xl font-black uppercase tracking-tight mb-8">Lo Spettacolo</h2>
             <div className="prose prose-xl prose-invert max-w-none">
               <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap">
                 {show.text}
               </p>
             </div>
-            {/* Gallery */}
+            {/* Gallery with dynamic bento layout that fills the space seamlessly */}
             {show.images && show.images.length > 0 && (
-              <div className="mt-16">
-                <h3 className="text-2xl font-black uppercase tracking-tight mb-8">Galleria</h3>
-                <div className={cn(
-                  "grid gap-6 items-start",
-                  show.images.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
-                )}>
-                  {show.images.map((img: any, idx: number) => (
-                    <div 
-                      key={idx} 
-                      onClick={() => setLightbox({ isOpen: true, index: idx, images: show.images })}
-                      className={cn(
-                        "relative w-full rounded-3xl overflow-hidden bg-muted shadow-xl border border-foreground/5 transition-all duration-500 hover:shadow-2xl hover:border-primary/20 cursor-pointer group",
-                        idx % 3 === 0 ? "aspect-video" : "aspect-[4/3]",
-                        show.images.length > 1 && idx % 2 !== 0 && "sm:mt-12"
-                      )}
-                    >
-                      <Image 
-                        src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                        alt={img.alt || show.title || "Foto spettacolo"} 
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover grayscale hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
-                      />
-                    </div>
-                  ))}
+              <div className="mt-12 sm:mt-16">
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
+                  {show.images.map((img: any, idx: number) => {
+                    const total = show.images.length;
+                    
+                    // Determine column span and height to fill space with dynamic editorial movement
+                    let layoutClasses = "";
+                    if (total === 1) {
+                      layoutClasses = "sm:col-span-12 aspect-[16/10]";
+                    } else if (total === 2) {
+                      layoutClasses = idx === 0 
+                        ? "sm:col-span-7 h-[280px] sm:h-[380px]" 
+                        : "sm:col-span-5 h-[280px] sm:h-[380px]";
+                    } else if (idx === 0) {
+                      layoutClasses = "sm:col-span-12 aspect-[16/9]";
+                    } else {
+                      const remIdx = idx - 1;
+                      const isLastSingle = remIdx === total - 2 && remIdx % 2 === 0;
+                      if (isLastSingle) {
+                        layoutClasses = "sm:col-span-12 aspect-[16/9] sm:aspect-[21/9]";
+                      } else {
+                        const pairCycle = Math.floor(remIdx / 2) % 2;
+                        const isFirstInPair = remIdx % 2 === 0;
+                        if (pairCycle === 0) {
+                          layoutClasses = isFirstInPair 
+                            ? "sm:col-span-7 h-[280px] sm:h-[360px]" 
+                            : "sm:col-span-5 h-[280px] sm:h-[360px]";
+                        } else {
+                          layoutClasses = isFirstInPair 
+                            ? "sm:col-span-5 h-[280px] sm:h-[360px]" 
+                            : "sm:col-span-7 h-[280px] sm:h-[360px]";
+                        }
+                      }
+                    }
+
+                    return (
+                      <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: idx * 0.08 }}
+                        onClick={() => setLightbox({ isOpen: true, index: idx, images: show.images })}
+                        className={cn(
+                          "relative w-full rounded-3xl overflow-hidden bg-muted shadow-xl border border-foreground/5 transition-all duration-500 hover:shadow-2xl hover:border-primary/30 cursor-pointer group",
+                          layoutClasses
+                        )}
+                      >
+                        <Image 
+                          src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                          alt={img.alt || show.title || "Foto spettacolo"} 
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover grayscale hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
+                        />
+
+                        {/* Glassmorphic expand icon badge */}
+                        <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
+                          <Maximize2 size={14} />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
 
           {/* Sidebar: Dates & Tickets */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-32 space-y-8">
-              <div className="p-8 bg-muted/20 rounded-[2.5rem] border border-foreground/5 shadow-sm">
-                <h3 className="text-xl font-black uppercase tracking-tight mb-8 flex items-center">
+          <div className="lg:col-span-5 xl:col-span-4">
+            <div className="sticky top-32 space-y-6 sm:space-y-8">
+              <div className="p-6 sm:p-8 bg-muted/20 rounded-[2.5rem] border border-foreground/5 shadow-sm">
+                <h3 className="text-xl font-black uppercase tracking-tight mb-6 sm:mb-8 flex items-center">
                   <Calendar className="mr-3 text-primary" size={24} />
                   Date e Biglietti
                 </h3>
@@ -114,8 +152,8 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
                       <div key={idx} className="pb-6 border-b border-foreground/5 last:border-0 last:pb-0">
                         <div className="font-bold text-lg mb-1">{d.date}</div>
                         <div className="flex items-start text-foreground/60 text-sm mb-4">
-                          <MapPin size={16} className="mr-2 mt-0.5 text-primary/60" />
-                          {d.location}
+                          <MapPin size={16} className="mr-2 mt-0.5 text-primary/60 shrink-0" />
+                          <span>{d.location}</span>
                         </div>
                         {d.ticket_label && (
                           d.ticket_href ? (
@@ -143,13 +181,22 @@ export default function SpettacoloDettaglioClient({ content, slug }: { content: 
               </div>
               
               {show.details && show.details.length > 0 && (
-                <div className="p-8 border-2 border-foreground/10 rounded-[2.5rem] bg-transparent">
-                  <h4 className="font-black mb-6 uppercase tracking-[0.2em] text-xs opacity-60">Info Spettacolo</h4>
+                <div className="p-6 sm:p-8 border border-foreground/10 rounded-[2.5rem] bg-muted/10">
+                  <h4 className="font-black mb-6 uppercase tracking-[0.2em] text-xs text-foreground/50">
+                    Info Spettacolo
+                  </h4>
                   <div className="space-y-4">
                     {show.details.map((detail: any, dIdx: number) => (
-                      <div key={dIdx} className="flex justify-between items-center text-sm border-b border-foreground/5 pb-4 last:border-0 last:pb-0">
-                        <span className="opacity-40 font-bold uppercase tracking-wider">{detail.label}</span>
-                        <span className="font-black text-primary">{detail.value}</span>
+                      <div 
+                        key={dIdx} 
+                        className="flex items-start justify-between gap-4 text-sm border-b border-foreground/5 pb-3.5 last:border-0 last:pb-0"
+                      >
+                        <span className="text-xs font-bold uppercase tracking-wider text-foreground/50 shrink-0 max-w-[45%] pt-0.5">
+                          {detail.label}
+                        </span>
+                        <span className="font-black text-primary text-right leading-snug break-words">
+                          {detail.value}
+                        </span>
                       </div>
                     ))}
                   </div>
