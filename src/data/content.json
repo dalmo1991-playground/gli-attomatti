@@ -50,8 +50,8 @@
       "href": "/Iniziative",
       "sublinks": [
         {
-          "label": "Corso di Teatro",
-          "href": "/Iniziative/corso-di-teatro"
+          "label": "Laboratorio Teatrale",
+          "href": "/Iniziative/laboratorio-teatrale"
         }
       ]
     },
@@ -762,9 +762,9 @@
       "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
       "archive_sections": [
         {
-          "slug": "corso-di-teatro",
-          "title": "Corso di Teatro",
-          "year": "2026",
+          "slug": "laboratorio-teatrale",
+          "title": "Laboratorio Teatrale",
+          "year": "2026-27",
           "short_description": "Un percorso formativo pratico ed emozionante per avvicinarsi alla recitazione, alla dizione e all'improvvisazione scenica.",
           "text": "Il nostro corso di teatro è pensato per chiunque voglia mettersi in gioco, superare la timidezza o perfezionare le proprie capacità sceniche in un ambiente stimolante, accogliente e divertente.\n\nAttraverso esercizi di respirazione, dizione, improvvisazione teatrale e lavoro corale sul testo, esploreremo insieme i fondamenti della recitazione fino alla messa in scena di un saggio finale aperto al pubblico.",
           "images": [
@@ -779,10 +779,10 @@
           ],
           "dates": [
             {
-              "date": "Ogni Martedì (da Ottobre a Maggio), ore 20:00 - 22:00",
-              "location": "Zurigo",
-              "ticket_label": "Iscriviti o Richiedi Info",
-              "ticket_href": "/Contatti",
+              "date": "Martedì, 19:00 - 21:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "Iscrizioni chiuse",
+              "ticket_href": "",
               "visible": true
             }
           ],
@@ -794,7 +794,7 @@
             },
             {
               "label": "Frequenza",
-              "value": "Settimanale (2 ore)",
+              "value": "Settimanale, con periodi di pausa",
               "visible": true
             },
             {
@@ -804,7 +804,7 @@
             },
             {
               "label": "A cura di",
-              "value": "Gli Attomatti",
+              "value": "Gli Attomatti - Domenico Scotti di Carlo",
               "visible": true
             }
           ],
