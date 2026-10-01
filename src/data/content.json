@@ -52,6 +52,10 @@
         {
           "label": "Laboratorio Teatrale",
           "href": "/Iniziative/laboratorio-teatrale"
+        },
+        {
+          "label": "Cineforum",
+          "href": "/iniziative/cineforum"
         }
       ]
     },
@@ -167,12 +171,8 @@
           "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           "images": [
             {
-              "url": "/images/show1.png",
-              "alt": "Storia 1"
-            },
-            {
-              "url": "/images/show2.png",
-              "alt": "Storia 2"
+              "url": "/images/1782553781605-DSC_0682.webp",
+              "alt": "Foto sezione"
             }
           ],
           "visible": true
@@ -182,8 +182,12 @@
           "text": "La missione degli Attomatti è creare un ponte culturale attraverso il teatro. Vogliamo offrire agli italiani a Zurigo e agli amanti della nostra lingua un punto di incontro dove l'arte diventa comunità.\n\nOgni nostra produzione è frutto di mesi di prove, passione e dedizione, con l'obiettivo di emozionare e far riflettere il nostro pubblico.",
           "images": [
             {
-              "url": "/images/show3.png",
-              "alt": "Missione 1"
+              "url": "/images/1782553648895-DSD00540.webp",
+              "alt": "Foto sezione"
+            },
+            {
+              "url": "/images/1782553714122-DSD02274.webp",
+              "alt": "Foto sezione"
             }
           ],
           "visible": true
@@ -191,7 +195,13 @@
         {
           "title": "Verso l'infinito e oltre",
           "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          "visible": true
+          "visible": true,
+          "images": [
+            {
+              "url": "/images/1790869266263-non-sottovalutare-40.webp",
+              "alt": "Foto sezione"
+            }
+          ]
         }
       ],
       "navigation_links": [
@@ -303,7 +313,7 @@
           "visible": true
         },
         {
-          "name": "Delia Della Porta",
+          "name": "Delia",
           "role": "Fondatore",
           "image": "/images/show1.png",
           "bio": "Lorem ipsum dolor sit amet.",
@@ -832,6 +842,62 @@
             }
           ],
           "visible": true
+        },
+        {
+          "title": "Cineforum",
+          "slug": "cineforum",
+          "year": "2026-27",
+          "short_description": "<span data-path-to-node=\"0,0\">\"Nel passo lento della meraviglia\" è una rassegna cinematografica in cinque appuntamenti organizzata da UNITRE e Gli Attomatti Teatro, in programma dal 3 ottobre 2026 al 20 marzo 2027</span><span data-path-to-node=\"0,1\"><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><source-footnote _nghost-ng-c1106491258=\"\" class=\"ng-star-inserted\"><sup _ngcontent-ng-c1106491258=\"\" class=\"superscript\"><!----></sup></source-footnote><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></span><span data-path-to-node=\"0,2\">.</span><sources-carousel-inline ng-version=\"0.0.0-PLACEHOLDER\" _nghost-ng-c2566309193=\"\"></sources-carousel-inline>",
+          "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE e Gli Attomatti Teatro, questa rassegna propone cinque imperdibili incontri, concepiti come cinque sguardi unici e profondi sul tema del tempo. È un'occasione per ritrovarsi, riflettere e lasciarsi incantare dall'emozione della proiezione condivisa.<div><br></div><div>Il percorso cinematografico si snoderà attraverso cinque date, tutte in programma dalle 18.00 alle 20.00 presso la ABZ Saal in Balberstrasse 47 a Zurigo. Si comincia il 3 ottobre 2026 con il grande classico \"Tempi moderni\", per poi proseguire il 14 novembre con \"Le vacanze di Monsieur Hulot\". Nel nuovo anno, gli appuntamenti riprenderanno il 16 gennaio 2027 con \"I vitelloni\", seguiti il 20 febbraio da \"Pane e tulipani\", per concludersi infine il 20 marzo con \"Una storia vera\". Come di consueto, il titolo esatto sarà confermato prima di ciascun incontro per gestire eventuali variazioni di programma.</div><div><br></div><div>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria contattando Gli Attomatti al numero +41 78 942 39 93. Per gli iscritti UNITRE, invece, l'ingresso è già interamente compreso nella quota associativa; in questo caso, per richiedere informazioni e riservare il proprio posto è possibile fare riferimento a Elvira Di Mauro al numero 076 639 09 52.&nbsp;</div>",
+          "hero_image": "",
+          "dates": [
+            {
+              "date": "3 ottobre 2026, ore 18:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "Tempi Moderni",
+              "ticket_href": ""
+            },
+            {
+              "date": "4 novembre 2026, ore 18:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "Le vacanze di Monsieur Hulot",
+              "ticket_href": ""
+            },
+            {
+              "date": "16 Gennaio 2027, ore 18:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "I vitelloni",
+              "ticket_href": ""
+            },
+            {
+              "date": "20 Febbraio 2027, ore 18:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "Pane e tulipani",
+              "ticket_href": ""
+            },
+            {
+              "date": "20 Marzo 2027, ore 18:00",
+              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "ticket_label": "Una storia vera",
+              "ticket_href": ""
+            }
+          ],
+          "details": [
+            {
+              "label": "Prenotazione",
+              "value": "+41 78 942 39 93"
+            },
+            {
+              "label": "UniTre",
+              "value": "+41 76 639 09 52"
+            }
+          ],
+          "images": [
+            {
+              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+              "alt": "Locandina"
+            }
+          ]
         }
       ]
     },
