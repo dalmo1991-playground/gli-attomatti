@@ -17,6 +17,7 @@ import {
   Trash2
 } from "lucide-react";
 import { useAdmin } from "../../context/AdminContext";
+import { compressImageClient } from "@/lib/clientImageCompress";
 
 export interface MediaImage {
   url: string;
@@ -96,43 +97,76 @@ export function MediaLibraryModal({
   const handleDirectUpload = async (files: FileList | null) => {
     if (!files || files.length === 0 || !adminSecret) return;
     setIsUploading(true);
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
-    }
 
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: {
-          "x-admin-secret": adminSecret
-        },
-        body: formData
-      });
+      const stagedBlobs: Array<{ path: string; sha: string; url: string; originalName: string }> = [];
 
-      if (res.ok) {
-        const data = await res.json();
-        const urls: string[] = data.urls || (data.url ? [data.url] : []);
-        const newImages: MediaImage[] = urls.map((uploadedUrl, idx) => {
-          const file = files[idx];
-          const cleanName = file ? file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ") : "Nuova foto";
-          return {
-            url: uploadedUrl,
-            name: cleanName,
-            timestamp: Date.now()
-          };
+      // 1. Stage each file (pre-compressed client-side)
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const compressedFile = await compressImageClient(file, 1920, 0.82);
+
+        const formData = new FormData();
+        formData.append("action", "stage");
+        formData.append("file", compressedFile);
+
+        const stageRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            "x-admin-secret": adminSecret
+          },
+          body: formData
         });
 
-        // Add to images list and select them
-        setImages((prev) => [...newImages, ...prev.filter((i) => !urls.includes(i.url))]);
-        if (multiple) {
-          setSelectedUrls((prev) => [...prev, ...urls]);
-        } else if (urls.length > 0) {
-          setSelectedUrls([urls[0]]);
+        if (!stageRes.ok) {
+          const err = await stageRes.json().catch(() => ({}));
+          throw new Error(err.error || `Errore caricamento di "${file.name}"`);
         }
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(`Errore di caricamento: ${err.error || "Errore sconosciuto"}`);
+
+        const stageData = await stageRes.json();
+        stagedBlobs.push({
+          path: stageData.filePath,
+          sha: stageData.blobSha,
+          url: stageData.url,
+          originalName: file.name
+        });
+      }
+
+      // 2. Commit all staged files in 1 single commit
+      const commitRes = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret
+        },
+        body: JSON.stringify({
+          action: "commit",
+          items: stagedBlobs,
+          message: `Upload batch of ${stagedBlobs.length} images via Media Modal`
+        })
+      });
+
+      if (!commitRes.ok) {
+        const err = await commitRes.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante il salvataggio su GitHub");
+      }
+
+      const urls = stagedBlobs.map((b) => b.url);
+      const newImages: MediaImage[] = stagedBlobs.map((b) => {
+        const cleanName = b.originalName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        return {
+          url: b.url,
+          name: cleanName,
+          timestamp: Date.now()
+        };
+      });
+
+      // Add to images list and select them
+      setImages((prev) => [...newImages, ...prev.filter((i) => !urls.includes(i.url))]);
+      if (multiple) {
+        setSelectedUrls((prev) => [...prev, ...urls]);
+      } else if (urls.length > 0) {
+        setSelectedUrls([urls[0]]);
       }
     } catch (err) {
       alert(`Errore di caricamento: ${(err as Error).message}`);

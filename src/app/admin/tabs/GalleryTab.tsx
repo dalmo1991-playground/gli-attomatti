@@ -29,6 +29,7 @@ import { useAdmin } from "../context/AdminContext";
 import { findAllImageReferences, ImageReference } from "../utils/imageReferences";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaImage } from "../components/ui/MediaLibraryModal";
+import { compressImageClient } from "@/lib/clientImageCompress";
 
 function StagedThumbnail({
   file,
@@ -90,6 +91,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState<string | null>(null);
   const [stagedFiles, setStagedFiles] = useState<File[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -155,7 +157,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
     setStagedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Upload all staged files in 1 single commit
+  // Upload all staged files in 1 single commit with client pre-compression
   const handleUploadStaged = async () => {
     if (stagedFiles.length === 0) return;
     if (!adminSecret) {
@@ -164,27 +166,63 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
     }
 
     setIsUploading(true);
+    setUploadProgressText("Preparazione...");
     try {
-      const formData = new FormData();
-      for (const file of stagedFiles) {
-        formData.append("files", file);
+      const stagedBlobs: Array<{ path: string; sha: string; url: string }> = [];
+
+      // 1. Stage each file individually (pre-compressed client-side to WebP < 250KB)
+      for (let i = 0; i < stagedFiles.length; i++) {
+        const file = stagedFiles[i];
+        setUploadProgressText(`Ottimizzazione e invio foto ${i + 1} di ${stagedFiles.length}...`);
+
+        const compressedFile = await compressImageClient(file, 1920, 0.82);
+
+        const formData = new FormData();
+        formData.append("action", "stage");
+        formData.append("file", compressedFile);
+
+        const stageRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            "x-admin-secret": adminSecret
+          },
+          body: formData
+        });
+
+        if (!stageRes.ok) {
+          const err = await stageRes.json().catch(() => ({}));
+          throw new Error(err.error || `Errore durante il caricamento di "${file.name}"`);
+        }
+
+        const stageData = await stageRes.json();
+        stagedBlobs.push({
+          path: stageData.filePath,
+          sha: stageData.blobSha,
+          url: stageData.url
+        });
       }
 
-      const res = await fetch("/api/upload", {
+      // 2. Commit all staged files together in 1 single commit (tiny ~1KB JSON payload)
+      setUploadProgressText("Creazione commit unico su GitHub...");
+      const commitRes = await fetch("/api/upload", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "x-admin-secret": adminSecret
         },
-        body: formData
+        body: JSON.stringify({
+          action: "commit",
+          items: stagedBlobs,
+          message: `Upload batch of ${stagedBlobs.length} images via Admin Gallery`
+        })
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Errore durante il caricamento");
+      if (!commitRes.ok) {
+        const err = await commitRes.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante il salvataggio su GitHub");
       }
 
-      const data = await res.json();
-      const count = data.count || stagedFiles.length;
+      const count = stagedBlobs.length;
       setStagedFiles([]);
       setSuccessMessage(`${count} ${count === 1 ? "foto caricata" : "foto caricate"} con successo con 1 solo commit Git!`);
       setTimeout(() => setSuccessMessage(null), 6000);
@@ -193,6 +231,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
       alert(`Errore di caricamento: ${(err as Error).message}`);
     } finally {
       setIsUploading(false);
+      setUploadProgressText(null);
     }
   };
 
@@ -488,7 +527,7 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
               >
                 {isUploading ? (
                   <>
-                    <Loader2 size={15} className="animate-spin" /> Caricamento in corso...
+                    <Loader2 size={15} className="animate-spin shrink-0" /> {uploadProgressText || "Caricamento in corso..."}
                   </>
                 ) : (
                   <>

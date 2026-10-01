@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
+import { compressImageClient } from "@/lib/clientImageCompress";
 
 export interface GalleryImage {
   url: string;
@@ -63,37 +64,67 @@ export function GalleryField({
     }
 
     setIsUploading(true);
-    const newItems: GalleryImage[] = [];
 
     try {
-      const formData = new FormData();
+      const stagedBlobs: Array<{ path: string; sha: string; url: string; originalName: string }> = [];
+
+      // 1. Stage each file (pre-compressed client-side)
       for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-      }
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: {
-          "x-admin-secret": adminSecret
-        },
-        body: formData
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Errore durante il caricamento");
-      }
-
-      const data = await res.json();
-      const urls: string[] = data.urls || (data.url ? [data.url] : []);
-      for (let i = 0; i < urls.length; i++) {
         const file = files[i];
-        const cleanName = file ? file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ") : "Foto";
-        newItems.push({
-          url: urls[i],
-          alt: cleanName
+        const compressedFile = await compressImageClient(file, 1920, 0.82);
+
+        const formData = new FormData();
+        formData.append("action", "stage");
+        formData.append("file", compressedFile);
+
+        const stageRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            "x-admin-secret": adminSecret
+          },
+          body: formData
+        });
+
+        if (!stageRes.ok) {
+          const err = await stageRes.json().catch(() => ({}));
+          throw new Error(err.error || `Errore caricamento di "${file.name}"`);
+        }
+
+        const stageData = await stageRes.json();
+        stagedBlobs.push({
+          path: stageData.filePath,
+          sha: stageData.blobSha,
+          url: stageData.url,
+          originalName: file.name
         });
       }
+
+      // 2. Commit all staged files in 1 single commit
+      const commitRes = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret
+        },
+        body: JSON.stringify({
+          action: "commit",
+          items: stagedBlobs,
+          message: `Upload batch of ${stagedBlobs.length} images via Gallery Field`
+        })
+      });
+
+      if (!commitRes.ok) {
+        const err = await commitRes.json().catch(() => ({}));
+        throw new Error(err.error || "Errore durante il salvataggio su GitHub");
+      }
+
+      const newItems: GalleryImage[] = stagedBlobs.map((b) => {
+        const cleanName = b.originalName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        return {
+          url: b.url,
+          alt: cleanName
+        };
+      });
 
       if (newItems.length > 0) {
         onChange([...images, ...newItems]);

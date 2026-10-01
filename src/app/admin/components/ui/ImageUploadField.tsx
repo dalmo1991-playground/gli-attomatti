@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
+import { compressImageClient } from "@/lib/clientImageCompress";
 
 interface ImageUploadFieldProps {
   label?: string;
@@ -42,10 +43,13 @@ export function ImageUploadField({
     }
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
 
     try {
+      // Compress client-side to WebP max 1920px (< 250KB) to prevent 4.5MB payload limit
+      const compressedFile = await compressImageClient(file, 1920, 0.82);
+      const formData = new FormData();
+      formData.append("file", compressedFile);
+
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: {

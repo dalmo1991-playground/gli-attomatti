@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { commitMultipleToGitHub } from '@/lib/github';
+import { commitMultipleToGitHub, createGitHubBlob, commitTreeItems } from '@/lib/github';
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
@@ -28,9 +28,112 @@ export async function POST(request: Request) {
     );
   }
 
+  const contentType = request.headers.get('content-type') || '';
+
+  // 1. COMMIT STAGED BATCH (JSON request: small 1KB payload, commits all blobs in 1 commit)
+  if (contentType.includes('application/json')) {
+    try {
+      const body = await request.json();
+      if (body.action === 'commit') {
+        const items = (body.items || []) as Array<{ path: string; sha: string; url?: string }>;
+        if (items.length === 0) {
+          return NextResponse.json({ error: 'Nessun elemento da committare' }, { status: 400 });
+        }
+
+        const commitMessage =
+          body.message ||
+          (items.length === 1
+            ? `Upload image: ${path.basename(items[0].path)} via Admin Console`
+            : `Upload batch of ${items.length} images via Admin Console`);
+
+        let commitSha: string | undefined;
+        let commitUrl: string | undefined;
+
+        if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) {
+          const commitResult = await commitTreeItems({
+            items: items.filter((i) => i.sha),
+            message: commitMessage
+          });
+          commitSha = commitResult.commitSha;
+          commitUrl = commitResult.commitUrl;
+        }
+
+        return NextResponse.json({
+          success: true,
+          count: items.length,
+          urls: items.map((i) => i.url || `/${i.path.replace(/^public\//, '')}`),
+          commitSha,
+          commitUrl
+        });
+      }
+    } catch (err) {
+      console.error('Error committing staged batch:', err);
+      return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    }
+  }
+
+  // 2. FORM DATA (STAGE SINGLE FILE OR BATCH UPLOAD)
   try {
     const formData = await request.formData();
-    // Accept multiple files from 'files' or single from 'file'
+    const action = formData.get('action') as string | null;
+
+    // A. STAGE A SINGLE FILE (Uploads 1 pre-compressed file, creates blob, NO commit yet)
+    if (action === 'stage') {
+      const file = (formData.get('file') || formData.get('files')) as File | null;
+      if (!file) {
+        return NextResponse.json({ error: 'Nessun file fornito per lo staging' }, { status: 400 });
+      }
+
+      const inputBuffer = Buffer.from(await file.arrayBuffer());
+      const optimizedBuffer = await sharp(inputBuffer)
+        .rotate()
+        .resize({
+          width: 1920,
+          withoutEnlargement: true,
+          fit: 'inside'
+        })
+        .webp({ quality: 80 })
+        .toBuffer();
+
+      const timestamp = Date.now();
+      const originalName = file.name.split('.').slice(0, -1).join('.') || 'image';
+      const sanitizedName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const randomSuffix = Math.random().toString(36).substring(2, 6);
+      const fileName = `${timestamp}-${randomSuffix}-${sanitizedName}.webp`;
+      const filePath = `public/images/${fileName}`;
+
+      // Local filesystem save in dev
+      if (process.env.NODE_ENV === 'development') {
+        try {
+          const localDir = path.join(process.cwd(), 'public/images');
+          if (!fs.existsSync(localDir)) {
+            await fs.promises.mkdir(localDir, { recursive: true });
+          }
+          await fs.promises.writeFile(path.join(localDir, fileName), optimizedBuffer);
+        } catch (fsErr) {
+          console.warn('Local fs write error in dev:', fsErr);
+        }
+      }
+
+      let blobSha: string | undefined;
+      if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) {
+        blobSha = await createGitHubBlob({
+          content: optimizedBuffer,
+          isBinary: true
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        fileName,
+        filePath,
+        url: `/images/${fileName}`,
+        blobSha: blobSha || '',
+        size: optimizedBuffer.length
+      });
+    }
+
+    // B. STANDARD UPLOAD (Single or small batch direct upload)
     const filesFromAll = formData.getAll('files') as File[];
     const singleFile = formData.get('file') as File | null;
     const allFiles: File[] =
@@ -46,10 +149,6 @@ export async function POST(request: Request) {
 
     const timestamp = Date.now();
 
-    // Process all images in parallel with Sharp
-    // 1. Resize to max 1920px width (keeping aspect ratio)
-    // 2. Convert to WebP (better compression)
-    // 3. Auto-rotate based on EXIF
     const processedFiles = await Promise.all(
       allFiles.map(async (file, idx) => {
         const inputBuffer = Buffer.from(await file.arrayBuffer());
@@ -79,7 +178,6 @@ export async function POST(request: Request) {
       })
     );
 
-    // In local development, ensure public/images directory exists and save locally
     if (process.env.NODE_ENV === 'development') {
       try {
         const localDir = path.join(process.cwd(), 'public/images');
@@ -94,7 +192,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Try committing all images to GitHub in a SINGLE commit
     try {
       const commitMessage =
         processedFiles.length === 1
@@ -110,7 +207,6 @@ export async function POST(request: Request) {
         message: commitMessage
       });
     } catch (githubErr: any) {
-      // In development, if GITHUB_TOKEN is not configured, local files are already written
       if (
         process.env.NODE_ENV === 'development' &&
         (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
