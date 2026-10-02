@@ -12,24 +12,34 @@ import Image from "next/image";
 
 
 export default function AttoriClient({ content }: { content: any }) {
-  const { attori } = content.pages;
-  const { join_us } = attori;
+  const attori = content?.pages?.attori || {
+    title: "Le Persone",
+    list: [],
+    join_us: {
+      title: "Vuoi unirti a noi?",
+      text: "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
+      cta_label: "Contattaci",
+      cta_href: "/Contatti"
+    }
+  };
+  const list: any[] = Array.isArray(attori.list) ? attori.list : [];
+  const join_us = attori.join_us || {};
 
   const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
   const [selectedActor, setSelectedActor] = useState<any | null>(null);
 
   const galleryImages = useMemo(() => {
-    return attori.list.map((person: any) => ({
-      url: person.image,
-      alt: person.name
+    return list.map((person: any) => ({
+      url: person?.image?.trim() || "/images/1782553290530-TheaterCurtain.webp",
+      alt: person?.name || "Attore"
     }));
-  }, [attori.list]);
+  }, [list]);
 
   return (
     <div>
       {/* Header */}
       <PageHeader
-        title={attori.title}
+        title={attori.title || "Le Persone"}
         description="Le persone che rendono possibile la magia del teatro Attomatti."
         backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
         compact
@@ -37,70 +47,90 @@ export default function AttoriClient({ content }: { content: any }) {
 
       {/* Actors Grid */}
       <Section className="py-24">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
-          {attori.list.map((person: any, idx: number) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover="hover"
-              onClick={() => setSelectedActor(person)}
-              className="group text-center cursor-pointer"
-            >
-              <div className="relative w-64 h-64 mx-auto mb-8">
-                {/* Decorative Ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
+        {list.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+            {list.filter((p) => p.visible !== false).map((person: any, idx: number) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover="hover"
+                onClick={() => setSelectedActor(person)}
+                className="group text-center cursor-pointer"
+              >
+                <div className="relative w-64 h-64 mx-auto mb-8">
+                  {/* Decorative Ring */}
+                  <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
+                  
+                  {/* Profile Pic Container */}
+                  <div 
+                    className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
+                  >
+                    <Image 
+                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                      alt={person.name || "Attore"} 
+                      fill
+                      sizes="(max-width: 640px) 256px, 320px"
+                      className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
+                    />
+                  </div>
+                </div>
                 
-                {/* Profile Pic Container */}
-                <div 
-                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
-                >
-                  <Image 
-                    src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                    alt={person.name} 
-                    fill
-                    sizes="(max-width: 640px) 256px, 320px"
-                    className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
-                  />
+                <div className="space-y-3">
+                  <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center text-balance break-words">
+                    {person.name}
+                  </h3>
+                  {person.role && (
+                    <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
+                      {person.role}
+                    </div>
+                  )}
+                  {person.bio && (
+                    <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
+                      {person.bio}
+                    </p>
+                  )}
                 </div>
-
-
-              </div>
-              
-              <div className="space-y-3">
-                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center text-balance break-words">
-                  {person.name}
-                </h3>
-                <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
-                  {person.role}
-                </div>
-                <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
-                  {person.bio}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-foreground/40 font-medium">
+            Nessun membro attualmente inserito.
+          </div>
+        )}
       </Section>
 
       {/* Join Us Call to Action */}
-      {join_us && (
+      {join_us && (join_us.title || join_us.text) && (
         <Section className="bg-muted/10 py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
-              {join_us.title}
-            </h2>
-            <p className="text-lg text-foreground/60 mb-10">
-              {join_us.text}
-            </p>
-            <Link 
-              href={join_us.cta_href}
-              className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
-            >
-              {join_us.cta_label}
-            </Link>
+            {join_us.title && (
+              <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
+                {join_us.title}
+              </h2>
+            )}
+            {join_us.text && (
+              <p className="text-lg text-foreground/60 mb-10">
+                {join_us.text}
+              </p>
+            )}
+            {join_us.cta_label && (
+              join_us.cta_href ? (
+                <Link 
+                  href={join_us.cta_href}
+                  className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
+                >
+                  {join_us.cta_label}
+                </Link>
+              ) : (
+                <div className="px-10 py-5 bg-primary/20 text-primary rounded-full font-black text-lg inline-block">
+                  {join_us.cta_label}
+                </div>
+              )
+            )}
           </div>
         </Section>
       )}

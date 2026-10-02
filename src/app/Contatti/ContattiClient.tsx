@@ -9,7 +9,13 @@ import Link from "next/link";
 import { trackContact } from "@/lib/tracking";
 
 export default function ContattiClient({ content }: { content: any }) {
-  const { contatti } = content.pages;
+  const contatti = content?.pages?.contatti || {
+    title: "Contattaci",
+    description: "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
+    email: "compagniateatralegliattomatti@gmail.com",
+    socials: []
+  };
+  const socials: any[] = Array.isArray(contatti.socials) ? contatti.socials : [];
 
   const SocialIcon = ({ platform }: { platform: string }) => {
     if (platform === "Facebook") {
@@ -35,36 +41,37 @@ export default function ContattiClient({ content }: { content: any }) {
     <div className="min-h-screen">
       {/* Hero Section */}
       <PageHeader
-        title={contatti.title}
-        description={contatti.description}
+        title={contatti.title || "Contattaci"}
+        description={contatti.description || "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto."}
       />
 
       {/* Contact Cards */}
       <Section className="py-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {/* Email Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="p-12 bg-muted/20 rounded-[3rem] border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
-          >
-            <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
-              <Mail size={40} />
-            </div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">Email</h2>
-            <Link 
-              href={`mailto:${contatti.email}`}
-              onClick={() => trackContact("email", contatti.email)}
-              className="text-2xl md:text-3xl font-black hover:text-primary transition-colors break-all"
+          {contatti.email && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="p-12 bg-muted/20 rounded-[3rem] border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
             >
-              {contatti.email}
-            </Link>
-          </motion.div>
-
+              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                <Mail size={40} />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">Email</h2>
+              <Link 
+                href={`mailto:${contatti.email}`}
+                onClick={() => trackContact("email", contatti.email)}
+                className="text-2xl md:text-3xl font-black hover:text-primary transition-colors break-all"
+              >
+                {contatti.email}
+              </Link>
+            </motion.div>
+          )}
 
           {/* Social Cards */}
-          {contatti.socials.map((social: any, idx: number) => {
+          {socials.filter((s: any) => s && s.visible !== false).map((social: any, idx: number) => {
             return (
               <motion.div
                 key={idx}
@@ -78,14 +85,20 @@ export default function ContattiClient({ content }: { content: any }) {
                   <SocialIcon platform={social.platform} />
                 </div>
                 <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">{social.platform}</h2>
-                <Link 
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-2xl md:text-3xl font-black hover:text-primary transition-colors"
-                >
-                  {social.handle}
-                </Link>
+                {social.href ? (
+                  <Link 
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-2xl md:text-3xl font-black hover:text-primary transition-colors"
+                  >
+                    {social.handle || social.platform}
+                  </Link>
+                ) : (
+                  <div className="text-2xl md:text-3xl font-black">
+                    {social.handle || social.platform}
+                  </div>
+                )}
               </motion.div>
             );
           })}

@@ -8,15 +8,21 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export default function ParlanoDiNoiClient({ content }: { content: any }) {
-  const { parlano_di_noi } = content.pages;
-  const { press_contact } = parlano_di_noi;
+  const parlano_di_noi = content?.pages?.parlano_di_noi || {
+    title: "Dicono di Noi",
+    description: "Gli attomatti nella stampa",
+    press: [],
+    press_contact: {}
+  };
+  const press: any[] = Array.isArray(parlano_di_noi.press) ? parlano_di_noi.press : [];
+  const press_contact = parlano_di_noi.press_contact || {};
 
   return (
     <div>
       {/* Header */}
       <PageHeader
-        title={parlano_di_noi.title}
-        description={parlano_di_noi.description}
+        title={parlano_di_noi.title || "Dicono di Noi"}
+        description={parlano_di_noi.description || "Gli attomatti nella stampa"}
         backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
         compact
       />
@@ -24,7 +30,7 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
       {/* Press Quotes */}
       <Section className="py-24">
         <div className="max-w-5xl mx-auto space-y-12">
-          {parlano_di_noi.press.map((item: any, idx: number) => {
+          {press.filter((item: any) => item && item.visible !== false).map((item: any, idx: number) => {
             const CardContent = (
               <div className="relative z-10">
                 <blockquote className="text-3xl md:text-4xl font-serif italic text-foreground/80 leading-snug mb-10 whitespace-pre-wrap">
@@ -85,21 +91,33 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
       </Section>
 
       {/* Press Area CTA - Styled like Join Us */}
-      {press_contact && (
+      {press_contact && (press_contact.title || press_contact.text) && (
         <Section className="bg-muted/10 py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
-              {press_contact.title}
-            </h2>
-            <p className="text-lg text-foreground/60 mb-10">
-              {press_contact.text}
-            </p>
-            <Link 
-              href={press_contact.cta_href}
-              className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
-            >
-              {press_contact.cta_label}
-            </Link>
+            {press_contact.title && (
+              <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
+                {press_contact.title}
+              </h2>
+            )}
+            {press_contact.text && (
+              <p className="text-lg text-foreground/60 mb-10">
+                {press_contact.text}
+              </p>
+            )}
+            {press_contact.cta_label && (
+              press_contact.cta_href ? (
+                <Link 
+                  href={press_contact.cta_href}
+                  className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
+                >
+                  {press_contact.cta_label}
+                </Link>
+              ) : (
+                <div className="px-10 py-5 bg-primary/20 text-primary rounded-full font-black text-lg inline-block">
+                  {press_contact.cta_label}
+                </div>
+              )
+            )}
           </div>
         </Section>
       )}

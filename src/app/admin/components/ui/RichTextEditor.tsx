@@ -263,6 +263,25 @@ export function RichTextEditor({
     updateActiveFormats();
   };
 
+  // Handle paste: strip all external HTML styles and paste as clean plain text
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    if (!text) return;
+
+    if (document.queryCommandSupported && document.queryCommandSupported("insertText")) {
+      document.execCommand("insertText", false, text);
+    } else {
+      const selection = window.getSelection();
+      if (!selection || !selection.rangeCount) return;
+      selection.deleteFromDocument();
+      const textNode = document.createTextNode(text);
+      selection.getRangeAt(0).insertNode(textNode);
+      selection.collapse(textNode, text.length);
+    }
+    handleInput();
+  };
+
   // Keyboard shortcut listener
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.metaKey || e.ctrlKey) {
@@ -446,6 +465,7 @@ export function RichTextEditor({
             ref={editorRef}
             contentEditable={!disabled}
             onInput={handleInput}
+            onPaste={handlePaste}
             onKeyDown={handleKeyDown}
             onKeyUp={updateActiveFormats}
             onMouseUp={updateActiveFormats}

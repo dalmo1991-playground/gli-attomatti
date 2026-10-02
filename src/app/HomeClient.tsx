@@ -15,10 +15,14 @@ const MotionImage = motion.create(Image);
 
 
 export default function HomeClient({ content }: { content: any }) {
-  const { hero, upcoming_shows, introduction } = content.pages.home;
+  const home = content?.pages?.home || {};
+  const hero = home.hero || {};
+  const upcoming_shows = Array.isArray(home.upcoming_shows) ? home.upcoming_shows : [];
+  const introduction = home.introduction || { title: "", text: "", images: [] };
+  const introImages: any[] = Array.isArray(introduction.images) ? introduction.images : [];
 
   // Filter active shows
-  const activeShows = upcoming_shows.filter((show: any) => show.active);
+  const activeShows = upcoming_shows.filter((show: any) => show && show.active);
   const showMode = activeShows.length > 0;
 
   const [currentShowIndex, setCurrentShowIndex] = useState(0);
@@ -45,13 +49,13 @@ export default function HomeClient({ content }: { content: any }) {
   }, [showMode, activeShows.length]);
 
   useEffect(() => {
-    if (introduction.images.length > 1) {
+    if (introImages.length > 1) {
       const timer = setInterval(() => {
-        setIntroIndex((prev) => (prev + 1) % introduction.images.length);
+        setIntroIndex((prev) => (prev + 1) % introImages.length);
       }, 4000);
       return () => clearInterval(timer);
     }
-  }, [introduction.images.length]);
+  }, [introImages.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -350,22 +354,21 @@ export default function HomeClient({ content }: { content: any }) {
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
             </div>
 
-            {introduction.images && introduction.images.length > 0 && (
+            {introImages && introImages.length > 0 && (
               <AnimatePresence mode="popLayout">
                 <MotionImage
                   key={introIndex}
-                  src={introduction.images[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={introduction.images[introIndex]?.alt || "Introduzione"}
+                  src={introImages[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                  alt={introImages[introIndex]?.alt || "Introduzione"}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className={`cursor-pointer transition-transform duration-700 ${introduction.images[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
-                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
+                  className={`cursor-pointer transition-transform duration-700 ${introImages[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
+                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introImages })}
                 />
-
               </AnimatePresence>
             )}
           </div>

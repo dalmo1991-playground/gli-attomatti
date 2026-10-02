@@ -83,7 +83,15 @@ function SectionPhotoCarousel({
 }
 
 export default function ChiSiamoClient({ content }: { content: any }) {
-  const { chi_siamo } = content.pages;
+  const chi_siamo = content?.pages?.chi_siamo || {
+    title: "Chi Siamo",
+    description: "La compagnia teatrale Gli Attomatti di Zurigo.",
+    content_sections: [],
+    navigation_links: []
+  };
+
+  const sections: any[] = Array.isArray(chi_siamo.content_sections) ? chi_siamo.content_sections : [];
+  const navLinks: any[] = Array.isArray(chi_siamo.navigation_links) ? chi_siamo.navigation_links : [];
 
   const iconMap: Record<string, any> = {
     users: Users,
@@ -104,12 +112,12 @@ export default function ChiSiamoClient({ content }: { content: any }) {
     <div>
       {/* Hero Section */}
       <PageHeader
-        title={chi_siamo.title}
-        description={chi_siamo.description}
+        title={chi_siamo.title || "Chi Siamo"}
+        description={chi_siamo.description || "La compagnia teatrale Gli Attomatti di Zurigo."}
       />
 
       {/* Content Sections */}
-      {chi_siamo.content_sections.map((section: any, idx: number) => (
+      {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => (
         <Section key={idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
             <div className="md:col-span-4 sticky top-32">
@@ -145,30 +153,47 @@ export default function ChiSiamoClient({ content }: { content: any }) {
       ))}
 
       {/* Navigation Links Section */}
-      <Section className="py-24 bg-muted/10 border-t border-foreground/5">
-        <div className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {chi_siamo.navigation_links.map((link: any, idx: number) => {
-              const Icon = iconMap[link.icon] || ArrowRight;
-              return (
-                <Link
-                  key={idx}
-                  href={link.href}
-                  className="flex items-center justify-between p-8 bg-background border border-foreground/5 rounded-2xl hover:border-primary/30 transition-all hover:-translate-y-1 group shadow-sm"
-                >
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                      <Icon size={24} />
+      {navLinks.length > 0 && (
+        <Section className="py-24 bg-muted/10 border-t border-foreground/5">
+          <div className="max-w-3xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {navLinks.filter((l) => l.visible !== false).map((link: any, idx: number) => {
+                const Icon = iconMap[link.icon] || ArrowRight;
+                const safeHref = link.href?.startsWith("/") || link.href?.startsWith("http")
+                  ? link.href
+                  : `/${link.href || ""}`;
+                return safeHref ? (
+                  <Link
+                    key={idx}
+                    href={safeHref}
+                    className="flex items-center justify-between p-8 bg-background border border-foreground/5 rounded-2xl hover:border-primary/30 transition-all hover:-translate-y-1 group shadow-sm"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                        <Icon size={24} />
+                      </div>
+                      <span className="text-xl font-bold">{link.label}</span>
                     </div>
-                    <span className="text-xl font-bold">{link.label}</span>
+                    <ArrowRight className="text-primary opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
+                  </Link>
+                ) : (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-8 bg-background border border-foreground/5 rounded-2xl shadow-sm"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-6">
+                        <Icon size={24} />
+                      </div>
+                      <span className="text-xl font-bold">{link.label}</span>
+                    </div>
                   </div>
-                  <ArrowRight className="text-primary opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
-                </Link>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </Section>
+        </Section>
+      )}
 
       <Lightbox
         images={lightbox.images}
