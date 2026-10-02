@@ -73,9 +73,9 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
 
         {/* Center: Branch & Environment Badge */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/40 border border-foreground/5 text-xs font-mono font-semibold text-foreground/60">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className={`w-2 h-2 rounded-full ${activeBranch === 'main' ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
           <span>Branch:</span>
-          <span className="font-bold text-foreground">{activeBranch}</span>
+          <span className={`font-bold ${activeBranch === 'main' ? 'text-emerald-400' : 'text-amber-400'}`}>{activeBranch}</span>
         </div>
 
         {/* Right: Actions (Diff, Secret, Publish, View Site) */}
