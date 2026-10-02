@@ -38,7 +38,7 @@ export default function RegistrationClient({ page }: RegistrationClientProps) {
     try {
       const match = url.match(/tally\.so\/(?:r|embed)\/([a-zA-Z0-9_-]+)/);
       if (match && match[1]) {
-        return `https://tally.so/embed/${match[1]}?alignLeft=1&hideTitle=1&transparentBackground=0`;
+        return `https://tally.so/embed/${match[1]}?alignLeft=1&transparentBackground=0`;
       }
       const u = new URL(url);
       u.protocol = "https:";
@@ -95,7 +95,7 @@ export default function RegistrationClient({ page }: RegistrationClientProps) {
         {/* Embedded Tally Card with Solid White Background */}
         {embedUrl ? (
           <div className="space-y-4">
-            <div className="w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200 relative">
+            <div className="w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200 relative p-4 sm:p-6 md:p-8">
               <iframe
                 data-tally-src={embedUrl}
                 src={embedUrl}

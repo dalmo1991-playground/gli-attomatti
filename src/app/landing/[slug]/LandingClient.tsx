@@ -699,7 +699,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                 try {
                   const match = rawUrl.match(/tally\.so\/(?:r|embed)\/([a-zA-Z0-9_-]+)/);
                   if (match && match[1]) {
-                    embedUrl = `https://tally.so/embed/${match[1]}?alignLeft=1&hideTitle=1&transparentBackground=0&dynamicHeight=1`;
+                    embedUrl = `https://tally.so/embed/${match[1]}?alignLeft=1&transparentBackground=0&dynamicHeight=1`;
                   } else {
                     const u = new URL(rawUrl);
                     u.protocol = "https:";
@@ -738,7 +738,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                     {/* Embedded Tally Card with Solid White Background */}
                     {embedUrl ? (
                       <div className="space-y-4">
-                        <div className="w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200 relative">
+                        <div className="w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200 relative p-4 sm:p-6 md:p-8">
                           <iframe
                             data-tally-src={embedUrl}
                             src={embedUrl}
