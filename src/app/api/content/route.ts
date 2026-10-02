@@ -1,18 +1,28 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getContent } from '@/lib/data';
-import { commitToGitHub } from '@/lib/github';
+import { commitToGitHub, resolveTargetBranch } from '@/lib/github';
 import fs from 'fs';
 import path from 'path';
 
-export async function GET() {
+export async function GET(request: Request) {
   const content = await getContent();
-  return NextResponse.json(content);
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+  const branch = resolveTargetBranch(host);
+
+  return NextResponse.json(content, {
+    headers: {
+      'x-git-branch': branch,
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+    },
+  });
 }
 
 export async function POST(request: Request) {
   const secret = request.headers.get('x-admin-secret')?.trim();
   const configuredSecret = process.env.ADMIN_SECRET?.trim();
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+  const targetBranch = resolveTargetBranch(host);
 
   // If ADMIN_SECRET is not configured on the server
   if (!configuredSecret) {
@@ -54,6 +64,7 @@ export async function POST(request: Request) {
         path: 'src/data/content.json',
         content: JSON.stringify(json, null, 2),
         message: 'Update site content via Admin Console',
+        branch: targetBranch,
         isBinary: false
       });
     } catch (githubErr: any) {

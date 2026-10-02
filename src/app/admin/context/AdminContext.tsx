@@ -64,7 +64,15 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [publishStatus, setPublishStatus] = useState<PublishStatus | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeBranch, setActiveBranch] = useState<string>("dev");
+  const [activeBranch, setActiveBranch] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const h = window.location.hostname.toLowerCase();
+      if (h === "gliattomatti.ch" || h === "www.gliattomatti.ch" || h.endsWith(".gliattomatti.ch")) {
+        return "main";
+      }
+    }
+    return "dev";
+  });
   const [recoverableDraft, setRecoverableDraft] = useState<RecoverableDraft | null>(null);
   const [lastDraftSavedAt, setLastDraftSavedAt] = useState<string | null>(null);
 
@@ -100,6 +108,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     async function fetchLiveContent() {
       try {
         const res = await fetch("/api/content");
+        const branchHeader = res.headers.get("x-git-branch");
+        if (branchHeader) {
+          setActiveBranch(branchHeader);
+        }
         let liveData = contentData;
         if (res.ok) {
           liveData = await res.json();

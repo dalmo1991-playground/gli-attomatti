@@ -10,26 +10,42 @@ function getLocalGitBranch(): string | undefined {
   }
 }
 
-function resolveTargetBranch(): string {
-  // 1. If running on Vercel with a known commit ref (e.g. 'dev' or 'main')
+export function resolveTargetBranch(host?: string): string {
+  // 1. If host is provided and matches production domain, ALWAYS target main
+  if (host) {
+    const cleanHost = host.split(':')[0].toLowerCase();
+    if (
+      cleanHost === 'gliattomatti.ch' ||
+      cleanHost === 'www.gliattomatti.ch' ||
+      cleanHost.endsWith('.gliattomatti.ch')
+    ) {
+      return 'main';
+    }
+  }
+
+  // 2. If running on Vercel with a known commit ref (e.g. 'dev' or 'main')
   if (process.env.VERCEL_GIT_COMMIT_REF) {
     return process.env.VERCEL_GIT_COMMIT_REF;
   }
 
-  // 2. Distinguish by Vercel environment
+  // 3. Distinguish by Vercel environment
+  if (process.env.VERCEL_ENV === 'production') {
+    return 'main';
+  }
   if (process.env.VERCEL_ENV === 'preview') {
     return 'dev';
   }
-  if (process.env.VERCEL_ENV === 'production') {
-    return process.env.GITHUB_BRANCH || 'main';
+
+  // 4. Explicit override via env variable if set
+  if (process.env.GITHUB_BRANCH) {
+    return process.env.GITHUB_BRANCH;
   }
 
-  // 3. Fallback for local development or other hosting environments
+  // 5. Fallback for local development or other hosting environments
   return (
     process.env.CF_PAGES_BRANCH ||
     process.env.BRANCH ||
     getLocalGitBranch() ||
-    process.env.GITHUB_BRANCH ||
     'dev'
   );
 }
