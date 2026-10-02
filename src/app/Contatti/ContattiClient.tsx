@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
@@ -31,34 +32,12 @@ export default function ContattiClient({ content }: { content: any }) {
   };
 
   return (
-    <div className="pt-20 min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <Section className="bg-muted/30 py-24 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-8xl font-black mb-8 uppercase tracking-tighter"
-          >
-            {contatti.title}
-          </motion.h1>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-1 bg-primary mx-auto mb-8"
-          />
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-xl md:text-2xl text-foreground/70 leading-relaxed font-medium"
-          >
-            <RichText content={contatti.description} />
-          </motion.div>
-        </div>
-      </Section>
+      <PageHeader
+        title={contatti.title}
+        description={contatti.description}
+      />
 
       {/* Contact Cards */}
       <Section className="py-24">

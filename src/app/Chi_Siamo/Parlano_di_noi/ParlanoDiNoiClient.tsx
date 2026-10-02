@@ -1,9 +1,10 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
-import { ChevronLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export default function ParlanoDiNoiClient({ content }: { content: any }) {
@@ -11,31 +12,14 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
   const { press_contact } = parlano_di_noi;
 
   return (
-    <div className="pt-20">
+    <div>
       {/* Header */}
-      <Section className="bg-muted/30 py-20 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Link 
-            href="/Chi_Siamo" 
-            className="inline-flex items-center text-primary font-bold mb-8 hover:gap-2 transition-all group"
-          >
-            <ChevronLeft size={20} className="mr-1 group-hover:-translate-x-1 transition-transform" />
-            Torna a Chi Siamo
-          </Link>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter"
-          >
-            {parlano_di_noi.title}
-          </motion.h1>
-          <div className="w-20 h-1 bg-primary mx-auto mb-8" />
-          <RichText
-            content={parlano_di_noi.description}
-            className="text-xl text-foreground/70 font-medium"
-          />
-        </div>
-      </Section>
+      <PageHeader
+        title={parlano_di_noi.title}
+        description={parlano_di_noi.description}
+        backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
+        compact
+      />
 
       {/* Press Quotes */}
       <Section className="py-24">

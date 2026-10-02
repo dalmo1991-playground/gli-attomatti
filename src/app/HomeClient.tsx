@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
+import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 
 const MotionImage = motion.create(Image);
 
@@ -72,7 +73,7 @@ export default function HomeClient({ content }: { content: any }) {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] py-24 md:py-32 flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100dvh-5rem)] py-8 sm:py-10 md:py-12 flex items-center justify-center overflow-hidden">
         {showMode ? (
           /* Mode 1: Upcoming Shows Slideshow */
           <div className="absolute inset-0 z-0">
@@ -108,7 +109,7 @@ export default function HomeClient({ content }: { content: any }) {
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/1782553290530-TheaterCurtain.webp"
-              alt="Hero Background"
+              alt="Sipario teatrale — Compagnia Gli Attomatti Zurigo"
               fill
               sizes="100vw"
               className="object-cover opacity-30 scale-105"
@@ -122,7 +123,7 @@ export default function HomeClient({ content }: { content: any }) {
         <div className="relative z-20 text-center px-6 max-w-5xl w-full">
           {showMode ? (
             /* Mode 1: Upcoming Show Content */
-            <div className="relative w-full flex flex-col items-center justify-center py-4">
+            <div className="relative w-full flex flex-col items-center justify-center">
               <AnimatePresence initial={false} custom={heroDirection} mode="popLayout">
                 <motion.div
                   key={currentShowIndex}
@@ -139,29 +140,35 @@ export default function HomeClient({ content }: { content: any }) {
                 >
                   {/* Presenter */}
                   {activeShows[currentShowIndex].presenter && (
-                    <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-3 md:mb-5 opacity-90 drop-shadow-sm">
+                    <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-2 md:mb-3 opacity-90 drop-shadow-sm">
                       {activeShows[currentShowIndex].presenter}
                     </p>
                   )}
 
                   {/* Title */}
-                  <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md">
+                  <h1 className={cn(
+                    getHeroTitleSizeClass(activeShows[currentShowIndex].title),
+                    "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
+                  )}>
                     {activeShows[currentShowIndex].title}
                   </h1>
 
                   {/* Tagline */}
                   {activeShows[currentShowIndex].tagline && (
-                    <p className="mt-4 md:mt-5 text-lg sm:text-xl md:text-2xl font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm">
+                    <p className={cn(
+                      getTaglineSizeClass(activeShows[currentShowIndex].tagline),
+                      "mt-3 md:mt-4 font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm text-balance break-words"
+                    )}>
                       {activeShows[currentShowIndex].tagline}
                     </p>
                   )}
 
                   {/* Date & Location Badges */}
                   {(activeShows[currentShowIndex].date || activeShows[currentShowIndex].location) && (
-                    <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-sm sm:text-base md:text-lg font-medium text-foreground/90 mt-6 md:mt-8">
+                    <div className="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 text-xs sm:text-sm md:text-base font-medium text-foreground/90 mt-5 md:mt-6">
                       {activeShows[currentShowIndex].date && (
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
-                          <Calendar size={18} className="text-primary shrink-0" />
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
+                          <Calendar size={16} className="text-primary shrink-0" />
                           <span>{activeShows[currentShowIndex].date}</span>
                         </div>
                       )}
@@ -171,16 +178,16 @@ export default function HomeClient({ content }: { content: any }) {
                             href={activeShows[currentShowIndex].location_href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
+                            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
                           >
-                            <MapPin size={18} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                            <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
                             <span className="group-hover:text-primary transition-colors">
                               {activeShows[currentShowIndex].location}
                             </span>
                           </Link>
                         ) : (
-                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
-                            <MapPin size={18} className="text-primary shrink-0" />
+                          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
+                            <MapPin size={16} className="text-primary shrink-0" />
                             <span>{activeShows[currentShowIndex].location}</span>
                           </div>
                         )
@@ -189,20 +196,20 @@ export default function HomeClient({ content }: { content: any }) {
                   )}
 
                   {/* Buttons / Actions Area */}
-                  <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full">
+                  <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
                     {/* Button 1 */}
                     {activeShows[currentShowIndex].cta && (
                       activeShows[currentShowIndex].cta_href ? (
                         <Link
                           href={activeShows[currentShowIndex].cta_href}
-                          className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:-translate-y-1 flex items-center justify-center min-w-[260px] sm:min-w-[280px]"
+                          className="px-8 py-3.5 sm:py-4 bg-primary text-white rounded-full font-black text-base sm:text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                         >
                           {activeShows[currentShowIndex].cta}
-                          <ArrowRight size={20} className="ml-2" />
+                          <ArrowRight size={18} className="ml-2" />
                         </Link>
                       ) : (
-                        <div className="px-8 py-3 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-lg flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
-                          <Info size={18} className="mr-3 opacity-80" />
+                        <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-base flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
+                          <Info size={16} className="mr-2 opacity-80" />
                           {activeShows[currentShowIndex].cta}
                         </div>
                       )
@@ -213,13 +220,13 @@ export default function HomeClient({ content }: { content: any }) {
                       (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
                         <Link
                           href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
-                          className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[260px] sm:min-w-[280px]"
+                          className="px-8 py-3.5 sm:py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold text-base sm:text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                         >
                           {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
                         </Link>
                       ) : (
-                        <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
-                          <Info size={18} className="mr-3 text-primary opacity-80" />
+                        <div className="px-6 py-2.5 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-base flex items-center justify-center shadow-xl">
+                          <Info size={16} className="mr-2 text-primary opacity-80" />
                           {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
                         </div>
                       )
@@ -230,7 +237,7 @@ export default function HomeClient({ content }: { content: any }) {
             </div>
           ) : (
             /* Mode 2: Generic Content */
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <div className="flex flex-col items-center">
                 <MotionImage
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -239,14 +246,14 @@ export default function HomeClient({ content }: { content: any }) {
                   alt={content.site.name}
                   width={192}
                   height={192}
-                  className="h-32 md:h-48 w-auto mb-12 animate-float"
+                  className="h-28 sm:h-36 md:h-44 w-auto mb-6 md:mb-8 animate-float"
                 />
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+                <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
                   {hero.subtitle}
                 </p>
                 <div className={cn(
-                  "flex gap-6 justify-center items-center w-full",
+                  "flex gap-4 sm:gap-6 justify-center items-center w-full",
                   (!!hero.primary_cta_href === !!hero.secondary_cta_href)
                     ? "flex-col sm:flex-row"
                     : "flex-col"
@@ -255,13 +262,13 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.primary_cta_href ? (
                       <Link
                         href={hero.primary_cta_href}
-                        className="px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                       >
                         {hero.primary_cta_label}
                         <ArrowRight size={18} className="ml-2" />
                       </Link>
                     ) : (
-                      <div className="px-6 py-2 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
+                      <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
                         <Info size={16} className="mr-2 opacity-80" />
                         {hero.primary_cta_label}
                       </div>
@@ -271,12 +278,12 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.secondary_cta_href ? (
                       <Link
                         href={hero.secondary_cta_href}
-                        className="px-8 py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                       >
                         {hero.secondary_cta_label}
                       </Link>
                     ) : (
-                      <div className="px-6 py-2 glass border-2 border-foreground/20 text-foreground rounded-lg font-bold text-base flex items-center justify-center">
+                      <div className="px-6 py-2.5 glass border-2 border-foreground/20 text-foreground rounded-lg font-bold text-base flex items-center justify-center">
                         <Info size={16} className="mr-2 text-primary opacity-80" />
                         {hero.secondary_cta_label}
                       </div>
@@ -288,9 +295,9 @@ export default function HomeClient({ content }: { content: any }) {
           )}
         </div>
 
-        {/* Carousel Indicators (Dots) moved to the very bottom */}
+        {/* Carousel Indicators (Dots) */}
         {showMode && activeShows.length > 1 && (
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
             {activeShows.map((_: any, idx: number) => (
               <button
                 key={idx}

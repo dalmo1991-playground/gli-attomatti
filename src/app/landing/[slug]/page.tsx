@@ -23,7 +23,18 @@ export async function generateMetadata({
   return {
     title: landing.title || "Gli Attomatti",
     description: heroBlock?.tagline || "Spettacolo teatrale della compagnia Gli Attomatti a Zurigo.",
+    alternates: {
+      canonical: `/landing/${slug}`
+    },
     openGraph: {
+      title: landing.title,
+      description: heroBlock?.tagline,
+      url: `https://gliattomatti.ch/landing/${slug}`,
+      type: "website",
+      images: heroBlock?.hero_image ? [heroBlock.hero_image] : undefined
+    },
+    twitter: {
+      card: "summary_large_image",
       title: landing.title,
       description: heroBlock?.tagline,
       images: heroBlock?.hero_image ? [heroBlock.hero_image] : undefined

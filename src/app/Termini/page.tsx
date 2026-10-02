@@ -5,6 +5,9 @@ import { ArrowLeft, FileText, Ticket, ShieldCheck, Clock, Ban, Scale } from "luc
 export const metadata: Metadata = {
   title: "Termini e Condizioni di Biglietteria — Gli Attomatti",
   description: "Condizioni generali per l'acquisto dei biglietti e l'accesso agli spettacoli teatrali della compagnia Gli Attomatti.",
+  alternates: {
+    canonical: "/Termini",
+  },
 };
 
 export default function TerminiPage() {

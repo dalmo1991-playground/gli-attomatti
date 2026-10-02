@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
 import { trackInitiateCheckout } from "@/lib/tracking";
 
@@ -140,7 +141,10 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
-                      className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.95] text-foreground drop-shadow-md"
+                      className={cn(
+                        getPageHeroTitleSizeClass(block.title),
+                        "font-black uppercase tracking-tighter leading-[0.95] text-foreground drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
+                      )}
                     >
                       {block.title}
                     </motion.h1>
@@ -152,7 +156,10 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-lg sm:text-2xl text-foreground/80 font-medium max-w-2xl mx-auto leading-relaxed"
+                        className={cn(
+                          getTaglineSizeClass(block.tagline),
+                          "text-foreground/80 font-medium max-w-2xl mx-auto leading-relaxed text-balance break-words"
+                        )}
                       >
                         {block.tagline}
                       </motion.p>

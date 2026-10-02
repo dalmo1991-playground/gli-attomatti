@@ -1,6 +1,7 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import Link from "next/link";
@@ -25,30 +26,14 @@ export default function AttoriClient({ content }: { content: any }) {
   }, [attori.list]);
 
   return (
-    <div className="pt-20">
+    <div>
       {/* Header */}
-      <Section className="bg-muted/30 py-20 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Link 
-            href="/Chi_Siamo" 
-            className="inline-flex items-center text-primary font-bold mb-8 hover:gap-2 transition-all group"
-          >
-            <ChevronLeft size={20} className="mr-1 group-hover:-translate-x-1 transition-transform" />
-            Torna a Chi Siamo
-          </Link>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter"
-          >
-            {attori.title}
-          </motion.h1>
-          <div className="w-20 h-1 bg-primary mx-auto mb-8" />
-          <p className="text-xl text-foreground/70 font-medium">
-            Le persone che rendono possibile la magia del teatro Attomatti.
-          </p>
-        </div>
-      </Section>
+      <PageHeader
+        title={attori.title}
+        description="Le persone che rendono possibile la magia del teatro Attomatti."
+        backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
+        compact
+      />
 
       {/* Actors Grid */}
       <Section className="py-24">
@@ -76,6 +61,7 @@ export default function AttoriClient({ content }: { content: any }) {
                     src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
                     alt={person.name} 
                     fill
+                    sizes="(max-width: 640px) 256px, 320px"
                     className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
                   />
                 </div>
@@ -84,7 +70,7 @@ export default function AttoriClient({ content }: { content: any }) {
               </div>
               
               <div className="space-y-3">
-                <h3 className="text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[4.5rem]">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center text-balance break-words">
                   {person.name}
                 </h3>
                 <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
@@ -163,6 +149,7 @@ export default function AttoriClient({ content }: { content: any }) {
                       src={selectedActor.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
                       alt={selectedActor.name}
                       fill
+                      sizes="(max-width: 768px) 224px, 320px"
                       className="object-cover"
                     />
                   </div>

@@ -7,6 +7,9 @@ import PrivacyConsentButton from "./PrivacyConsentButton";
 export const metadata: Metadata = {
   title: "Informativa sulla Privacy — Gli Attomatti",
   description: "Informativa sul trattamento dei dati personali (Datenschutzerklärung) ai sensi della nLPD svizzera.",
+  alternates: {
+    canonical: "/Privacy",
+  },
 };
 
 export default async function PrivacyPage() {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -18,7 +19,12 @@ interface LightboxProps {
 }
 
 export function Lightbox({ images, initialIndex, isOpen = true, onClose }: LightboxProps) {
+  const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -51,14 +57,16 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && images.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
           onClick={onClose}
         >
           <button
@@ -110,6 +118,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

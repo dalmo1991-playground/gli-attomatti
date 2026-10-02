@@ -72,6 +72,7 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
               src={images[currentIndex].url}
               alt={images[currentIndex].alt}
               fill
+              sizes="(max-width: 768px) 100vw, 80vw"
               className="object-cover"
             />
 

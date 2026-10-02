@@ -24,6 +24,15 @@ export async function generateMetadata({
     description:
       page.description ||
       `Acquisto biglietti per ${page.title} della compagnia teatrale Gli Attomatti a Zurigo.`,
+    alternates: {
+      canonical: `/Biglietti/${slug}`,
+    },
+    openGraph: {
+      title: `${page.title} — Biglietti & Prevendita`,
+      description: page.description || `Acquisto biglietti per ${page.title} a Zurigo.`,
+      url: `https://gliattomatti.ch/Biglietti/${slug}`,
+      type: "website",
+    },
   };
 }
 

@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookieBanner } from "@/components/analytics/CookieBanner";
 import { TrackingScripts } from "@/components/analytics/TrackingScripts";
+import { DevThemeCustomizer } from "@/components/dev/DevThemeCustomizer";
 
 export function LayoutWrapper({ children, content }: { children: React.ReactNode, content: any }) {
   const pathname = usePathname();
@@ -44,6 +45,8 @@ export function LayoutWrapper({ children, content }: { children: React.ReactNode
         integrations={content?.integrations}
         onConsentChange={setConsent}
       />
+
+      <DevThemeCustomizer />
     </>
   );
 }

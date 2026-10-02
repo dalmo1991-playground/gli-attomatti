@@ -55,7 +55,7 @@
         },
         {
           "label": "Cineforum",
-          "href": "/iniziative/cineforum"
+          "href": "/Iniziative/cineforum"
         }
       ]
     },
@@ -250,7 +250,7 @@
         {
           "name": "Andrea",
           "role": "Attore",
-          "image": "/images/show2.png",
+          "image": "",
           "bio": "Consectetur adipiscing elit.",
           "description": "Regista associato con una profonda comprensione della commedia dell'arte. Supervisiona i dettagli scenici per garantire il massimo realismo e coinvolgimento del pubblico.",
           "shows": [
@@ -265,7 +265,7 @@
         {
           "name": "Ausilia",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -290,7 +290,7 @@
         {
           "name": "Carla",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -315,7 +315,7 @@
         {
           "name": "Delia",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -340,7 +340,7 @@
         {
           "name": "Florinda",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -390,7 +390,7 @@
         {
           "name": "Lucrezia",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -415,7 +415,7 @@
         {
           "name": "Ludovica",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -460,7 +460,7 @@
         {
           "name": "Margherita",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -485,7 +485,7 @@
         {
           "name": "Matteo",
           "role": "Fondatore",
-          "image": "/images/show1.png",
+          "image": "",
           "bio": "Lorem ipsum dolor sit amet.",
           "description": "Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile. Domenico è il fondatore e presidente della compagnia Gli Attomatti. Con anni di esperienza nel teatro amatoriale svizzero e italiano, dirige gli spettacoli guidando il cast con passione, carisma e dedizione infaticabile.",
           "shows": [
@@ -510,7 +510,7 @@
         {
           "name": "Mauro",
           "role": "Protagonista",
-          "image": "/images/show3.png",
+          "image": "",
           "bio": "Sed do eiusmod tempor.",
           "description": "Attore carismatico specializzato in ruoli comici e drammatici di spicco. Ha calcato numerosi palcoscenici portando freschezza, spontaneità e una grande energia scenica.",
           "shows": [

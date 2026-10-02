@@ -5,6 +5,9 @@ import { ArrowLeft, Building2, MapPin, Users, Mail, Globe, ShieldAlert } from "l
 export const metadata: Metadata = {
   title: "Impressum — Gli Attomatti",
   description: "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
+  alternates: {
+    canonical: "/Impressum",
+  },
 };
 
 export default function ImpressumPage() {
