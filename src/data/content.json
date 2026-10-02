@@ -84,8 +84,8 @@
       "content_sections": [],
       "navigation_links": [
         {
-          "label": "Le Persone",
-          "href": "/Chi_Siamo/Attori",
+          "label": "",
+          "href": "",
           "icon": "users",
           "visible": true
         },
