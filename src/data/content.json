@@ -1027,12 +1027,15 @@
       ],
       "theme": {
         "preset": "light_chic",
-        "background": "#f8fafc",
-        "foreground": "#0f172a",
-        "primary": "#e11d48",
-        "secondary": "#4f46e5",
-        "accent": "#d97706",
-        "muted": "#e2e8f0"
+        "background": "#a3d4e5",
+        "foreground": "#0c1c50",
+        "primary": "#c2410c",
+        "primaryForeground": "#ffffff",
+        "secondary": "#c2410c",
+        "secondaryForeground": "#ffffff",
+        "accent": "#c2410c",
+        "accentForeground": "#ffffff",
+        "muted": "#ffffff"
       }
     }
   ],
