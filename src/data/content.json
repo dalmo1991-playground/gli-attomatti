@@ -1014,6 +1014,15 @@
           "text": "Prenota ora prima dell'esaurimento posti.",
           "cta_label": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
+        },
+        {
+          "id": "b-1790937925423",
+          "type": "tally",
+          "title": "Iscrizione Online",
+          "subtitle": "Compila il modulo sottostante per confermare la tua partecipazione.",
+          "tally_url": "https://tally.so/r/LZaPOz",
+          "fallback_label": "Apri modulo Tally",
+          "show_privacy_note": true
         }
       ],
       "theme": {
