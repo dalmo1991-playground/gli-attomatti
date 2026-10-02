@@ -88,6 +88,20 @@
           "secondary_cta": "Scopri di più",
           "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
           "image": "/images/1790869266263-non-sottovalutare-40.webp"
+        },
+        {
+          "active": true,
+          "title": "Cineforum",
+          "presenter": "Gli Attomatti ed UniTre Presentano",
+          "tagline": "Nel passo lento della meraviglia",
+          "date": "mensilmente, dal 3 ottobre",
+          "location": "Balberstrasse 47, Zurich (Wollishofen)",
+          "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A",
+          "cta": "Info & Prenotazioni",
+          "cta_href": "/Iniziative/cineforum",
+          "secondary_cta": "",
+          "secondary_cta_href": "",
+          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp"
         }
       ],
       "introduction": {
@@ -133,7 +147,7 @@
         ]
       },
       "instagram_feed": {
-        "enabled": true,
+        "enabled": false,
         "title": "Seguici su Instagram",
         "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
         "handle": "@gliattomatti",
