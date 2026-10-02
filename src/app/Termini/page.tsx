@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop } from "lucide-react";
+import { ArrowLeft, FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Termini di Biglietteria e Iscrizioni",
@@ -81,7 +81,7 @@ export default function TerminiPage() {
                 Tutti i prezzi dei biglietti per gli spettacoli sono espressi in Franchi Svizzeri (CHF). L&apos;acquisto si perfeziona con il buon fine del pagamento su Eventfrog e l&apos;invio telematico del biglietto elettronico recante codice QR univoco.
               </p>
               <p>
-                Per gli eventi gestiti tramite registrazione via form (Tally), la partecipazione è confermata unicamente a seguito del completamento del modulo e della ricezione della notifica/email di conferma da parte degli organizzatori.
+                Per gli eventi gestiti tramite registrazione via form (Tally), la partecipazione è confermata unicamente a seguito del completamento del modulo.
               </p>
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function TerminiPage() {
             </h2>
             <div className="space-y-3 text-foreground/80 leading-relaxed font-medium">
               <p>
-                In caso di <strong>annullamento definitivo</strong> di una recita o evento per cause di forza maggiore, disposizioni di pubblica sicurezza o impedimenti organizzativi insormontabili, l&apos;importo nominale dei biglietti acquistati sarà rimborsato all&apos;acquirente secondo le modalità operative della piattaforma Eventfrog.
+                In caso di <strong>annullamento definitivo</strong> di uno spettacolo o evento per cause di forza maggiore, disposizioni di pubblica sicurezza o impedimenti organizzativi insormontabili, l&apos;importo nominale dei biglietti acquistati sarà rimborsato all&apos;acquirente secondo le modalità operative della piattaforma Eventfrog.
               </p>
               <p>
                 In caso di <strong>rinvio a data alternativa</strong>, il biglietto o l&apos;iscrizione rimane valido per la nuova data comunicata. Qualora l&apos;utente non possa partecipare nella nuova data, avrà facoltà di richiedere il rimborso o cancellare l&apos;iscrizione secondo le tempistiche indicate tempestivamente dall&apos;organizzatore.
@@ -170,14 +170,49 @@ export default function TerminiPage() {
             </p>
           </div>
 
-          {/* 7. Servizi Tecnici Incorporati */}
+          {/* 7. Foto e Registrazioni Video durante gli Eventi */}
+          <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                <Camera size={20} />
+              </div>
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                7. Foto, riprese video e diritto all&apos;immagine
+              </h2>
+            </div>
+            <div className="space-y-4 text-foreground/80 leading-relaxed font-medium">
+              <p>
+                Durante gli spettacoli, i workshop, le prove aperte e gli eventi organizzati dalla compagnia teatrale <strong>Gli Attomatti</strong>, possono essere effettuate riprese fotografiche e registrazioni video a scopo di documentazione culturale, archivio storico e divulgazione artistica. Tali contenuti possono essere pubblicati sui canali ufficiali della compagnia (inclusi il presente sito web, i profili social ufficiali come Instagram e Facebook, o materiali promozionali e rassegne stampa).
+              </p>
+              <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-foreground/90 space-y-2">
+                <p className="font-bold text-amber-300 text-sm">
+                  Preferisci non comparire? Basta dircelo!
+                </p>
+                <p className="text-sm">
+                  Rispettiamo pienamente la riservatezza e le preferenze di ciascun spettatore e partecipante: <strong>se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all&apos;ingresso o in qualsiasi momento durante la serata</strong>. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.
+                </p>
+                <p className="text-sm">
+                  Inoltre, se in seguito dovessi notare una tua immagine in una foto o in un video già pubblicato e desiderassi la rimozione o l&apos;oscuramento, puoi richiederlo in qualsiasi momento scrivendoci a{" "}
+                  <a
+                    href="mailto:compagniateatralegliattomatti@gmail.com"
+                    className="text-primary font-bold hover:underline"
+                  >
+                    compagniateatralegliattomatti@gmail.com
+                  </a>
+                  : provvederemo con la massima tempestività.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 8. Servizi Tecnici Incorporati */}
           <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
                 <Laptop size={20} />
               </div>
               <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                7. Servizi terzi incorporati e limitazione di responsabilità tecnica
+                8. Servizi terzi incorporati e limitazione di responsabilità tecnica
               </h2>
             </div>
             <p className="text-foreground/80 leading-relaxed font-medium">
@@ -185,14 +220,14 @@ export default function TerminiPage() {
             </p>
           </div>
 
-          {/* 8. Legge applicabile */}
+          {/* 9. Legge applicabile */}
           <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
                 <Scale size={20} />
               </div>
               <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                8. Diritto applicabile e foro competente
+                9. Diritto applicabile e foro competente
               </h2>
             </div>
             <p className="text-foreground/80 leading-relaxed font-medium">

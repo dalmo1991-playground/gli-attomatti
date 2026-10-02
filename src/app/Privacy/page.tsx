@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
-import { ArrowLeft, ShieldCheck, Server, EyeOff, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, Sliders, ClipboardList } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Server, EyeOff, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, Sliders, ClipboardList, Camera } from "lucide-react";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 
 export const metadata: Metadata = {
@@ -342,6 +342,30 @@ export default async function PrivacyPage() {
                   I post incorporati di Instagram nella home page sono protetti da un meccanismo a due clic (2-Click): all'apertura del sito nessun dato viene trasmesso a Meta. Solo cliccando attivamente su &quot;Carica questo post&quot; viene stabilita una connessione diretta con i server di Instagram.
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Fotografie e riprese audiovisive agli eventi */}
+          <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                <Camera size={20} />
+              </div>
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                Fotografie e riprese durante gli eventi (Diritto all&apos;immagine)
+              </h2>
+            </div>
+            <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <p>
+                Durante le rappresentazioni teatrali, i workshop e gli eventi promossi dalla compagnia, possono essere realizzate riprese fotografiche e audiovisive destinate alla documentazione artistica e alla comunicazione istituzionale sui nostri canali ufficiali (sito web e social network quali Instagram e Facebook).
+              </p>
+              <p>
+                Nel pieno rispetto della nLPD e della sfera privata di ciascuno, <strong>chiunque partecipi ha la facoltà di opporsi in qualsiasi momento alla propria ripresa</strong>: è sufficiente informare il personale di sala all&apos;ingresso o durante l&apos;evento. Inoltre, è sempre possibile richiedere la rimozione tempestiva di fotografie o video in cui si compare inviando un&apos;email a:{" "}
+                <a href="mailto:compagniateatralegliattomatti@gmail.com" className="text-primary hover:underline font-bold">
+                  compagniateatralegliattomatti@gmail.com
+                </a>
+                .
+              </p>
             </div>
           </div>
 
