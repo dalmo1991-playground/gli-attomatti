@@ -897,27 +897,27 @@
               "date": "I vitelloni - 16 Gennaio 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
               "ticket_label": "Registrati",
-              "ticket_href": "",
+              "ticket_href": "/Registrazioni/16-01-27",
               "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
               "date": "Pane e tulipani - 20 Febbraio 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
               "ticket_label": "Registrati",
-              "ticket_href": "",
+              "ticket_href": "/Registrazioni/20-02-27",
               "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
               "date": "Una storia vera - 20 Marzo 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
               "ticket_label": "Registrati",
-              "ticket_href": "",
+              "ticket_href": "/Registrazioni/20-03-27",
               "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             }
           ],
           "details": [
             {
-              "label": "Prenotazione",
+              "label": "Attomatti",
               "value": "+41 78 942 39 93"
             },
             {
@@ -1091,6 +1091,39 @@
       "category": "Cineforum",
       "description": "",
       "tally_url": "https://tally.so/r/Eky7ON",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954967375",
+      "title": " I vitelloni ",
+      "slug": "16-01-27",
+      "category": "Cineforum",
+      "description": "",
+      "tally_url": "https://tally.so/r/2EQGpV",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954972841",
+      "title": "Pane e tulipani",
+      "slug": "20-02-27",
+      "category": "Cineforum",
+      "description": "",
+      "tally_url": "https://tally.so/r/Gx8AZj",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954973513",
+      "title": "Una storia vera",
+      "slug": "20-03-27",
+      "category": "Cineforum",
+      "description": "",
+      "tally_url": "https://tally.so/r/obXLq1",
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
       "active": true
