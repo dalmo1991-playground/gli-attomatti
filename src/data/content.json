@@ -880,34 +880,39 @@
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
           "dates": [
             {
-              "date": "3 ottobre 2026, ore 18:00",
+              "date": "Tempi Moderni - 03 ottobre 2026, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "Tempi Moderni",
-              "ticket_href": ""
+              "ticket_label": "",
+              "ticket_href": "",
+              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
-              "date": "4 novembre 2026, ore 18:00",
+              "date": "Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "Le vacanze di Monsieur Hulot",
-              "ticket_href": ""
+              "ticket_label": "Registrati",
+              "ticket_href": "/Registrazioni/14-11-26",
+              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
-              "date": "16 Gennaio 2027, ore 18:00",
+              "date": "I vitelloni - 16 Gennaio 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "I vitelloni",
-              "ticket_href": ""
+              "ticket_label": "Registrati",
+              "ticket_href": "",
+              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
-              "date": "20 Febbraio 2027, ore 18:00",
+              "date": "Pane e tulipani - 20 Febbraio 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "Pane e tulipani",
-              "ticket_href": ""
+              "ticket_label": "Registrati",
+              "ticket_href": "",
+              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             },
             {
-              "date": "20 Marzo 2027, ore 18:00",
+              "date": "Una storia vera - 20 Marzo 2027, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "Una storia vera",
-              "ticket_href": ""
+              "ticket_label": "Registrati",
+              "ticket_href": "",
+              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             }
           ],
           "details": [
@@ -1080,14 +1085,14 @@
   ],
   "registration_pages": [
     {
-      "id": "reg-saalvermietung",
-      "title": "Affitto Sala / Saalvermietung",
-      "slug": "saalvermietung",
-      "category": "Richiesta Affitto",
-      "description": "Compila il modulo per verificare la disponibilità e richiedere l'affitto della sala prove o teatro.",
-      "tally_url": "https://tally.so/r/LZaPOz",
-      "back_link_label": "Torna alla Home",
-      "back_link_href": "/",
+      "id": "reg-1790954268119",
+      "title": "Le vacanze di Monsieur Hulot",
+      "slug": "14-11-26",
+      "category": "Cineforum",
+      "description": "",
+      "tally_url": "https://tally.so/r/Eky7ON",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
       "active": true
     }
   ],
