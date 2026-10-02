@@ -92,6 +92,9 @@ export default function CheckoutClient({ page }: CheckoutClientProps) {
                 title={`Prevendita ${page.title}`}
                 className="w-full h-[720px] sm:h-[760px] border-0"
                 allow="payment"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
               />
             </div>
 

@@ -94,6 +94,7 @@ export default function HomeClient({ content }: { content: any }) {
                   src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
                   alt={activeShows[currentShowIndex].title || "Spettacolo"}
                   fill
+                  sizes="100vw"
                   className="object-cover opacity-40"
                   priority
                 />
@@ -109,6 +110,7 @@ export default function HomeClient({ content }: { content: any }) {
               src="/images/1782553290530-TheaterCurtain.webp"
               alt="Hero Background"
               fill
+              sizes="100vw"
               className="object-cover opacity-30 scale-105"
               priority
             />
@@ -341,6 +343,7 @@ export default function HomeClient({ content }: { content: any }) {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className={`cursor-pointer transition-transform duration-700 ${introduction.images[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
                   onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
                 />

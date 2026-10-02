@@ -162,6 +162,8 @@ function InstagramEmbedCard({
         allow="encrypted-media"
         onLoad={() => setLoaded(true)}
         title={post.title || `Post Instagram ${index + 1}`}
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
       />
     </div>
   );

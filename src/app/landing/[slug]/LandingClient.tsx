@@ -112,6 +112,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                         src={block.hero_image}
                         alt={block.title || "Hero"}
                         fill
+                        sizes="100vw"
                         priority
                         className="object-cover object-center"
                       />
@@ -555,6 +556,9 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                             title={block.title || "Biglietti Eventfrog"}
                             className="w-full h-[720px] sm:h-[760px] border-0"
                             allow="payment"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+                            loading="lazy"
+                            referrerPolicy="strict-origin-when-cross-origin"
                           />
                         </div>
 
