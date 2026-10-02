@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
         { url: "/logo_attomatti.svg", type: "image/svg+xml" },
         { url: "/favicon.ico" },
       ],
-      apple: "/logo_attomatti.svg",
+      apple: "/apple-icon.png",
     },
     alternates: {
       canonical: "./",
