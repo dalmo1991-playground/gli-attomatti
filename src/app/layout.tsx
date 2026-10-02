@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies, headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
@@ -132,6 +133,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const content = await getContent();
+
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") || headersList.get("host") || "";
+  const hostname = host.split(":")[0].toLowerCase();
+
+  const isProduction =
+    hostname === "gliattomatti.ch" ||
+    hostname === "www.gliattomatti.ch" ||
+    hostname.endsWith(".gliattomatti.ch");
+
+  const isDev = !isProduction;
+  let initialHasAccess = isProduction;
+
+  if (isDev) {
+    const cookieStore = await cookies();
+    initialHasAccess = cookieStore.get("attomatti_dev_access")?.value === "1";
+  }
+
   const isDevBuild =
     process.env.NODE_ENV !== "production" ||
     process.env.VERCEL_ENV === "preview" ||
@@ -149,7 +168,13 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-primary/20 selection:text-primary`}
       >
-        <LayoutWrapper content={content}>{children}</LayoutWrapper>
+        <LayoutWrapper
+          content={content}
+          isDev={isDev}
+          initialHasAccess={initialHasAccess}
+        >
+          {children}
+        </LayoutWrapper>
       </body>
     </html>
   );

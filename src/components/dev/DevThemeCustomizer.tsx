@@ -12,7 +12,8 @@ import {
   ClipboardPaste,
   SlidersHorizontal,
   ChevronDown,
-  Info
+  Info,
+  Lock
 } from "lucide-react";
 import {
   ThemeColors,
@@ -556,6 +557,19 @@ export function DevThemeCustomizer() {
                   aria-label="Ripristina default"
                 >
                   <RotateCcw size={18} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    document.cookie = "attomatti_dev_access=; path=/; max-age=0; SameSite=Lax";
+                    window.location.reload();
+                  }}
+                  className="p-3 rounded-2xl bg-foreground/5 hover:bg-rose-500/20 hover:text-rose-400 border border-foreground/10 transition-colors text-foreground"
+                  title="Blocca di nuovo accesso sito dev (elimina cookie per testare il blocco)"
+                  aria-label="Blocca sito dev"
+                >
+                  <Lock size={18} />
                 </button>
               </div>
 
