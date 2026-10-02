@@ -1040,6 +1040,19 @@
       "active": true
     }
   ],
+  "registration_pages": [
+    {
+      "id": "reg-saalvermietung",
+      "title": "Affitto Sala / Saalvermietung",
+      "slug": "saalvermietung",
+      "category": "Richiesta Affitto",
+      "description": "Compila il modulo per verificare la disponibilità e richiedere l'affitto della sala prove o teatro.",
+      "tally_url": "https://tally.so/r/LZaPOz",
+      "back_link_label": "Torna alla Home",
+      "back_link_href": "/",
+      "active": true
+    }
+  ],
   "integrations": {
     "google_analytics": {
       "enabled": true,
@@ -1051,6 +1064,9 @@
     },
     "eventfrog": {
       "enabled": false
+    },
+    "tally": {
+      "enabled": true
     },
     "cookie_consent": {
       "version": 1

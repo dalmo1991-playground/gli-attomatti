@@ -117,11 +117,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
+  // Dynamic standalone registration pages: /Registrazioni/[slug]
+  const registrationPages: { slug: string; active?: boolean }[] =
+    content?.registration_pages ?? [];
+  const registrationRoutes: MetadataRoute.Sitemap = registrationPages
+    .filter((page) => page.active !== false && page.slug)
+    .map((page) => ({
+      url: `${BASE_URL}/Registrazioni/${page.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
+
   return [
     ...staticRoutes,
     ...showRoutes,
     ...iniziativeRoutes,
     ...landingRoutes,
     ...ticketingRoutes,
+    ...registrationRoutes,
   ];
 }

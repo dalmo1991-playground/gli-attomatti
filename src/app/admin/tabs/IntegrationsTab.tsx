@@ -16,7 +16,8 @@ import {
   Mail,
   HelpCircle,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  ClipboardList
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -326,6 +327,28 @@ export function IntegrationsTab() {
             </p>
             <p className="leading-relaxed text-foreground/60">
               Se invece preferisci indirizzare il pubblico direttamente al portale esterno di Eventfrog (o a un festival), sei libero di incollare l&apos;URL esterno direttamente nel campo link dello spettacolo o dell&apos;iniziativa.
+            </p>
+          </div>
+        </div>
+      </AdminSection>
+
+      {/* Tally Forms */}
+      <AdminSection
+        title="Moduli Tally & Registrazioni"
+        description="Informazioni sull'incorporamento di Tally.so e pagine di iscrizione dedicate."
+        icon={ClipboardList}
+      >
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70 space-y-2">
+            <div className="flex items-center gap-2 font-bold text-foreground">
+              <Info size={14} className="text-accent" />
+              <span>Pagine di Iscrizione Dedicate e Privacy UE:</span>
+            </div>
+            <p className="leading-relaxed">
+              Puoi creare e gestire liberamente le tue pagine di registrazione interne dal menu laterale <strong>Registrazioni &amp; Moduli</strong>. Ogni pagina creata (es. <code>/Registrazioni/workshop</code> o <code>/Registrazioni/saalvermietung</code>) incorpora il form Tally.so in modo fluido e trasparente.
+            </p>
+            <p className="leading-relaxed text-foreground/60">
+              Tally.so rispetta pienamente la nLPD svizzera e il GDPR (server situati nell&apos;Unione Europea). Non traccia cookie invasivi e consente notifiche email e gestione capienza posti automatica a costo zero.
             </p>
           </div>
         </div>

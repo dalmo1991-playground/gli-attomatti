@@ -17,7 +17,8 @@ import {
   MessageSquare,
   HelpCircle,
   Megaphone,
-  Ticket
+  Ticket,
+  ClipboardList
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -34,6 +35,7 @@ const BLOCK_TYPES = [
   { type: "hero", label: "Hero Header", icon: Sparkles, desc: "Titolo d'impatto, sfondo e CTA principale" },
   { type: "event_details", label: "Data, Orario & Luogo", icon: Calendar, desc: "Card con dettagli data, mappa e prezzo" },
   { type: "eventfrog", label: "Cassa Biglietti Eventfrog", icon: Ticket, desc: "Embed ufficiale di Eventfrog per acquistare i biglietti direttamente sulla landing" },
+  { type: "tally", label: "Modulo Tally (Registrazione)", icon: ClipboardList, desc: "Embed ufficiale Tally.so per iscrizioni, corsi o registrazioni" },
   { type: "synopsis", label: "Trama & Sinossi", icon: BookOpen, desc: "Descrizione narrativa, citazione e foto" },
   { type: "gallery", label: "Galleria Fotografica", icon: ImageIcon, desc: "Scatti di scena con lightbox" },
   { type: "reviews", label: "Recensioni & Critica", icon: MessageSquare, desc: "Social proof e stelle di gradimento" },
@@ -155,6 +157,15 @@ export function LandingTab() {
         eventfrog_url: "",
         fallback_label: "Apri su Eventfrog",
         show_terms_note: true
+      };
+    } else if (type === "tally") {
+      newBlock = {
+        ...newBlock,
+        title: "Iscrizione Online",
+        subtitle: "Compila il modulo sottostante per confermare la tua partecipazione.",
+        tally_url: "",
+        fallback_label: "Apri modulo Tally",
+        show_privacy_note: true
       };
     } else if (type === "synopsis") {
       newBlock = {
@@ -676,6 +687,76 @@ export function LandingTab() {
                                     ) : (
                                       <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
                                         <span>⚠️ Incolla un URL di Eventfrog sopra per visualizzare il widget di acquisto sulla landing page.</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+
+                                {block.type === "tally" && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Titolo della Sezione"
+                                        value={block.title || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                        placeholder="es. Iscriviti o Registrati"
+                                      />
+                                      <FormField
+                                        label="Sottotitolo / Didascalia"
+                                        value={block.subtitle || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "subtitle", v)}
+                                        placeholder="es. Compila i campi per confermare la tua presenza..."
+                                      />
+                                    </div>
+
+                                    <FormField
+                                      label="URL Modulo Tally.so (Link del Form)"
+                                      value={block.tally_url || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "tally_url", v.trim())}
+                                      placeholder="https://tally.so/r/LZaPOz"
+                                      helpText="Incolla l'indirizzo del tuo form Tally. Verrà incorporato a tutta larghezza in un riquadro fluido."
+                                    />
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Testo Pulsante di Riserva / Fallback"
+                                        value={block.fallback_label || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "fallback_label", v)}
+                                        placeholder="Apri su Tally"
+                                        helpText="Pulsante mostrato sotto il riquadro per chi preferisce aprire il form a schermo intero."
+                                      />
+
+                                      <div className="flex items-center pt-6">
+                                        <label className="flex items-center gap-3 cursor-pointer select-none">
+                                          <input
+                                            type="checkbox"
+                                            checked={block.show_privacy_note !== false}
+                                            onChange={(e) => updateBlock(actualIdx, bIdx, "show_privacy_note", e.target.checked)}
+                                            className="w-4 h-4 rounded accent-primary cursor-pointer"
+                                          />
+                                          <span className="text-xs font-bold text-foreground">
+                                            Mostra avviso di conformità privacy
+                                          </span>
+                                        </label>
+                                      </div>
+                                    </div>
+
+                                    {block.tally_url ? (
+                                      <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between gap-2">
+                                        <span>✓ Riquadro Tally configurato: il form sarà visibile sulla landing page.</span>
+                                        <a
+                                          href={block.tally_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 font-bold underline shrink-0"
+                                        >
+                                          <span>Verifica link</span>
+                                          <ExternalLink size={12} />
+                                        </a>
+                                      </div>
+                                    ) : (
+                                      <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                                        <span>⚠️ Incolla un URL di Tally sopra per visualizzare il modulo di registrazione sulla landing page.</span>
                                       </div>
                                     )}
                                   </div>

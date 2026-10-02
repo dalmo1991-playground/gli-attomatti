@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,7 +14,13 @@ import {
   ChevronRight,
   Maximize2,
   Info,
-  ShieldCheck
+  ShieldCheck,
+  ClipboardList,
+  X,
+  Sparkles,
+  Clock,
+  Lock,
+  CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
@@ -32,8 +38,37 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
   const header = landing.header || {};
   const stickyBar = landing.sticky_bar || {};
 
-  const theme = getLandingTheme(landing);
+  const initialTheme = useMemo(() => getLandingTheme(landing), [landing]);
+  const [theme, setTheme] = useState(initialTheme);
   const themeStyles = getLandingThemeStyles(theme);
+
+  useEffect(() => {
+    setTheme(getLandingTheme(landing));
+  }, [landing]);
+
+  // Listen to live dev theme modifications for this specific landing page
+  useEffect(() => {
+    if (typeof window === "undefined" || !landing?.slug) return;
+    try {
+      const saved = localStorage.getItem(`attomatti_landing_theme_${landing.slug}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.background === "string" && typeof parsed.primary === "string") {
+          setTheme((prev) => ({ ...prev, ...parsed }));
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load dev theme for landing", e);
+    }
+
+    const handleThemeChange = (e: any) => {
+      if (e.detail?.slug === landing.slug && e.detail?.colors) {
+        setTheme((prev) => ({ ...prev, ...e.detail.colors }));
+      }
+    };
+    window.addEventListener("attomatti_landing_theme_change", handleThemeChange);
+    return () => window.removeEventListener("attomatti_landing_theme_change", handleThemeChange);
+  }, [landing?.slug]);
 
   const [faqOpen, setFaqOpen] = useState<Record<number, boolean>>({ 0: true });
   const [lightbox, setLightbox] = useState<{
@@ -52,6 +87,9 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
 
   return (
     <div
+      id="landing-root"
+      data-landing-slug={landing?.slug}
+      data-landing-theme={JSON.stringify(initialTheme)}
       style={themeStyles}
       className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary transition-colors duration-300"
     >
@@ -86,7 +124,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
               href={header.cta_href || "#"}
               target={header.cta_href?.startsWith("http") ? "_blank" : undefined}
               rel={header.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
             >
               <Ticket size={14} />
               <span>{header.cta_label}</span>
@@ -176,7 +214,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                           href={block.primary_cta_href || "#"}
                           target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
                           rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary text-white font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/25 hover:scale-105 flex items-center justify-center gap-2"
+                          className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/25 hover:scale-105 flex items-center justify-center gap-2"
                         >
                           <Ticket size={18} />
                           <span>{block.primary_cta_label}</span>
@@ -286,7 +324,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                               href={block.cta_href || "#"}
                               target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
                               rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                              className="px-8 py-3.5 rounded-full bg-primary text-white font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:scale-105 flex items-center gap-2"
+                              className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:scale-105 flex items-center gap-2"
                             >
                               <Ticket size={16} />
                               <span>{block.cta_label}</span>
@@ -618,6 +656,107 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
               );
             }
 
+            /* ================= TALLY REGISTRATION BLOCK ================= */
+            case "tally": {
+              const rawUrl = block.tally_url?.trim() || "";
+              let embedUrl = rawUrl;
+              if (rawUrl) {
+                try {
+                  const match = rawUrl.match(/tally\.so\/(?:r|embed)\/([a-zA-Z0-9_-]+)/);
+                  if (match && match[1]) {
+                    embedUrl = `https://tally.so/embed/${match[1]}?alignLeft=1&hideTitle=1&transparentBackground=0&dynamicHeight=1`;
+                  } else {
+                    const u = new URL(rawUrl);
+                    u.protocol = "https:";
+                    embedUrl = u.toString();
+                  }
+                } catch {
+                  embedUrl = rawUrl;
+                }
+              }
+
+              return (
+                <section key={bIdx} id="registrazione" className="py-20 px-4 sm:px-6 relative overflow-hidden">
+                  <div className="max-w-3xl mx-auto space-y-8">
+                    {/* Header */}
+                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 text-accent text-xs font-black uppercase tracking-wider">
+                        <ClipboardList size={14} />
+                        Modulo di Iscrizione
+                      </div>
+                      <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
+                        {block.title || "Iscriviti o Registrati"}
+                      </h2>
+                      {block.subtitle && (
+                        <p className="text-base sm:text-lg text-foreground/70 font-medium leading-relaxed">
+                          {block.subtitle}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Embedded Tally Card with Solid White Background */}
+                    {embedUrl ? (
+                      <div className="space-y-4">
+                        <div className="w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200 relative">
+                          <iframe
+                            data-tally-src={embedUrl}
+                            src={embedUrl}
+                            title={block.title || "Modulo Tally"}
+                            className="w-full h-[780px] sm:h-[840px] border-0 block bg-white"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+                            loading="lazy"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                          />
+                        </div>
+
+                        {/* Fallback button */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/60">
+                          <div className="flex items-center gap-2">
+                            <Info size={16} className="text-accent shrink-0" />
+                            <span>Problemi con il modulo? Puoi compilarlo a schermo intero:</span>
+                          </div>
+                          <a
+                            href={rawUrl || embedUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent/15 hover:bg-accent/25 text-accent font-bold text-xs uppercase tracking-wider transition-colors shrink-0"
+                          >
+                            <span>{block.fallback_label || "Apri su Tally"}</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-12 rounded-3xl bg-muted/20 border border-foreground/5 text-center space-y-3 glass">
+                        <ClipboardList size={36} className="mx-auto text-foreground/30" />
+                        <p className="text-foreground/60 font-medium">
+                          Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell&apos;Admin.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Safety note */}
+                    {block.show_privacy_note !== false && (
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground/40 font-medium">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck size={16} className="text-emerald-400" />
+                          <span>Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
+                            Informativa Privacy
+                          </Link>
+                          <Link href="/Contatti" className="hover:text-foreground transition-colors underline">
+                            Contattaci
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              );
+            }
+
             /* ================= CLOSING CTA BLOCK ================= */
             case "closing_cta": {
               return (
@@ -637,7 +776,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
                           href={block.cta_href || "#"}
                           target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
                           rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="inline-flex items-center gap-2 px-10 py-5 rounded-full bg-primary text-white font-black text-base uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105"
+                          className="inline-flex items-center gap-2 px-10 py-5 rounded-full bg-primary text-primary-foreground font-black text-base uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105"
                         >
                           <Ticket size={20} />
                           <span>{block.cta_label}</span>
@@ -682,7 +821,7 @@ export default function LandingClient({ landing, site }: LandingClientProps) {
               href={stickyBar.cta_href || "#"}
               target={stickyBar.cta_href?.startsWith("http") ? "_blank" : undefined}
               rel={stickyBar.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="px-6 py-2.5 rounded-full bg-primary text-white font-black text-xs uppercase tracking-wider shrink-0 hover:bg-primary/90 transition-all shadow-md"
+              className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider shrink-0 hover:bg-primary/90 transition-all shadow-md"
             >
               {stickyBar.cta_label}
             </Link>

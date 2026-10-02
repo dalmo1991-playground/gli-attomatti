@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Palette,
@@ -11,9 +12,9 @@ import {
   Sparkles,
   ClipboardPaste,
   SlidersHorizontal,
-  ChevronDown,
   Info,
-  Lock
+  Lock,
+  Layers
 } from "lucide-react";
 import {
   ThemeColors,
@@ -42,7 +43,7 @@ interface ColorItemConfig {
 }
 
 const COLOR_KEYS: ColorItemConfig[] = [
-  { key: "background", label: "Sfondo", desc: "Canvas principale del sito" },
+  { key: "background", label: "Sfondo", desc: "Canvas principale della pagina" },
   { key: "foreground", label: "Testo", desc: "Tipografia e contrasto primario" },
   {
     key: "primary",
@@ -68,11 +69,56 @@ const COLOR_KEYS: ColorItemConfig[] = [
   { key: "muted", label: "Superfici", desc: "Sfondo schede e container" },
 ];
 
+/**
+ * Applies landing theme colors directly to #landing-root element and notifies listeners.
+ */
+function applyLandingThemeLive(slug: string, colors: ThemeColors) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(`attomatti_landing_theme_${slug}`, JSON.stringify(colors));
+  } catch (e) {
+    console.error("Failed to save isolated landing theme to localStorage", e);
+  }
+
+  // Dispatch custom event for LandingClient state
+  window.dispatchEvent(
+    new CustomEvent("attomatti_landing_theme_change", {
+      detail: { slug, colors }
+    })
+  );
+
+  // Directly update CSS properties on the landing root container for zero-latency response
+  const el = document.getElementById("landing-root");
+  if (el) {
+    const primaryFg = colors.primaryForeground || getAutoContrastColor(colors.primary);
+    const secondaryFg = colors.secondaryForeground || getAutoContrastColor(colors.secondary);
+    const accentFg = colors.accentForeground || getAutoContrastColor(colors.accent);
+
+    el.style.setProperty("--background", colors.background);
+    el.style.setProperty("--foreground", colors.foreground);
+    el.style.setProperty("--primary", colors.primary);
+    el.style.setProperty("--primary-foreground", primaryFg);
+    el.style.setProperty("--secondary", colors.secondary);
+    el.style.setProperty("--secondary-foreground", secondaryFg);
+    el.style.setProperty("--accent", colors.accent);
+    el.style.setProperty("--accent-foreground", accentFg);
+    el.style.setProperty("--muted", colors.muted);
+    el.style.backgroundColor = colors.background;
+    el.style.color = colors.foreground;
+  }
+}
+
 export function DevThemeCustomizer() {
+  const pathname = usePathname();
+  const isLanding = pathname?.startsWith("/landing/");
+  const landingSlug = isLanding ? pathname.replace("/landing/", "").split("/")[0] : null;
+
   const [mounted, setMounted] = useState(false);
   const [isDev, setIsDev] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [colors, setColors] = useState<ThemeColors>(DEFAULT_THEME_COLORS);
+  const [landingOriginalTheme, setLandingOriginalTheme] = useState<ThemeColors | null>(null);
   const [copied, setCopied] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [importJson, setImportJson] = useState("");
@@ -83,15 +129,65 @@ export function DevThemeCustomizer() {
     setMounted(true);
     const dev = isDevSite();
     setIsDev(dev);
-
-    if (dev) {
-      const saved = getSavedDevTheme();
-      if (saved) {
-        setColors(saved);
-        applyTheme(saved);
-      }
-    }
   }, []);
+
+  // Sync theme based on route context (Global site vs Isolated Landing Page)
+  useEffect(() => {
+    if (!isDev) return;
+
+    if (isLanding && landingSlug) {
+      // 1. ISOLATED LANDING PAGE MODE
+      const storageKey = `attomatti_landing_theme_${landingSlug}`;
+      let customOverride: ThemeColors | null = null;
+
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed.background === "string" && typeof parsed.primary === "string") {
+            customOverride = parsed;
+          }
+        }
+      } catch (e) {
+        console.error("Failed to read landing theme from localStorage", e);
+      }
+
+      // Read original landing theme from dataset if available
+      let baseTheme: ThemeColors = DEFAULT_THEME_COLORS;
+      const rootEl = document.getElementById("landing-root");
+      if (rootEl?.dataset?.landingTheme) {
+        try {
+          const parsed = JSON.parse(rootEl.dataset.landingTheme);
+          baseTheme = {
+            background: parsed.background,
+            foreground: parsed.foreground,
+            primary: parsed.primary,
+            primaryForeground: parsed.primaryForeground || getAutoContrastColor(parsed.primary),
+            secondary: parsed.secondary,
+            secondaryForeground: parsed.secondaryForeground || getAutoContrastColor(parsed.secondary),
+            accent: parsed.accent,
+            accentForeground: parsed.accentForeground || getAutoContrastColor(parsed.accent),
+            muted: parsed.muted
+          };
+          setLandingOriginalTheme(baseTheme);
+        } catch (e) {
+          console.error("Failed to parse dataset landingTheme", e);
+        }
+      }
+
+      const activeTheme = customOverride || baseTheme;
+      setColors(activeTheme);
+      if (customOverride) {
+        applyLandingThemeLive(landingSlug, customOverride);
+      }
+    } else {
+      // 2. GLOBAL WEBSITE MODE
+      setLandingOriginalTheme(null);
+      const savedGlobal = getSavedDevTheme() || DEFAULT_THEME_COLORS;
+      setColors(savedGlobal);
+      applyTheme(savedGlobal);
+    }
+  }, [pathname, isLanding, landingSlug, isDev]);
 
   // Close on Escape key
   useEffect(() => {
@@ -108,7 +204,12 @@ export function DevThemeCustomizer() {
     return null;
   }
 
-  const isCustomized = JSON.stringify(colors) !== JSON.stringify(DEFAULT_THEME_COLORS);
+  // Check if current colors differ from base reference
+  const isCustomized = isLanding
+    ? landingOriginalTheme
+      ? JSON.stringify(colors) !== JSON.stringify(landingOriginalTheme)
+      : false
+    : JSON.stringify(colors) !== JSON.stringify(DEFAULT_THEME_COLORS);
 
   const handleColorChange = (key: ColorKey, value: string) => {
     const updated = { ...colors, [key]: value };
@@ -121,29 +222,65 @@ export function DevThemeCustomizer() {
       updated.accentForeground = getAutoContrastColor(value);
     }
     setColors(updated);
-    saveDevTheme(updated);
+
+    if (isLanding && landingSlug) {
+      applyLandingThemeLive(landingSlug, updated);
+    } else {
+      saveDevTheme(updated);
+    }
   };
 
   const handleForegroundChange = (fgKey: FgKey, value: string) => {
     const updated = { ...colors, [fgKey]: value };
     setColors(updated);
-    saveDevTheme(updated);
+
+    if (isLanding && landingSlug) {
+      applyLandingThemeLive(landingSlug, updated);
+    } else {
+      saveDevTheme(updated);
+    }
   };
 
   const handleApplyPreset = (presetColors: ThemeColors) => {
     setColors(presetColors);
-    saveDevTheme(presetColors);
+
+    if (isLanding && landingSlug) {
+      applyLandingThemeLive(landingSlug, presetColors);
+    } else {
+      saveDevTheme(presetColors);
+    }
   };
 
   const handleReset = () => {
-    setColors(DEFAULT_THEME_COLORS);
-    resetDevTheme();
+    if (isLanding && landingSlug) {
+      try {
+        localStorage.removeItem(`attomatti_landing_theme_${landingSlug}`);
+      } catch (e) {
+        console.error("Failed to clear landing theme override", e);
+      }
+      const targetTheme = landingOriginalTheme || DEFAULT_THEME_COLORS;
+      setColors(targetTheme);
+      applyLandingThemeLive(landingSlug, targetTheme);
+    } else {
+      setColors(DEFAULT_THEME_COLORS);
+      resetDevTheme();
+    }
   };
 
   const handleCopy = async () => {
     try {
-      const payload = JSON.stringify(colors, null, 2);
-      await navigator.clipboard.writeText(payload);
+      const payload = {
+        background: colors.background,
+        foreground: colors.foreground,
+        primary: colors.primary,
+        primaryForeground: colors.primaryForeground || getAutoContrastColor(colors.primary),
+        secondary: colors.secondary,
+        secondaryForeground: colors.secondaryForeground || getAutoContrastColor(colors.secondary),
+        accent: colors.accent,
+        accentForeground: colors.accentForeground || getAutoContrastColor(colors.accent),
+        muted: colors.muted
+      };
+      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (err) {
@@ -175,11 +312,15 @@ export function DevThemeCustomizer() {
           muted: parsed.muted.trim(),
         };
         setColors(validated);
-        saveDevTheme(validated);
+        if (isLanding && landingSlug) {
+          applyLandingThemeLive(landingSlug, validated);
+        } else {
+          saveDevTheme(validated);
+        }
         setShowImport(false);
         setImportJson("");
       } else {
-        setImportError("Formato JSON non valido. Mancano uno o più colori.");
+        setImportError("Formato JSON non valido. Mancano uno o più colori fondamentali.");
       }
     } catch {
       setImportError("JSON non valido. Assicurati che sia una sintassi JSON corretta.");
@@ -207,8 +348,13 @@ export function DevThemeCustomizer() {
           <Palette size={24} className="transition-transform group-hover:rotate-12" />
 
           {/* Dev indicator tag */}
-          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider bg-primary text-white rounded-full shadow-md">
-            DEV
+          <span
+            className={cn(
+              "absolute -top-1 -right-1 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-full shadow-md",
+              isLanding ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground"
+            )}
+          >
+            {isLanding ? "LANDING" : "DEV"}
           </span>
 
           {/* Active custom indicator dot */}
@@ -234,19 +380,37 @@ export function DevThemeCustomizer() {
           >
             {/* Header */}
             <div className="p-5 border-b border-foreground/10 flex items-center justify-between gap-3 shrink-0 bg-muted/40">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border",
+                    isLanding
+                      ? "bg-accent/20 text-accent border-accent/30"
+                      : "bg-primary/20 text-primary border-primary/30"
+                  )}
+                >
                   <Palette size={20} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-black text-base uppercase tracking-tight">Tavolozza Dev</h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent/20 text-accent uppercase tracking-wider">
-                      Live Preview
+                    <h3 className="font-black text-base uppercase tracking-tight truncate">
+                      {isLanding ? "Tavolozza Landing" : "Tavolozza Dev"}
+                    </h3>
+                    <span
+                      className={cn(
+                        "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0",
+                        isLanding
+                          ? "bg-accent/20 text-accent border border-accent/30 font-mono"
+                          : "bg-primary/20 text-primary border border-primary/30"
+                      )}
+                    >
+                      {isLanding ? `/${landingSlug}` : "Sito Globale"}
                     </span>
                   </div>
-                  <p className="text-xs text-foreground/60">
-                    Cambia i colori del sito in tempo reale
+                  <p className="text-xs text-foreground/60 truncate">
+                    {isLanding
+                      ? "Tavolozza scollegata dal sito • Modifica solo questa landing"
+                      : "Cambia i colori del sito in tempo reale"}
                   </p>
                 </div>
               </div>
@@ -254,7 +418,7 @@ export function DevThemeCustomizer() {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/10 transition-colors text-foreground/60 hover:text-foreground"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/10 transition-colors text-foreground/60 hover:text-foreground shrink-0"
                 aria-label="Chiudi pannello"
               >
                 <X size={18} />
@@ -268,7 +432,7 @@ export function DevThemeCustomizer() {
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-xs font-black uppercase tracking-wider text-foreground/60 flex items-center gap-1.5">
                     <Sparkles size={14} className="text-accent" />
-                    Temi Scenici Rapidi
+                    Temi Scenici Rapidi (6 Preset)
                   </span>
                   {isCustomized && (
                     <button
@@ -277,7 +441,7 @@ export function DevThemeCustomizer() {
                       className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
                     >
                       <RotateCcw size={12} />
-                      Default
+                      {isLanding ? "Ripristina Landing" : "Ripristina Default"}
                     </button>
                   )}
                 </div>
@@ -294,7 +458,7 @@ export function DevThemeCustomizer() {
                         className={cn(
                           "p-2.5 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between group",
                           isSelected
-                            ? "border-primary bg-primary/10 shadow-sm"
+                            ? "border-primary bg-primary/10 shadow-sm ring-1 ring-primary/40"
                             : "border-foreground/10 hover:border-foreground/25 bg-muted/30 hover:bg-muted/60"
                         )}
                       >
@@ -337,7 +501,7 @@ export function DevThemeCustomizer() {
                     Colori Singoli ({COLOR_KEYS.length})
                   </span>
                   <span className="text-[11px] text-foreground/40 font-mono">
-                    CSS Variables
+                    CSS Variables & Contrast
                   </span>
                 </div>
 
@@ -505,7 +669,7 @@ export function DevThemeCustomizer() {
                   <button
                     type="button"
                     onClick={handleImportSubmit}
-                    className="w-full py-2 bg-primary text-white rounded-xl text-xs font-black hover:bg-primary/90 transition-all"
+                    className="w-full py-2 bg-primary text-primary-foreground rounded-xl text-xs font-black hover:bg-primary/90 transition-all shadow-sm"
                   >
                     Carica ed Applica Colori
                   </button>
@@ -523,7 +687,7 @@ export function DevThemeCustomizer() {
                     "flex-1 py-3 px-4 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all shadow-md",
                     copied
                       ? "bg-emerald-600 text-white"
-                      : "bg-primary text-white hover:bg-primary/90"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
                   )}
                 >
                   {copied ? (
@@ -534,7 +698,7 @@ export function DevThemeCustomizer() {
                   ) : (
                     <>
                       <Copy size={16} />
-                      Copia Configurazione
+                      {isLanding ? "Copia JSON per Admin" : "Copia Configurazione"}
                     </>
                   )}
                 </button>
@@ -553,29 +717,35 @@ export function DevThemeCustomizer() {
                   type="button"
                   onClick={handleReset}
                   className="p-3 rounded-2xl bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 transition-colors text-foreground"
-                  title="Ripristina tema predefinito"
+                  title={isLanding ? "Ripristina tema originale della landing" : "Ripristina tema predefinito del sito"}
                   aria-label="Ripristina default"
                 >
                   <RotateCcw size={18} />
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    document.cookie = "attomatti_dev_access=; path=/; max-age=0; SameSite=Lax";
-                    window.location.reload();
-                  }}
-                  className="p-3 rounded-2xl bg-foreground/5 hover:bg-rose-500/20 hover:text-rose-400 border border-foreground/10 transition-colors text-foreground"
-                  title="Blocca di nuovo accesso sito dev (elimina cookie per testare il blocco)"
-                  aria-label="Blocca sito dev"
-                >
-                  <Lock size={18} />
-                </button>
+                {!isLanding && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      document.cookie = "attomatti_dev_access=; path=/; max-age=0; SameSite=Lax";
+                      window.location.reload();
+                    }}
+                    className="p-3 rounded-2xl bg-foreground/5 hover:bg-rose-500/20 hover:text-rose-400 border border-foreground/10 transition-colors text-foreground"
+                    title="Blocca di nuovo accesso sito dev (elimina cookie per testare il blocco)"
+                    aria-label="Blocca sito dev"
+                  >
+                    <Lock size={18} />
+                  </button>
+                )}
               </div>
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-foreground/40 font-medium">
                 <Info size={12} />
-                <span>Salvataggio automatico locale • Solo visibile in Dev</span>
+                <span>
+                  {isLanding
+                    ? "Tavolozza isolata per questa landing • Non modifica il tema del sito principale"
+                    : "Salvataggio automatico locale • Solo visibile in Dev"}
+                </span>
               </div>
             </div>
           </motion.div>

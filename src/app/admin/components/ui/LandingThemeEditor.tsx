@@ -1,15 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Palette,
   Check,
+  Copy,
   RotateCcw,
   Sparkles,
   Layers,
   Eye,
   Star,
-  Ticket
+  Ticket,
+  ClipboardPaste,
+  SlidersHorizontal,
+  Info
 } from "lucide-react";
 import {
   LANDING_THEME_PRESETS,
@@ -17,6 +21,7 @@ import {
   getLandingTheme,
   LandingThemeColors
 } from "@/lib/landingThemes";
+import { getAutoContrastColor, getRelativeLuminance } from "@/lib/devTheme";
 import { cn } from "@/lib/utils";
 
 interface LandingThemeEditorProps {
@@ -24,12 +29,19 @@ interface LandingThemeEditorProps {
   onChange: (updatedTheme: LandingThemeColors & { preset: string }) => void;
 }
 
-const COLOR_FIELDS: Array<{
-  key: keyof LandingThemeColors;
+type ColorKey = "background" | "foreground" | "primary" | "secondary" | "accent" | "muted";
+type FgKey = "primaryForeground" | "secondaryForeground" | "accentForeground";
+
+interface ColorItemConfig {
+  key: ColorKey;
   label: string;
   desc: string;
   roleHint: string;
-}> = [
+  fgKey?: FgKey;
+  fgLabel?: string;
+}
+
+const COLOR_FIELDS: ColorItemConfig[] = [
   {
     key: "background",
     label: "Sfondo Pagina",
@@ -46,19 +58,25 @@ const COLOR_FIELDS: Array<{
     key: "primary",
     label: "Colore Primario",
     desc: "Pulsanti di acquisto biglietti e badge hero",
-    roleHint: "CTA principali e callout"
+    roleHint: "CTA principali e callout",
+    fgKey: "primaryForeground",
+    fgLabel: "Testo su Primario"
   },
   {
     key: "secondary",
     label: "Colore Secondario",
     desc: "Sfondi secondari e tag informativi",
-    roleHint: "Tag date, orari e dettagli"
+    roleHint: "Tag date, orari e dettagli",
+    fgKey: "secondaryForeground",
+    fgLabel: "Testo su Secondario"
   },
   {
     key: "accent",
     label: "Colore Accento",
     desc: "Stelle recensioni, citazioni e riflettori",
-    roleHint: "Elementi decorativi e rating"
+    roleHint: "Elementi decorativi e rating",
+    fgKey: "accentForeground",
+    fgLabel: "Testo su Accento"
   },
   {
     key: "muted",
@@ -74,9 +92,19 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
     LANDING_THEME_PRESETS.find((p) => p.id === currentTheme.presetId) ||
     LANDING_THEME_PRESETS[0];
 
+  const [copied, setCopied] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importJson, setImportJson] = useState("");
+  const [importError, setImportError] = useState<string | null>(null);
+
   // Check if any color has been customized compared to the matched preset
   const isCustomized = (Object.keys(matchedPreset.colors) as Array<keyof LandingThemeColors>).some(
-    (key) => matchedPreset.colors[key].toLowerCase() !== currentTheme[key].toLowerCase()
+    (key) => {
+      const presetVal = matchedPreset.colors[key];
+      const currentVal = currentTheme[key];
+      if (!presetVal && !currentVal) return false;
+      return (presetVal || "").toLowerCase() !== (currentVal || "").toLowerCase();
+    }
   );
 
   const handleSelectPreset = (preset: LandingThemePreset) => {
@@ -86,16 +114,46 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
     });
   };
 
-  const handleColorChange = (key: keyof LandingThemeColors, hex: string) => {
+  const handleColorChange = (key: ColorKey, hex: string) => {
+    const updated: LandingThemeColors & { preset: string } = {
+      preset: currentTheme.presetId,
+      background: currentTheme.background,
+      foreground: currentTheme.foreground,
+      primary: currentTheme.primary,
+      primaryForeground: currentTheme.primaryForeground,
+      secondary: currentTheme.secondary,
+      secondaryForeground: currentTheme.secondaryForeground,
+      accent: currentTheme.accent,
+      accentForeground: currentTheme.accentForeground,
+      muted: currentTheme.muted,
+      [key]: hex
+    };
+
+    // Auto-recalculate button text contrast when primary/secondary/accent change
+    if (key === "primary") {
+      updated.primaryForeground = getAutoContrastColor(hex);
+    } else if (key === "secondary") {
+      updated.secondaryForeground = getAutoContrastColor(hex);
+    } else if (key === "accent") {
+      updated.accentForeground = getAutoContrastColor(hex);
+    }
+
+    onChange(updated);
+  };
+
+  const handleForegroundChange = (fgKey: FgKey, hex: string) => {
     onChange({
       preset: currentTheme.presetId,
       background: currentTheme.background,
       foreground: currentTheme.foreground,
       primary: currentTheme.primary,
+      primaryForeground: currentTheme.primaryForeground,
       secondary: currentTheme.secondary,
+      secondaryForeground: currentTheme.secondaryForeground,
       accent: currentTheme.accent,
+      accentForeground: currentTheme.accentForeground,
       muted: currentTheme.muted,
-      [key]: hex
+      [fgKey]: hex
     });
   };
 
@@ -104,6 +162,61 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
       preset: matchedPreset.id,
       ...matchedPreset.colors
     });
+  };
+
+  const handleCopyJson = async () => {
+    try {
+      const payload = {
+        background: currentTheme.background,
+        foreground: currentTheme.foreground,
+        primary: currentTheme.primary,
+        primaryForeground: currentTheme.primaryForeground || getAutoContrastColor(currentTheme.primary),
+        secondary: currentTheme.secondary,
+        secondaryForeground: currentTheme.secondaryForeground || getAutoContrastColor(currentTheme.secondary),
+        accent: currentTheme.accent,
+        accentForeground: currentTheme.accentForeground || getAutoContrastColor(currentTheme.accent),
+        muted: currentTheme.muted
+      };
+      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      console.error("Clipboard copy failed", err);
+    }
+  };
+
+  const handleImportSubmit = () => {
+    setImportError(null);
+    try {
+      const parsed = JSON.parse(importJson.trim());
+      if (
+        typeof parsed.background === "string" &&
+        typeof parsed.foreground === "string" &&
+        typeof parsed.primary === "string" &&
+        typeof parsed.secondary === "string" &&
+        typeof parsed.accent === "string" &&
+        typeof parsed.muted === "string"
+      ) {
+        onChange({
+          preset: parsed.preset || currentTheme.presetId,
+          background: parsed.background.trim(),
+          foreground: parsed.foreground.trim(),
+          primary: parsed.primary.trim(),
+          primaryForeground: parsed.primaryForeground?.trim() || getAutoContrastColor(parsed.primary),
+          secondary: parsed.secondary.trim(),
+          secondaryForeground: parsed.secondaryForeground?.trim() || getAutoContrastColor(parsed.secondary),
+          accent: parsed.accent.trim(),
+          accentForeground: parsed.accentForeground?.trim() || getAutoContrastColor(parsed.accent),
+          muted: parsed.muted.trim()
+        });
+        setShowImport(false);
+        setImportJson("");
+      } else {
+        setImportError("Formato JSON non valido. Mancano uno o più colori fondamentali (background, foreground, primary, secondary, accent, muted).");
+      }
+    } catch {
+      setImportError("JSON non valido. Assicurati di incollare una sintassi JSON corretta (es. dalla Tavolozza Dev).");
+    }
   };
 
   return (
@@ -124,23 +237,81 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
               </span>
             </div>
             <p className="text-[11px] text-foreground/50 mt-0.5">
-              Scegli tra il tema standard o 5 preset stilistici teatrali, poi ritocca liberamente ogni colore.
+              Stessa tavolozza usata nell&apos;ambiente Dev: 6 temi teatrali, contrasto bottoni personalizzabile ed import/export JSON.
             </p>
           </div>
         </div>
 
-        {isCustomized && (
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <button
             type="button"
-            onClick={handleResetToPreset}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground text-xs font-bold transition-all border border-foreground/10 self-start sm:self-auto shrink-0"
-            title="Ripristina i colori originali di questo preset"
+            onClick={handleCopyJson}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground text-xs font-bold transition-all border border-foreground/10"
+            title="Copia configurazione JSON per usarla nella Tavolozza Dev o su un'altra landing"
           >
-            <RotateCcw size={13} />
-            <span>Ripristina preset</span>
+            {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
+            <span>{copied ? "Copiato!" : "Copia JSON"}</span>
           </button>
-        )}
+
+          <button
+            type="button"
+            onClick={() => setShowImport(!showImport)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground text-xs font-bold transition-all border border-foreground/10"
+            title="Incolla configurazione JSON dalla Tavolozza Dev"
+          >
+            <ClipboardPaste size={13} />
+            <span>Importa JSON</span>
+          </button>
+
+          {isCustomized && (
+            <button
+              type="button"
+              onClick={handleResetToPreset}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground text-xs font-bold transition-all border border-foreground/10"
+              title="Ripristina i colori originali di questo preset"
+            >
+              <RotateCcw size={13} />
+              <span>Ripristina preset</span>
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* JSON Import Section */}
+      {showImport && (
+        <div className="p-4 rounded-2xl bg-muted/30 border border-foreground/15 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <ClipboardPaste size={14} className="text-primary" />
+              Incolla JSON configurazione dalla Tavolozza Dev
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowImport(false)}
+              className="text-foreground/40 hover:text-foreground text-[10px]"
+            >
+              Chiudi
+            </button>
+          </div>
+          <textarea
+            rows={4}
+            value={importJson}
+            onChange={(e) => setImportJson(e.target.value)}
+            placeholder='{"background": "#0f172a", "foreground": "#f8fafc", "primary": "#fb7185", "primaryForeground": "#0f172a", ...}'
+            className="w-full p-2.5 text-xs font-mono bg-background border border-foreground/20 rounded-xl focus:border-primary focus:outline-none resize-none"
+          />
+          {importError && (
+            <p className="text-xs text-rose-400 font-bold">{importError}</p>
+          )}
+          <button
+            type="button"
+            onClick={handleImportSubmit}
+            className="w-full py-2 bg-primary text-primary-foreground font-black rounded-xl text-xs hover:bg-primary/90 transition-all shadow-sm"
+          >
+            Carica ed Applica Colori
+          </button>
+        </div>
+      )}
 
       {/* 1. Theme Presets Carousel / Grid */}
       <div className="space-y-2.5">
@@ -177,7 +348,7 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
                       {preset.name}
                     </span>
                     {isSelected && (
-                      <span className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
+                      <span className="w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
                         <Check size={10} strokeWidth={3} />
                       </span>
                     )}
@@ -289,14 +460,24 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
                   borderColor: `${currentTheme.foreground}15`
                 }}
               >
-                <span style={{ color: currentTheme.secondary }}>CHF 25.-</span> • Sabato 20:00
+                <span
+                  style={{
+                    color: currentTheme.secondaryForeground || getAutoContrastColor(currentTheme.secondary),
+                    backgroundColor: currentTheme.secondary,
+                    padding: "2px 6px",
+                    borderRadius: "6px"
+                  }}
+                >
+                  CHF 25.-
+                </span>{" "}
+                • Sabato 20:00
               </div>
 
               <div
-                className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-colors"
                 style={{
                   backgroundColor: currentTheme.primary,
-                  color: "#ffffff"
+                  color: currentTheme.primaryForeground || getAutoContrastColor(currentTheme.primary)
                 }}
               >
                 <Ticket size={13} />
@@ -311,17 +492,21 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
       <div className="space-y-3 pt-2 border-t border-foreground/5">
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5">
-            <Layers size={13} className="text-primary" />
-            <span>Personalizzazione Singoli Colori (Hex Picker)</span>
+            <SlidersHorizontal size={13} className="text-primary" />
+            <span>Personalizzazione Singoli Colori ({COLOR_FIELDS.length})</span>
           </label>
           <span className="text-[11px] text-foreground/40 font-mono">
-            CSS Variables
+            CSS Variables & Contrast
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {COLOR_FIELDS.map((field) => {
-            const currentColor = currentTheme[field.key];
+            const currentColor = currentTheme[field.key] || "#000000";
+            const currentFg = field.fgKey
+              ? currentTheme[field.fgKey] || getAutoContrastColor(currentColor)
+              : null;
+            const isDarkBg = getRelativeLuminance(currentColor) <= 0.45;
 
             return (
               <div
@@ -368,6 +553,39 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
                     var(--{field.key})
                   </span>
                 </div>
+
+                {/* Button Contrast / Foreground Text Picker */}
+                {field.fgKey && currentFg && (
+                  <div className="flex items-center justify-between pt-2 border-t border-foreground/5 text-[11px] text-foreground/70">
+                    <div className="flex items-center gap-2">
+                      <label
+                        className="relative w-5 h-5 rounded-md overflow-hidden cursor-pointer border border-foreground/25 block shadow-xs hover:scale-105 transition-transform"
+                        style={{ backgroundColor: currentFg }}
+                        title={`Modifica contrasto ${field.fgLabel}`}
+                      >
+                        <input
+                          type="color"
+                          value={currentFg}
+                          onChange={(e) => handleForegroundChange(field.fgKey!, e.target.value)}
+                          className="sr-only"
+                        />
+                      </label>
+                      <span className="text-[10px] font-mono opacity-60">
+                        {field.fgLabel}
+                      </span>
+                    </div>
+
+                    <span
+                      className="px-2 py-0.5 rounded-full text-[10px] font-bold shadow-xs transition-colors"
+                      style={{
+                        backgroundColor: currentColor,
+                        color: currentFg
+                      }}
+                    >
+                      Anteprima ({isDarkBg ? "Scuro" : "Chiaro"})
+                    </span>
+                  </div>
+                )}
               </div>
             );
           })}

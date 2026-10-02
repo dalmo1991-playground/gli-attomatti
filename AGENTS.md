@@ -77,3 +77,29 @@ This project does **not** use a traditional database.
   />
   ```
 - **Dynamic Content**: Always verify nested optional arrays or properties exist (`content.pages?.spettacoli?.archive_sections || []`) to prevent runtime crashes when content schema evolves.
+
+---
+
+## 6. Legal & Regulatory Compliance Verification (Mandatory)
+Every time an AI agent introduces or modifies a feature, tool, or data flow, **the agent MUST systematically verify whether the legal documents require updating**:
+
+### Trigger Checklist (When to check legal docs):
+- **Third-Party Services & Integrations**: Adding, updating, or embedding external tools (e.g. ticketing like *Eventfrog*, form builders like *Tally*, analytics like *Google Analytics*, pixels like *Meta Pixel*, maps, external APIs).
+- **Embedded Components (iFrames & Widgets)**: Embedding external content or checkout/registration frames into pages (e.g. `/Biglietti/[slug]`, `/Registrazioni/[slug]`, landing pages).
+- **Data Collection & Forms**: Adding new input fields, registration flows, contact mechanisms, user data storage, newsletter subscriptions, or surveys.
+- **Cookies & Storage**: Setting new cookies, local storage keys, session tokens, or third-party session cookies.
+- **Transactional & Event Rules**: Modifying ticket pricing, refund rules, event attendance rules, cancellation policies, or registration procedures.
+
+### Legal Documents to Audit & Update:
+1. **`src/app/Privacy/page.tsx` (Informativa sulla Privacy — nLPD / revFADP & GDPR)**:
+   - Disclose data controllers, data processors, processing purposes, server locations (EU/CH/US), and data retention.
+   - Update the **Cookie & Storage Table** (distinguish between strictly necessary technical session cookies vs. opt-in analytics/marketing).
+   - Ensure conditional flags (e.g. `isEventfrogActive`, `isTallyActive`, `isGaActive`) correctly detect active pages or content structures.
+2. **`src/app/Termini/page.tsx` (Termini e Condizioni — Regolamento Spettacoli & Eventi)**:
+   - Update purchase conditions, registration validity, refund/cancellation policies, no-show guidelines, and technical liability disclaimers for embedded third-party services.
+3. **`src/app/Impressum/page.tsx` (Note Legali / Impressum)**:
+   - Ensure the disclaimer (Haftungsausschluss) covers new external links or embedded iframe services.
+4. **`src/components/analytics/CookieBanner.tsx`**:
+   - Ensure cookie descriptions, categories, and opt-in toggles remain accurate.
+
+*Remember: All legal copy must be written in **rigorous, professional Italian** and conform strictly to Swiss law (nLPD).*

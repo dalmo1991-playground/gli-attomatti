@@ -186,7 +186,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                 <div>
                   <span className="font-bold text-foreground block text-sm">Cookie Tecnici Necessari</span>
                   <span className="text-foreground/60 leading-relaxed">
-                    Indispensabili per la navigazione sicura e per memorizzare le tue preferenze di privacy. Sempre attivi.
+                    Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi.
                   </span>
                 </div>
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider shrink-0">
