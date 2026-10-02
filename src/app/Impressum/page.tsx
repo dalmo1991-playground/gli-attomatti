@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Users, Mail, Globe, ShieldAlert } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Impressum — Gli Attomatti",
+  title: "Note Legali & Impressum",
   description: "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
   alternates: {
     canonical: "/Impressum",

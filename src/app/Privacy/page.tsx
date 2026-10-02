@@ -5,7 +5,7 @@ import { ArrowLeft, ShieldCheck, Server, EyeOff, ExternalLink, Scale, BarChart3,
 import PrivacyConsentButton from "./PrivacyConsentButton";
 
 export const metadata: Metadata = {
-  title: "Informativa sulla Privacy — Gli Attomatti",
+  title: "Informativa sulla Privacy",
   description: "Informativa sul trattamento dei dati personali (Datenschutzerklärung) ai sensi della nLPD svizzera.",
   alternates: {
     canonical: "/Privacy",

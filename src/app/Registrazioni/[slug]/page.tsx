@@ -15,12 +15,12 @@ export async function generateMetadata({
 
   if (!page || page.active === false) {
     return {
-      title: "Registrazioni — Gli Attomatti",
+      title: "Registrazioni",
     };
   }
 
   return {
-    title: `${page.title} — Registrazione Online — Gli Attomatti`,
+    title: `${page.title} — Registrazione Online`,
     description:
       page.description ||
       `Modulo di registrazione e iscrizione per ${page.title} della compagnia teatrale Gli Attomatti a Zurigo.`,

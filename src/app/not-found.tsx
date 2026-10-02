@@ -3,7 +3,7 @@ import { Sparkles, Home, Theater } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pagina non trovata — Gli Attomatti",
+  title: "Pagina non trovata",
   description: "La pagina cercata non è stata trovata o è stata spostata.",
   robots: {
     index: false,

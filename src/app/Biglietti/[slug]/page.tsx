@@ -15,12 +15,12 @@ export async function generateMetadata({
 
   if (!page || page.active === false) {
     return {
-      title: "Biglietti — Gli Attomatti",
+      title: "Biglietti",
     };
   }
 
   return {
-    title: `${page.title} — Biglietti & Prevendita — Gli Attomatti`,
+    title: `${page.title} — Biglietti & Prevendita`,
     description:
       page.description ||
       `Acquisto biglietti per ${page.title} della compagnia teatrale Gli Attomatti a Zurigo.`,

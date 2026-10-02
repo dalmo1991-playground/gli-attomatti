@@ -15,7 +15,7 @@ export async function generateMetadata({
 
   if (!initiative) {
     return {
-      title: "Iniziativa non trovata — Gli Attomatti",
+      title: "Iniziativa non trovata",
       robots: { index: false, follow: true }
     };
   }

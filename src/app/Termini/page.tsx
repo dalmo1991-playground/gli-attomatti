@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Termini di Biglietteria e Iscrizioni — Gli Attomatti",
+  title: "Termini di Biglietteria e Iscrizioni",
   description: "Condizioni generali per l'acquisto dei biglietti, l'iscrizione agli eventi e l'accesso agli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
   alternates: {
     canonical: "/Termini",

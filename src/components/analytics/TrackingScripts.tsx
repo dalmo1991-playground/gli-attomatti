@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import Script from "next/script";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface TrackingScriptsProps {
   integrations?: {
@@ -23,6 +24,76 @@ interface TrackingScriptsProps {
     analytics: boolean;
     marketing: boolean;
   };
+}
+
+interface RouteTrackerProps {
+  gaId: string | null;
+  metaId: string | null;
+  hasAnalyticsConsent: boolean;
+  hasMarketingConsent: boolean;
+}
+
+/**
+ * RouteTracker monitors client-side navigations (SPA page changes in Next.js App Router).
+ * In Next.js, history.pushState happens before React commits the new <title> to the DOM.
+ * By waiting for the <title> tag mutation (or falling back to a quick tick),
+ * we guarantee that GA4 and Meta Pixel record the EXACT, updated page title and path.
+ */
+function RouteTracker({
+  gaId,
+  metaId,
+  hasAnalyticsConsent,
+  hasMarketingConsent,
+}: RouteTrackerProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (!hasAnalyticsConsent || !gaId) return;
+
+    let fired = false;
+    const sendPageView = () => {
+      if (fired) return;
+      fired = true;
+
+      const query = searchParams?.toString();
+      const pagePath = pathname + (query ? `?${query}` : "");
+      const pageLocation = window.location.href;
+      const pageTitle = document.title || "Gli Attomatti";
+
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "page_view", {
+          page_title: pageTitle,
+          page_location: pageLocation,
+          page_path: pagePath,
+        });
+      }
+
+      if (hasMarketingConsent && metaId && typeof window.fbq === "function") {
+        window.fbq("track", "PageView");
+      }
+    };
+
+    // Watch for <title> mutation in <head> so we fire as soon as Next.js updates the document title
+    const titleEl = document.querySelector("title");
+    let observer: MutationObserver | null = null;
+    if (titleEl) {
+      observer = new MutationObserver(() => {
+        sendPageView();
+      });
+      observer.observe(titleEl, { childList: true, characterData: true, subtree: true });
+    }
+
+    // Fallback: in case the title was already updated or doesn't change, fire after 120ms
+    const timer = setTimeout(sendPageView, 120);
+
+    return () => {
+      clearTimeout(timer);
+      if (observer) observer.disconnect();
+    };
+  }, [pathname, searchParams, gaId, metaId, hasAnalyticsConsent, hasMarketingConsent]);
+
+  return null;
 }
 
 export function TrackingScripts({ integrations, consent }: TrackingScriptsProps) {
@@ -101,7 +172,7 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${gaId}', {
-                  page_path: window.location.pathname,
+                  send_page_view: false,
                   anonymize_ip: true
                 });
               `,
@@ -126,11 +197,20 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${metaId}');
-              fbq('track', 'PageView');
             `,
           }}
         />
       )}
+
+      {/* 4. Active Route & Page Title Tracker for SPA navigation */}
+      <Suspense fallback={null}>
+        <RouteTracker
+          gaId={gaId}
+          metaId={metaId}
+          hasAnalyticsConsent={hasAnalyticsConsent}
+          hasMarketingConsent={hasMarketingConsent}
+        />
+      </Suspense>
     </>
   );
 }

@@ -15,7 +15,7 @@ export async function generateMetadata({
 
   if (!show) {
     return {
-      title: "Spettacolo non trovato — Gli Attomatti",
+      title: "Spettacolo non trovato",
       robots: { index: false, follow: true }
     };
   }

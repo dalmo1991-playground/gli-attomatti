@@ -14,7 +14,7 @@ export async function generateMetadata({
 
   if (!landing) {
     return {
-      title: "Landing — Gli Attomatti"
+      title: "Pagina Promozionale"
     };
   }
 
