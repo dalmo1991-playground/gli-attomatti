@@ -7,30 +7,8 @@
   },
   "navigation": [
     {
-      "label": "Home",
-      "href": "/"
-    },
-    {
-      "label": "Chi Siamo",
-      "href": "/Chi_Siamo",
-      "sublinks": [
-        {
-          "label": "Le Persone",
-          "href": "/Chi_Siamo/Attori"
-        },
-        {
-          "label": "Dicono di Noi",
-          "href": "/Chi_Siamo/Parlano_di_noi"
-        }
-      ]
-    },
-    {
-      "label": "Spettacoli",
-      "href": "/Spettacoli"
-    },
-    {
-      "label": "Iniziative",
-      "href": "/Iniziative"
+      "label": "Dicono di noi",
+      "href": "/Chi_Siamo/Parlano_di_noi"
     },
     {
       "label": "Contatti",
