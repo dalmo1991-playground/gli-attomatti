@@ -33,22 +33,22 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
                 
                 <div className="flex flex-wrap items-center justify-between gap-6 border-t border-foreground/10 pt-8">
                   <div className="flex items-center">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                      <ExternalLink size={20} className="text-primary group-hover:text-white transition-colors" />
+                    <div className="w-12 h-12 bg-secondary/15 text-secondary rounded-full flex items-center justify-center mr-4 group-hover:bg-secondary group-hover:text-secondary-foreground transition-all duration-500">
+                      <ExternalLink size={20} className="text-secondary group-hover:text-secondary-foreground transition-colors" />
                     </div>
                     <div>
                       <div className="text-xl font-bold flex items-center">
                         {item.source}
                         {item.source_href && <ExternalLink size={16} className="ml-2 opacity-40 group-hover:opacity-100 transition-opacity" />}
                       </div>
-                      <p className="text-foreground/40 text-sm font-bold uppercase tracking-widest mt-1">
+                      <p className="text-accent text-sm font-bold uppercase tracking-widest mt-1">
                         Anno {item.date}
                       </p>
                     </div>
                   </div>
                   
                   <div className="hidden md:block">
-                    <div className="px-6 py-2 border border-foreground/10 rounded-full text-xs font-bold uppercase tracking-widest opacity-40 group-hover:opacity-100 group-hover:border-primary/40 transition-all">
+                    <div className="px-5 py-1.5 bg-accent/10 text-accent border border-accent/30 rounded-full text-xs font-bold uppercase tracking-widest shadow-xs">
                       {item.badge_label}
                     </div>
                   </div>
@@ -96,7 +96,7 @@ export default function ParlanoDiNoiClient({ content }: { content: any }) {
             </p>
             <Link 
               href={press_contact.cta_href}
-              className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 inline-block"
+              className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
             >
               {press_contact.cta_label}
             </Link>

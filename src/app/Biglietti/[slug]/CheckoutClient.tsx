@@ -131,7 +131,7 @@ export default function CheckoutClient({ page }: CheckoutClientProps) {
             </div>
             <Link
               href={page.back_link_href || "/"}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-all"
             >
               {page.back_link_label || "Torna al sito"}
             </Link>

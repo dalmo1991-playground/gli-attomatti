@@ -72,7 +72,7 @@ export function BentoGallery({
               transition={{ duration: 0.5, delay: idx * 0.08 }}
               onClick={() => onImageClick(idx)}
               className={cn(
-                "relative w-full rounded-3xl overflow-hidden bg-muted shadow-xl border border-foreground/5 transition-all duration-500 hover:shadow-2xl hover:border-primary/30 cursor-pointer group",
+                "relative w-full rounded-3xl overflow-hidden bg-muted shadow-xl border border-foreground/10 transition-all duration-500 hover:shadow-[0_0_30px_rgba(var(--secondary-rgb),0.25)] hover:border-secondary/40 cursor-pointer group",
                 layoutClasses
               )}
             >
@@ -84,8 +84,8 @@ export function BentoGallery({
                 className={`transition-all duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
               />
 
-              {/* Glassmorphic expand icon badge */}
-              <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
+              {/* Glassmorphic expand icon badge with golden accent */}
+              <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/70 backdrop-blur-md border border-accent/40 flex items-center justify-center text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
                 <Maximize2 size={14} />
               </div>
             </motion.div>

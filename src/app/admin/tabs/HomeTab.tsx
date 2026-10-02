@@ -41,6 +41,7 @@ export function HomeTab() {
         tagline: "Una commedia imperdibile",
         date: "Prossimamente",
         location: "Zurigo",
+        location_href: "",
         cta: "Prenota Posto",
         cta_href: "/Contatti",
         secondary_cta: "Dettagli",
@@ -249,6 +250,13 @@ export function HomeTab() {
                   placeholder="Es. Theater Casino Zug"
                 />
               </div>
+
+              <FormField
+                label="Link Google Maps (opzionale)"
+                value={show.location_href || ""}
+                onChange={(v) => updateShowField(idx, "location_href", v)}
+                placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-foreground/5">
                 <FormField

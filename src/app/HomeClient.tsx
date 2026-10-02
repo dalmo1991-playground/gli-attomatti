@@ -103,6 +103,9 @@ export default function HomeClient({ content }: { content: any }) {
               </motion.div>
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
+            {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none z-10" />
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none z-10" />
           </div>
         ) : (
           /* Mode 2: Generic Background */
@@ -117,6 +120,9 @@ export default function HomeClient({ content }: { content: any }) {
             />
 
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background" />
+            {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
           </div>
         )}
 
@@ -167,15 +173,15 @@ export default function HomeClient({ content }: { content: any }) {
                   {(activeShows[currentShowIndex].date || activeShows[currentShowIndex].location) && (
                     <div className="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 text-xs sm:text-sm md:text-base font-medium text-foreground/90 mt-5 md:mt-6">
                       {activeShows[currentShowIndex].date && (
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
-                          <Calendar size={16} className="text-primary shrink-0" />
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/30 backdrop-blur-md shadow-[0_0_15px_rgba(251,191,36,0.15)] font-bold">
+                          <Calendar size={15} className="text-accent shrink-0" />
                           <span>{activeShows[currentShowIndex].date}</span>
                         </div>
                       )}
                       {activeShows[currentShowIndex].location && (
-                        activeShows[currentShowIndex].location_href ? (
+                        activeShows[currentShowIndex].location_href?.trim() ? (
                           <Link
-                            href={activeShows[currentShowIndex].location_href}
+                            href={activeShows[currentShowIndex].location_href.trim()}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
@@ -202,7 +208,7 @@ export default function HomeClient({ content }: { content: any }) {
                       activeShows[currentShowIndex].cta_href ? (
                         <Link
                           href={activeShows[currentShowIndex].cta_href}
-                          className="px-8 py-3.5 sm:py-4 bg-primary text-white rounded-full font-black text-base sm:text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                          className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                         >
                           {activeShows[currentShowIndex].cta}
                           <ArrowRight size={18} className="ml-2" />
@@ -220,13 +226,13 @@ export default function HomeClient({ content }: { content: any }) {
                       (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
                         <Link
                           href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
-                          className="px-8 py-3.5 sm:py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold text-base sm:text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                          className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                         >
                           {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
                         </Link>
                       ) : (
-                        <div className="px-6 py-2.5 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-base flex items-center justify-center shadow-xl">
-                          <Info size={16} className="mr-2 text-primary opacity-80" />
+                        <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-xl font-black text-base flex items-center justify-center shadow-xl">
+                          <Info size={16} className="mr-2 text-secondary opacity-80" />
                           {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
                         </div>
                       )
@@ -262,7 +268,7 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.primary_cta_href ? (
                       <Link
                         href={hero.primary_cta_href}
-                        className="px-8 py-3.5 sm:py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                       >
                         {hero.primary_cta_label}
                         <ArrowRight size={18} className="ml-2" />
@@ -278,13 +284,13 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.secondary_cta_href ? (
                       <Link
                         href={hero.secondary_cta_href}
-                        className="px-8 py-3.5 sm:py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                       >
                         {hero.secondary_cta_label}
                       </Link>
                     ) : (
-                      <div className="px-6 py-2.5 glass border-2 border-foreground/20 text-foreground rounded-lg font-bold text-base flex items-center justify-center">
-                        <Info size={16} className="mr-2 text-primary opacity-80" />
+                      <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-lg font-bold text-base flex items-center justify-center">
+                        <Info size={16} className="mr-2 text-secondary opacity-80" />
                         {hero.secondary_cta_label}
                       </div>
                     )
@@ -317,6 +323,11 @@ export default function HomeClient({ content }: { content: any }) {
       </section>
 
       {/* Introduction Section */}
+      {/* Stage Divider */}
+      <div className="w-full max-w-6xl mx-auto px-6 py-6">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
+      </div>
+
       <Section className="bg-muted/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
@@ -360,6 +371,11 @@ export default function HomeClient({ content }: { content: any }) {
           </div>
         </div>
       </Section>
+
+      {/* Stage Divider */}
+      <div className="w-full max-w-6xl mx-auto px-6 py-4">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
+      </div>
 
       {/* Instagram Feed Section (Modalità B - Embed) */}
       <InstagramFeed data={content.pages?.home?.instagram_feed} />

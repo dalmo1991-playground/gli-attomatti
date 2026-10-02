@@ -2,8 +2,11 @@ export interface ThemeColors {
   background: string;
   foreground: string;
   primary: string;
+  primaryForeground?: string;
   secondary: string;
+  secondaryForeground?: string;
   accent: string;
+  accentForeground?: string;
   muted: string;
 }
 
@@ -14,12 +17,50 @@ export interface ThemePreset {
   colors: ThemeColors;
 }
 
+/**
+ * Calculates WCAG relative luminance from a hex color string.
+ */
+export function getRelativeLuminance(hex: string): number {
+  const cleanHex = hex.replace("#", "").trim();
+  let r = 0, g = 0, b = 0;
+  if (cleanHex.length === 3) {
+    r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    b = parseInt(cleanHex[2] + cleanHex[2], 16);
+  } else if (cleanHex.length === 6) {
+    r = parseInt(cleanHex.substring(0, 2), 16);
+    g = parseInt(cleanHex.substring(2, 4), 16);
+    b = parseInt(cleanHex.substring(4, 6), 16);
+  }
+  const sRGB = [r, g, b].map((val) => {
+    const s = val / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+}
+
+/**
+ * Automatically calculates high-contrast foreground text (#09090b or #ffffff) based on background luminance.
+ */
+export function getAutoContrastColor(hexColor: string): string {
+  try {
+    const lum = getRelativeLuminance(hexColor);
+    // Threshold 0.45: light colors (yellow, light amber, light cyan, etc.) receive dark text; dark colors receive white text.
+    return lum > 0.45 ? "#09090b" : "#ffffff";
+  } catch (e) {
+    return "#ffffff";
+  }
+}
+
 export const DEFAULT_THEME_COLORS: ThemeColors = {
   background: "#0f172a", // Slate 900
   foreground: "#f8fafc", // Slate 50
   primary: "#fb7185",    // Rose 400
+  primaryForeground: "#0f172a", // High contrast dark text on Rose 400
   secondary: "#818cf8",  // Indigo 400
+  secondaryForeground: "#0f172a",
   accent: "#fbbf24",     // Amber 400
+  accentForeground: "#0f172a",
   muted: "#1e293b",      // Slate 800
 };
 
@@ -38,8 +79,11 @@ export const THEME_PRESETS: ThemePreset[] = [
       background: "#09090b",
       foreground: "#fafaf9",
       primary: "#d97706",
+      primaryForeground: "#ffffff",
       secondary: "#e11d48",
+      secondaryForeground: "#ffffff",
       accent: "#fde047",
+      accentForeground: "#09090b",
       muted: "#18181b"
     }
   },
@@ -51,8 +95,11 @@ export const THEME_PRESETS: ThemePreset[] = [
       background: "#18060c",
       foreground: "#fff1f2",
       primary: "#e11d48",
+      primaryForeground: "#ffffff",
       secondary: "#c084fc",
+      secondaryForeground: "#09090b",
       accent: "#fbbf24",
+      accentForeground: "#09090b",
       muted: "#2a0c16"
     }
   },
@@ -64,8 +111,11 @@ export const THEME_PRESETS: ThemePreset[] = [
       background: "#070b19",
       foreground: "#f0fdfa",
       primary: "#06b6d4",
+      primaryForeground: "#09090b",
       secondary: "#ec4899",
+      secondaryForeground: "#ffffff",
       accent: "#a855f7",
+      accentForeground: "#ffffff",
       muted: "#0f1d36"
     }
   },
@@ -77,8 +127,11 @@ export const THEME_PRESETS: ThemePreset[] = [
       background: "#061612",
       foreground: "#f0fdf4",
       primary: "#10b981",
+      primaryForeground: "#09090b",
       secondary: "#38bdf8",
+      secondaryForeground: "#09090b",
       accent: "#f59e0b",
+      accentForeground: "#09090b",
       muted: "#0d2620"
     }
   },
@@ -90,8 +143,11 @@ export const THEME_PRESETS: ThemePreset[] = [
       background: "#f8fafc",
       foreground: "#0f172a",
       primary: "#e11d48",
+      primaryForeground: "#ffffff",
       secondary: "#4f46e5",
+      secondaryForeground: "#ffffff",
       accent: "#d97706",
+      accentForeground: "#ffffff",
       muted: "#e2e8f0"
     }
   }
@@ -126,7 +182,6 @@ export function hexToRgb(hex: string): string | null {
  * Strictly returns false on live production domain (gliattomatti.ch).
  */
 export function isDevSite(): boolean {
-  // If executed on server side
   if (typeof window === "undefined") {
     return process.env.NEXT_PUBLIC_IS_DEV_SITE === "true" || process.env.NODE_ENV !== "production";
   }
@@ -182,10 +237,24 @@ export function applyTheme(colors: ThemeColors): void {
   root.style.setProperty("--accent", colors.accent);
   root.style.setProperty("--muted", colors.muted);
 
+  // Compute or apply dynamic high-contrast foregrounds
+  const primaryFg = colors.primaryForeground || getAutoContrastColor(colors.primary);
+  const secondaryFg = colors.secondaryForeground || getAutoContrastColor(colors.secondary);
+  const accentFg = colors.accentForeground || getAutoContrastColor(colors.accent);
+
+  root.style.setProperty("--primary-foreground", primaryFg);
+  root.style.setProperty("--secondary-foreground", secondaryFg);
+  root.style.setProperty("--accent-foreground", accentFg);
+
+  // RGB channels for glowing effects
   const primaryRgb = hexToRgb(colors.primary);
-  if (primaryRgb) {
-    root.style.setProperty("--primary-rgb", primaryRgb);
-  }
+  if (primaryRgb) root.style.setProperty("--primary-rgb", primaryRgb);
+
+  const secondaryRgb = hexToRgb(colors.secondary);
+  if (secondaryRgb) root.style.setProperty("--secondary-rgb", secondaryRgb);
+
+  const accentRgb = hexToRgb(colors.accent);
+  if (accentRgb) root.style.setProperty("--accent-rgb", accentRgb);
 }
 
 /**

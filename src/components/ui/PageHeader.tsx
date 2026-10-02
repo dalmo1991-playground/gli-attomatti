@@ -30,9 +30,10 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <Section className={cn("bg-muted/30 relative overflow-hidden", compact ? "py-16 sm:py-20" : "py-20 sm:py-24", className)}>
-      {/* Ambient background glows */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -ml-32 -mt-32 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl -mr-48 -mb-48 pointer-events-none" />
+      {/* Ambient theatrical background glows */}
+      <div className="absolute top-0 left-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl -ml-24 -mt-24 pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl -mr-20 pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-secondary/15 rounded-full blur-3xl -mb-32 pointer-events-none" />
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
         {backLink && (

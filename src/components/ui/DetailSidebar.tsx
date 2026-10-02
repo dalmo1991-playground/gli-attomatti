@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 export interface DetailDate {
   date: string;
   location?: string;
+  location_href?: string;
   ticket_label?: string;
   ticket_href?: string;
 }
@@ -41,7 +42,7 @@ export function DetailSidebar({
       {/* Dates & Tickets Card */}
       <div className="p-6 sm:p-8 bg-muted/20 rounded-[2.5rem] border border-foreground/5 shadow-sm">
         <h3 className="text-xl font-black uppercase tracking-tight mb-6 sm:mb-8 flex items-center">
-          <Calendar className="mr-3 text-primary shrink-0" size={24} />
+          <Calendar className="mr-3 text-accent shrink-0" size={24} />
           <span>{datesTitle}</span>
         </h3>
 
@@ -49,12 +50,26 @@ export function DetailSidebar({
           {dates && dates.length > 0 ? (
             dates.map((d, idx) => (
               <div key={idx} className="pb-6 border-b border-foreground/5 last:border-0 last:pb-0">
-                <div className="font-bold text-lg mb-1">{d.date}</div>
+                <div className="font-bold text-lg mb-1 text-accent">{d.date}</div>
                 {d.location && (
-                  <div className="flex items-start text-foreground/60 text-sm mb-4">
-                    <MapPin size={16} className="mr-2 mt-0.5 text-primary/60 shrink-0" />
-                    <span>{d.location}</span>
-                  </div>
+                  d.location_href?.trim() ? (
+                    <Link
+                      href={d.location_href.trim()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-start text-foreground/70 text-sm mb-4 hover:text-accent transition-colors group"
+                    >
+                      <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0 group-hover:text-accent transition-colors" />
+                      <span className="underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+                        {d.location}
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-start text-foreground/60 text-sm mb-4">
+                      <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0" />
+                      <span>{d.location}</span>
+                    </div>
+                  )
                 )}
                 {d.ticket_label && (
                   d.ticket_href?.trim() ? (
@@ -63,7 +78,7 @@ export function DetailSidebar({
                       target={d.ticket_href.trim().startsWith("http") ? "_blank" : undefined}
                       rel={d.ticket_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
                       onClick={() => onTicketClick?.(d.ticket_href!)}
-                      className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-full text-sm font-black hover:bg-primary/90 transition-all w-full justify-center shadow-lg shadow-primary/20"
+                      className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-full text-sm font-black hover:opacity-90 transition-all w-full justify-center shadow-lg shadow-primary/25 hover:-translate-y-0.5"
                     >
                       <Ticket size={16} className="mr-2 shrink-0" />
                       <span>{d.ticket_label}</span>

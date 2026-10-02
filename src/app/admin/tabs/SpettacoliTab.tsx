@@ -69,6 +69,7 @@ export function SpettacoliTab() {
     next[sIdx].dates.push({
       date: "",
       location: "",
+      location_href: "",
       ticket_label: "Prenota",
       ticket_href: ""
     });
@@ -330,6 +331,13 @@ export function SpettacoliTab() {
                                   placeholder="es. Missione Cattolica, Zurigo"
                                 />
                               </div>
+
+                              <FormField
+                                label="Link Google Maps (opzionale)"
+                                value={d.location_href || ""}
+                                onChange={(v) => updateShowDate(actualIdx, dIdx, "location_href", v)}
+                                placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                              />
 
                               {/* State Presets */}
                               <div className="flex flex-wrap items-center gap-1.5 pt-1">

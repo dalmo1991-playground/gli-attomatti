@@ -262,7 +262,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                 <button
                   type="button"
                   onClick={handleSaveCustom}
-                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
+                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
                 >
                   Salva preferenze
                 </button>
@@ -270,7 +270,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
+                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
                 >
                   Accetta tutti
                 </button>

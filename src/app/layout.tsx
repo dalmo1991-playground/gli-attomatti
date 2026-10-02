@@ -89,11 +89,37 @@ const devThemeBootstrapScript = `
     if (saved) {
       var colors = JSON.parse(saved);
       var root = document.documentElement;
+      function lum(hex) {
+        try {
+          var c = hex.replace('#','').trim();
+          if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+          var r = parseInt(c.substr(0,2),16)/255;
+          var g = parseInt(c.substr(2,2),16)/255;
+          var b = parseInt(c.substr(4,2),16)/255;
+          r = r <= 0.03928 ? r/12.92 : Math.pow((r+0.055)/1.055, 2.4);
+          g = g <= 0.03928 ? g/12.92 : Math.pow((g+0.055)/1.055, 2.4);
+          b = b <= 0.03928 ? b/12.92 : Math.pow((b+0.055)/1.055, 2.4);
+          return 0.2126*r + 0.7152*g + 0.0722*b;
+        } catch(e) { return 0; }
+      }
+      function getFg(fg, bg) {
+        if (fg) return fg;
+        return lum(bg) > 0.45 ? '#09090b' : '#ffffff';
+      }
       if (colors.background) root.style.setProperty('--background', colors.background);
       if (colors.foreground) root.style.setProperty('--foreground', colors.foreground);
-      if (colors.primary) root.style.setProperty('--primary', colors.primary);
-      if (colors.secondary) root.style.setProperty('--secondary', colors.secondary);
-      if (colors.accent) root.style.setProperty('--accent', colors.accent);
+      if (colors.primary) {
+        root.style.setProperty('--primary', colors.primary);
+        root.style.setProperty('--primary-foreground', getFg(colors.primaryForeground, colors.primary));
+      }
+      if (colors.secondary) {
+        root.style.setProperty('--secondary', colors.secondary);
+        root.style.setProperty('--secondary-foreground', getFg(colors.secondaryForeground, colors.secondary));
+      }
+      if (colors.accent) {
+        root.style.setProperty('--accent', colors.accent);
+        root.style.setProperty('--accent-foreground', getFg(colors.accentForeground, colors.accent));
+      }
       if (colors.muted) root.style.setProperty('--muted', colors.muted);
     }
   } catch(e) {}

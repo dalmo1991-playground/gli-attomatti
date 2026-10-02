@@ -69,6 +69,7 @@ export function IniziativeTab() {
     next[sIdx].dates.push({
       date: "",
       location: "",
+      location_href: "",
       ticket_label: "Iscriviti",
       ticket_href: ""
     });
@@ -289,6 +290,12 @@ export function IniziativeTab() {
                                 placeholder="Zurigo Centro"
                               />
                             </div>
+                            <FormField
+                              label="Link Google Maps (opzionale)"
+                              value={d.location_href || ""}
+                              onChange={(v) => updateDate(actualIdx, dIdx, "location_href", v)}
+                              placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                            />
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <FormField
                                 label="Etichetta Bottone"

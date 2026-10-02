@@ -23,20 +23,47 @@ import {
   applyTheme,
   saveDevTheme,
   getSavedDevTheme,
-  resetDevTheme
+  resetDevTheme,
+  getAutoContrastColor,
+  getRelativeLuminance
 } from "@/lib/devTheme";
 import { cn } from "@/lib/utils";
 
-const COLOR_KEYS: Array<{
-  key: keyof ThemeColors & string;
+type ColorKey = "background" | "foreground" | "primary" | "secondary" | "accent" | "muted";
+type FgKey = "primaryForeground" | "secondaryForeground" | "accentForeground";
+
+interface ColorItemConfig {
+  key: ColorKey;
   label: string;
   desc: string;
-}> = [
+  fgKey?: FgKey;
+  fgLabel?: string;
+}
+
+const COLOR_KEYS: ColorItemConfig[] = [
   { key: "background", label: "Sfondo", desc: "Canvas principale del sito" },
   { key: "foreground", label: "Testo", desc: "Tipografia e contrasto primario" },
-  { key: "primary", label: "Primario", desc: "Pulsanti CTA, bordi e highlight" },
-  { key: "secondary", label: "Secondario", desc: "Tag, sfumature e bagliori" },
-  { key: "accent", label: "Accento", desc: "Dettagli scenici, stelle e callout" },
+  {
+    key: "primary",
+    label: "Primario",
+    desc: "Pulsanti CTA, bordi e highlight",
+    fgKey: "primaryForeground",
+    fgLabel: "Testo su Primario"
+  },
+  {
+    key: "secondary",
+    label: "Secondario",
+    desc: "Badge, riflettori freddi e azioni secondarie",
+    fgKey: "secondaryForeground",
+    fgLabel: "Testo su Secondario"
+  },
+  {
+    key: "accent",
+    label: "Accento",
+    desc: "Date spettacoli, riflettori caldi e dettagli",
+    fgKey: "accentForeground",
+    fgLabel: "Testo su Accento"
+  },
   { key: "muted", label: "Superfici", desc: "Sfondo schede e container" },
 ];
 
@@ -82,8 +109,22 @@ export function DevThemeCustomizer() {
 
   const isCustomized = JSON.stringify(colors) !== JSON.stringify(DEFAULT_THEME_COLORS);
 
-  const handleColorChange = (key: keyof ThemeColors, value: string) => {
+  const handleColorChange = (key: ColorKey, value: string) => {
     const updated = { ...colors, [key]: value };
+    // Automatically recalculate high-contrast button text unless explicitly locked
+    if (key === "primary") {
+      updated.primaryForeground = getAutoContrastColor(value);
+    } else if (key === "secondary") {
+      updated.secondaryForeground = getAutoContrastColor(value);
+    } else if (key === "accent") {
+      updated.accentForeground = getAutoContrastColor(value);
+    }
+    setColors(updated);
+    saveDevTheme(updated);
+  };
+
+  const handleForegroundChange = (fgKey: FgKey, value: string) => {
+    const updated = { ...colors, [fgKey]: value };
     setColors(updated);
     saveDevTheme(updated);
   };
@@ -125,8 +166,11 @@ export function DevThemeCustomizer() {
           background: parsed.background.trim(),
           foreground: parsed.foreground.trim(),
           primary: parsed.primary.trim(),
+          primaryForeground: parsed.primaryForeground?.trim() || getAutoContrastColor(parsed.primary),
           secondary: parsed.secondary.trim(),
+          secondaryForeground: parsed.secondaryForeground?.trim() || getAutoContrastColor(parsed.secondary),
           accent: parsed.accent.trim(),
+          accentForeground: parsed.accentForeground?.trim() || getAutoContrastColor(parsed.accent),
           muted: parsed.muted.trim(),
         };
         setColors(validated);
@@ -297,54 +341,94 @@ export function DevThemeCustomizer() {
                 </div>
 
                 <div className="space-y-2.5">
-                  {COLOR_KEYS.map(({ key, label, desc }) => {
+                  {COLOR_KEYS.map(({ key, label, desc, fgKey, fgLabel }) => {
                     const currentColor = colors[key] || "#000000";
+                    const currentFg = fgKey
+                      ? colors[fgKey] || getAutoContrastColor(currentColor)
+                      : null;
+                    const isDarkBg = getRelativeLuminance(currentColor) <= 0.45;
+
                     return (
                       <div
                         key={key}
-                        className="p-2.5 rounded-2xl bg-muted/20 border border-foreground/10 flex items-center justify-between gap-3 hover:border-foreground/20 transition-colors"
+                        className="p-2.5 rounded-2xl bg-muted/20 border border-foreground/10 space-y-2 hover:border-foreground/20 transition-colors"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Native color picker masked inside styled rounded swatch */}
-                          <label
-                            className="relative w-9 h-9 rounded-xl overflow-hidden cursor-pointer shadow-sm border border-foreground/20 shrink-0 block hover:scale-105 active:scale-95 transition-transform"
-                            style={{ backgroundColor: currentColor }}
-                            title={`Modifica colore ${label}`}
-                          >
-                            <input
-                              type="color"
-                              value={currentColor}
-                              onChange={(e) => handleColorChange(key, e.target.value)}
-                              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                            />
-                          </label>
-                          <div className="min-w-0">
-                            <div className="font-bold text-xs flex items-center gap-1.5 truncate">
-                              <span>{label}</span>
-                              <span className="text-[10px] text-foreground/40 font-mono">
-                                --{key}
-                              </span>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Native color picker masked inside styled rounded swatch */}
+                            <label
+                              className="relative w-9 h-9 rounded-xl overflow-hidden cursor-pointer shadow-sm border border-foreground/20 shrink-0 block hover:scale-105 active:scale-95 transition-transform"
+                              style={{ backgroundColor: currentColor }}
+                              title={`Modifica colore ${label}`}
+                            >
+                              <input
+                                type="color"
+                                value={currentColor}
+                                onChange={(e) => handleColorChange(key, e.target.value)}
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                              />
+                            </label>
+                            <div className="min-w-0">
+                              <div className="font-bold text-xs flex items-center gap-1.5 truncate">
+                                <span>{label}</span>
+                                <span className="text-[10px] text-foreground/40 font-mono">
+                                  --{key}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-foreground/50 truncate">
+                                {desc}
+                              </p>
                             </div>
-                            <p className="text-[11px] text-foreground/50 truncate">
-                              {desc}
-                            </p>
+                          </div>
+
+                          {/* Hex Input */}
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="text"
+                              value={currentColor}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                handleColorChange(key, val);
+                              }}
+                              className="w-20 px-2 py-1 bg-background/80 border border-foreground/15 rounded-lg text-xs font-mono uppercase text-center focus:border-primary focus:outline-none"
+                              placeholder="#000000"
+                              maxLength={7}
+                            />
                           </div>
                         </div>
 
-                        {/* Hex Input */}
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="text"
-                            value={currentColor}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              handleColorChange(key, val);
-                            }}
-                            className="w-20 px-2 py-1 bg-background/80 border border-foreground/15 rounded-lg text-xs font-mono uppercase text-center focus:border-primary focus:outline-none"
-                            placeholder="#000000"
-                            maxLength={7}
-                          />
-                        </div>
+                        {/* Foreground / Button Text Contrast Parameterization */}
+                        {fgKey && currentFg && (
+                          <div className="flex items-center justify-between pt-1.5 border-t border-foreground/5 text-[11px] text-foreground/70">
+                            <div className="flex items-center gap-2">
+                              <label
+                                className="relative w-5 h-5 rounded-md overflow-hidden cursor-pointer border border-foreground/25 block shadow-xs hover:scale-105 transition-transform"
+                                style={{ backgroundColor: currentFg }}
+                                title={`Modifica contrasto ${fgLabel}`}
+                              >
+                                <input
+                                  type="color"
+                                  value={currentFg}
+                                  onChange={(e) => handleForegroundChange(fgKey, e.target.value)}
+                                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                />
+                              </label>
+                              <span className="text-[10px] font-mono opacity-60">
+                                {fgLabel}: {currentFg}
+                              </span>
+                            </div>
+
+                            <span
+                              className="px-2 py-0.5 rounded-full text-[10px] font-bold shadow-xs transition-colors"
+                              style={{
+                                backgroundColor: currentColor,
+                                color: currentFg
+                              }}
+                            >
+                              Anteprima ({isDarkBg ? "Scuro" : "Chiaro"})
+                            </span>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -365,26 +449,29 @@ export function DevThemeCustomizer() {
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <span
-                    className="px-3 py-1.5 rounded-full text-xs font-black shadow-md"
+                    className="px-3 py-1.5 rounded-full text-xs font-black shadow-md transition-colors"
                     style={{
                       backgroundColor: colors.primary,
-                      color: "#ffffff"
+                      color: colors.primaryForeground || getAutoContrastColor(colors.primary)
                     }}
                   >
                     Bottone Primario
                   </span>
                   <span
-                    className="px-2.5 py-1 rounded-full text-xs font-bold"
+                    className="px-2.5 py-1 rounded-full text-xs font-bold transition-colors"
                     style={{
                       backgroundColor: colors.secondary,
-                      color: "#ffffff"
+                      color: colors.secondaryForeground || getAutoContrastColor(colors.secondary)
                     }}
                   >
                     Badge Secondario
                   </span>
                   <span
-                    className="text-xs font-bold"
-                    style={{ color: colors.accent }}
+                    className="px-2.5 py-1 rounded-full text-xs font-bold transition-colors shadow-xs"
+                    style={{
+                      backgroundColor: colors.accent,
+                      color: colors.accentForeground || getAutoContrastColor(colors.accent)
+                    }}
                   >
                     ★ Accento
                   </span>

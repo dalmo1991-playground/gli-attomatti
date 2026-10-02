@@ -82,6 +82,7 @@
           "tagline": "40, un numero importante...",
           "date": "24 Ottobre 2026, ore 15:00",
           "location": "Scuol",
+          "location_href": "",
           "cta": "Info & Biglietti",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
           "secondary_cta": "Scopri di più",
@@ -616,6 +617,7 @@
             {
               "date": "21 Giugno 2026, ore 18:30",
               "location": "Missione Cattolica, Feldstrasse 109, Zurigo",
+              "location_href": "https://maps.app.goo.gl/WvTxrSCR7L11aERh6",
               "ticket_label": "",
               "ticket_href": "",
               "visible": true

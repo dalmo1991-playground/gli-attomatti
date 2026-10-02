@@ -97,7 +97,7 @@ export default function AttoriClient({ content }: { content: any }) {
             </p>
             <Link 
               href={join_us.cta_href}
-              className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 inline-block"
+              className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
             >
               {join_us.cta_label}
             </Link>
