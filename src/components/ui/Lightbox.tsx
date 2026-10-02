@@ -1,23 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface LightboxImage {
-  url: string;
+  url?: string;
+  src?: string;
   alt?: string;
 }
 
 interface LightboxProps {
   images: LightboxImage[];
   initialIndex: number;
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
 }
 
-export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProps) {
+export function Lightbox({ images, initialIndex, isOpen = true, onClose }: LightboxProps) {
+  const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -50,14 +57,16 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && images.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
           onClick={onClose}
         >
           <button
@@ -95,8 +104,8 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.2 }}
-                src={images[currentIndex].url}
-                alt={images[currentIndex].alt || `Image ${currentIndex + 1}`}
+                src={images[currentIndex]?.url || images[currentIndex]?.src || ""}
+                alt={images[currentIndex]?.alt || `Image ${currentIndex + 1}`}
                 className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               />
             </AnimatePresence>
@@ -109,6 +118,7 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

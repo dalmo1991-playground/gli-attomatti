@@ -3,8 +3,11 @@ import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Users, Mail, Globe, ShieldAlert } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Impressum — Gli Attomatti",
+  title: "Note Legali & Impressum",
   description: "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
+  alternates: {
+    canonical: "/Impressum",
+  },
 };
 
 export default function ImpressumPage() {
@@ -104,6 +107,29 @@ export default function ImpressumPage() {
             </div>
           </div>
 
+          {/* Esclusione di responsabilità per contenuti e servizi incorporati */}
+          <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                <ShieldAlert size={20} />
+              </div>
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                Esclusione di responsabilità (Haftungsausschluss)
+              </h2>
+            </div>
+            <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <p>
+                <strong>Contenuti del sito:</strong> I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento.
+              </p>
+              <p>
+                <strong>Collegamenti esterni e servizi incorporati (iframe embed):</strong> Il nostro sito include collegamenti telematici a siti terzi nonché <strong>servizi digitali incorporati direttamente nelle pagine</strong>, in particolare la piattaforma svizzera di biglietteria <strong>Eventfrog AG</strong> (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di <strong>Tally BV</strong> (Muinklaan 23, 9000 Gand, Belgio).
+              </p>
+              <p>
+                L&apos;accesso, la compilazione e l&apos;utilizzo di tali servizi terzi avvengono a esclusivo rischio dell&apos;utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori.
+              </p>
+            </div>
+          </div>
+
           {/* Copyright */}
           <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
             <div className="flex items-center gap-3">
@@ -111,11 +137,11 @@ export default function ImpressumPage() {
                 <ShieldAlert size={20} />
               </div>
               <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                Diritto d'autore (Copyright)
+                Diritto d&apos;autore (Copyright)
               </h2>
             </div>
             <p className="text-foreground/80 leading-relaxed font-medium">
-              I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d'autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d'autore richiede il previo consenso scritto dell'autore o degli autori in questione.
+              I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d&apos;autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d&apos;autore richiede il previo consenso scritto dell&apos;autore o degli autori in questione.
             </p>
           </div>
         </div>

@@ -1,59 +1,241 @@
 import { NextResponse } from 'next/server';
-import { commitToGitHub } from '@/lib/github';
+import { commitMultipleToGitHub, createGitHubBlob, commitTreeItems } from '@/lib/github';
 import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 
 export async function POST(request: Request) {
-  const secret = request.headers.get('x-admin-secret');
+  const secret = request.headers.get('x-admin-secret')?.trim();
+  const configuredSecret = process.env.ADMIN_SECRET?.trim();
 
-  // Basic security check
-  if (secret !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // If ADMIN_SECRET is not configured on the server
+  if (!configuredSecret) {
+    console.error('ADMIN_SECRET environment variable is missing on server.');
+    return NextResponse.json(
+      {
+        error:
+          'ADMIN_SECRET non è configurato nelle variabili d\'ambiente del server. Aggiungi ADMIN_SECRET nel file .env.local del progetto.'
+      },
+      { status: 500 }
+    );
   }
 
+  // Basic security check
+  if (secret !== configuredSecret) {
+    return NextResponse.json(
+      { error: 'Password non autorizzata. Verifica la chiave inserita.' },
+      { status: 401 }
+    );
+  }
+
+  const contentType = request.headers.get('content-type') || '';
+
+  // 1. COMMIT STAGED BATCH (JSON request: small 1KB payload, commits all blobs in 1 commit)
+  if (contentType.includes('application/json')) {
+    try {
+      const body = await request.json();
+      if (body.action === 'commit') {
+        const items = (body.items || []) as Array<{ path: string; sha: string; url?: string }>;
+        if (items.length === 0) {
+          return NextResponse.json({ error: 'Nessun elemento da committare' }, { status: 400 });
+        }
+
+        const commitMessage =
+          body.message ||
+          (items.length === 1
+            ? `Upload image: ${path.basename(items[0].path)} via Admin Console`
+            : `Upload batch of ${items.length} images via Admin Console`);
+
+        let commitSha: string | undefined;
+        let commitUrl: string | undefined;
+
+        if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) {
+          const commitResult = await commitTreeItems({
+            items: items.filter((i) => i.sha),
+            message: commitMessage
+          });
+          commitSha = commitResult.commitSha;
+          commitUrl = commitResult.commitUrl;
+        }
+
+        return NextResponse.json({
+          success: true,
+          count: items.length,
+          urls: items.map((i) => i.url || `/${i.path.replace(/^public\//, '')}`),
+          commitSha,
+          commitUrl
+        });
+      }
+    } catch (err) {
+      console.error('Error committing staged batch:', err);
+      return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    }
+  }
+
+  // 2. FORM DATA (STAGE SINGLE FILE OR BATCH UPLOAD)
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File | null;
+    const action = formData.get('action') as string | null;
 
-    if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    // A. STAGE A SINGLE FILE (Uploads 1 pre-compressed file, creates blob, NO commit yet)
+    if (action === 'stage') {
+      const file = (formData.get('file') || formData.get('files')) as File | null;
+      if (!file) {
+        return NextResponse.json({ error: 'Nessun file fornito per lo staging' }, { status: 400 });
+      }
+
+      const inputBuffer = Buffer.from(await file.arrayBuffer());
+      const optimizedBuffer = await sharp(inputBuffer)
+        .rotate()
+        .resize({
+          width: 1920,
+          withoutEnlargement: true,
+          fit: 'inside'
+        })
+        .webp({ quality: 80 })
+        .toBuffer();
+
+      const timestamp = Date.now();
+      const originalName = file.name.split('.').slice(0, -1).join('.') || 'image';
+      const sanitizedName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const randomSuffix = Math.random().toString(36).substring(2, 6);
+      const fileName = `${timestamp}-${randomSuffix}-${sanitizedName}.webp`;
+      const filePath = `public/images/${fileName}`;
+
+      // Local filesystem save in dev
+      if (process.env.NODE_ENV === 'development') {
+        try {
+          const localDir = path.join(process.cwd(), 'public/images');
+          if (!fs.existsSync(localDir)) {
+            await fs.promises.mkdir(localDir, { recursive: true });
+          }
+          await fs.promises.writeFile(path.join(localDir, fileName), optimizedBuffer);
+        } catch (fsErr) {
+          console.warn('Local fs write error in dev:', fsErr);
+        }
+      }
+
+      let blobSha: string | undefined;
+      if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO) {
+        blobSha = await createGitHubBlob({
+          content: optimizedBuffer,
+          isBinary: true
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        fileName,
+        filePath,
+        url: `/images/${fileName}`,
+        blobSha: blobSha || '',
+        size: optimizedBuffer.length
+      });
     }
 
-    const inputBuffer = Buffer.from(await file.arrayBuffer());
-    
-    // Process image with Sharp
-    // 1. Resize to max 1920px width (keeping aspect ratio)
-    // 2. Convert to WebP (better compression)
-    // 3. Auto-rotate based on EXIF
-    const optimizedBuffer = await sharp(inputBuffer)
-      .rotate() // Handles EXIF orientation
-      .resize({
-        width: 1920,
-        withoutEnlargement: true, // Don't upscale small images
-        fit: 'inside'
-      })
-      .webp({ quality: 80 })
-      .toBuffer();
+    // B. STANDARD UPLOAD (Single or small batch direct upload)
+    const filesFromAll = formData.getAll('files') as File[];
+    const singleFile = formData.get('file') as File | null;
+    const allFiles: File[] =
+      filesFromAll.length > 0
+        ? filesFromAll
+        : singleFile
+        ? [singleFile]
+        : [];
 
-    // Create a unique filename with .webp extension
+    if (allFiles.length === 0) {
+      return NextResponse.json({ error: 'Nessun file fornito' }, { status: 400 });
+    }
+
     const timestamp = Date.now();
-    const originalName = file.name.split('.').slice(0, -1).join('.'); // Remove original extension
-    const sanitizedName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-    const fileName = `${timestamp}-${sanitizedName}.webp`;
-    const filePath = `public/images/${fileName}`;
 
-    // Commit the optimized image to GitHub
-    await commitToGitHub({
-      path: filePath,
-      content: optimizedBuffer,
-      message: `Upload optimized image: ${fileName} via Admin Console`,
-      isBinary: true
-    });
+    const processedFiles = await Promise.all(
+      allFiles.map(async (file, idx) => {
+        const inputBuffer = Buffer.from(await file.arrayBuffer());
+        const optimizedBuffer = await sharp(inputBuffer)
+          .rotate()
+          .resize({
+            width: 1920,
+            withoutEnlargement: true,
+            fit: 'inside'
+          })
+          .webp({ quality: 80 })
+          .toBuffer();
 
-    const publicUrl = `/images/${fileName}`;
+        const originalName = file.name.split('.').slice(0, -1).join('.') || 'image';
+        const sanitizedName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        const randomSuffix = Math.random().toString(36).substring(2, 6);
+        const fileName = `${timestamp}-${idx}-${randomSuffix}-${sanitizedName}.webp`;
+        const filePath = `public/images/${fileName}`;
 
-    return NextResponse.json({ 
-      success: true, 
-      url: publicUrl 
+        return {
+          fileName,
+          filePath,
+          buffer: optimizedBuffer,
+          url: `/images/${fileName}`,
+          size: optimizedBuffer.length
+        };
+      })
+    );
+
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const localDir = path.join(process.cwd(), 'public/images');
+        if (!fs.existsSync(localDir)) {
+          await fs.promises.mkdir(localDir, { recursive: true });
+        }
+        for (const item of processedFiles) {
+          await fs.promises.writeFile(path.join(localDir, item.fileName), item.buffer);
+        }
+      } catch (fsErr) {
+        console.warn('Local fs write image error in dev:', fsErr);
+      }
+    }
+
+    try {
+      const commitMessage =
+        processedFiles.length === 1
+          ? `Upload optimized image: ${processedFiles[0].fileName} via Admin Console`
+          : `Upload batch of ${processedFiles.length} optimized images via Admin Console`;
+
+      await commitMultipleToGitHub({
+        files: processedFiles.map((p) => ({
+          path: p.filePath,
+          content: p.buffer,
+          isBinary: true
+        })),
+        message: commitMessage
+      });
+    } catch (githubErr: any) {
+      if (
+        process.env.NODE_ENV === 'development' &&
+        (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
+      ) {
+        return NextResponse.json({
+          success: true,
+          count: processedFiles.length,
+          url: processedFiles[0].url,
+          urls: processedFiles.map((p) => p.url),
+          items: processedFiles.map((p) => ({
+            url: p.url,
+            name: p.fileName,
+            size: p.size
+          }))
+        });
+      }
+      throw githubErr;
+    }
+
+    return NextResponse.json({
+      success: true,
+      count: processedFiles.length,
+      url: processedFiles[0].url,
+      urls: processedFiles.map((p) => p.url),
+      items: processedFiles.map((p) => ({
+        url: p.url,
+        name: p.fileName,
+        size: p.size
+      }))
     });
   } catch (error) {
     console.error('Upload error:', error);

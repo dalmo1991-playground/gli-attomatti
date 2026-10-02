@@ -1,0 +1,11 @@
+# Gli Attomatti — Cursor Rules
+# See AGENTS.md for full architecture, design system, and CMS details.
+
+- Language: Italian ONLY for all user-facing text and copy.
+- Always ignore the TODO file.
+- Do not remove or modify the /Saalvermietung redirect in next.config.ts.
+- Zero external database: content is in src/data/content.json.
+- Always guard Next.js <Link> against undefined or empty href.
+- Always guard Next.js <Image> against empty string src by providing a fallback image.
+- Never hardcode arbitrary hex colors; use CSS variables and Tailwind tokens defined in src/app/globals.css.
+- Mandatory legal audit: on every feature/change (third-party tools, embeds, forms, cookies, pricing, or registration flows), always verify and update legal documents (Privacy, Termini, Impressum, CookieBanner) in compliant Italian.

@@ -1,80 +1,90 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { getCardTitleSizeClass } from "@/lib/typography";
 export default function SpettacoliClient({ content }: { content: any }) {
-  const { spettacoli } = content.pages;
+  const spettacoli = content?.pages?.spettacoli || {
+    title: "I Nostri Spettacoli",
+    description: "Tutte le produzioni teatrali della compagnia.",
+    archive_sections: []
+  };
+
+  const archive: any[] = Array.isArray(spettacoli.archive_sections) ? spettacoli.archive_sections : [];
 
   return (
-    <div className="pt-20">
+    <div>
       {/* Hero Section */}
-      <Section className="bg-muted/30 py-24 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -ml-32 -mt-32" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl -mr-48 -mb-48" />
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-8xl font-black mb-8 uppercase tracking-tighter"
-          >
-            {spettacoli.title}
-          </motion.h1>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-1 bg-primary mx-auto mb-8"
-          />
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-xl md:text-2xl text-foreground/70 leading-relaxed font-medium"
-          >
-            {spettacoli.description}
-          </motion.p>
-        </div>
-      </Section>
+      <PageHeader
+        title={spettacoli.title || "I Nostri Spettacoli"}
+        description={spettacoli.description || "Tutte le produzioni teatrali della compagnia."}
+      />
 
       {/* Archive Sections */}
-      {spettacoli.archive_sections.map((section: any, idx: number) => (
-        <Section key={idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
-            <div className="md:col-span-4 sticky top-32">
-              <div className="inline-flex items-center px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-                <Calendar size={14} className="mr-2" />
-                Anno {section.year}
+      {archive.length > 0 ? (
+        archive.filter((s) => s.visible !== false).map((section: any, idx: number) => (
+          <Section key={section.slug || idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
+              <div className="md:col-span-4 sticky top-32">
+                {section.year && (
+                  <div className="inline-flex items-center px-4 py-1.5 bg-accent/15 text-accent border border-accent/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_12px_rgba(251,191,36,0.15)]">
+                    <Calendar size={14} className="mr-2" />
+                    Anno {section.year}
+                  </div>
+                )}
+                {section.slug ? (
+                  <Link href={`/Spettacoli/${section.slug}`} className="block group">
+                    <h2 className={cn(
+                      getCardTitleSizeClass(section.title),
+                      "font-black uppercase tracking-tight mb-6 leading-tight group-hover:text-primary transition-colors text-balance break-words [overflow-wrap:anywhere]"
+                    )}>
+                      {section.title}
+                    </h2>
+                  </Link>
+                ) : (
+                  <h2 className={cn(
+                    getCardTitleSizeClass(section.title),
+                    "font-black uppercase tracking-tight mb-6 leading-tight text-balance break-words [overflow-wrap:anywhere]"
+                  )}>
+                    {section.title}
+                  </h2>
+                )}
+                <div className="w-12 h-1 bg-primary mb-8" />
+                
+                {section.slug && (
+                  <Link 
+                    href={`/Spettacoli/${section.slug}`}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
+                  >
+                    <span>Scopri lo spettacolo</span>
+                    <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
               </div>
-              <Link href={`/Spettacoli/${section.slug}`} className="block group">
-                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-6 leading-tight group-hover:text-primary transition-colors">
-                  {section.title}
-                </h2>
-              </Link>
-              <div className="w-12 h-1 bg-primary mb-8" />
               
-              <Link 
-                href={`/Spettacoli/${section.slug}`}
-                className="inline-flex items-center text-primary font-bold hover:gap-2 transition-all group"
-              >
-                Scopri lo spettacolo
-                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-            
-            <div className="md:col-span-8">
-              <div className="prose prose-xl prose-invert max-w-none">
-                <p className="text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap mb-8">
-                  {section.short_description || section.text}
-                </p>
+              <div className="md:col-span-8">
+                <div className="prose prose-xl prose-invert max-w-none">
+                  <RichText
+                    content={section.short_description || section.text || ""}
+                    className="text-xl text-foreground/80 leading-relaxed mb-8"
+                  />
+                </div>
               </div>
             </div>
+          </Section>
+        ))
+      ) : (
+        <Section className="py-24 text-center">
+          <div className="max-w-md mx-auto text-foreground/40 font-medium">
+            Nessuno spettacolo in archivio al momento.
           </div>
         </Section>
-      ))}
+      )}
     </div>
   );
 }

@@ -8,15 +8,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
+import { InstagramFeed } from "@/components/home/InstagramFeed";
+import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 
 const MotionImage = motion.create(Image);
 
 
 export default function HomeClient({ content }: { content: any }) {
-  const { hero, upcoming_shows, introduction } = content.pages.home;
+  const home = content?.pages?.home || {};
+  const hero = home.hero || {};
+  const upcoming_shows = Array.isArray(home.upcoming_shows) ? home.upcoming_shows : [];
+  const introduction = home.introduction || { title: "", text: "", images: [] };
+  const introImages: any[] = Array.isArray(introduction.images) ? introduction.images : [];
 
   // Filter active shows
-  const activeShows = upcoming_shows.filter((show: any) => show.active);
+  const activeShows = upcoming_shows.filter((show: any) => show && show.active);
   const showMode = activeShows.length > 0;
 
   const [currentShowIndex, setCurrentShowIndex] = useState(0);
@@ -43,13 +49,13 @@ export default function HomeClient({ content }: { content: any }) {
   }, [showMode, activeShows.length]);
 
   useEffect(() => {
-    if (introduction.images.length > 1) {
+    if (introImages.length > 1) {
       const timer = setInterval(() => {
-        setIntroIndex((prev) => (prev + 1) % introduction.images.length);
+        setIntroIndex((prev) => (prev + 1) % introImages.length);
       }, 4000);
       return () => clearInterval(timer);
     }
-  }, [introduction.images.length]);
+  }, [introImages.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -71,7 +77,7 @@ export default function HomeClient({ content }: { content: any }) {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100dvh-5rem)] py-8 sm:py-10 md:py-12 flex items-center justify-center overflow-hidden">
         {showMode ? (
           /* Mode 1: Upcoming Shows Slideshow */
           <div className="absolute inset-0 z-0">
@@ -90,9 +96,10 @@ export default function HomeClient({ content }: { content: any }) {
                 className="absolute inset-0"
               >
                 <Image
-                  src={activeShows[currentShowIndex].image}
-                  alt={activeShows[currentShowIndex].title}
+                  src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                  alt={activeShows[currentShowIndex].title || "Spettacolo"}
                   fill
+                  sizes="100vw"
                   className="object-cover opacity-40"
                   priority
                 />
@@ -100,26 +107,33 @@ export default function HomeClient({ content }: { content: any }) {
               </motion.div>
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
+            {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none z-10" />
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none z-10" />
           </div>
         ) : (
           /* Mode 2: Generic Background */
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/1782553290530-TheaterCurtain.webp"
-              alt="Hero Background"
+              alt="Sipario teatrale — Compagnia Gli Attomatti Zurigo"
               fill
+              sizes="100vw"
               className="object-cover opacity-30 scale-105"
               priority
             />
 
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background" />
+            {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
           </div>
         )}
 
         <div className="relative z-20 text-center px-6 max-w-5xl w-full">
           {showMode ? (
             /* Mode 1: Upcoming Show Content */
-            <div className="relative w-full flex flex-col items-center justify-center min-h-[500px] overflow-hidden">
+            <div className="relative w-full flex flex-col items-center justify-center">
               <AnimatePresence initial={false} custom={heroDirection} mode="popLayout">
                 <motion.div
                   key={currentShowIndex}
@@ -132,90 +146,108 @@ export default function HomeClient({ content }: { content: any }) {
                     x: { type: "spring", stiffness: 300, damping: 30 },
                     opacity: { duration: 0.5 }
                   }}
-                  className="space-y-8 w-full"
+                  className="w-full flex flex-col items-center max-w-4xl mx-auto"
                 >
-                  <div className="flex flex-col items-center">
-                    <p className="text-primary font-bold tracking-[0.3em] uppercase text-sm mb-4 opacity-80">
+                  {/* Presenter */}
+                  {activeShows[currentShowIndex].presenter && (
+                    <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-2 md:mb-3 opacity-90 drop-shadow-sm">
                       {activeShows[currentShowIndex].presenter}
                     </p>
-                    <div className="h-[200px] flex flex-col items-center justify-center">
-                      <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none text-center">
-                        {activeShows[currentShowIndex].title}
-                      </h1>
-                      {activeShows[currentShowIndex].tagline && (
-                        <p className="mt-4 text-xl md:text-2xl font-medium text-primary/80 tracking-tight italic">
-                          {activeShows[currentShowIndex].tagline}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-6 text-lg font-medium text-foreground/80 mb-10 h-8">
-                      <div className="flex items-center">
-                        <Calendar size={20} className="mr-2 text-primary" />
-                        {activeShows[currentShowIndex].date}
-                      </div>
-                      <Link
-                        href={activeShows[currentShowIndex].location_href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center transition-colors"
-                      >
-                        <MapPin size={20} className="mr-2 text-primary" />
-                        <span>
-                          {activeShows[currentShowIndex].location}
-                        </span>
-                      </Link>
-                    </div>
+                  )}
 
-                    {/* Buttons / Tags Area */}
-                    <div className={cn(
-                      "mt-10 flex gap-6 justify-center items-center w-full",
-                      (!!activeShows[currentShowIndex].cta_href === !!activeShows[currentShowIndex].details_href)
-                        ? "flex-col sm:flex-row" // Same type (both buttons or both tags) -> side-by-side
-                        : "flex-col" // Different type -> stacked
+                  {/* Title */}
+                  <h1 className={cn(
+                    getHeroTitleSizeClass(activeShows[currentShowIndex].title),
+                    "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
+                  )}>
+                    {activeShows[currentShowIndex].title}
+                  </h1>
+
+                  {/* Tagline */}
+                  {activeShows[currentShowIndex].tagline && (
+                    <p className={cn(
+                      getTaglineSizeClass(activeShows[currentShowIndex].tagline),
+                      "mt-3 md:mt-4 font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm text-balance break-words"
                     )}>
-                      {/* Button 1 */}
-                      {activeShows[currentShowIndex].cta && (
-                        activeShows[currentShowIndex].cta_href ? (
+                      {activeShows[currentShowIndex].tagline}
+                    </p>
+                  )}
+
+                  {/* Date & Location Badges */}
+                  {(activeShows[currentShowIndex].date || activeShows[currentShowIndex].location) && (
+                    <div className="flex flex-wrap justify-center items-center gap-2.5 sm:gap-3 text-xs sm:text-sm md:text-base font-medium text-foreground/90 mt-5 md:mt-6">
+                      {activeShows[currentShowIndex].date && (
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/30 backdrop-blur-md shadow-[0_0_15px_rgba(251,191,36,0.15)] font-bold">
+                          <Calendar size={15} className="text-accent shrink-0" />
+                          <span>{activeShows[currentShowIndex].date}</span>
+                        </div>
+                      )}
+                      {activeShows[currentShowIndex].location && (
+                        activeShows[currentShowIndex].location_href?.trim() ? (
                           <Link
-                            href={activeShows[currentShowIndex].cta_href}
-                            className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:-translate-y-1 flex items-center justify-center min-w-[280px]"
+                            href={activeShows[currentShowIndex].location_href.trim()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
                           >
-                            {activeShows[currentShowIndex].cta}
-                            <ArrowRight size={20} className="ml-2" />
+                            <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                            <span className="group-hover:text-primary transition-colors">
+                              {activeShows[currentShowIndex].location}
+                            </span>
                           </Link>
                         ) : (
-                          <div className="px-8 py-3 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-lg flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
-                            <Info size={18} className="mr-3 opacity-80" />
-                            {activeShows[currentShowIndex].cta}
+                          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
+                            <MapPin size={16} className="text-primary shrink-0" />
+                            <span>{activeShows[currentShowIndex].location}</span>
                           </div>
                         )
                       )}
-
-                      {/* Button 2 */}
-                      {activeShows[currentShowIndex].details_label && (
-                        activeShows[currentShowIndex].details_href ? (
-                          <Link
-                            href={activeShows[currentShowIndex].details_href}
-                            className="px-10 py-5 border-2 border-foreground/20 text-foreground rounded-full font-bold text-lg hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[280px]"
-                          >
-                            {activeShows[currentShowIndex].details_label}
-                          </Link>
-                        ) : (
-                          <div className="px-8 py-3 glass border-2 border-foreground/20 text-foreground rounded-xl font-black text-lg flex items-center justify-center shadow-xl">
-                            <Info size={18} className="mr-3 text-primary opacity-80" />
-                            {activeShows[currentShowIndex].details_label}
-                          </div>
-                        )
-                      )}
-
                     </div>
+                  )}
+
+                  {/* Buttons / Actions Area */}
+                  <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
+                    {/* Button 1 */}
+                    {activeShows[currentShowIndex].cta && (
+                      activeShows[currentShowIndex].cta_href ? (
+                        <Link
+                          href={activeShows[currentShowIndex].cta_href}
+                          className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                        >
+                          {activeShows[currentShowIndex].cta}
+                          <ArrowRight size={18} className="ml-2" />
+                        </Link>
+                      ) : (
+                        <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-base flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
+                          <Info size={16} className="mr-2 opacity-80" />
+                          {activeShows[currentShowIndex].cta}
+                        </div>
+                      )
+                    )}
+
+                    {/* Button 2 */}
+                    {(activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label) && (
+                      (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
+                        <Link
+                          href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
+                          className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
+                        >
+                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
+                        </Link>
+                      ) : (
+                        <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-xl font-black text-base flex items-center justify-center shadow-xl">
+                          <Info size={16} className="mr-2 text-secondary opacity-80" />
+                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
+                        </div>
+                      )
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           ) : (
             /* Mode 2: Generic Content */
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <div className="flex flex-col items-center">
                 <MotionImage
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -224,14 +256,14 @@ export default function HomeClient({ content }: { content: any }) {
                   alt={content.site.name}
                   width={192}
                   height={192}
-                  className="h-32 md:h-48 w-auto mb-12 animate-float"
+                  className="h-28 sm:h-36 md:h-44 w-auto mb-6 md:mb-8 animate-float"
                 />
 
-                <p className="text-xl md:text-2xl text-foreground/70 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+                <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
                   {hero.subtitle}
                 </p>
                 <div className={cn(
-                  "flex gap-6 justify-center items-center w-full",
+                  "flex gap-4 sm:gap-6 justify-center items-center w-full",
                   (!!hero.primary_cta_href === !!hero.secondary_cta_href)
                     ? "flex-col sm:flex-row"
                     : "flex-col"
@@ -240,13 +272,13 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.primary_cta_href ? (
                       <Link
                         href={hero.primary_cta_href}
-                        className="px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                       >
                         {hero.primary_cta_label}
                         <ArrowRight size={18} className="ml-2" />
                       </Link>
                     ) : (
-                      <div className="px-6 py-2 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
+                      <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
                         <Info size={16} className="mr-2 opacity-80" />
                         {hero.primary_cta_label}
                       </div>
@@ -256,13 +288,13 @@ export default function HomeClient({ content }: { content: any }) {
                     hero.secondary_cta_href ? (
                       <Link
                         href={hero.secondary_cta_href}
-                        className="px-8 py-4 border-2 border-foreground/20 text-foreground rounded-full font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center min-w-[240px]"
+                        className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                       >
                         {hero.secondary_cta_label}
                       </Link>
                     ) : (
-                      <div className="px-6 py-2 glass border-2 border-foreground/20 text-foreground rounded-lg font-bold text-base flex items-center justify-center">
-                        <Info size={16} className="mr-2 text-primary opacity-80" />
+                      <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-lg font-bold text-base flex items-center justify-center">
+                        <Info size={16} className="mr-2 text-secondary opacity-80" />
                         {hero.secondary_cta_label}
                       </div>
                     )
@@ -273,9 +305,9 @@ export default function HomeClient({ content }: { content: any }) {
           )}
         </div>
 
-        {/* Carousel Indicators (Dots) moved to the very bottom */}
+        {/* Carousel Indicators (Dots) */}
         {showMode && activeShows.length > 1 && (
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
             {activeShows.map((_: any, idx: number) => (
               <button
                 key={idx}
@@ -295,6 +327,11 @@ export default function HomeClient({ content }: { content: any }) {
       </section>
 
       {/* Introduction Section */}
+      {/* Stage Divider */}
+      <div className="w-full max-w-6xl mx-auto px-6 py-6">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
+      </div>
+
       <Section className="bg-muted/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
@@ -317,27 +354,34 @@ export default function HomeClient({ content }: { content: any }) {
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
             </div>
 
-            {/* Concurrent transition for fluidity */}
-            {introduction.images.length > 0 && (
+            {introImages && introImages.length > 0 && (
               <AnimatePresence mode="popLayout">
                 <MotionImage
                   key={introIndex}
-                  src={introduction.images[introIndex].url}
-                  alt={introduction.images[introIndex].alt}
+                  src={introImages[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                  alt={introImages[introIndex]?.alt || "Introduzione"}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                   fill
-                  className="object-cover cursor-pointer hover:scale-105 transition-transform duration-700"
-                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introduction.images })}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={`cursor-pointer transition-transform duration-700 ${introImages[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
+                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introImages })}
                 />
-
               </AnimatePresence>
             )}
           </div>
         </div>
       </Section>
+
+      {/* Stage Divider */}
+      <div className="w-full max-w-6xl mx-auto px-6 py-4">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
+      </div>
+
+      {/* Instagram Feed Section (Modalità B - Embed) */}
+      <InstagramFeed data={content.pages?.home?.instagram_feed} />
 
       <Lightbox
         images={lightbox.images}

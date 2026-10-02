@@ -15,6 +15,15 @@ export function Navbar({ content }: { content: any }) {
   const [scrolled, setScrolled] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
+  const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
+  const siteName = content?.site?.name || "Gli Attomatti";
+
+  const getSafeHref = (href?: string) => {
+    if (!href) return "/";
+    if (href.startsWith("/") || href.startsWith("http")) return href;
+    return `/${href}`;
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -36,7 +45,7 @@ export function Navbar({ content }: { content: any }) {
         <Link href="/" className="flex items-center gap-3 group">
           <Image 
             src="/logo_attomatti.svg" 
-            alt={content.site.name} 
+            alt={siteName} 
             width={40}
             height={40}
             className="h-10 w-auto group-hover:scale-110 transition-transform duration-300"
@@ -44,65 +53,76 @@ export function Navbar({ content }: { content: any }) {
           />
 
           <span className="text-xl font-black tracking-tighter uppercase text-primary">
-            {content.site.name}
+            {siteName}
           </span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-8 items-center">
-          {content.navigation.map((link: any) => (
-            <div 
-              key={link.href}
-              className="relative py-2"
-              onMouseEnter={() => setHoveredLink(link.label)}
-              onMouseLeave={() => setHoveredLink(null)}
-            >
-              <Link
-                href={link.href}
-                className={cn(
-                  "text-sm font-bold transition-colors hover:text-primary flex items-center gap-1 uppercase tracking-wider",
-                  pathname === link.href || pathname.startsWith(link.href + "/") ? "text-primary" : "text-foreground/80"
-                )}
-              >
-                {link.label}
-                {link.sublinks && (
-                  <ChevronDown 
-                    size={14} 
-                    className={cn(
-                      "transition-transform duration-300",
-                      hoveredLink === link.label ? "rotate-180" : ""
-                    )} 
-                  />
-                )}
-              </Link>
+          {navigation.map((link: any, idx: number) => {
+            const safeHref = getSafeHref(link.href);
+            const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
+            const isActive = pathname === safeHref || (safeHref !== "/" && pathname.startsWith(safeHref + "/"));
 
-              {/* Dropdown Menu */}
-              <AnimatePresence>
-                {link.sublinks && hoveredLink === link.label && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 mt-2 w-48 bg-background border border-foreground/5 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                  >
-                    {link.sublinks.map((sub: any) => (
-                      <Link
-                        key={sub.href}
-                        href={sub.href}
-                        className={cn(
-                          "block px-5 py-3 text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary",
-                          pathname === sub.href ? "text-primary bg-primary/5" : "text-foreground/70"
-                        )}
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+            return (
+              <div 
+                key={link.href || idx}
+                className="relative py-2"
+                onMouseEnter={() => setHoveredLink(link.label)}
+                onMouseLeave={() => setHoveredLink(null)}
+              >
+                <Link
+                  href={safeHref}
+                  className={cn(
+                    "text-sm font-bold transition-colors hover:text-primary flex items-center gap-1 uppercase tracking-wider",
+                    isActive ? "text-primary" : "text-foreground/80"
+                  )}
+                >
+                  {link.label}
+                  {hasSublinks && (
+                    <ChevronDown 
+                      size={14} 
+                      className={cn(
+                        "transition-transform duration-300",
+                        hoveredLink === link.label ? "rotate-180" : ""
+                      )} 
+                    />
+                  )}
+                </Link>
+
+                {/* Dropdown Menu */}
+                <AnimatePresence>
+                  {hasSublinks && hoveredLink === link.label && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 w-48 bg-background border border-foreground/5 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      {link.sublinks.map((sub: any, sIdx: number) => {
+                        const subHref = getSafeHref(sub.href);
+                        const isSubActive = pathname === subHref;
+
+                        return (
+                          <Link
+                            key={sub.href || sIdx}
+                            href={subHref}
+                            className={cn(
+                              "block px-5 py-3 text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary",
+                              isSubActive ? "text-primary bg-primary/5" : "text-foreground/70"
+                            )}
+                          >
+                            {sub.label}
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
 
         {/* Mobile Toggle */}
@@ -124,37 +144,48 @@ export function Navbar({ content }: { content: any }) {
             className="md:hidden bg-background/95 backdrop-blur-xl border-t border-foreground/10 overflow-hidden"
           >
             <nav className="flex flex-col gap-6 mt-12">
-            {content.navigation.map((link: any) => (
-              <div key={link.href} className="space-y-4 px-6">
-                  <Link
-                    href={link.href}
-                    onClick={() => !link.sublinks && setIsOpen(false)}
-                    className={cn(
-                      "text-xl font-black uppercase tracking-tight flex items-center justify-between",
-                      pathname === link.href ? "text-primary" : "text-foreground"
+              {navigation.map((link: any, idx: number) => {
+                const safeHref = getSafeHref(link.href);
+                const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
+                const isActive = pathname === safeHref;
+
+                return (
+                  <div key={link.href || idx} className="space-y-4 px-6">
+                    <Link
+                      href={safeHref}
+                      onClick={() => !hasSublinks && setIsOpen(false)}
+                      className={cn(
+                        "text-xl font-black uppercase tracking-tight flex items-center justify-between",
+                        isActive ? "text-primary" : "text-foreground"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                    {hasSublinks && (
+                      <div className="flex flex-col gap-4 pl-6 border-l border-foreground/5">
+                        {link.sublinks.map((sub: any, sIdx: number) => {
+                          const subHref = getSafeHref(sub.href);
+                          const isSubActive = pathname === subHref;
+
+                          return (
+                            <Link
+                              key={sub.href || sIdx}
+                              href={subHref}
+                              onClick={() => setIsOpen(false)}
+                              className={cn(
+                                "text-lg font-medium",
+                                isSubActive ? "text-primary" : "text-foreground/60"
+                              )}
+                            >
+                              {sub.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-                  >
-                    {link.label}
-                  </Link>
-                  {link.sublinks && (
-                    <div className="flex flex-col gap-4 pl-6 border-l border-foreground/5">
-                      {link.sublinks.map((sub: any) => (
-                        <Link
-                          key={sub.href}
-                          href={sub.href}
-                          onClick={() => setIsOpen(false)}
-                          className={cn(
-                            "text-lg font-medium",
-                            pathname === sub.href ? "text-primary" : "text-foreground/60"
-                          )}
-                        >
-                          {sub.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </nav>
           </motion.div>
         )}

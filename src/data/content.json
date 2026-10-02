@@ -2,12 +2,35 @@
   "site": {
     "name": "Gli Attomatti",
     "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
+    "url": "https://gliattomatti.ch",
     "language": "it"
   },
   "navigation": [
     {
-      "label": "Dicono di noi",
-      "href": "Chi_Siamo/Parlano_di_noi"
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "Chi Siamo",
+      "href": "/Chi_Siamo",
+      "sublinks": [
+        {
+          "label": "Le Persone",
+          "href": "/Chi_Siamo/Attori"
+        },
+        {
+          "label": "Dicono di Noi",
+          "href": "/Chi_Siamo/Parlano_di_noi"
+        }
+      ]
+    },
+    {
+      "label": "Spettacoli",
+      "href": "/Spettacoli"
+    },
+    {
+      "label": "Iniziative",
+      "href": "/Iniziative"
     },
     {
       "label": "Contatti",
@@ -66,10 +89,46 @@
             "alt": "Principe"
           }
         ]
+      },
+      "instagram_feed": {
+        "enabled": false,
+        "title": "Seguici su Instagram",
+        "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
+        "handle": "@gliattomatti",
+        "profile_url": "https://www.instagram.com/gliattomatti/",
+        "cta_label": "Segui @gliattomatti",
+        "posts": []
       }
     },
-    "chi_siamo": {},
-    "attori": {},
+    "chi_siamo": {
+      "title": "Chi Siamo",
+      "description": "La compagnia teatrale Gli Attomatti di Zurigo.",
+      "content_sections": [],
+      "navigation_links": [
+        {
+          "label": "Le Persone",
+          "href": "/Chi_Siamo/Attori",
+          "icon": "users",
+          "visible": true
+        },
+        {
+          "label": "Dicono di Noi",
+          "href": "/Chi_Siamo/Parlano_di_noi",
+          "icon": "message-square",
+          "visible": true
+        }
+      ]
+    },
+    "attori": {
+      "title": "Le Persone",
+      "list": [],
+      "join_us": {
+        "title": "Vuoi unirti a noi?",
+        "text": "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
+        "cta_label": "Contattaci",
+        "cta_href": "/Contatti"
+      }
+    },
     "parlano_di_noi": {
       "title": "Dicono di Noi",
       "description": "Gli attomatti nella stampa",
@@ -97,7 +156,16 @@
         "cta_href": "/Contatti"
       }
     },
-    "spettacoli": {},
+    "spettacoli": {
+      "title": "I Nostri Spettacoli",
+      "description": "Tutte le produzioni teatrali della compagnia.",
+      "archive_sections": []
+    },
+    "iniziative": {
+      "title": "Le Nostre Iniziative",
+      "description": "Corsi, laboratori ed eventi culturali.",
+      "archive_sections": []
+    },
     "contatti": {
       "title": "Contattaci",
       "description": "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
@@ -116,6 +184,33 @@
           "visible": true
         }
       ]
+    }
+  },
+  "landings": [],
+  "ticketing_pages": [],
+  "registration_pages": [],
+  "integrations": {
+    "google_analytics": {
+      "enabled": false,
+      "measurement_id": ""
+    },
+    "meta_pixel": {
+      "enabled": false,
+      "pixel_id": ""
+    },
+    "eventfrog": {
+      "enabled": false
+    },
+    "tally": {
+      "enabled": false
+    },
+    "cookie_consent": {
+      "version": 1
+    },
+    "events": {
+      "view_content": true,
+      "initiate_checkout": true,
+      "contact": true
     }
   }
 }

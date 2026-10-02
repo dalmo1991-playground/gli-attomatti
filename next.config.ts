@@ -1,7 +1,30 @@
 import type { NextConfig } from "next";
 
+const isDev =
+  process.env.NODE_ENV !== "production" ||
+  process.env.VERCEL_ENV === "preview" ||
+  process.env.VERCEL_GIT_COMMIT_REF === "dev" ||
+  process.env.GITHUB_BRANCH === "dev";
+
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_IS_DEV_SITE: String(isDev),
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src 'self' https://eventfrog.ch https://www.instagram.com https://tally.so;",
+          },
+        ],
+      },
+    ];
+  },
   /* config options here */
+  /* Important - the url https://gliattomatti.ch/Saalvermietung is used behind many printed QR codes - do not kill it */
   async redirects() {
     return [
       {

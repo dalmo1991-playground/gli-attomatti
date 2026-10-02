@@ -1,141 +1,136 @@
 "use client";
 
 import { Section } from "@/components/ui/Section";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 
 
 export default function AttoriClient({ content }: { content: any }) {
-  const { attori } = content.pages;
-  const { join_us } = attori;
+  const attori = content?.pages?.attori || {
+    title: "Le Persone",
+    list: [],
+    join_us: {
+      title: "Vuoi unirti a noi?",
+      text: "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
+      cta_label: "Contattaci",
+      cta_href: "/Contatti"
+    }
+  };
+  const list: any[] = Array.isArray(attori.list) ? attori.list : [];
+  const join_us = attori.join_us || {};
 
   const [lightbox, setLightbox] = useState({ isOpen: false, index: 0 });
   const [selectedActor, setSelectedActor] = useState<any | null>(null);
 
   const galleryImages = useMemo(() => {
-    return attori.list.map((person: any) => ({
-      url: person.image,
-      alt: person.name
+    return list.map((person: any) => ({
+      url: person?.image?.trim() || "/images/1782553290530-TheaterCurtain.webp",
+      alt: person?.name || "Attore"
     }));
-  }, [attori.list]);
+  }, [list]);
 
   return (
-    <div className="pt-20">
+    <div>
       {/* Header */}
-      <Section className="bg-muted/30 py-20 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Link 
-            href="/Chi_Siamo" 
-            className="inline-flex items-center text-primary font-bold mb-8 hover:gap-2 transition-all group"
-          >
-            <ChevronLeft size={20} className="mr-1 group-hover:-translate-x-1 transition-transform" />
-            Torna a Chi Siamo
-          </Link>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter"
-          >
-            {attori.title}
-          </motion.h1>
-          <div className="w-20 h-1 bg-primary mx-auto mb-8" />
-          <p className="text-xl text-foreground/70 font-medium">
-            Le persone che rendono possibile la magia del teatro Attomatti.
-          </p>
-        </div>
-      </Section>
+      <PageHeader
+        title={attori.title || "Le Persone"}
+        description="Le persone che rendono possibile la magia del teatro Attomatti."
+        backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
+        compact
+      />
 
       {/* Actors Grid */}
       <Section className="py-24">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
-          {attori.list.map((person: any, idx: number) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover="hover"
-              onClick={() => setSelectedActor(person)}
-              className="group text-center cursor-pointer"
-            >
-              <div className="relative w-64 h-64 mx-auto mb-8">
-                {/* Decorative Ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
-                
-                {/* Profile Pic Container */}
-                <motion.div 
-                  className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/20 transition-all duration-700 pointer-events-none"
-                >
-                  {/* Background (Stage Standby): Grayscale, Dimmed Image */}
-                  <div className="absolute inset-0 bg-black">
-                    <Image 
-                      src={person.image} 
-                      alt={person.name} 
-                      fill
-                      className="object-cover opacity-80 filter grayscale brightness-95 contrast-110 transition-all duration-700 scale-100 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* Spotlight Foreground (Color and Brightness) */}
-                  <motion.div
-                    className="absolute inset-0 z-10 pointer-events-none"
-                    initial={{ clipPath: "circle(0% at 50% 50%)" }}
-                    variants={{
-                      hover: { 
-                        clipPath: "circle(100% at 50% 50%)" 
-                      }
-                    }}
-                    transition={{ type: "tween", ease: "easeInOut", duration: 0.6 }}
+        {list.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+            {list.filter((p) => p.visible !== false).map((person: any, idx: number) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover="hover"
+                onClick={() => setSelectedActor(person)}
+                className="group text-center cursor-pointer"
+              >
+                <div className="relative w-64 h-64 mx-auto mb-8">
+                  {/* Decorative Ring */}
+                  <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
+                  
+                  {/* Profile Pic Container */}
+                  <div 
+                    className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
                   >
                     <Image 
-                      src={person.image} 
-                      alt={person.name} 
+                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                      alt={person.name || "Attore"} 
                       fill
-                      className="object-cover filter brightness-110 contrast-100 scale-105"
+                      sizes="(max-width: 640px) 256px, 320px"
+                      className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
                     />
-                  </motion.div>
-                </motion.div>
-
-
-              </div>
-              
-              <div className="space-y-3">
-                <h3 className="text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[4.5rem]">
-                  {person.name}
-                </h3>
-                <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
-                  {person.role}
+                  </div>
                 </div>
-                <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
-                  {person.bio}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                
+                <div className="space-y-3">
+                  <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center text-balance break-words">
+                    {person.name}
+                  </h3>
+                  {person.role && (
+                    <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
+                      {person.role}
+                    </div>
+                  )}
+                  {person.bio && (
+                    <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
+                      {person.bio}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-foreground/40 font-medium">
+            Nessun membro attualmente inserito.
+          </div>
+        )}
       </Section>
 
       {/* Join Us Call to Action */}
-      {join_us && (
+      {join_us && (join_us.title || join_us.text) && (
         <Section className="bg-muted/10 py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
-              {join_us.title}
-            </h2>
-            <p className="text-lg text-foreground/60 mb-10">
-              {join_us.text}
-            </p>
-            <Link 
-              href={join_us.cta_href}
-              className="px-10 py-5 bg-primary text-white rounded-full font-black text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-1 inline-block"
-            >
-              {join_us.cta_label}
-            </Link>
+            {join_us.title && (
+              <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
+                {join_us.title}
+              </h2>
+            )}
+            {join_us.text && (
+              <p className="text-lg text-foreground/60 mb-10">
+                {join_us.text}
+              </p>
+            )}
+            {join_us.cta_label && (
+              join_us.cta_href ? (
+                <Link 
+                  href={join_us.cta_href}
+                  className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
+                >
+                  {join_us.cta_label}
+                </Link>
+              ) : (
+                <div className="px-10 py-5 bg-primary/20 text-primary rounded-full font-black text-lg inline-block">
+                  {join_us.cta_label}
+                </div>
+              )
+            )}
           </div>
         </Section>
       )}
@@ -181,9 +176,10 @@ export default function AttoriClient({ content }: { content: any }) {
                 <div className="md:col-span-5 flex justify-center md:sticky md:top-0">
                   <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl ring-8 ring-muted border border-foreground/5 shrink-0">
                     <Image
-                      src={selectedActor.image}
+                      src={selectedActor.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
                       alt={selectedActor.name}
                       fill
+                      sizes="(max-width: 768px) 224px, 320px"
                       className="object-cover"
                     />
                   </div>
@@ -199,9 +195,10 @@ export default function AttoriClient({ content }: { content: any }) {
                       {selectedActor.role}
                     </div>
                     {selectedActor.description && (
-                      <p className="text-foreground/75 leading-relaxed text-lg whitespace-pre-wrap border-t border-foreground/5 pt-6">
-                        {selectedActor.description}
-                      </p>
+                      <RichText
+                        content={selectedActor.description}
+                        className="text-foreground/75 leading-relaxed text-lg border-t border-foreground/5 pt-6"
+                      />
                     )}
                     {selectedActor.shows && selectedActor.shows.length > 0 && (
                       <div className="border-t border-foreground/5 pt-6 mt-6 space-y-4">
