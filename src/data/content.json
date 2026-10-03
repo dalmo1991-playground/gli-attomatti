@@ -1077,32 +1077,11 @@
         "logo_text": "Gli Attomatti & UNITRE",
         "cta_label": "Prenota il tuo Posto",
         "cta_href": "#prenotazione",
-        "nav_links": [
-          {
-            "label": "La Rassegna",
-            "href": "#sinossi"
-          },
-          {
-            "label": "Programma Film",
-            "href": "#programma"
-          },
-          {
-            "label": "Date & Luogo",
-            "href": "#dettagli"
-          },
-          {
-            "label": "Locandina",
-            "href": "#locandina"
-          },
-          {
-            "label": "FAQ",
-            "href": "#faq"
-          }
-        ]
+        "nav_links": []
       },
       "sticky_bar": {
         "enabled": true,
-        "text": "Cineforum Zurigo • 5 Capolavori del Cinema sul Tempo",
+        "text": "Cineforum",
         "cta_label": "Prenota Posto",
         "cta_href": "#prenotazione"
       },
@@ -1112,8 +1091,8 @@
           "type": "hero",
           "anchor": "hero",
           "badge": "UNITRE & Gli Attomatti Teatro presentano",
-          "title": "Nel passo lento della meraviglia",
-          "tagline": "Cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.",
+          "title": "Cineforum",
+          "tagline": "<p>Nel passo lento della meraviglia: cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.</p>",
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
           "primary_cta_label": "Riserva il tuo Posto",
           "primary_cta_href": "#prenotazione",
@@ -1127,7 +1106,7 @@
           "title": "Il Tempo Ritrovato sul Grande Schermo",
           "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo frenetico della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE Zurigo e la compagnia Gli Attomatti, la rassegna esplora il tema del tempo attraverso cinque sguardi unici della cinematografia mondiale.\n\nDall'umorismo poetico di Chaplin e Tati, alla malinconia sognatrice di Fellini, fino alla libertà ritrovata di Soldini e al viaggio toccante di David Lynch: ogni film è una finestra su ciò che conta davvero, arricchita da un momento di scambio e dibattito conviviale in sala.",
           "quote": "Non abbiamo poco tempo, ma ne perdiamo molto. Il cinema d'autore è l'arte di fermare quell'attimo.",
-          "quote_author": "UNITRE & Gli Attomatti Teatro"
+          "quote_author": "Domenico Scotti di Carlo"
         },
         {
           "id": "b-cineforum-programma",
@@ -1162,11 +1141,11 @@
           "type": "event_details",
           "anchor": "dettagli",
           "title": "Informazioni Pratiche & Sede",
-          "info_badge": "Ingresso a Offerta Libera • Posti in Sala Limitati",
+          "info_badge": "",
           "date": "5 Sabati • Ore 18:00 – 20:00 (Ottobre 2026 – Marzo 2027)",
           "location": "ABZ Saal, Balberstrasse 47, Zurigo (Wollishofen)",
           "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A",
-          "price": "Offerta Libera (Gratuito per soci UNITRE)",
+          "price": "Offerta Libera",
           "cta_label": "Riserva il tuo Posto",
           "cta_href": "#prenotazione"
         },
@@ -1174,17 +1153,13 @@
           "id": "b-cineforum-gallery",
           "type": "gallery",
           "anchor": "locandina",
-          "title": "La Locandina della Rassegna",
+          "title": "La Locandina",
           "images": [
             {
               "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
               "alt": "Locandina Cineforum Nel passo lento della meraviglia",
-              "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro"
-            },
-            {
-              "url": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-              "alt": "Atmosfera Cineforum",
-              "caption": "L'atmosfera raccolta e suggestiva della sala di proiezione"
+              "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro",
+              "no_crop": true
             }
           ]
         },
@@ -1240,13 +1215,22 @@
           ]
         },
         {
-          "id": "b-cineforum-closing",
+          "id": "b-1791027853708",
+          "type": "tally",
+          "title": "Registrati per il prossimo appuntamento",
+          "subtitle": "Compila il modulo sottostante per confermare la tua partecipazione.",
+          "tally_url": "https://tally.so/r/Eky7ON",
+          "fallback_label": "Apri modulo Tally",
+          "show_privacy_note": true,
+          "anchor": "registrazione"
+        },
+        {
+          "id": "b-1791027943995",
           "type": "closing_cta",
-          "anchor": "prenotazione",
-          "title": "Unisciti a Noi per la Prossima Proiezione",
-          "text": "I posti in sala sono limitati. Prenota ora il tuo ingresso a offerta libera via WhatsApp o telefono per assicurarti una poltrona.",
-          "cta_label": "Prenota Subito (+41 78 942 39 93)",
-          "cta_href": "https://wa.me/41789423993?text=Salve%20vorrei%20prenotare%20un%20posto%20per%20il%20Cineforum%20Nel%20passo%20lento%20della%20meraviglia"
+          "title": "Unisciti a Noi",
+          "text": "<p>Se vuoi regstrarti agli altri appuntamenti della rassegna, usa i link sotto.</p>",
+          "cta_label": "Registrati",
+          "cta_href": "/Iniziative/cineforum"
         }
       ],
       "theme": {
