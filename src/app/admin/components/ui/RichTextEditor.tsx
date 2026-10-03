@@ -25,13 +25,24 @@ interface RichTextEditorProps {
   disabled?: boolean;
 }
 
+function cleanDirtyHtml(html: string): string {
+  if (!html || typeof html !== "string") return "";
+  return html
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<\/?(?:source-footnote|sources-carousel-inline|citation-tag)[^>]*>/gi, "")
+    .replace(/\s*data-path-to-node="[^"]*"/gi, "")
+    .replace(/\s*_ng(?:host|content)[^=]*="[^"]*"/gi, "")
+    .replace(/\s*ng-[^=]*="[^"]*"/gi, "");
+}
+
 /**
  * Ensures text has proper HTML structure:
  * Converts plain text newlines (\n\n -> <p>, \n -> <br>) if no HTML tags exist.
  */
 function plainTextToHtml(text: string): string {
   if (!text || typeof text !== "string") return "";
-  const trimmed = text.trim();
+  const cleaned = cleanDirtyHtml(text);
+  const trimmed = cleaned.trim();
   if (!trimmed) return "";
   // If it already contains HTML block or inline tags, keep it as HTML
   if (/<(?:p|div|ul|ol|li|br|strong|b|em|i|a|h[1-6])\b[^>]*>/i.test(trimmed)) {

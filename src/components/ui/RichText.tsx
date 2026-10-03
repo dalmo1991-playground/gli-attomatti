@@ -23,11 +23,16 @@ function isHtml(str: string): boolean {
 function sanitizeHtml(dirtyHtml: string): string {
   if (!dirtyHtml) return "";
   let clean = dirtyHtml
+    .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
+    .replace(/<\/?(?:source-footnote|sources-carousel-inline|citation-tag)[^>]*>/gi, "")
+    .replace(/\s*data-path-to-node="[^"]*"/gi, "")
+    .replace(/\s*_ng(?:host|content)[^=]*="[^"]*"/gi, "")
+    .replace(/\s*ng-[^=]*="[^"]*"/gi, "")
     .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "")
     .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
 
