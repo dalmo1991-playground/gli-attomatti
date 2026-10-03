@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 const MotionImage = motion.create(Image);
 
@@ -82,7 +83,8 @@ function SectionPhotoCarousel({
   );
 }
 
-export default function ChiSiamoClient({ content }: { content: any }) {
+export default function ChiSiamoClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const chi_siamo = content?.pages?.chi_siamo || {
     title: "Chi Siamo",
     description: "La compagnia teatrale Gli Attomatti di Zurigo.",

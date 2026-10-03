@@ -256,7 +256,7 @@ export default async function PrivacyPage() {
                   Per la vendita, prevendita ed emissione dei biglietti teatrali ci avvaliamo della piattaforma svizzera specializzata <strong>Eventfrog AG</strong> (Neuhardstrasse 38, 4600 Olten, Svizzera).
                 </p>
                 <p>
-                  I servizi di cassa possono essere raggiunti tramite link esterni o <strong>incorporati direttamente (embedded) tramite iframe</strong> all&apos;interno delle pagine del nostro sito (in particolare nelle sezioni <code>/Biglietti/[slug]</code> e nelle schede dedicate agli spettacoli).
+                  I servizi di cassa possono essere raggiunti tramite link esterni o <strong>incorporati direttamente (embedded) tramite iframe</strong> all&apos;interno delle pagine del nostro sito (in particolare nell&apos;hub <code>/Biglietti</code>, nelle sezioni <code>/Biglietti/[slug]</code> e nelle schede dedicate agli spettacoli).
                 </p>
                 <p>
                   Quando acquisti un biglietto (tramite la cassa incorporata o sul sito Eventfrog), la transazione avviene tramite connessione cifrata diretta con i server di Eventfrog AG. I dati anagrafici, di recapito e di pagamento necessari al perfezionamento dell&apos;ordine vengono trattati direttamente da Eventfrog AG in qualità di titolare indipendente e fornitore del servizio, in piena conformità alla Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).
@@ -293,7 +293,7 @@ export default async function PrivacyPage() {
                   Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci) e per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su <code>/Saalvermietung</code>), utilizziamo la piattaforma di moduli interattivi fornita da <strong>Tally BV</strong> (Muinklaan 23, 9000 Gand, Belgio).
                 </p>
                 <p>
-                  I moduli possono essere compilati tramite <strong>incorporamento diretto (iframe embed)</strong> all&apos;interno delle nostre pagine dedicate (<code>/Registrazioni/[slug]</code>, landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.
+                  I moduli possono essere compilati tramite <strong>incorporamento diretto (iframe embed)</strong> all&apos;interno delle nostre pagine dedicate (nell&apos;hub <code>/Registrazioni</code>, nelle sezioni <code>/Registrazioni/[slug]</code>, landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.
                 </p>
                 <p>
                   Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o preferenze) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all&apos;interno dell&apos;Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).

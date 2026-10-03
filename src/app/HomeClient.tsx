@@ -10,11 +10,12 @@ import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 const MotionImage = motion.create(Image);
 
-
-export default function HomeClient({ content }: { content: any }) {
+export default function HomeClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const home = content?.pages?.home || {};
   const hero = home.hero || {};
   const upcoming_shows = Array.isArray(home.upcoming_shows) ? home.upcoming_shows : [];
@@ -341,11 +342,10 @@ export default function HomeClient({ content }: { content: any }) {
             </p>
             <Link
               href="/Chi_Siamo"
-              className="text-primary font-bold inline-flex items-center group"
-              style={{display: 'none'}}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
             >
-              La nostra storia
-              <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              <span>Scopri la nostra storia</span>
+              <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           <div className="relative aspect-square md:aspect-auto md:h-[500px] overflow-hidden rounded-3xl shadow-2xl">

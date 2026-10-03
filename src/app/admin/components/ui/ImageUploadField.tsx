@@ -191,54 +191,103 @@ export function ImageUploadField({
 
         {/* Path Input & Action Buttons */}
         <div className="flex-1 w-full min-w-0 space-y-2">
-          <div className="flex gap-2 items-center w-full min-w-0">
-            <input
-              type="text"
-              value={value || ""}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="/images/... o incolla URL"
-              className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono text-xs text-foreground placeholder:text-foreground/20"
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleUploadFile(file);
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setIsLibraryOpen(true)}
-              title="Sfoglia tutte le foto caricate nel sito"
-              className="px-3 py-2 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
-            >
-              <FolderOpen size={13} />
-              <span>Galleria</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              title="Carica file WebP da PC"
-              className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 disabled:opacity-50"
-            >
-              <Upload size={13} />
-              <span className="hidden sm:inline">Upload</span>
-            </button>
-            {value && (
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleUploadFile(file);
+            }}
+          />
+
+          {isVertical ? (
+            /* Vertical / Compact Layout for narrow columns */
+            <div className="space-y-2 w-full">
+              <div className="flex items-center gap-1.5 w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsLibraryOpen(true)}
+                  title="Sfoglia tutte le foto caricate nel sito"
+                  className="flex-1 min-w-0 py-2 px-2.5 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                >
+                  <FolderOpen size={13} className="shrink-0" />
+                  <span className="truncate">Galleria</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  title="Carica file WebP da PC"
+                  className="flex-1 min-w-0 py-2 px-2.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  <Upload size={13} className="shrink-0" />
+                  <span className="truncate">Upload</span>
+                </button>
+                {value && (
+                  <button
+                    type="button"
+                    onClick={() => onChange("")}
+                    title="Rimuovi foto"
+                    className="p-2 bg-muted hover:bg-rose-500/20 text-foreground/40 hover:text-rose-400 rounded-xl transition-all shrink-0"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              <input
+                type="text"
+                value={value || ""}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder="/images/... o incolla URL"
+                className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono text-xs text-foreground placeholder:text-foreground/20"
+              />
+            </div>
+          ) : (
+            /* Horizontal / Standard Layout */
+            <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full min-w-0">
+              <input
+                type="text"
+                value={value || ""}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder="/images/... o incolla URL"
+                className="flex-1 min-w-[140px] px-3 py-2 rounded-xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono text-xs text-foreground placeholder:text-foreground/20"
+              />
               <button
                 type="button"
-                onClick={() => onChange("")}
-                title="Rimuovi"
-                className="p-2 bg-muted hover:bg-rose-500/20 text-foreground/40 hover:text-rose-400 rounded-xl transition-all shrink-0"
+                onClick={() => setIsLibraryOpen(true)}
+                title="Sfoglia tutte le foto caricate nel sito"
+                className="px-3 py-2 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5"
               >
-                <X size={14} />
+                <FolderOpen size={13} />
+                <span>Galleria</span>
               </button>
-            )}
-          </div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                title="Carica file WebP da PC"
+                className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Upload size={13} />
+                <span>Upload</span>
+              </button>
+              {value && (
+                <button
+                  type="button"
+                  onClick={() => onChange("")}
+                  title="Rimuovi"
+                  className="p-2 bg-muted hover:bg-rose-500/20 text-foreground/40 hover:text-rose-400 rounded-xl transition-all shrink-0"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          )}
+
           <p className="text-[10px] text-foreground/40 font-medium leading-snug">
             {helpText || "Scegli una foto dalla Galleria per riutilizzarla, oppure trascina/carica un nuovo file."}
           </p>

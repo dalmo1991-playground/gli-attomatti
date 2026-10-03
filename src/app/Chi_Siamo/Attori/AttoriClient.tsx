@@ -9,9 +9,10 @@ import { useState, useMemo } from "react";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-
-export default function AttoriClient({ content }: { content: any }) {
+export default function AttoriClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const attori = content?.pages?.attori || {
     title: "Le Persone",
     list: [],

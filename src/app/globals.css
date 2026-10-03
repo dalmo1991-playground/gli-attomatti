@@ -92,3 +92,29 @@ body {
   background: rgba(225, 29, 72, 0.3);
 }
 
+/* Standalone Live Preview Banner layout offset */
+html.has-preview-banner header {
+  top: 2.5rem;
+}
+@media (min-width: 640px) {
+  html.has-preview-banner header {
+    top: 2.75rem;
+  }
+}
+html.has-preview-banner main {
+  padding-top: calc(5rem + 2.5rem);
+}
+@media (min-width: 640px) {
+  html.has-preview-banner main {
+    padding-top: calc(5rem + 2.75rem);
+  }
+}
+html.has-preview-banner main:not(.pt-20) {
+  padding-top: 2.5rem;
+}
+@media (min-width: 640px) {
+  html.has-preview-banner main:not(.pt-20) {
+    padding-top: 2.75rem;
+  }
+}
+

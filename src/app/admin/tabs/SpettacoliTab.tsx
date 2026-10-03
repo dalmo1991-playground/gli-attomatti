@@ -88,6 +88,16 @@ export function SpettacoliTab() {
     updateContent("pages.spettacoli.archive_sections", next);
   };
 
+  const moveShowDate = (sIdx: number, dIdx: number, dir: -1 | 1) => {
+    const dates = [...(archive[sIdx]?.dates || [])];
+    const targetIdx = dIdx + dir;
+    if (targetIdx < 0 || targetIdx >= dates.length) return;
+    [dates[dIdx], dates[targetIdx]] = [dates[targetIdx], dates[dIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], dates };
+    updateContent("pages.spettacoli.archive_sections", next);
+  };
+
   // Details sub-list helpers
   const addShowDetail = (sIdx: number) => {
     const next = [...archive];
@@ -105,6 +115,16 @@ export function SpettacoliTab() {
   const updateShowDetail = (sIdx: number, detIdx: number, field: string, value: string) => {
     const next = [...archive];
     next[sIdx].details[detIdx] = { ...next[sIdx].details[detIdx], [field]: value };
+    updateContent("pages.spettacoli.archive_sections", next);
+  };
+
+  const moveShowDetail = (sIdx: number, detIdx: number, dir: -1 | 1) => {
+    const details = [...(archive[sIdx]?.details || [])];
+    const targetIdx = detIdx + dir;
+    if (targetIdx < 0 || targetIdx >= details.length) return;
+    [details[detIdx], details[targetIdx]] = [details[targetIdx], details[detIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], details };
     updateContent("pages.spettacoli.archive_sections", next);
   };
 
@@ -317,6 +337,39 @@ export function SpettacoliTab() {
                               key={dIdx}
                               className="p-4 bg-background/50 border border-foreground/5 rounded-2xl space-y-3"
                             >
+                              <div className="flex items-center justify-between pb-2 border-b border-foreground/5">
+                                <span className="text-xs font-black uppercase text-foreground/60 tracking-wider">
+                                  Data #{dIdx + 1}
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => moveShowDate(actualIdx, dIdx, -1)}
+                                    disabled={dIdx === 0}
+                                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                    title="Sposta data in alto"
+                                  >
+                                    <ArrowUp size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => moveShowDate(actualIdx, dIdx, 1)}
+                                    disabled={dIdx === (show.dates || []).length - 1}
+                                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                    title="Sposta data in basso"
+                                  >
+                                    <ArrowDown size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeShowDate(actualIdx, dIdx)}
+                                    className="p-1 ml-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-all"
+                                    title="Rimuovi Data"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <FormField
                                   label="Data e Ora"
@@ -490,14 +543,34 @@ export function SpettacoliTab() {
                                 className="w-full px-2.5 py-1.5 bg-muted/30 border border-foreground/10 rounded-lg text-xs text-foreground focus:border-primary focus:outline-none"
                               />
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => removeShowDetail(actualIdx, detIdx)}
-                              className="text-rose-400 hover:text-rose-300 p-1 transition-colors"
-                              title="Rimuovi"
-                            >
-                              <Trash2 size={13} />
-                            </button>
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => moveShowDetail(actualIdx, detIdx, -1)}
+                                disabled={detIdx === 0}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta prima"
+                              >
+                                <ArrowUp size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveShowDetail(actualIdx, detIdx, 1)}
+                                disabled={detIdx === (show.details || []).length - 1}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta dopo"
+                              >
+                                <ArrowDown size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeShowDetail(actualIdx, detIdx)}
+                                className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-1 rounded-md transition-all ml-0.5"
+                                title="Rimuovi"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

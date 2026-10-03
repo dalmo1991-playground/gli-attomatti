@@ -27,16 +27,28 @@ import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
 import { trackInitiateCheckout } from "@/lib/tracking";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 interface LandingClientProps {
   landing: any;
   site: any;
 }
 
-export default function LandingClient({ landing, site }: LandingClientProps) {
-  const blocks = landing.blocks || [];
-  const header = landing.header || {};
-  const stickyBar = landing.sticky_bar || {};
+export default function LandingClient({ landing: initialLanding, site }: LandingClientProps) {
+  const liveContent = useLiveContent(null);
+  const landing = useMemo(() => {
+    if (liveContent?.landings) {
+      const match = liveContent.landings.find(
+        (l: any) => l.slug === initialLanding?.slug || l.id === initialLanding?.id
+      );
+      if (match) return match;
+    }
+    return initialLanding;
+  }, [liveContent, initialLanding]);
+
+  const blocks = landing?.blocks || [];
+  const header = landing?.header || {};
+  const stickyBar = landing?.sticky_bar || {};
 
   const initialTheme = useMemo(() => getLandingTheme(landing), [landing]);
   const [theme, setTheme] = useState(initialTheme);

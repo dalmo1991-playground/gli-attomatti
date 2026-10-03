@@ -11,6 +11,8 @@ import {
   Info
 } from "lucide-react";
 
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
+
 export interface RegistrationPageData {
   id?: string;
   title: string;
@@ -29,7 +31,18 @@ interface RegistrationClientProps {
   integrations?: any;
 }
 
-export default function RegistrationClient({ page }: RegistrationClientProps) {
+export default function RegistrationClient({ page: initialPage }: RegistrationClientProps) {
+  const liveContent = useLiveContent(null);
+  const page = React.useMemo(() => {
+    if (liveContent?.registration_pages) {
+      const match = liveContent.registration_pages.find(
+        (p: any) => p.slug === initialPage?.slug || p.id === initialPage?.id
+      );
+      if (match) return match;
+    }
+    return initialPage;
+  }, [liveContent, initialPage]);
+
   const rawUrl = page.tally_url?.trim() || "";
 
   // Normalize Tally URL into an optimized embed format with solid white background

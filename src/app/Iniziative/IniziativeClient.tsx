@@ -8,8 +8,10 @@ import { Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { getCardTitleSizeClass } from "@/lib/typography";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function IniziativeClient({ content }: { content: any }) {
+export default function IniziativeClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const iniziative = content?.pages?.iniziative || {
     title: "Le Nostre Iniziative",
     description: "Corsi, laboratori ed eventi teatrali.",
@@ -32,10 +34,12 @@ export default function IniziativeClient({ content }: { content: any }) {
           <Section key={section.slug || idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
               <div className="md:col-span-4 sticky top-32">
-                <div className="inline-flex items-center px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-                  <Calendar size={14} className="mr-2" />
-                  Anno {section.year}
-                </div>
+                {section.year && (
+                  <div className="inline-flex items-center px-4 py-1.5 bg-accent/15 text-accent border border-accent/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_12px_rgba(251,191,36,0.15)]">
+                    <Calendar size={14} className="mr-2" />
+                    Anno {section.year}
+                  </div>
+                )}
                 {section.slug ? (
                   <Link href={`/Iniziative/${section.slug}`} className="block group">
                     <h2 className={cn(
@@ -58,10 +62,10 @@ export default function IniziativeClient({ content }: { content: any }) {
                 {section.slug && (
                   <Link 
                     href={`/Iniziative/${section.slug}`}
-                    className="inline-flex items-center text-primary font-bold hover:gap-2 transition-all group"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
                   >
-                    Scopri l'iniziativa
-                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    <span>Scopri l&apos;iniziativa</span>
+                    <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 )}
               </div>

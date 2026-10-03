@@ -54,10 +54,10 @@ export default function TerminiPage() {
               </p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 <li>
-                  <strong>Biglietti per spettacoli a pagamento:</strong> l&apos;acquisto può essere completato direttamente sul portale di ticketing o mediante le <em>casse incorporate (iframe embed)</em> integrate nelle nostre pagine <code>/Biglietti/[slug]</code>. L&apos;elaborazione tecnica della transazione e l&apos;emissione del titolo d&apos;accesso con QR code sono gestiti dalla piattaforma partner svizzera <strong>Eventfrog AG</strong> (Neuhardstrasse 38, 4600 Olten, Svizzera), alle cui condizioni contrattuali per gli acquirenti si rimanda per gli aspetti transazionali.
+                  <strong>Biglietti per spettacoli a pagamento:</strong> l&apos;acquisto può essere completato direttamente sul portale di ticketing o mediante le <em>casse incorporate (iframe embed)</em> integrate nelle nostre pagine dell&apos;hub <code>/Biglietti</code> e delle sezioni <code>/Biglietti/[slug]</code>. L&apos;elaborazione tecnica della transazione e l&apos;emissione del titolo d&apos;accesso con QR code sono gestiti dalla piattaforma partner svizzera <strong>Eventfrog AG</strong> (Neuhardstrasse 38, 4600 Olten, Svizzera), alle cui condizioni contrattuali per gli acquirenti si rimanda per gli aspetti transazionali.
                 </li>
                 <li>
-                  <strong>Iscrizioni a eventi gratuiti, workshop o audizioni:</strong> la prenotazione avviene tramite moduli interattivi (anche incorporati via iframe) forniti dalla piattaforma <strong>Tally BV</strong> (Gand, Belgio) raggiungibili alle pagine <code>/Registrazioni/[slug]</code> o link associati.
+                  <strong>Iscrizioni a eventi gratuiti, workshop o audizioni:</strong> la prenotazione avviene tramite moduli interattivi (anche incorporati via iframe) forniti dalla piattaforma <strong>Tally BV</strong> (Gand, Belgio) raggiungibili all&apos;hub <code>/Registrazioni</code>, alle pagine <code>/Registrazioni/[slug]</code> o link associati.
                 </li>
                 <li>
                   <strong>Richieste per affitto sala (Saalvermietung) o contatti speciali:</strong> i moduli compilabili sul sito hanno valore di richiesta informativa preliminare e non costituiscono di per sé un contratto di locazione perfezionato, il quale richiede espressa conferma scritta e stipula tra le parti.

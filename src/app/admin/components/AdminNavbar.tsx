@@ -10,7 +10,9 @@ import {
   Layers,
   Menu,
   Check,
-  Loader2
+  Loader2,
+  Eye,
+  PanelLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../context/AdminContext";
@@ -19,9 +21,19 @@ import { DiffModal } from "./DiffModal";
 interface AdminNavbarProps {
   onToggleSidebar: () => void;
   isSidebarOpen: boolean;
+  isSidebarCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+  isPreviewOpen?: boolean;
+  onTogglePreview?: () => void;
 }
 
-export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
+export function AdminNavbar({
+  onToggleSidebar,
+  isSidebarCollapsed = false,
+  onToggleCollapse,
+  isPreviewOpen,
+  onTogglePreview
+}: AdminNavbarProps) {
   const {
     adminSecret,
     setAdminSecret,
@@ -44,17 +56,28 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
     setIsSecretOpen(false);
   };
 
+  const handleSidebarClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      onToggleSidebar();
+    } else if (onToggleCollapse) {
+      onToggleCollapse();
+    } else {
+      onToggleSidebar();
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-xl border-b border-foreground/5 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-        {/* Left: Mobile Toggle & Brand */}
+        {/* Left: Mobile Toggle / Desktop Collapse & Brand */}
         <div className="flex items-center gap-3">
           <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-muted rounded-xl text-foreground/70 hover:text-foreground transition-colors md:hidden"
-            title="Menu"
+            onClick={handleSidebarClick}
+            className="p-2 hover:bg-muted rounded-xl text-foreground/70 hover:text-foreground transition-colors"
+            title={isSidebarCollapsed ? "Espandi barra laterale" : "Comprimi barra laterale"}
+            aria-label="Attiva/disattiva barra laterale"
           >
-            <Menu size={20} />
+            <PanelLeft size={20} className={cn("transition-transform duration-200", isSidebarCollapsed && "text-primary rotate-180")} />
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -78,8 +101,26 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
           <span className={`font-bold ${activeBranch === 'main' ? 'text-emerald-400' : 'text-amber-400'}`}>{activeBranch}</span>
         </div>
 
-        {/* Right: Actions (Diff, Secret, Publish, View Site) */}
+        {/* Right: Actions (Diff, Secret, Publish, View Site, Anteprima) */}
         <div className="flex items-center gap-2.5">
+          {/* Anteprima Toggle Button */}
+          {onTogglePreview && (
+            <button
+              type="button"
+              onClick={onTogglePreview}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border",
+                isPreviewOpen
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted/40 text-foreground/70 hover:text-foreground border-foreground/10 hover:border-foreground/20"
+              )}
+              title={isPreviewOpen ? "Nascondi Anteprima Affiancata" : "Mostra Anteprima Affiancata"}
+            >
+              <Eye size={13} className={cn(isPreviewOpen ? "text-primary-foreground" : "text-primary")} />
+              <span>Anteprima</span>
+            </button>
+          )}
+
           {/* View Website Link */}
           <Link
             href="/"

@@ -8,7 +8,10 @@ import { Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { getCardTitleSizeClass } from "@/lib/typography";
-export default function SpettacoliClient({ content }: { content: any }) {
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
+
+export default function SpettacoliClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const spettacoli = content?.pages?.spettacoli || {
     title: "I Nostri Spettacoli",
     description: "Tutte le produzioni teatrali della compagnia.",

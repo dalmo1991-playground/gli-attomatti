@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Ticket, ExternalLink, ShieldCheck, Info } from "lucide-react";
 import { trackInitiateCheckout } from "@/lib/tracking";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 interface TicketingPageData {
   id?: string;
@@ -23,7 +24,18 @@ interface CheckoutClientProps {
   integrations?: any;
 }
 
-export default function CheckoutClient({ page }: CheckoutClientProps) {
+export default function CheckoutClient({ page: initialPage }: CheckoutClientProps) {
+  const liveContent = useLiveContent(null);
+  const page = React.useMemo(() => {
+    if (liveContent?.ticketing_pages) {
+      const match = liveContent.ticketing_pages.find(
+        (p: any) => p.slug === initialPage?.slug || p.id === initialPage?.id
+      );
+      if (match) return match;
+    }
+    return initialPage;
+  }, [liveContent, initialPage]);
+
   const ticketUrl = page.eventfrog_url?.trim() || "";
 
   // Normalize Eventfrog Embed URL

@@ -9,8 +9,10 @@ import { DetailHero } from "@/components/ui/DetailHero";
 import { BentoGallery } from "@/components/ui/BentoGallery";
 import { DetailSidebar } from "@/components/ui/DetailSidebar";
 import { trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function SpettacoloDettaglioClient({ content, slug }: { content: any, slug: string }) {
+export default function SpettacoloDettaglioClient({ content: initialContent, slug }: { content: any, slug: string }) {
+  const content = useLiveContent(initialContent);
   const show = (content?.pages?.spettacoli?.archive_sections || []).find((s: any) => s?.slug === slug);
 
   useEffect(() => {

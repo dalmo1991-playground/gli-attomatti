@@ -9,8 +9,10 @@ import { DetailHero } from "@/components/ui/DetailHero";
 import { BentoGallery } from "@/components/ui/BentoGallery";
 import { DetailSidebar } from "@/components/ui/DetailSidebar";
 import { trackViewContent } from "@/lib/tracking";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function IniziativaDettaglioClient({ content, slug }: { content: any, slug: string }) {
+export default function IniziativaDettaglioClient({ content: initialContent, slug }: { content: any, slug: string }) {
+  const content = useLiveContent(initialContent);
   const initiative = (content?.pages?.iniziative?.archive_sections || []).find((s: any) => s?.slug === slug);
 
   useEffect(() => {

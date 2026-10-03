@@ -6,8 +6,10 @@ import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function ParlanoDiNoiClient({ content }: { content: any }) {
+export default function ParlanoDiNoiClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const parlano_di_noi = content?.pages?.parlano_di_noi || {
     title: "Dicono di Noi",
     description: "Gli attomatti nella stampa",

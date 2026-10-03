@@ -2,13 +2,14 @@
 
 import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { trackContact } from "@/lib/tracking";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function ContattiClient({ content }: { content: any }) {
+export default function ContattiClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const contatti = content?.pages?.contatti || {
     title: "Contattaci",
     description: "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
@@ -54,7 +55,7 @@ export default function ContattiClient({ content }: { content: any }) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="p-12 bg-muted/20 rounded-[3rem] border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
+              className="p-8 sm:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
             >
               <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                 <Mail size={40} />
@@ -79,7 +80,7 @@ export default function ContattiClient({ content }: { content: any }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + idx * 0.1 }}
-                className="p-12 bg-muted/20 rounded-[3rem] border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
+                className="p-8 sm:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
               >
                 <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                   <SocialIcon platform={social.platform} />
