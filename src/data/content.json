@@ -1075,14 +1075,14 @@
       "theme_color": "gold",
       "header": {
         "logo_text": "Gli Attomatti & UNITRE",
-        "cta_label": "Prenota il tuo Posto",
+        "cta_label": "Prenota",
         "cta_href": "#registrazione",
         "nav_links": []
       },
       "sticky_bar": {
         "enabled": true,
         "text": "Cineforum",
-        "cta_label": "Prenota Posto",
+        "cta_label": "Prenota",
         "cta_href": "#registrazione"
       },
       "blocks": [
@@ -1090,7 +1090,7 @@
           "id": "b-cineforum-hero",
           "type": "hero",
           "anchor": "hero",
-          "badge": "UNITRE & Gli Attomatti Teatro presentano",
+          "badge": "UNITRE & Gli Attomatti presentano",
           "title": "Cineforum",
           "tagline": "Nel passo lento della meraviglia: cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.",
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
@@ -1176,7 +1176,7 @@
             },
             {
               "quote": "Cinque pietre miliari della storia del cinema mondiale proposte non solo per essere guardate, ma per essere vissute e discusse insieme.",
-              "author": "Gli Attomatti Teatro",
+              "author": "Gli Attomatti",
               "rating": 5
             },
             {
