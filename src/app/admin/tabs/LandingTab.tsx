@@ -1324,8 +1324,9 @@ export function LandingTab({
                     </div>
                   </div>
                 </AccordionCard>
-              );
-            })}
+              </div>
+            );
+          })}
           </div>
         )}
       </AdminSection>

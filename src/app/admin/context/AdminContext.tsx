@@ -175,6 +175,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     return findDiffs(initialContent, content);
   }, [initialContent, content]);
 
+  const hasUnsavedChanges = diffList.length > 0;
+
   // Instantly broadcast content changes to all live preview consumers (tabs & iframes)
   useEffect(() => {
     if (isLoading || !content) return;
