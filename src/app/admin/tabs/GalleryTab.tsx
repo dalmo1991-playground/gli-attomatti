@@ -17,7 +17,6 @@ import {
   ArrowUpDown,
   Filter,
   Layers,
-  Sparkles,
   Info,
   Loader2,
   X,

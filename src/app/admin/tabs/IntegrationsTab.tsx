@@ -15,7 +15,6 @@ import {
   ShoppingCart,
   Mail,
   HelpCircle,
-  Sparkles,
   ExternalLink,
   ClipboardList
 } from "lucide-react";

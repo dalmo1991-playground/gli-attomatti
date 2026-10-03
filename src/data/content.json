@@ -1025,12 +1025,12 @@
           "title": "",
           "items": [
             {
-              "quote": "<p>Mai visto nulla del genere</p>",
+              "quote": "Mai visto nulla del genere",
               "author": "Critico",
               "rating": 3
             },
             {
-              "quote": "<p>Comprensibile</p>",
+              "quote": "Comprensibile",
               "author": "Pubblico",
               "rating": 5
             }
@@ -1065,6 +1065,201 @@
         "accent": "#c2410c",
         "accentForeground": "#ffffff",
         "muted": "#ffffff"
+      }
+    },
+    {
+      "id": "landing-cineforum",
+      "slug": "cineforum",
+      "title": "Cineforum — Nel passo lento della meraviglia",
+      "active": true,
+      "theme_color": "gold",
+      "header": {
+        "logo_text": "Gli Attomatti & UNITRE",
+        "cta_label": "Prenota il tuo Posto",
+        "cta_href": "#prenotazione",
+        "nav_links": [
+          {
+            "label": "La Rassegna",
+            "href": "#sinossi"
+          },
+          {
+            "label": "Programma Film",
+            "href": "#programma"
+          },
+          {
+            "label": "Date & Luogo",
+            "href": "#dettagli"
+          },
+          {
+            "label": "Locandina",
+            "href": "#locandina"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
+        ]
+      },
+      "sticky_bar": {
+        "enabled": true,
+        "text": "Cineforum Zurigo • 5 Capolavori del Cinema sul Tempo",
+        "cta_label": "Prenota Posto",
+        "cta_href": "#prenotazione"
+      },
+      "blocks": [
+        {
+          "id": "b-cineforum-hero",
+          "type": "hero",
+          "anchor": "hero",
+          "badge": "UNITRE & Gli Attomatti Teatro presentano",
+          "title": "Nel passo lento della meraviglia",
+          "tagline": "Cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.",
+          "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "primary_cta_label": "Riserva il tuo Posto",
+          "primary_cta_href": "#prenotazione",
+          "secondary_cta_label": "Guarda il Programma",
+          "secondary_cta_href": "#programma"
+        },
+        {
+          "id": "b-cineforum-synopsis",
+          "type": "synopsis",
+          "anchor": "sinossi",
+          "title": "Il Tempo Ritrovato sul Grande Schermo",
+          "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo frenetico della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE Zurigo e la compagnia Gli Attomatti, la rassegna esplora il tema del tempo attraverso cinque sguardi unici della cinematografia mondiale.\n\nDall'umorismo poetico di Chaplin e Tati, alla malinconia sognatrice di Fellini, fino alla libertà ritrovata di Soldini e al viaggio toccante di David Lynch: ogni film è una finestra su ciò che conta davvero, arricchita da un momento di scambio e dibattito conviviale in sala.",
+          "quote": "Non abbiamo poco tempo, ma ne perdiamo molto. Il cinema d'autore è l'arte di fermare quell'attimo.",
+          "quote_author": "UNITRE & Gli Attomatti Teatro"
+        },
+        {
+          "id": "b-cineforum-programma",
+          "type": "faq",
+          "anchor": "programma",
+          "title": "I 5 Capolavori in Programmazione",
+          "items": [
+            {
+              "question": "1. \"Tempi moderni\" di Charlie Chaplin — 3 Ottobre 2026, ore 18:00",
+              "answer": "La satira più celebre e profonda sull'alienazione dei ritmi frenetici moderni. Charlot alle prese con gli ingranaggi della fabbrica in un inno imperituro alla dignità, alla tenerezza e alla risata liberatoria. Apertura ufficiale della rassegna."
+            },
+            {
+              "question": "2. \"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 Novembre 2026, ore 18:00",
+              "answer": "Un capolavoro assoluto di comicità visiva e raffinatezza. Il tempo della vacanza al mare si trasforma in una serie esilarante di piccoli equivoci e gesti surreali che rivelano le manie e la poesia dell'animo umano."
+            },
+            {
+              "question": "3. \"I vitelloni\" di Federico Fellini — 16 Gennaio 2027, ore 18:00",
+              "answer": "Il primo grande trionfo internazionale di Fellini. Il ritratto indimenticabile di cinque giovani sognatori nella provincia romagnola, sospesi tra l'ozio delle serate invernali, il desiderio di partire e la paura di crescere."
+            },
+            {
+              "question": "4. \"Pane e tulipani\" di Silvio Soldini — 20 Febbraio 2027, ore 18:00",
+              "answer": "Una commedia luminosa e gentile vincitrice di 9 David di Donatello. Dimenticata in autogrill durante una gita di famiglia, la casalinga Rosalba decide di non tornare a casa e inventarsi una nuova vita meravigliosa a Venezia."
+            },
+            {
+              "question": "5. \"Una storia vera\" (The Straight Story) di David Lynch — 20 Marzo 2027, ore 18:00",
+              "answer": "Il commovente viaggio reale dell'anziano Alvin Straight a bordo di un trattorino tosaerba attraverso gli orizzonti dell'Iowa e del Wisconsin per fare pace con il fratello malato. Una meditazione universale sul perdono e sulla lentezza del cammino."
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-details",
+          "type": "event_details",
+          "anchor": "dettagli",
+          "title": "Informazioni Pratiche & Sede",
+          "info_badge": "Ingresso a Offerta Libera • Posti in Sala Limitati",
+          "date": "5 Sabati • Ore 18:00 – 20:00 (Ottobre 2026 – Marzo 2027)",
+          "location": "ABZ Saal, Balberstrasse 47, Zurigo (Wollishofen)",
+          "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A",
+          "price": "Offerta Libera (Gratuito per soci UNITRE)",
+          "cta_label": "Riserva il tuo Posto",
+          "cta_href": "#prenotazione"
+        },
+        {
+          "id": "b-cineforum-gallery",
+          "type": "gallery",
+          "anchor": "locandina",
+          "title": "La Locandina della Rassegna",
+          "images": [
+            {
+              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+              "alt": "Locandina Cineforum Nel passo lento della meraviglia",
+              "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro"
+            },
+            {
+              "url": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+              "alt": "Atmosfera Cineforum",
+              "caption": "L'atmosfera raccolta e suggestiva della sala di proiezione"
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-reviews",
+          "type": "reviews",
+          "anchor": "recensioni",
+          "title": "L'Esperienza del Cineforum",
+          "items": [
+            {
+              "quote": "Il valore più grande di questa rassegna è la possibilità di ritrovare la comunità italiana a Zurigo attorno a opere che lasciano un segno profondo.",
+              "author": "UNITRE Zurigo",
+              "rating": 5
+            },
+            {
+              "quote": "Cinque pietre miliari della storia del cinema mondiale proposte non solo per essere guardate, ma per essere vissute e discusse insieme.",
+              "author": "Gli Attomatti Teatro",
+              "rating": 5
+            },
+            {
+              "quote": "Un format intimo, caloroso e accessibile a tutti con offerta libera nella splendida sala ABZ Saal di Wollishofen.",
+              "author": "Pubblico & Partecipanti",
+              "rating": 5
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-faq",
+          "type": "faq",
+          "anchor": "faq",
+          "title": "Domande Frequenti",
+          "items": [
+            {
+              "question": "Come funziona l'ingresso a offerta libera?",
+              "answer": "L'evento è aperto a tutti gli appassionati con ingresso a offerta libera per supportare l'organizzazione e la sala. Per gli iscritti a UNITRE Zurigo, la partecipazione a tutti e cinque gli incontri è già interamente compresa nella quota sociale annuale."
+            },
+            {
+              "question": "Perché è richiesta la prenotazione?",
+              "answer": "La sala ABZ Saal ha una capienza confortevole ma limitata. Prenotare in anticipo garantisce a tutti un posto a sedere ottimale e ci permette di accogliervi al meglio."
+            },
+            {
+              "question": "Posso partecipare solo a singole date?",
+              "answer": "Assolutamente sì. Puoi scegliere di seguire l'intero percorso o iscriverti ai singoli titoli che ti incuriosiscono di più."
+            },
+            {
+              "question": "In che lingua sono proiettati i film?",
+              "answer": "I film italiani (come I vitelloni e Pane e tulipani) sono in lingua originale italiana; i film internazionali sono presentati con cura e sempre accompagnati da introduzione e dibattito in italiano."
+            },
+            {
+              "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
+              "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 (fermata Morgental o Post Wollishofen) e la stazione ferroviaria S-Bahn Wollishofen a pochi minuti a piedi."
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-closing",
+          "type": "closing_cta",
+          "anchor": "prenotazione",
+          "title": "Unisciti a Noi per la Prossima Proiezione",
+          "text": "I posti in sala sono limitati. Prenota ora il tuo ingresso a offerta libera via WhatsApp o telefono per assicurarti una poltrona.",
+          "cta_label": "Prenota Subito (+41 78 942 39 93)",
+          "cta_href": "https://wa.me/41789423993?text=Salve%20vorrei%20prenotare%20un%20posto%20per%20il%20Cineforum%20Nel%20passo%20lento%20della%20meraviglia"
+        }
+      ],
+      "theme": {
+        "preset": "gold",
+        "background": "#09090b",
+        "foreground": "#fafaf9",
+        "primary": "#d97706",
+        "primaryForeground": "#ffffff",
+        "secondary": "#e11d48",
+        "secondaryForeground": "#ffffff",
+        "accent": "#fde047",
+        "accentForeground": "#09090b",
+        "muted": "#18181b"
       }
     }
   ],

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Home, Theater } from "lucide-react";
+import { Home, Theater } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function NotFound() {
 
       <div className="relative z-10 max-w-xl mx-auto text-center space-y-8">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary border border-primary/20 backdrop-blur-md">
-          <Sparkles size={14} />
+          <Theater size={14} />
           <span>Errore 404 • Fuori Scena</span>
         </div>
 

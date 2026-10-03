@@ -9,7 +9,6 @@ import {
   Copy,
   RotateCcw,
   X,
-  Sparkles,
   ClipboardPaste,
   SlidersHorizontal,
   Info,
@@ -431,7 +430,7 @@ export function DevThemeCustomizer() {
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-xs font-black uppercase tracking-wider text-foreground/60 flex items-center gap-1.5">
-                    <Sparkles size={14} className="text-accent" />
+                    <Palette size={14} className="text-accent" />
                     Temi Scenici Rapidi (6 Preset)
                   </span>
                   {isCustomized && (

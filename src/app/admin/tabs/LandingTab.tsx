@@ -10,7 +10,7 @@ import {
   ArrowUp,
   ArrowDown,
   Layers,
-  Sparkles,
+  Layout,
   Calendar,
   BookOpen,
   Image as ImageIcon,
@@ -84,7 +84,7 @@ function AnchorQuickPick({
 }
 
 const BLOCK_TYPES = [
-  { type: "hero", label: "Hero Header", icon: Sparkles, desc: "Titolo d'impatto, sfondo e CTA principale" },
+  { type: "hero", label: "Hero Header", icon: Layout, desc: "Titolo d'impatto, sfondo e CTA principale" },
   { type: "event_details", label: "Data, Orario & Luogo", icon: Calendar, desc: "Card con dettagli data, mappa e prezzo" },
   { type: "eventfrog", label: "Cassa Biglietti Eventfrog", icon: Ticket, desc: "Embed ufficiale di Eventfrog per acquistare i biglietti direttamente sulla landing" },
   { type: "tally", label: "Modulo Tally (Registrazione)", icon: ClipboardList, desc: "Embed ufficiale Tally.so per iscrizioni, corsi o registrazioni" },
@@ -445,7 +445,7 @@ export function LandingTab() {
                                 className="px-2.5 py-1 rounded-lg bg-secondary/10 hover:bg-secondary/20 text-secondary text-[11px] font-bold border border-secondary/20 transition-all flex items-center gap-1"
                                 title="Genera automaticamente le voci di menu dai blocchi della pagina"
                               >
-                                <Sparkles size={12} />
+                                <Layers size={12} />
                                 <span>Genera dai Blocchi</span>
                               </button>
                             )}

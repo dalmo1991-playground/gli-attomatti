@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ExternalLink, Lock, ArrowRight, AlertCircle, Theater, ShieldCheck } from "lucide-react";
+import { ExternalLink, Lock, ArrowRight, AlertCircle, Theater, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DevAccessGateProps {
@@ -77,7 +77,7 @@ export function DevAccessGate({
         <div className="text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            <Sparkles size={14} className="text-accent" />
+            <ShieldCheck size={14} className="text-accent" />
             <span>Ambiente di Sviluppo</span>
           </div>
 

@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   ClipboardList,
   X,
-  Sparkles,
   Clock,
   Lock,
   CheckCircle2,
@@ -254,9 +253,8 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest shadow-xs"
+                        className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest shadow-xs"
                       >
-                        <Sparkles size={12} className="text-primary" />
                         <span>{block.badge}</span>
                       </motion.div>
                     )}
@@ -604,7 +602,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                           </div>
 
                           <p className="italic font-serif text-lg text-foreground/85 leading-snug">
-                            &ldquo;{rev.quote}&rdquo;
+                            &ldquo;{(rev.quote || "").replace(/<[^>]+>/g, "").trim()}&rdquo;
                           </p>
 
                           <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
