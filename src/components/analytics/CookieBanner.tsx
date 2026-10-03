@@ -142,9 +142,9 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="fixed bottom-0 inset-x-0 z-50 p-4 sm:p-6 pointer-events-none"
+        className="fixed bottom-0 inset-x-0 z-50 p-3 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] pointer-events-none"
       >
-        <div className="max-w-4xl mx-auto bg-slate-900/95 border border-foreground/15 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl pointer-events-auto text-foreground space-y-6">
+        <div className="max-w-4xl mx-auto bg-slate-900/95 border border-foreground/15 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur-xl pointer-events-auto text-foreground space-y-4 sm:space-y-6 max-h-[85dvh] overflow-y-auto overscroll-contain custom-scrollbar">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">

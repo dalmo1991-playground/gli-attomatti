@@ -38,7 +38,7 @@ export function DetailSidebar({
   className
 }: DetailSidebarProps) {
   return (
-    <div className={cn("sticky top-32 space-y-6 sm:space-y-8", className)}>
+    <div className={cn("lg:sticky lg:top-32 space-y-6 sm:space-y-8", className)}>
       {/* Dates & Tickets Card */}
       <div className="p-6 sm:p-8 bg-muted/20 rounded-[2.5rem] border border-foreground/5 shadow-sm">
         <h3 className="text-xl font-black uppercase tracking-tight mb-6 sm:mb-8 flex items-center">

@@ -1009,9 +1009,9 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
         </div>
       </footer>
 
-      {/* 4. Sticky Mobile Bottom CTA Bar */}
+      {/* 4. Sticky Mobile Bottom CTA Bar with Safe-Area Padding */}
       {stickyBar.enabled && stickyBar.cta_label && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-t border-foreground/10 p-3 sm:p-4 md:hidden shadow-2xl">
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-t border-foreground/10 px-4 pt-3 pb-[max(0.85rem,env(safe-area-inset-bottom))] md:hidden shadow-2xl">
           <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />

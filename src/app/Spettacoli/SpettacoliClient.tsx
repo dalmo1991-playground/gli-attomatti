@@ -31,9 +31,9 @@ export default function SpettacoliClient({ content: initialContent }: { content:
       {/* Archive Sections */}
       {archive.length > 0 ? (
         archive.filter((s) => s.visible !== false).map((section: any, idx: number) => (
-          <Section key={section.slug || idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
-              <div className="md:col-span-4 sticky top-32">
+          <Section key={section.slug || idx} className={cn("py-12 sm:py-16 md:py-24", idx % 2 !== 0 && "bg-muted/10")}>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-start">
+              <div className="md:col-span-4 md:sticky md:top-32">
                 {section.year && (
                   <div className="inline-flex items-center px-4 py-1.5 bg-accent/15 text-accent border border-accent/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_12px_rgba(251,191,36,0.15)]">
                     <Calendar size={14} className="mr-2" />

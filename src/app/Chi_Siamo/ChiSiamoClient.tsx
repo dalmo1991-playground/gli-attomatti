@@ -60,7 +60,7 @@ function SectionPhotoCarousel({
 
       {/* Carousel Indicators (Dots) if multiple images */}
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-1 z-20">
           {images.map((_, i) => (
             <button
               key={i}
@@ -68,14 +68,18 @@ function SectionPhotoCarousel({
                 e.stopPropagation();
                 setCurrentIndex(i);
               }}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
-                i === currentIndex
-                  ? "bg-primary w-6 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]"
-                  : "bg-white/40 hover:bg-white/70"
-              )}
+              className="p-2 flex items-center justify-center"
               aria-label={`Foto ${i + 1}`}
-            />
+            >
+              <span
+                className={cn(
+                  "rounded-full transition-all duration-300 block",
+                  i === currentIndex
+                    ? "bg-primary w-6 h-2 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]"
+                    : "bg-white/40 hover:bg-white/70 w-2 h-2"
+                )}
+              />
+            </button>
           ))}
         </div>
       )}
@@ -120,9 +124,9 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
 
       {/* Content Sections */}
       {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => (
-        <Section key={idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
-            <div className="md:col-span-4 sticky top-32">
+        <Section key={idx} className={cn("py-12 sm:py-16 md:py-24", idx % 2 !== 0 && "bg-muted/10")}>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-start">
+            <div className="md:col-span-4 md:sticky md:top-32">
               <h2 className="text-3xl font-black uppercase tracking-tight mb-6">
                 {section.title}
               </h2>
@@ -133,7 +137,7 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
               <div className="prose prose-xl prose-invert max-w-none">
                 <RichText
                   content={section.text}
-                  className="text-xl text-foreground/80 leading-relaxed mb-12"
+                  className="text-xl text-foreground/80 leading-relaxed mb-8 md:mb-12"
                 />
 
                 {section.images && section.images.length > 0 && (
@@ -156,7 +160,7 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
 
       {/* Navigation Links Section */}
       {navLinks.length > 0 && (
-        <Section className="py-24 bg-muted/10 border-t border-foreground/5">
+        <Section className="py-12 sm:py-16 md:py-24 bg-muted/10 border-t border-foreground/5">
           <div className="max-w-3xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {navLinks.filter((l) => l.visible !== false).map((link: any, idx: number) => {

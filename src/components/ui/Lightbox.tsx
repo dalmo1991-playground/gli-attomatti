@@ -57,6 +57,26 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+    setTouchStartX(null);
+  };
+
   if (!mounted) return null;
 
   return createPortal(
@@ -66,52 +86,58 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/95 backdrop-blur-sm touch-pan-y"
           onClick={onClose}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
+          {/* Close button with safe-area support */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 z-50 p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            aria-label="Chiudi galleria"
+            className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-50 p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90"
           >
-            <X size={32} />
+            <X size={26} />
           </button>
 
           {images.length > 1 && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                className="absolute left-4 md:left-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-all hover:scale-110 hover:-translate-x-1"
+                aria-label="Foto precedente"
+                className="hidden sm:flex absolute left-4 md:left-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:-translate-x-1"
               >
-                <ChevronLeft size={40} />
+                <ChevronLeft size={36} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                className="absolute right-4 md:right-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-all hover:scale-110 hover:translate-x-1"
+                aria-label="Foto successiva"
+                className="hidden sm:flex absolute right-4 md:right-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:translate-x-1"
               >
-                <ChevronRight size={40} />
+                <ChevronRight size={36} />
               </button>
             </>
           )}
 
           <div 
-            className="relative w-full max-w-7xl max-h-[90vh] px-16 flex flex-col items-center justify-center"
+            className="relative w-full max-w-7xl max-h-[85vh] px-3 sm:px-12 md:px-16 flex flex-col items-center justify-center select-none"
             onClick={(e) => e.stopPropagation()}
           >
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentIndex}
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
+                exit={{ opacity: 0, scale: 1.04 }}
                 transition={{ duration: 0.2 }}
                 src={images[currentIndex]?.url || images[currentIndex]?.src || ""}
                 alt={images[currentIndex]?.alt || `Image ${currentIndex + 1}`}
-                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
               />
             </AnimatePresence>
             
             {images.length > 1 && (
-              <div className="absolute bottom-[-40px] text-white/50 font-medium tracking-widest text-sm">
+              <div className="mt-4 text-white/60 font-mono tracking-widest text-xs sm:text-sm bg-black/40 px-3 py-1 rounded-full border border-white/10">
                 {currentIndex + 1} / {images.length}
               </div>
             )}

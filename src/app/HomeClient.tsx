@@ -308,7 +308,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
 
         {/* Carousel Indicators (Dots) */}
         {showMode && activeShows.length > 1 && (
-          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-1 z-30">
             {activeShows.map((_: any, idx: number) => (
               <button
                 key={idx}
@@ -316,12 +316,18 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   setHeroDirection(idx > currentShowIndex ? 1 : -1);
                   setCurrentShowIndex(idx);
                 }}
-                className={cn(
-                  "w-2.5 h-2.5 rounded-full transition-all duration-300",
-                  idx === currentShowIndex ? "bg-primary w-8 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" : "bg-primary/20 hover:bg-primary/40"
-                )}
+                className="p-2 sm:p-2.5 flex items-center justify-center cursor-pointer"
                 aria-label={`Slide ${idx + 1}`}
-              />
+              >
+                <span
+                  className={cn(
+                    "h-2.5 rounded-full transition-all duration-300 block",
+                    idx === currentShowIndex
+                      ? "bg-primary w-8 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+                      : "bg-primary/20 hover:bg-primary/40 w-2.5"
+                  )}
+                />
+              </button>
             ))}
           </div>
         )}

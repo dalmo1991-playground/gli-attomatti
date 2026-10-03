@@ -47,9 +47,9 @@ export default function AttoriClient({ content: initialContent }: { content: any
       />
 
       {/* Actors Grid */}
-      <Section className="py-24">
+      <Section className="py-12 sm:py-16 md:py-24">
         {list.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 md:gap-16">
             {list.filter((p) => p.visible !== false).map((person: any, idx: number) => (
               <motion.div
                 key={idx}
@@ -59,37 +59,37 @@ export default function AttoriClient({ content: initialContent }: { content: any
                 transition={{ delay: idx * 0.1 }}
                 whileHover="hover"
                 onClick={() => setSelectedActor(person)}
-                className="group text-center cursor-pointer"
+                className="group text-center cursor-pointer active:scale-[0.98] transition-transform"
               >
-                <div className="relative w-64 h-64 mx-auto mb-8">
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto mb-6 sm:mb-8">
                   {/* Decorative Ring */}
                   <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 scale-110 group-hover:scale-125 group-hover:border-amber-400/50 transition-all duration-700 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] pointer-events-none" />
                   
                   {/* Profile Pic Container */}
                   <div 
-                    className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
+                    className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-4 sm:ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
                   >
                     <Image 
                       src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
                       alt={person.name || "Attore"} 
                       fill
-                      sizes="(max-width: 640px) 256px, 320px"
+                      sizes="(max-width: 640px) 192px, 256px"
                       className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center text-balance break-words">
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3rem] sm:min-h-[4rem] flex items-center justify-center text-balance break-words">
                     {person.name}
                   </h3>
                   {person.role && (
-                    <div className="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
+                    <div className="inline-block px-3.5 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
                       {person.role}
                     </div>
                   )}
                   {person.bio && (
-                    <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-4 border-t border-foreground/5 whitespace-pre-wrap">
+                    <p className="text-foreground/60 leading-relaxed max-w-sm mx-auto pt-3 sm:pt-4 border-t border-foreground/5 whitespace-pre-wrap text-sm sm:text-base text-pretty">
                       {person.bio}
                     </p>
                   )}
@@ -106,15 +106,15 @@ export default function AttoriClient({ content: initialContent }: { content: any
 
       {/* Join Us Call to Action */}
       {join_us && (join_us.title || join_us.text) && (
-        <Section className="bg-muted/10 py-24 text-center border-t border-foreground/5">
+        <Section className="bg-muted/10 py-12 sm:py-16 md:py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
             {join_us.title && (
-              <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black mb-4 sm:mb-6 uppercase tracking-tight">
                 {join_us.title}
               </h2>
             )}
             {join_us.text && (
-              <p className="text-lg text-foreground/60 mb-10">
+              <p className="text-base sm:text-lg text-foreground/60 mb-8 sm:mb-10 text-pretty">
                 {join_us.text}
               </p>
             )}
@@ -122,12 +122,12 @@ export default function AttoriClient({ content: initialContent }: { content: any
               join_us.cta_href ? (
                 <Link 
                   href={join_us.cta_href}
-                  className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
+                  className="px-8 sm:px-10 py-4 sm:py-5 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
                 >
                   {join_us.cta_label}
                 </Link>
               ) : (
-                <div className="px-10 py-5 bg-primary/20 text-primary rounded-full font-black text-lg inline-block">
+                <div className="px-8 sm:px-10 py-4 sm:py-5 bg-primary/20 text-primary rounded-full font-black text-base sm:text-lg inline-block">
                   {join_us.cta_label}
                 </div>
               )
@@ -145,7 +145,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
 
       <AnimatePresence>
         {selectedActor && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
             {/* Backdrop Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -157,59 +157,60 @@ export default function AttoriClient({ content: initialContent }: { content: any
 
             {/* Modal Dialog Content */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="relative w-full max-w-4xl bg-background border border-foreground/10 rounded-3xl overflow-hidden shadow-2xl z-10 p-6 md:p-10 max-h-[90vh] md:max-h-none flex flex-col justify-center"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
+              className="relative w-full max-w-4xl bg-background border border-foreground/10 rounded-3xl shadow-2xl z-10 p-5 sm:p-8 md:p-10 max-h-[88vh] overflow-y-auto overscroll-contain custom-scrollbar"
             >
               {/* Close Button */}
               <button
                 onClick={() => setSelectedActor(null)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground/75 hover:text-foreground transition-colors cursor-pointer z-20"
+                aria-label="Chiudi scheda attore"
+                className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2.5 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground transition-all active:scale-95 cursor-pointer z-30"
               >
-                <X size={20} className="md:w-6 md:h-6" />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
 
               {/* Pop-up Content */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center md:items-start overflow-y-auto md:overflow-visible max-h-[70vh] md:max-h-none pr-1 md:pr-0 custom-scrollbar w-full pt-8 md:pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-center md:items-start w-full pt-4 md:pt-0">
                 {/* Profile Pic Column */}
                 <div className="md:col-span-5 flex justify-center md:sticky md:top-0">
-                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl ring-8 ring-muted border border-foreground/5 shrink-0">
+                  <div className="relative w-32 h-32 sm:w-44 sm:h-44 md:w-72 md:h-72 rounded-full overflow-hidden shadow-xl ring-4 sm:ring-8 ring-muted border border-foreground/5 shrink-0">
                     <Image
                       src={selectedActor.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
                       alt={selectedActor.name}
                       fill
-                      sizes="(max-width: 768px) 224px, 320px"
+                      sizes="(max-width: 640px) 140px, (max-width: 768px) 180px, 320px"
                       className="object-cover"
                     />
                   </div>
                 </div>
 
                 {/* Info Column */}
-                <div className="md:col-span-7 space-y-6 text-center md:text-left md:overflow-y-auto md:max-h-[520px] md:pr-4 custom-scrollbar">
+                <div className="md:col-span-7 space-y-4 sm:space-y-6 text-center md:text-left">
                   <div>
-                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-3">
+                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight mb-2 sm:mb-3">
                       {selectedActor.name}
                     </h2>
-                    <div className="inline-block px-5 py-2 bg-primary/10 text-primary rounded-full text-sm font-bold uppercase tracking-wider mb-6">
+                    <div className="inline-block px-4 py-1.5 sm:px-5 sm:py-2 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 sm:mb-6">
                       {selectedActor.role}
                     </div>
                     {selectedActor.description && (
                       <RichText
                         content={selectedActor.description}
-                        className="text-foreground/75 leading-relaxed text-lg border-t border-foreground/5 pt-6"
+                        className="text-foreground/75 leading-relaxed text-base sm:text-lg border-t border-foreground/5 pt-4 sm:pt-6 text-pretty"
                       />
                     )}
                     {selectedActor.shows && selectedActor.shows.length > 0 && (
-                      <div className="border-t border-foreground/5 pt-6 mt-6 space-y-4">
+                      <div className="border-t border-foreground/5 pt-5 sm:pt-6 mt-5 sm:mt-6 space-y-3 sm:space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-widest text-foreground/45">
                           Spettacoli e Ruoli
                         </h4>
-                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                        <div className="flex flex-wrap gap-2.5 sm:gap-3 justify-center md:justify-start">
                           {selectedActor.shows.map((show: any, sIdx: number) => {
                             const badgeContent = (
-                              <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-foreground/[0.03] text-foreground hover:bg-primary/10 hover:text-primary rounded-xl text-sm font-semibold transition-all border border-foreground/5 cursor-pointer">
+                              <span className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 bg-foreground/[0.04] text-foreground hover:bg-primary/10 hover:text-primary rounded-xl text-xs sm:text-sm font-semibold transition-all border border-foreground/5 cursor-pointer active:scale-95">
                                 <span>{show.title}</span>
                                 {show.role && (
                                   <>

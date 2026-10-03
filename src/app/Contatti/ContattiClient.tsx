@@ -47,24 +47,24 @@ export default function ContattiClient({ content: initialContent }: { content: a
       />
 
       {/* Contact Cards */}
-      <Section className="py-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <Section className="py-12 sm:py-16 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {/* Email Card */}
           {contatti.email && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="p-8 sm:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
+              className="p-6 sm:p-10 md:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
             >
-              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                <Mail size={40} />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 sm:mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                <Mail size={32} className="sm:w-10 sm:h-10" />
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">Email</h2>
+              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">Email</h2>
               <Link 
                 href={`mailto:${contatti.email}`}
                 onClick={() => trackContact("email", contatti.email)}
-                className="text-2xl md:text-3xl font-black hover:text-primary transition-colors break-all"
+                className="text-xl sm:text-2xl md:text-3xl font-black hover:text-primary transition-colors break-all"
               >
                 {contatti.email}
               </Link>
@@ -80,12 +80,12 @@ export default function ContattiClient({ content: initialContent }: { content: a
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + idx * 0.1 }}
-                className="p-8 sm:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
+                className="p-6 sm:p-10 md:p-12 bg-muted/20 rounded-3xl border border-foreground/5 flex flex-col items-center text-center group hover:bg-background hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl"
               >
-                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 sm:mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                   <SocialIcon platform={social.platform} />
                 </div>
-                <h2 className="text-sm font-bold uppercase tracking-[0.3em] mb-4 opacity-40">{social.platform}</h2>
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">{social.platform}</h2>
                 {social.href ? (
                   <Link 
                     href={social.href}
