@@ -11,10 +11,28 @@ export function LivePreviewProvider({
   children: React.ReactNode;
   initialContent: any;
 }) {
-  const [content, setContent] = useState(initialContent);
+  const [content, setContent] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const liveDataRaw = localStorage.getItem("attomatti_preview_live_data");
+        if (liveDataRaw) {
+          const parsed = JSON.parse(liveDataRaw);
+          if (parsed) return parsed;
+        }
+        const stored = localStorage.getItem("attomatti_admin_draft");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.content) return parsed.content;
+        }
+      } catch {}
+    }
+    return initialContent;
+  });
 
   useEffect(() => {
-    setContent(initialContent);
+    if (!content) {
+      setContent(initialContent);
+    }
   }, [initialContent]);
 
   useEffect(() => {

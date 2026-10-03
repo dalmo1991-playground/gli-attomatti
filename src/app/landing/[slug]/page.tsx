@@ -51,9 +51,5 @@ export default async function LandingPage({
   const content = await getContent();
   const landing = (content?.landings || []).find((l: any) => l?.slug === slug);
 
-  if (!landing) {
-    notFound();
-  }
-
-  return <LandingClient landing={landing} site={content.site} />;
+  return <LandingClient landing={landing} site={content?.site} slug={slug} />;
 }

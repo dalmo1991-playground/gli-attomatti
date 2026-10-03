@@ -175,7 +175,20 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     return findDiffs(initialContent, content);
   }, [initialContent, content]);
 
-  const hasUnsavedChanges = diffList.length > 0;
+  // Instantly broadcast content changes to all live preview consumers (tabs & iframes)
+  useEffect(() => {
+    if (isLoading || !content) return;
+    try {
+      localStorage.setItem("attomatti_preview_live_data", JSON.stringify(content));
+    } catch {}
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        const ch = new BroadcastChannel("attomatti_preview_sync");
+        ch.postMessage({ type: "ATTOMATTI_PREVIEW_SYNC", content });
+        ch.close();
+      }
+    } catch {}
+  }, [content, isLoading]);
 
   // Auto-save to localStorage whenever changes occur (debounced 1.5s)
   useEffect(() => {

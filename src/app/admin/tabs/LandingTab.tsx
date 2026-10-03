@@ -95,12 +95,32 @@ const BLOCK_TYPES = [
   { type: "closing_cta", label: "Banner CTA Finale", icon: Megaphone, desc: "Pulsante di chiusura ad alta conversione" }
 ];
 
-export function LandingTab() {
+export interface LandingTabProps {
+  selectedSlug?: string;
+  onSelectSlug?: (slug: string) => void;
+  onRequestPreview?: (slug: string) => void;
+}
+
+export function LandingTab({
+  selectedSlug,
+  onSelectSlug,
+  onRequestPreview
+}: LandingTabProps = {}) {
   const { content, updateContent } = useAdmin();
   const landings = content?.landings || [];
   const [search, setSearch] = useState("");
   const [activeLandingIdx, setActiveLandingIdx] = useState<number | null>(0);
   const [copiedAnchor, setCopiedAnchor] = useState<string | null>(null);
+
+  // Sync active landing index when selectedSlug changes externally
+  React.useEffect(() => {
+    if (selectedSlug && landings.length > 0) {
+      const idx = landings.findIndex((l: any) => l.slug === selectedSlug);
+      if (idx !== -1 && idx !== activeLandingIdx) {
+        setActiveLandingIdx(idx);
+      }
+    }
+  }, [selectedSlug, landings]);
 
   const addLanding = () => {
     const newId = `landing-${Date.now()}`;
@@ -155,6 +175,7 @@ export function LandingTab() {
 
     updateContent("landings", [...landings, newLanding]);
     setActiveLandingIdx(landings.length);
+    onSelectSlug?.(newLanding.slug);
   };
 
   const removeLanding = (idx: number) => {
@@ -339,37 +360,60 @@ export function LandingTab() {
               const availableAnchors = getAllLandingAnchors(landing);
 
               return (
-                <AccordionCard
+                <div
                   key={actualIdx}
-                  title={landing.title || "Senza Titolo"}
-                  subtitle={`/landing/${landing.slug || ""}`}
-                  thumbnail={thumbnail}
-                  badge={landing.active ? "Attiva" : "Bozza"}
-                  badgeColor={landing.active ? "primary" : "muted"}
-                  index={actualIdx}
-                  total={landings.length}
-                  onDelete={() => removeLanding(actualIdx)}
-                  defaultOpen={activeLandingIdx === actualIdx}
+                  onClick={() => {
+                    if (landing.slug) onSelectSlug?.(landing.slug);
+                  }}
                 >
-                  <div className="space-y-8 pt-2">
-                    {/* General Settings */}
-                    <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-foreground/70">
-                          Impostazioni Generali
-                        </h4>
-                        {landing.slug && (
-                          <Link
-                            href={`/landing/${landing.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
-                          >
-                            <span>Anteprima Live</span>
-                            <ExternalLink size={12} />
-                          </Link>
-                        )}
-                      </div>
+                  <AccordionCard
+                    title={landing.title || "Senza Titolo"}
+                    subtitle={`/landing/${landing.slug || ""}`}
+                    thumbnail={thumbnail}
+                    badge={landing.active ? "Attiva" : "Bozza"}
+                    badgeColor={landing.active ? "primary" : "muted"}
+                    index={actualIdx}
+                    total={landings.length}
+                    onDelete={() => removeLanding(actualIdx)}
+                    defaultOpen={activeLandingIdx === actualIdx}
+                  >
+                    <div className="space-y-8 pt-2">
+                      {/* General Settings */}
+                      <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-foreground/70">
+                            Impostazioni Generali
+                          </h4>
+                          {landing.slug && (
+                            <div className="flex items-center gap-3">
+                              {onRequestPreview && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onSelectSlug?.(landing.slug);
+                                    onRequestPreview(landing.slug);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 text-xs text-foreground/70 hover:text-primary font-bold transition-colors cursor-pointer"
+                                  title="Apri nel pannello anteprima affiancato"
+                                >
+                                  <Layers size={13} />
+                                  <span>Anteprima Affiancata</span>
+                                </button>
+                              )}
+                              <Link
+                                href={`/landing/${landing.slug}?preview=1`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
+                                title="Apri l'anteprima in tempo reale in una nuova scheda"
+                              >
+                                <span>Nuova Scheda</span>
+                                <ExternalLink size={12} />
+                              </Link>
+                            </div>
+                          )}
+                        </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="md:col-span-2">
@@ -399,7 +443,36 @@ export function LandingTab() {
                         required
                       />
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div className="pt-2 border-t border-foreground/5 space-y-4">
+                        <h5 className="text-xs font-black uppercase tracking-wider text-foreground/80">
+                          Barra Superiore (Header & Logo)
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            label="Testo Logo in Testata"
+                            value={landing.header?.logo_text || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.logo_text", v)}
+                            placeholder="es. Gli Attomatti o Gli Attomatti & UNITRE"
+                            helpText="Testo principale mostrato in alto a sinistra (se vuoto, usa 'Gli Attomatti')."
+                          />
+                          <FormField
+                            label="Sottotitolo Testata"
+                            value={landing.header?.subtitle || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.subtitle", v)}
+                            placeholder="es. Teatro a Zurigo"
+                            helpText="Dicitura secondaria sotto il titolo (se vuoto, usa 'Teatro a Zurigo')."
+                          />
+                        </div>
+
+                        <ImageUploadField
+                          label="Icona / Logo Personalizzato (Opzionale)"
+                          value={landing.header?.logo_image || ""}
+                          onChange={(url) => updateLanding(actualIdx, "header.logo_image", url)}
+                          helpText="Se non specificato, viene usato il logo ufficiale Gli Attomatti, che adatta in automatico la scritta sottostante (nera/scura su sfondi chiari, bianca su sfondi scuri)."
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-foreground/5">
                         <FormField
                           label="Testo Pulsante CTA in Testata"
                           value={landing.header?.cta_label || ""}

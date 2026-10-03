@@ -26,7 +26,7 @@ import { GalleryTab } from "./tabs/GalleryTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { JsonTab } from "./tabs/JsonTab";
 
-const getRouteForTab = (tab: string, content: any): string => {
+const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): string => {
   switch (tab) {
     case "home":
     case "site":
@@ -51,6 +51,9 @@ const getRouteForTab = (tab: string, content: any): string => {
     case "contatti":
       return "/Contatti";
     case "landing": {
+      if (activeLandingSlug) {
+        return `/landing/${activeLandingSlug}`;
+      }
       const firstLanding = content?.landings?.[0]?.slug;
       return firstLanding ? `/landing/${firstLanding}` : "/";
     }
@@ -61,10 +64,18 @@ const getRouteForTab = (tab: string, content: any): string => {
 
 function AdminContent() {
   const [activeTab, setActiveTab] = useState("spettacoli");
+  const [activeLandingSlug, setActiveLandingSlug] = useState<string>("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { content, isLoading } = useAdmin();
+
+  // Keep activeLandingSlug synced with first available landing if empty
+  React.useEffect(() => {
+    if (!activeLandingSlug && content?.landings?.[0]?.slug) {
+      setActiveLandingSlug(content.landings[0].slug);
+    }
+  }, [content?.landings, activeLandingSlug]);
 
   // Load persisted collapse state on mount
   React.useEffect(() => {
@@ -90,7 +101,7 @@ function AdminContent() {
     });
   };
 
-  const previewRoute = getRouteForTab(activeTab, content);
+  const previewRoute = getRouteForTab(activeTab, content, activeLandingSlug);
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
@@ -146,7 +157,16 @@ function AdminContent() {
                   {activeTab === "iniziative" && <IniziativeTab />}
                   {activeTab === "ticketing" && <TicketingTab />}
                   {activeTab === "registrations" && <RegistrationsTab />}
-                  {activeTab === "landing" && <LandingTab />}
+                  {activeTab === "landing" && (
+                    <LandingTab
+                      selectedSlug={activeLandingSlug}
+                      onSelectSlug={(slug) => setActiveLandingSlug(slug)}
+                      onRequestPreview={(slug) => {
+                        setActiveLandingSlug(slug);
+                        setIsPreviewOpen(true);
+                      }}
+                    />
+                  )}
                   {activeTab === "parlano_di_noi" && <PressTab />}
                   {activeTab === "contatti" && <ContactTab />}
                   {activeTab === "json" && <JsonTab />}
@@ -159,6 +179,12 @@ function AdminContent() {
                       currentRoute={previewRoute}
                       content={content}
                       onClose={() => setIsPreviewOpen(false)}
+                      onNavigateRoute={(route) => {
+                        if (route.startsWith("/landing/")) {
+                          const slug = route.replace("/landing/", "").split("?")[0];
+                          if (slug) setActiveLandingSlug(slug);
+                        }
+                      }}
                     />
                   </div>
                 )}
@@ -171,6 +197,12 @@ function AdminContent() {
                     currentRoute={previewRoute}
                     content={content}
                     onClose={() => setIsPreviewOpen(false)}
+                    onNavigateRoute={(route) => {
+                      if (route.startsWith("/landing/")) {
+                        const slug = route.replace("/landing/", "").split("?")[0];
+                        if (slug) setActiveLandingSlug(slug);
+                      }
+                    }}
                   />
                 </div>
               )}

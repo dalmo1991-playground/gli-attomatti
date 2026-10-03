@@ -15,12 +15,14 @@ interface AdminPreviewPaneProps {
   currentRoute: string;
   content: any;
   onClose: () => void;
+  onNavigateRoute?: (route: string) => void;
 }
 
 export function AdminPreviewPane({
   currentRoute,
   content,
-  onClose
+  onClose,
+  onNavigateRoute
 }: AdminPreviewPaneProps) {
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [key, setKey] = useState(0);
@@ -116,12 +118,37 @@ export function AdminPreviewPane({
       {/* Top Controls Toolbar */}
       <div className="px-4 py-2.5 bg-background/95 backdrop-blur-md border-b border-foreground/10 flex items-center justify-between gap-3 text-xs">
         {/* Left: Route Selector / Indicator */}
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          <span className="font-mono text-foreground/80 font-bold truncate">
-            {activeUrl}
-          </span>
-        </div>
+        {activeUrl.startsWith("/landing") && (content?.landings || []).length > 0 ? (
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <select
+              value={activeUrl}
+              onChange={(e) => {
+                const nextUrl = e.target.value;
+                setActiveUrl(nextUrl);
+                onNavigateRoute?.(nextUrl);
+              }}
+              className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
+              title="Seleziona la landing page da visualizzare"
+            >
+              {content.landings.map((l: any, i: number) => {
+                const targetUrl = `/landing/${l.slug || ""}`;
+                return (
+                  <option key={l.slug || l.id || i} value={targetUrl} className="bg-background text-foreground">
+                    {l.title ? `${l.title} (${l.slug || "senza slug"})` : l.slug || `Landing ${i + 1}`}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="font-mono text-foreground/80 font-bold truncate">
+              {activeUrl}
+            </span>
+          </div>
+        )}
 
         {/* Center: Device Viewport Switcher */}
         <div className="flex items-center bg-foreground/5 p-1 rounded-xl border border-foreground/5 shrink-0">

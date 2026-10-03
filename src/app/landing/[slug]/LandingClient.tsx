@@ -26,38 +26,60 @@ import { cn, stripHtml, stripHtmlPreservingBreaks } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
+import { getRelativeLuminance } from "@/lib/devTheme";
 import { getBlockAnchor } from "@/lib/landingAnchors";
+import { notFound } from "next/navigation";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 interface LandingClientProps {
   landing: any;
   site: any;
+  slug?: string;
 }
 
-export default function LandingClient({ landing: initialLanding, site }: LandingClientProps) {
+export default function LandingClient({ landing: initialLanding, site, slug }: LandingClientProps) {
   const liveContent = useLiveContent(null);
   const landing = useMemo(() => {
     if (liveContent?.landings) {
       const match = liveContent.landings.find(
-        (l: any) => l.slug === initialLanding?.slug || l.id === initialLanding?.id
+        (l: any) => (slug && l.slug === slug) || (initialLanding?.slug && l.slug === initialLanding.slug) || (initialLanding?.id && l.id === initialLanding.id)
       );
       if (match) return match;
     }
     return initialLanding;
-  }, [liveContent, initialLanding]);
-
-  const blocks = landing?.blocks || [];
-  const header = landing?.header || {};
-  const stickyBar = landing?.sticky_bar || {};
+  }, [liveContent, initialLanding, slug]);
 
   const initialTheme = useMemo(() => getLandingTheme(landing), [landing]);
   const [theme, setTheme] = useState(initialTheme);
   const themeStyles = getLandingThemeStyles(theme);
 
   useEffect(() => {
-    setTheme(getLandingTheme(landing));
+    if (landing) {
+      setTheme(getLandingTheme(landing));
+    }
   }, [landing]);
+
+  const blocks = landing?.blocks || [];
+  const header = landing?.header || {};
+  const stickyBar = landing?.sticky_bar || {};
+
+  const isLightBg = useMemo(() => {
+    if (!theme?.background) return false;
+    try {
+      return getRelativeLuminance(theme.background) > 0.45;
+    } catch {
+      return false;
+    }
+  }, [theme?.background]);
+
+  const resolvedLogo = useMemo(() => {
+    const custom = header.logo_image?.trim();
+    if (!custom || custom === "/logo_attomatti.svg" || custom === "/logo_attomatti_dark.svg") {
+      return isLightBg ? "/logo_attomatti_dark.svg" : "/logo_attomatti.svg";
+    }
+    return custom;
+  }, [header.logo_image, isLightBg]);
 
   // Listen to live dev theme modifications for this specific landing page
   useEffect(() => {
@@ -99,6 +121,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
     setFaqOpen((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href?: string) => {
     if (href && href.startsWith("#")) {
       const targetId = href.replace(/^#/, "");
@@ -111,6 +138,20 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
       }
     }
   };
+
+  if (!landing) {
+    if (!mounted) {
+      return (
+        <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-4">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <span className="text-xs uppercase tracking-widest text-white/50">Caricamento anteprima...</span>
+          </div>
+        </div>
+      );
+    }
+    notFound();
+  }
 
   return (
     <div
@@ -129,7 +170,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             title="Torna alla Home"
           >
             <Image
-              src={header.logo_image?.trim() || "/logo_attomatti.svg"}
+              src={resolvedLogo}
               alt={header.logo_text || site?.name || "Gli Attomatti"}
               width={40}
               height={40}
@@ -137,11 +178,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
               priority
             />
             <div className="flex flex-col">
-              <span className="font-black text-sm tracking-wider uppercase">
+              <span className="font-black text-sm tracking-wider uppercase text-foreground">
                 {header.logo_text || site?.name || "Gli Attomatti"}
               </span>
-              <span className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
-                Teatro a Zurigo
+              <span className="text-[10px] text-foreground/50 font-bold uppercase tracking-widest">
+                {header.subtitle || "Teatro a Zurigo"}
               </span>
             </div>
           </Link>
