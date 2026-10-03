@@ -20,12 +20,14 @@ import {
   Sparkles,
   Clock,
   Lock,
-  CheckCircle2
+  CheckCircle2,
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
+import { getBlockAnchor } from "@/lib/landingAnchors";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
@@ -82,6 +84,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
     return () => window.removeEventListener("attomatti_landing_theme_change", handleThemeChange);
   }, [landing?.slug]);
 
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState<Record<number, boolean>>({ 0: true });
   const [lightbox, setLightbox] = useState<{
     isOpen: boolean;
@@ -97,20 +100,33 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
     setFaqOpen((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href?: string) => {
+    if (href && href.startsWith("#")) {
+      const targetId = href.replace(/^#/, "");
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        targetEl.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", href);
+        setMobileNavOpen(false);
+      }
+    }
+  };
+
   return (
     <div
       id="landing-root"
       data-landing-slug={landing?.slug}
       data-landing-theme={JSON.stringify(initialTheme)}
       style={themeStyles}
-      className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary transition-colors duration-300"
+      className="min-h-screen bg-background text-foreground scroll-smooth selection:bg-primary/20 selection:text-primary transition-colors duration-300"
     >
       {/* 1. Standalone Minimal Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-foreground/5 h-20 transition-all">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group shrink-0"
             title="Torna alla Home"
           >
             <Image
@@ -131,18 +147,71 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             </div>
           </Link>
 
-          {header.cta_label && (
-            <Link
-              href={header.cta_href || "#"}
-              target={header.cta_href?.startsWith("http") ? "_blank" : undefined}
-              rel={header.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
-            >
-              <Ticket size={14} />
-              <span>{header.cta_label}</span>
-            </Link>
+          {/* Desktop Anchor Navigation Links */}
+          {header.nav_links && Array.isArray(header.nav_links) && header.nav_links.length > 0 && (
+            <nav className="hidden md:flex items-center gap-6">
+              {header.nav_links.map((link: any, idx: number) => {
+                if (!link.label || !link.href) return null;
+                return (
+                  <Link
+                    key={idx}
+                    href={link.href}
+                    onClick={(e) => handleAnchorClick(e, link.href)}
+                    className="text-xs font-bold uppercase tracking-wider text-foreground/70 hover:text-primary transition-colors py-1"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
           )}
+
+          <div className="flex items-center gap-3">
+            {header.cta_label && (
+              <Link
+                href={header.cta_href || "#"}
+                onClick={(e) => handleAnchorClick(e, header.cta_href)}
+                target={header.cta_href?.startsWith("http") ? "_blank" : undefined}
+                rel={header.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
+              >
+                <Ticket size={14} />
+                <span>{header.cta_label}</span>
+              </Link>
+            )}
+
+            {/* Mobile menu toggle */}
+            {header.nav_links && Array.isArray(header.nav_links) && header.nav_links.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                className="p-2 md:hidden rounded-xl bg-muted/40 text-foreground hover:bg-muted transition-colors border border-foreground/5"
+                aria-label="Menu navigazione ancore"
+              >
+                {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Mobile menu dropdown */}
+        {header.nav_links && Array.isArray(header.nav_links) && header.nav_links.length > 0 && mobileNavOpen && (
+          <div className="md:hidden bg-background/95 backdrop-blur-xl border-b border-foreground/10 px-6 py-3 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-200">
+            {header.nav_links.map((link: any, idx: number) => {
+              if (!link.label || !link.href) return null;
+              return (
+                <Link
+                  key={idx}
+                  href={link.href}
+                  onClick={(e) => handleAnchorClick(e, link.href)}
+                  className="block text-xs font-bold uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors py-2 border-b border-foreground/5 last:border-0"
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </header>
 
       {/* 2. Dynamic Landing Blocks */}
@@ -151,12 +220,15 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
           switch (block.type) {
             /* ================= HERO BLOCK ================= */
             case "hero": {
+              const anchor = getBlockAnchor(block, "hero");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "hero"}
+                  id={anchor}
                   className="relative min-h-[80vh] flex items-center justify-center py-24 sm:py-32 px-4 sm:px-6 overflow-hidden scroll-mt-24"
                 >
+                  {anchor !== "hero" && <div id="hero" className="absolute -top-24 pointer-events-none" />}
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   {/* Background Image / Ambient Glow */}
                   {block.hero_image ? (
                     <div className="absolute inset-0 z-0">
@@ -227,6 +299,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                       {block.primary_cta_label && (
                         <Link
                           href={block.primary_cta_href || "#"}
+                          onClick={(e) => handleAnchorClick(e, block.primary_cta_href)}
                           target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
                           rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
                           className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/25 hover:scale-105 flex items-center justify-center gap-2"
@@ -239,6 +312,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                       {block.secondary_cta_label && (
                         <Link
                           href={block.secondary_cta_href || "#"}
+                          onClick={(e) => handleAnchorClick(e, block.secondary_cta_href)}
                           className="w-full sm:w-auto px-8 py-4 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/15 font-bold text-sm uppercase tracking-wider transition-all hover:scale-105 flex items-center justify-center gap-2"
                         >
                           <span>{block.secondary_cta_label}</span>
@@ -253,14 +327,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
 
             /* ================= EVENT DETAILS BLOCK ================= */
             case "event_details": {
+              const anchor = getBlockAnchor(block, "event_details");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "dettagli"}
+                  id={anchor}
                   className="py-16 px-4 sm:px-6 scroll-mt-24 relative"
                 >
-                  <div id="info" className="absolute -top-24" />
-                  <div id="evento" className="absolute -top-24" />
+                  {anchor !== "dettagli" && <div id="dettagli" className="absolute -top-24 pointer-events-none" />}
+                  <div id="info" className="absolute -top-24 pointer-events-none" />
+                  <div id="evento" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-4xl mx-auto">
                     <div className="p-8 sm:p-12 rounded-[2.5rem] bg-muted/20 border border-foreground/10 shadow-2xl relative overflow-hidden backdrop-blur-sm">
                       <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
@@ -339,6 +416,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                           {block.cta_label && (
                             <Link
                               href={block.cta_href || "#"}
+                              onClick={(e) => handleAnchorClick(e, block.cta_href)}
                               target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
                               rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
                               className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:scale-105 flex items-center gap-2"
@@ -357,14 +435,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
 
             /* ================= SYNOPSIS / STORY BLOCK ================= */
             case "synopsis": {
+              const anchor = getBlockAnchor(block, "synopsis");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "trama"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 scroll-mt-24 relative"
                 >
-                  <div id="sinossi" className="absolute -top-24" />
-                  <div id="storia" className="absolute -top-24" />
+                  {anchor !== "trama" && <div id="trama" className="absolute -top-24 pointer-events-none" />}
+                  <div id="sinossi" className="absolute -top-24 pointer-events-none" />
+                  <div id="storia" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-4xl mx-auto space-y-12">
                     <div className="text-center max-w-2xl mx-auto">
                       <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">
@@ -416,14 +497,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             case "gallery": {
               const galleryImages = block.images || [];
               if (galleryImages.length === 0) return null;
+              const anchor = getBlockAnchor(block, "gallery");
 
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "galleria"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 bg-muted/10 scroll-mt-24 relative"
                 >
-                  <div id="foto" className="absolute -top-24" />
+                  {anchor !== "galleria" && <div id="galleria" className="absolute -top-24 pointer-events-none" />}
+                  <div id="foto" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-5xl mx-auto space-y-12">
                     {block.title && (
                       <div className="text-center">
@@ -488,14 +572,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             case "reviews": {
               const reviews = block.items || [];
               if (reviews.length === 0) return null;
+              const anchor = getBlockAnchor(block, "reviews");
 
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "recensioni"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 scroll-mt-24 relative"
                 >
-                  <div id="critica" className="absolute -top-24" />
+                  {anchor !== "recensioni" && <div id="recensioni" className="absolute -top-24 pointer-events-none" />}
+                  <div id="critica" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-4xl mx-auto space-y-12">
                     <div className="text-center">
                       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
@@ -535,14 +622,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             case "faq": {
               const faqs = block.items || [];
               if (faqs.length === 0) return null;
+              const anchor = getBlockAnchor(block, "faq");
 
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "faq"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 bg-muted/10 scroll-mt-24 relative"
                 >
-                  <div id="domande" className="absolute -top-24" />
+                  {anchor !== "faq" && <div id="faq" className="absolute -top-24 pointer-events-none" />}
+                  <div id="domande" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-3xl mx-auto space-y-8">
                     <div className="text-center mb-10">
                       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
@@ -614,14 +704,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                 }
               }
 
+              const anchor = getBlockAnchor(block, "eventfrog");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "biglietti"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 relative overflow-hidden scroll-mt-24"
                 >
-                  <div id="cassa" className="absolute -top-24" />
-                  <div id="ticket" className="absolute -top-24" />
+                  {anchor !== "biglietti" && <div id="biglietti" className="absolute -top-24 pointer-events-none" />}
+                  <div id="cassa" className="absolute -top-24 pointer-events-none" />
+                  <div id="ticket" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-4xl mx-auto space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-4 max-w-2xl mx-auto">
@@ -722,14 +815,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                 }
               }
 
+              const anchor = getBlockAnchor(block, "tally");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "registrazione"}
+                  id={anchor}
                   className="py-20 px-4 sm:px-6 relative overflow-hidden scroll-mt-24"
                 >
-                  <div id="iscrizione" className="absolute -top-24" />
-                  <div id="modulo" className="absolute -top-24" />
+                  {anchor !== "registrazione" && <div id="registrazione" className="absolute -top-24 pointer-events-none" />}
+                  <div id="iscrizione" className="absolute -top-24 pointer-events-none" />
+                  <div id="modulo" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-3xl mx-auto space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-4 max-w-2xl mx-auto">
@@ -812,13 +908,16 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
 
             /* ================= CLOSING CTA BLOCK ================= */
             case "closing_cta": {
+              const anchor = getBlockAnchor(block, "closing_cta");
               return (
                 <section
                   key={bIdx}
-                  id={block.id || "prenota"}
+                  id={anchor}
                   className="py-24 px-4 sm:px-6 relative overflow-hidden scroll-mt-24"
                 >
-                  <div id="cta" className="absolute -top-24" />
+                  {anchor !== "prenota" && <div id="prenota" className="absolute -top-24 pointer-events-none" />}
+                  <div id="cta" className="absolute -top-24 pointer-events-none" />
+                  {block.id && block.id !== anchor && <div id={block.id} className="absolute -top-24 pointer-events-none" />}
                   <div className="max-w-4xl mx-auto text-center relative z-10 p-12 sm:p-16 rounded-[3rem] bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 space-y-6 shadow-2xl overflow-hidden">
                     <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -834,6 +933,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                       <div className="pt-4 relative z-10">
                         <Link
                           href={block.cta_href || "#"}
+                          onClick={(e) => handleAnchorClick(e, block.cta_href)}
                           target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
                           rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
                           className="inline-flex items-center gap-2 px-10 py-5 rounded-full bg-primary text-primary-foreground font-black text-base uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105"
@@ -882,6 +982,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
             </div>
             <Link
               href={stickyBar.cta_href || "#"}
+              onClick={(e) => handleAnchorClick(e, stickyBar.cta_href)}
               target={stickyBar.cta_href?.startsWith("http") ? "_blank" : undefined}
               rel={stickyBar.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
               className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider shrink-0 hover:bg-primary/90 transition-all shadow-md"

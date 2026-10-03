@@ -18,7 +18,11 @@ import {
   HelpCircle,
   Megaphone,
   Ticket,
-  ClipboardList
+  ClipboardList,
+  Hash,
+  Copy,
+  Check,
+  Link2
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -28,8 +32,56 @@ import { ImageUploadField } from "../components/ui/ImageUploadField";
 import { GalleryField } from "../components/ui/GalleryField";
 import { LandingThemeEditor } from "../components/ui/LandingThemeEditor";
 import { DEFAULT_THEME_PRESET } from "@/lib/landingThemes";
+import {
+  getBlockAnchor,
+  getDefaultBlockAnchor,
+  sanitizeAnchor,
+  getAllLandingAnchors
+} from "@/lib/landingAnchors";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+/**
+ * Quick-pick pill buttons to easily fill an anchor into a link field
+ */
+function AnchorQuickPick({
+  anchors,
+  currentHref,
+  onSelect
+}: {
+  anchors: { anchor: string; label: string }[];
+  currentHref?: string;
+  onSelect: (href: string) => void;
+}) {
+  if (!anchors || anchors.length === 0) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+      <span className="text-[10px] uppercase font-bold text-foreground/40 flex items-center gap-1">
+        <Hash size={10} /> Ancore pagina:
+      </span>
+      {anchors.map((a) => {
+        const href = `#${a.anchor}`;
+        const isSelected = currentHref === href;
+        return (
+          <button
+            key={a.anchor}
+            type="button"
+            onClick={() => onSelect(href)}
+            className={cn(
+              "px-2 py-0.5 rounded-md text-[11px] font-mono font-medium transition-colors border",
+              isSelected
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-muted/50 hover:bg-primary/10 hover:text-primary text-foreground/70 border-foreground/5"
+            )}
+            title={`Usa ${href} (${a.label})`}
+          >
+            #{a.anchor}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 const BLOCK_TYPES = [
   { type: "hero", label: "Hero Header", icon: Sparkles, desc: "Titolo d'impatto, sfondo e CTA principale" },
@@ -48,6 +100,7 @@ export function LandingTab() {
   const landings = content?.landings || [];
   const [search, setSearch] = useState("");
   const [activeLandingIdx, setActiveLandingIdx] = useState<number | null>(0);
+  const [copiedAnchor, setCopiedAnchor] = useState<string | null>(null);
 
   const addLanding = () => {
     const newId = `landing-${Date.now()}`;
@@ -283,6 +336,7 @@ export function LandingTab() {
               const actualIdx = landings.indexOf(landing);
               const heroBlock = landing.blocks?.find((b: any) => b.type === "hero");
               const thumbnail = heroBlock?.hero_image || "";
+              const availableAnchors = getAllLandingAnchors(landing);
 
               return (
                 <AccordionCard
@@ -352,12 +406,124 @@ export function LandingTab() {
                           onChange={(v) => updateLanding(actualIdx, "header.cta_label", v)}
                           placeholder="es. Acquista Biglietti"
                         />
-                        <FormField
-                          label="Link Pulsante CTA in Testata"
-                          value={landing.header?.cta_href || ""}
-                          onChange={(v) => updateLanding(actualIdx, "header.cta_href", v)}
-                          placeholder="https://eventfrog.ch/..."
-                        />
+                        <div>
+                          <FormField
+                            label="Link Pulsante CTA in Testata"
+                            value={landing.header?.cta_href || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.cta_href", v)}
+                            placeholder="https://eventfrog.ch/... o #biglietti"
+                          />
+                          <AnchorQuickPick
+                            anchors={availableAnchors}
+                            currentHref={landing.header?.cta_href}
+                            onSelect={(href) => updateLanding(actualIdx, "header.cta_href", href)}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Header Nav Links (Anchor Menu) */}
+                      <div className="pt-2 border-t border-foreground/5 space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div>
+                            <h5 className="text-xs font-black uppercase tracking-wider text-foreground/80 flex items-center gap-1.5">
+                              <Link2 size={13} className="text-primary" /> Voci di Menu Testata (Opzionale)
+                            </h5>
+                            <p className="text-[11px] text-foreground/40 mt-0.5">
+                              Crea un menu con ancore (#sezione) visibile nella barra superiore.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {availableAnchors.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const generated = availableAnchors
+                                    .filter((a) => a.type !== "hero" && a.type !== "closing_cta")
+                                    .map((a) => ({ label: a.label, href: `#${a.anchor}` }));
+                                  updateLanding(actualIdx, "header.nav_links", generated);
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-secondary/10 hover:bg-secondary/20 text-secondary text-[11px] font-bold border border-secondary/20 transition-all flex items-center gap-1"
+                                title="Genera automaticamente le voci di menu dai blocchi della pagina"
+                              >
+                                <Sparkles size={12} />
+                                <span>Genera dai Blocchi</span>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const current = landing.header?.nav_links || [];
+                                updateLanding(actualIdx, "header.nav_links", [
+                                  ...current,
+                                  { label: "Nuova Voce", href: availableAnchors[0] ? `#${availableAnchors[0].anchor}` : "#" }
+                                ]);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-bold border border-primary/20 transition-all flex items-center gap-1"
+                            >
+                              <Plus size={12} />
+                              <span>Aggiungi Voce</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {(!landing.header?.nav_links || landing.header.nav_links.length === 0) ? (
+                          <p className="text-xs text-foreground/30 italic py-1">
+                            Nessuna voce di menu configurata (la testata mostrerà logo e CTA). Clicca su &quot;Genera dai Blocchi&quot; per creare un menu ad ancore con 1 click.
+                          </p>
+                        ) : (
+                          <div className="space-y-2 pt-1">
+                            {landing.header.nav_links.map((link: any, lIdx: number) => (
+                              <div key={lIdx} className="flex items-center gap-2 bg-background/50 p-2.5 rounded-xl border border-foreground/5">
+                                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <input
+                                    type="text"
+                                    value={link.label || ""}
+                                    onChange={(e) => {
+                                      const next = [...(landing.header?.nav_links || [])];
+                                      next[lIdx] = { ...next[lIdx], label: e.target.value };
+                                      updateLanding(actualIdx, "header.nav_links", next);
+                                    }}
+                                    placeholder="Etichetta (es. Dettagli)"
+                                    className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-semibold focus:border-primary outline-none"
+                                  />
+                                  <div>
+                                    <input
+                                      type="text"
+                                      value={link.href || ""}
+                                      onChange={(e) => {
+                                        const next = [...(landing.header?.nav_links || [])];
+                                        next[lIdx] = { ...next[lIdx], href: e.target.value };
+                                        updateLanding(actualIdx, "header.nav_links", next);
+                                      }}
+                                      placeholder="#ancora o https://"
+                                      className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-mono font-medium focus:border-primary outline-none"
+                                    />
+                                    <AnchorQuickPick
+                                      anchors={availableAnchors}
+                                      currentHref={link.href}
+                                      onSelect={(href) => {
+                                        const next = [...(landing.header?.nav_links || [])];
+                                        next[lIdx] = { ...next[lIdx], href };
+                                        updateLanding(actualIdx, "header.nav_links", next);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = (landing.header?.nav_links || []).filter((_: any, i: number) => i !== lIdx);
+                                    updateLanding(actualIdx, "header.nav_links", next);
+                                  }}
+                                  className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors shrink-0"
+                                  title="Rimuovi voce"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -409,7 +575,12 @@ export function LandingTab() {
                               label="Link Tasto"
                               value={landing.sticky_bar?.cta_href || ""}
                               onChange={(v) => updateLanding(actualIdx, "sticky_bar.cta_href", v)}
-                              placeholder="https://..."
+                              placeholder="https://... o #biglietti"
+                            />
+                            <AnchorQuickPick
+                              anchors={availableAnchors}
+                              currentHref={landing.sticky_bar?.cta_href}
+                              onSelect={(href) => updateLanding(actualIdx, "sticky_bar.cta_href", href)}
                             />
                           </div>
                         </div>
@@ -458,6 +629,8 @@ export function LandingTab() {
                               icon: Layers
                             };
                             const BlockIcon = btConfig.icon;
+                            const activeAnchor = getBlockAnchor(block);
+                            const defaultAnchor = getDefaultBlockAnchor(block.type);
 
                             return (
                               <div
@@ -471,6 +644,9 @@ export function LandingTab() {
                                     </div>
                                     <span className="text-xs font-black uppercase tracking-wider text-foreground">
                                       {bIdx + 1}. {btConfig.label}
+                                    </span>
+                                    <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
+                                      #{activeAnchor}
                                     </span>
                                   </div>
 
@@ -500,6 +676,60 @@ export function LandingTab() {
                                       title="Rimuovi blocco"
                                     >
                                       <Trash2 size={14} />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Custom Anchor Configuration Bar */}
+                                <div className="p-3.5 rounded-xl bg-muted/20 border border-foreground/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                    <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                                      <Hash size={14} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <label className="text-[10px] font-black uppercase tracking-wider text-foreground/60">
+                                          Ancora di Sezione (Anchor ID)
+                                        </label>
+                                        <span className="text-[11px] text-foreground/50 font-mono">
+                                          Link: <strong className="text-primary font-bold">#{activeAnchor}</strong>
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 mt-1">
+                                        <span className="text-xs font-mono font-bold text-foreground/40 pl-1">#</span>
+                                        <input
+                                          type="text"
+                                          value={block.anchor ?? ""}
+                                          onChange={(e) => updateBlock(actualIdx, bIdx, "anchor", sanitizeAnchor(e.target.value))}
+                                          placeholder={defaultAnchor}
+                                          className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-mono font-semibold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-foreground/30 text-foreground"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(`#${activeAnchor}`);
+                                        setCopiedAnchor(activeAnchor);
+                                        setTimeout(() => setCopiedAnchor(null), 2000);
+                                      }}
+                                      className="px-3 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground text-xs font-bold transition-all flex items-center gap-1.5 border border-foreground/10 active:scale-95"
+                                      title="Copia link ancora negli appunti"
+                                    >
+                                      {copiedAnchor === activeAnchor ? (
+                                        <>
+                                          <Check size={13} className="text-emerald-400" />
+                                          <span className="text-emerald-400 font-bold">Copiato!</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Copy size={13} />
+                                          <span>Copia #{activeAnchor}</span>
+                                        </>
+                                      )}
                                     </button>
                                   </div>
                                 </div>
@@ -534,32 +764,48 @@ export function LandingTab() {
                                       onChange={(url) => updateBlock(actualIdx, bIdx, "hero_image", url)}
                                     />
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <FormField
-                                        label="Etichetta CTA Primaria"
-                                        value={block.primary_cta_label || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_label", v)}
-                                        placeholder="es. Acquista Biglietti"
-                                      />
-                                      <FormField
-                                        label="Link CTA Primaria"
-                                        value={block.primary_cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_href", v)}
-                                        placeholder="https://..."
-                                      />
-                                    </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <FormField
-                                        label="Etichetta CTA Secondaria"
-                                        value={block.secondary_cta_label || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_label", v)}
-                                        placeholder="es. Dettagli Evento"
-                                      />
-                                      <FormField
-                                        label="Link CTA Secondaria"
-                                        value={block.secondary_cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_href", v)}
-                                        placeholder="#dettagli"
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Etichetta CTA Primaria"
+                                          value={block.primary_cta_label || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_label", v)}
+                                          placeholder="es. Acquista Biglietti"
+                                        />
+                                        <div className="mt-2">
+                                          <FormField
+                                            label="Link CTA Primaria"
+                                            value={block.primary_cta_href || ""}
+                                            onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_href", v)}
+                                            placeholder="https://... o #biglietti"
+                                          />
+                                          <AnchorQuickPick
+                                            anchors={availableAnchors}
+                                            currentHref={block.primary_cta_href}
+                                            onSelect={(href) => updateBlock(actualIdx, bIdx, "primary_cta_href", href)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <FormField
+                                          label="Etichetta CTA Secondaria"
+                                          value={block.secondary_cta_label || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_label", v)}
+                                          placeholder="es. Dettagli Evento"
+                                        />
+                                        <div className="mt-2">
+                                          <FormField
+                                            label="Link CTA Secondaria"
+                                            value={block.secondary_cta_href || ""}
+                                            onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_href", v)}
+                                            placeholder="#dettagli"
+                                          />
+                                          <AnchorQuickPick
+                                            anchors={availableAnchors}
+                                            currentHref={block.secondary_cta_href}
+                                            onSelect={(href) => updateBlock(actualIdx, bIdx, "secondary_cta_href", href)}
+                                          />
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -613,11 +859,18 @@ export function LandingTab() {
                                         value={block.cta_label || ""}
                                         onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
                                       />
-                                      <FormField
-                                        label="Link Prenota"
-                                        value={block.cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Link Prenota"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -975,11 +1228,18 @@ export function LandingTab() {
                                         value={block.cta_label || ""}
                                         onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
                                       />
-                                      <FormField
-                                        label="Link Pulsante"
-                                        value={block.cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Link Pulsante"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 )}
