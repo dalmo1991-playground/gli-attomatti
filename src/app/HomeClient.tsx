@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Calendar, MapPin, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, stripHtmlPreservingBreaks } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
@@ -338,7 +338,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
           <div>
             <h2 className="text-4xl font-bold mb-6">{introduction.title}</h2>
             <p className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
-              {introduction.text}
+              {stripHtmlPreservingBreaks(introduction.text)}
             </p>
             <Link
               href="/Chi_Siamo"

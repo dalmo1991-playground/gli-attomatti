@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn, stripHtml, stripHtmlPreservingBreaks } from "@/lib/utils";
 import { RichTextEditor } from "./RichTextEditor";
 
 interface FormFieldProps {
@@ -56,12 +56,22 @@ export function FormField({
         )}
       </div>
 
-      {type === "textarea" || type === "richtext" ? (
+      {type === "richtext" ? (
         <RichTextEditor
           value={typeof value === "string" ? value : String(value ?? "")}
           onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
+        />
+      ) : type === "textarea" ? (
+        <textarea
+          value={typeof value === "string" ? stripHtmlPreservingBreaks(value) : String(value ?? "")}
+          onChange={(e) => onChange(stripHtmlPreservingBreaks(e.target.value))}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          rows={rows}
+          className="w-full p-3.5 rounded-2xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-sm text-foreground placeholder:text-foreground/20 disabled:opacity-50 resize-y"
         />
       ) : type === "select" ? (
         <select
@@ -80,8 +90,11 @@ export function FormField({
       ) : type === "switch" ? null : (
         <input
           type={type}
-          value={value ?? ""}
-          onChange={(e) => onChange(type === "number" ? Number(e.target.value) : e.target.value)}
+          value={typeof value === "string" ? stripHtml(value) : (value ?? "")}
+          onChange={(e) => {
+            const raw = e.target.value;
+            onChange(type === "number" ? Number(raw) : (type === "url" || type === "email" ? raw : stripHtml(raw)));
+          }}
           placeholder={placeholder}
           required={required}
           disabled={disabled}

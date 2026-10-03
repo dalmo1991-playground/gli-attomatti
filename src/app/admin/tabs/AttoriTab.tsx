@@ -176,7 +176,7 @@ export function AttoriTab() {
                       />
 
                       <FormField
-                        type="textarea"
+                        type="richtext"
                         label="Biografia Estesa"
                         value={p.description || ""}
                         onChange={(v) => updatePerson(originalIdx, "description", v)}

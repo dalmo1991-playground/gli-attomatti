@@ -241,7 +241,7 @@ export function IniziativeTab() {
                     label="Testo Descrittivo Completo"
                     value={item.text || ""}
                     onChange={(v) => updateInitiative(actualIdx, "text", v)}
-                    type="textarea"
+                    type="richtext"
                     rows={5}
                   />
 

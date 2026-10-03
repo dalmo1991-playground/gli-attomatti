@@ -6,6 +6,7 @@ import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { stripHtml } from "@/lib/utils";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function ParlanoDiNoiClient({ content: initialContent }: { content: any }) {
@@ -36,7 +37,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
             const CardContent = (
               <div className="relative z-10">
                 <blockquote className="text-3xl md:text-4xl font-serif italic text-foreground/80 leading-snug mb-10 whitespace-pre-wrap">
-                  {item.quote}
+                  {stripHtml(item.quote)}
                 </blockquote>
                 
                 <div className="flex flex-wrap items-center justify-between gap-6 border-t border-foreground/10 pt-8">

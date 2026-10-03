@@ -22,7 +22,7 @@ import {
   CheckCircle2,
   Menu
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, stripHtml, stripHtmlPreservingBreaks } from "@/lib/utils";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
@@ -255,7 +255,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                         animate={{ opacity: 1, y: 0 }}
                         className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest shadow-xs"
                       >
-                        <span>{block.badge}</span>
+                        <span>{stripHtml(block.badge)}</span>
                       </motion.div>
                     )}
 
@@ -264,11 +264,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
                       className={cn(
-                        getPageHeroTitleSizeClass(block.title),
+                        getPageHeroTitleSizeClass(stripHtml(block.title)),
                         "font-black uppercase tracking-tighter leading-[0.95] text-foreground drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
                       )}
                     >
-                      {block.title}
+                      {stripHtml(block.title)}
                     </motion.h1>
 
                     {/* Clean Section Divider */}
@@ -280,11 +280,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                         className={cn(
-                          getTaglineSizeClass(block.tagline),
+                          getTaglineSizeClass(stripHtml(block.tagline)),
                           "text-foreground/80 font-medium max-w-2xl mx-auto leading-relaxed text-balance break-words"
                         )}
                       >
-                        {block.tagline}
+                        {stripHtmlPreservingBreaks(block.tagline)}
                       </motion.p>
                     )}
 
@@ -344,12 +344,12 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                         <div className="space-y-6 flex-1">
                           {block.info_badge && (
                             <span className="inline-block text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
-                              {block.info_badge}
+                              {stripHtml(block.info_badge)}
                             </span>
                           )}
 
                           <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
-                            {block.title || "Data e Informazioni"}
+                            {stripHtml(block.title || "Data e Informazioni")}
                           </h2>
 
                           <div className="space-y-4">
@@ -363,7 +363,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                                     Data & Ora
                                   </div>
                                   <div className="text-base sm:text-lg font-bold text-foreground">
-                                    {block.date}
+                                    {stripHtml(block.date)}
                                   </div>
                                 </div>
                               </div>
@@ -379,7 +379,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                                     Luogo
                                   </div>
                                   <div className="text-base sm:text-lg font-bold text-foreground">
-                                    {block.location}
+                                    {stripHtml(block.location)}
                                   </div>
                                   {block.location_href && (
                                     <Link
@@ -406,7 +406,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                                 Biglietto
                               </span>
                               <span className="text-3xl sm:text-4xl font-black text-foreground drop-shadow-xs">
-                                {block.price}
+                                {stripHtml(block.price)}
                               </span>
                             </div>
                           )}
@@ -455,17 +455,17 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                       <div className={cn("space-y-6", block.image ? "md:col-span-7" : "md:col-span-12")}>
                         <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">
-                          {block.text}
+                          {stripHtmlPreservingBreaks(block.text)}
                         </p>
 
                         {block.quote && (
                           <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border-l-4 border-primary/60 space-y-3">
                             <p className="italic text-base sm:text-lg text-foreground/90 font-serif leading-relaxed">
-                              &ldquo;{block.quote}&rdquo;
+                              &ldquo;{stripHtml(block.quote)}&rdquo;
                             </p>
                             {block.quote_author && (
                               <p className="text-xs uppercase font-black tracking-wider text-foreground/60">
-                                — {block.quote_author}
+                                — {stripHtml(block.quote_author)}
                               </p>
                             )}
                           </div>
@@ -602,11 +602,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                           </div>
 
                           <p className="italic font-serif text-lg text-foreground/85 leading-snug">
-                            &ldquo;{(rev.quote || "").replace(/<[^>]+>/g, "").trim()}&rdquo;
+                            &ldquo;{stripHtml(rev.quote)}&rdquo;
                           </p>
 
                           <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
-                            {rev.author}
+                            {stripHtml(rev.author)}
                           </div>
                         </div>
                       ))}
@@ -655,7 +655,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                               onClick={() => toggleFaq(fIdx)}
                               className="w-full p-5 text-left font-bold text-base flex justify-between items-center gap-4 hover:text-foreground transition-colors"
                             >
-                              <span className="text-foreground">{f.question}</span>
+                              <span className="text-foreground">{stripHtml(f.question)}</span>
                               <ChevronDown
                                 size={18}
                                 className={cn(
@@ -673,8 +673,8 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                                   exit={{ height: 0, opacity: 0 }}
                                   transition={{ duration: 0.2 }}
                                 >
-                                  <div className="px-5 pb-5 text-foreground/70 text-sm leading-relaxed border-t border-foreground/5 pt-4">
-                                    {f.answer}
+                                  <div className="px-5 pb-5 text-foreground/70 text-sm leading-relaxed border-t border-foreground/5 pt-4 whitespace-pre-wrap">
+                                    {stripHtmlPreservingBreaks(f.answer)}
                                   </div>
                                 </motion.div>
                               )}
@@ -920,11 +920,11 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                     <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                     <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground relative z-10">
-                      {block.title || "Non Perdere lo Spettacolo"}
+                      {stripHtml(block.title || "Non Perdere lo Spettacolo")}
                     </h2>
                     {block.text && (
-                      <p className="text-lg text-foreground/80 max-w-xl mx-auto font-medium relative z-10">
-                        {block.text}
+                      <p className="text-lg text-foreground/80 max-w-xl mx-auto font-medium relative z-10 whitespace-pre-wrap">
+                        {stripHtmlPreservingBreaks(block.text)}
                       </p>
                     )}
                     {block.cta_label && (
@@ -937,7 +937,7 @@ export default function LandingClient({ landing: initialLanding, site }: Landing
                           className="inline-flex items-center gap-2 px-10 py-5 rounded-full bg-primary text-primary-foreground font-black text-base uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105"
                         >
                           <Ticket size={20} />
-                          <span>{block.cta_label}</span>
+                          <span>{stripHtml(block.cta_label)}</span>
                         </Link>
                       </div>
                     )}

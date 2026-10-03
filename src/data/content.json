@@ -220,7 +220,7 @@
         },
         {
           "title": "Cosa aspettarci dalla biennale",
-          "text": "<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><div><br></div>",
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
           "images": [],
           "visible": true
         }
@@ -874,7 +874,7 @@
           "slug": "cineforum",
           "year": "2026-27",
           "short_description": "\"Nel passo lento della meraviglia\" è una rassegna cinematografica in cinque appuntamenti organizzata da UNITRE e Gli Attomatti Teatro, in programma dal 3 ottobre 2026 al 20 marzo 2027.",
-          "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE e Gli Attomatti Teatro, questa rassegna propone cinque imperdibili incontri, concepiti come cinque sguardi unici e profondi sul tema del tempo. È un'occasione per ritrovarsi, riflettere e lasciarsi incantare dall'emozione della proiezione condivisa.<div><br></div><div>Il percorso cinematografico si snoderà attraverso cinque date, tutte in programma dalle 18.00 alle 20.00 presso la ABZ Saal in Balberstrasse 47 a Zurigo. Si comincia il 3 ottobre 2026 con il grande classico \"Tempi moderni\", per poi proseguire il 14 novembre con \"Le vacanze di Monsieur Hulot\". Nel nuovo anno, gli appuntamenti riprenderanno il 16 gennaio 2027 con \"I vitelloni\", seguiti il 20 febbraio da \"Pane e tulipani\", per concludersi infine il 20 marzo con \"Una storia vera\". Come di consueto, il titolo esatto sarà confermato prima di ciascun incontro per gestire eventuali variazioni di programma.</div><div><br></div><div>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria contattando Gli Attomatti al numero +41 78 942 39 93. Per gli iscritti UNITRE, invece, l'ingresso è già interamente compreso nella quota associativa; in questo caso, per richiedere informazioni e riservare il proprio posto è possibile fare riferimento a Elvira Di Mauro al numero 076 639 09 52.&nbsp;</div>",
+          "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE e Gli Attomatti Teatro, questa rassegna propone cinque imperdibili incontri, concepiti come cinque sguardi unici e profondi sul tema del tempo. È un'occasione per ritrovarsi, riflettere e lasciarsi incantare dall'emozione della proiezione condivisa.\n\nIl percorso cinematografico si snoderà attraverso cinque date, tutte in programma dalle 18.00 alle 20.00 presso la ABZ Saal in Balberstrasse 47 a Zurigo. Si comincia il 3 ottobre 2026 con il grande classico \"Tempi moderni\", per poi proseguire il 14 novembre con \"Le vacanze di Monsieur Hulot\". Nel nuovo anno, gli appuntamenti riprenderanno il 16 gennaio 2027 con \"I vitelloni\", seguiti il 20 febbraio da \"Pane e tulipani\", per concludersi infine il 20 marzo con \"Una storia vera\". Come di consueto, il titolo esatto sarà confermato prima di ciascun incontro per gestire eventuali variazioni di programma.\n\nL'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria contattando Gli Attomatti al numero +41 78 942 39 93. Per gli iscritti UNITRE, invece, l'ingresso è già interamente compreso nella quota associativa; in questo caso, per richiedere informazioni e riservare il proprio posto è possibile fare riferimento a Elvira Di Mauro al numero 076 639 09 52.",
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
           "dates": [
             {
@@ -1092,7 +1092,7 @@
           "anchor": "hero",
           "badge": "UNITRE & Gli Attomatti Teatro presentano",
           "title": "Cineforum",
-          "tagline": "<p>Nel passo lento della meraviglia: cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.</p>",
+          "tagline": "Nel passo lento della meraviglia: cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.",
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
           "primary_cta_label": "Riserva il tuo Posto",
           "primary_cta_href": "#prenotazione",
@@ -1228,7 +1228,7 @@
           "id": "b-1791027943995",
           "type": "closing_cta",
           "title": "Unisciti a Noi",
-          "text": "<p>Se vuoi regstrarti agli altri appuntamenti della rassegna, usa i link sotto.</p>",
+          "text": "Se vuoi registrarti agli altri appuntamenti della rassegna, usa i link sotto.",
           "cta_label": "Registrati",
           "cta_href": "/Iniziative/cineforum"
         }

@@ -258,7 +258,7 @@ export function SpettacoliTab() {
                     label="Testo Descrittivo Completo (sinossi e trama)"
                     value={show.text || ""}
                     onChange={(v) => updateShow(actualIdx, "text", v)}
-                    type="textarea"
+                    type="richtext"
                     rows={5}
                   />
 
