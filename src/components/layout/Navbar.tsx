@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -14,6 +14,7 @@ export function Navbar({ content }: { content: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
   const siteName = content?.site?.name || "Gli Attomatti";
@@ -32,17 +33,103 @@ export function Navbar({ content }: { content: any }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Close mobile menu when route/pathname changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // Close mobile menu on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   return (
-    <nav
-      className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-500 px-6 py-4",
-        scrolled 
-          ? "bg-background/40 backdrop-blur-xl border-b border-foreground/5 shadow-sm py-3" 
-          : "bg-transparent"
-      )}
-    >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-3 group">
+    <>
+      {/* Backdrop overlay for mobile menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
+      <header
+        ref={headerRef}
+        className={cn(
+          "fixed top-0 left-0 right-0 w-full z-50 transition-colors duration-300",
+          isOpen
+            ? "bg-background/95 backdrop-blur-xl border-b border-foreground/10"
+            : scrolled 
+              ? "bg-background/40 backdrop-blur-xl border-b border-foreground/5 shadow-sm" 
+              : "bg-transparent"
+        )}
+      >
+        <div
+          className={cn(
+            "max-w-7xl mx-auto flex justify-between items-center px-6 transition-all duration-300",
+            scrolled ? "py-3" : "py-4"
+          )}
+        >
+        <Link
+          href="/"
+          className="flex items-center gap-3 group"
+          onClick={() => setIsOpen(false)}
+        >
           <Image 
             src="/logo_attomatti.svg" 
             alt={siteName} 
@@ -58,7 +145,7 @@ export function Navbar({ content }: { content: any }) {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-8 items-center">
+        <nav className="hidden md:flex space-x-8 items-center" aria-label="Navigazione principale">
           {navigation.map((link: any, idx: number) => {
             const safeHref = getSafeHref(link.href);
             const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
@@ -123,12 +210,14 @@ export function Navbar({ content }: { content: any }) {
               </div>
             );
           })}
-        </div>
+        </nav>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-foreground"
+          className="md:hidden text-foreground p-2 -mr-2 rounded-lg hover:bg-foreground/5 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Chiudi menu" : "Apri menu"}
+          aria-expanded={isOpen}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -141,55 +230,59 @@ export function Navbar({ content }: { content: any }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background/95 backdrop-blur-xl border-t border-foreground/10 overflow-hidden"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="md:hidden w-full max-h-[calc(100dvh-4.5rem)] bg-background/95 backdrop-blur-xl border-t border-foreground/10 flex flex-col"
           >
-            <nav className="flex flex-col gap-6 mt-12">
-              {navigation.map((link: any, idx: number) => {
-                const safeHref = getSafeHref(link.href);
-                const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
-                const isActive = pathname === safeHref;
+            <div className="w-full overflow-y-auto overscroll-contain custom-scrollbar touch-pan-y flex-1 min-h-0">
+              <nav className="flex flex-col gap-6 px-6 pt-6 pb-24" aria-label="Navigazione mobile">
+                {navigation.map((link: any, idx: number) => {
+                  const safeHref = getSafeHref(link.href);
+                  const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
+                  const isActive = pathname === safeHref;
 
-                return (
-                  <div key={link.href || idx} className="space-y-4 px-6">
-                    <Link
-                      href={safeHref}
-                      onClick={() => !hasSublinks && setIsOpen(false)}
-                      className={cn(
-                        "text-xl font-black uppercase tracking-tight flex items-center justify-between",
-                        isActive ? "text-primary" : "text-foreground"
+                  return (
+                    <div key={link.href || idx} className="space-y-4">
+                      <Link
+                        href={safeHref}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          "text-xl font-black uppercase tracking-tight flex items-center justify-between",
+                          isActive ? "text-primary" : "text-foreground"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                      {hasSublinks && (
+                        <div className="flex flex-col gap-4 pl-6 border-l border-foreground/5">
+                          {link.sublinks.map((sub: any, sIdx: number) => {
+                            const subHref = getSafeHref(sub.href);
+                            const isSubActive = pathname === subHref;
+
+                            return (
+                              <Link
+                                key={sub.href || sIdx}
+                                href={subHref}
+                                onClick={() => setIsOpen(false)}
+                                className={cn(
+                                  "text-lg font-medium",
+                                  isSubActive ? "text-primary" : "text-foreground/60"
+                                )}
+                              >
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
                       )}
-                    >
-                      {link.label}
-                    </Link>
-                    {hasSublinks && (
-                      <div className="flex flex-col gap-4 pl-6 border-l border-foreground/5">
-                        {link.sublinks.map((sub: any, sIdx: number) => {
-                          const subHref = getSafeHref(sub.href);
-                          const isSubActive = pathname === subHref;
-
-                          return (
-                            <Link
-                              key={sub.href || sIdx}
-                              href={subHref}
-                              onClick={() => setIsOpen(false)}
-                              className={cn(
-                                "text-lg font-medium",
-                                isSubActive ? "text-primary" : "text-foreground/60"
-                              )}
-                            >
-                              {sub.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
+                    </div>
+                  );
+                })}
+              </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
+    </>
   );
 }
