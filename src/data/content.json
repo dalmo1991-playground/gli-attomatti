@@ -1070,26 +1070,14 @@
   ],
   "ticketing_hub": {
     "active": true,
-    "title": "Biglietteria & Prevendite",
-    "description": "Acquista i biglietti ufficiali per le produzioni teatrali della compagnia Gli Attomatti."
+    "title": "Biglietti",
+    "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento"
   },
-  "ticketing_pages": [
-    {
-      "id": "cassa-4-gatti",
-      "title": "4 Gatti",
-      "slug": "4-gatti",
-      "category": "Spettacolo Teatrale",
-      "description": "Acquisto biglietti per lo spettacolo teatrale 4 Gatti della compagnia Gli Attomatti.",
-      "eventfrog_url": "https://eventfrog.ch/en/p/theatre-stage/theatre/4-gatti-7455977392705676239.html",
-      "back_link_label": "Torna allo Spettacolo",
-      "back_link_href": "/Spettacoli/4-gatti",
-      "active": true
-    }
-  ],
+  "ticketing_pages": [],
   "registration_hub": {
     "active": true,
-    "title": "Iscrizioni & Corsi",
-    "description": "Iscriviti ai laboratori teatrali, workshop e alle attività formative della compagnia."
+    "title": "Registrazioni",
+    "description": "Questa pagina raccoglie tutte le registrazioni attive al momento"
   },
   "registration_pages": [
     {
