@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listFailedEmails, removeFailedEmail, clearAllFailedEmails } from "@/lib/email/dlq";
+import { listFailedEmails, removeFailedEmail, clearAllFailedEmails, enqueueFailedEmail } from "@/lib/email/dlq";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +82,54 @@ export async function DELETE(req: NextRequest) {
     console.error("[Email Queue Delete Exception]", error);
     return NextResponse.json(
       { error: "Errore durante l'eliminazione: " + error?.message },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/email/queue
+ * Simulates or inserts a test failed email record into the DLQ (useful for testing cron alerts).
+ */
+export async function POST(req: NextRequest) {
+  try {
+    if (!isAuthorized(req)) {
+      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const recipientEmail = body.email || "test.mario.rossi@example.com";
+    const recipientName = body.name || "Mario Rossi (Test DLQ)";
+    const subject = body.subject || "Conferma Prenotazione: Spettacolo Gli Attomatti";
+    const errorMessage = body.error || "Resend: Daily quota limit of 100 emails exceeded (Code 429)";
+
+    const record = await enqueueFailedEmail({
+      recipient: { email: recipientEmail, name: recipientName },
+      subject,
+      error: {
+        message: errorMessage,
+        statusCode: 429
+      },
+      compiledOptions: {
+        to: recipientEmail,
+        subject,
+        html: `<p>Questa è un'email di prova salvata in coda per simulare il superamento del limite giornaliero di Resend.</p>`,
+        text: `Questa è un'email di prova salvata in coda per simulare il superamento del limite giornaliero di Resend.`
+      },
+      originalRequest: {
+        body: { simulated: true, simulatedAt: new Date().toISOString() }
+      }
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Email di simulazione aggiunta con successo alla Coda DLQ!",
+      item: record
+    });
+  } catch (error: any) {
+    console.error("[Email Queue POST Exception]", error);
+    return NextResponse.json(
+      { error: "Errore durante la simulazione dell'email in coda: " + error?.message },
       { status: 500 }
     );
   }

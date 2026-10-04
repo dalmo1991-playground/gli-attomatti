@@ -195,6 +195,43 @@ export function EmailTab() {
     }
   };
 
+  // Simulate a failed email in DLQ for testing cron notifications
+  const [isSimulatingQueue, setIsSimulatingQueue] = useState(false);
+
+  const handleSimulateQueueError = async () => {
+    setIsSimulatingQueue(true);
+    setQueueMessage(null);
+    try {
+      const res = await fetch("/api/email/queue", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret || ""
+        },
+        body: JSON.stringify({
+          email: "test.mario.rossi@example.com",
+          name: "Mario Rossi (Test DLQ)",
+          subject: "Conferma Prenotazione: Spettacolo Gli Attomatti",
+          error: "Resend: Daily quota limit of 100 emails exceeded (Code 429)"
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setQueueMessage({
+          type: "success",
+          text: "Email di prova aggiunta con successo alla Coda! Stanotte alle 00:10 UTC il cron la rileverà e invierà l'alert."
+        });
+        await fetchQueue();
+      } else {
+        setQueueMessage({ type: "error", text: data.error || "Errore durante la simulazione." });
+      }
+    } catch (err: any) {
+      setQueueMessage({ type: "error", text: err?.message || "Errore di connessione." });
+    } finally {
+      setIsSimulatingQueue(false);
+    }
+  };
+
   const fetchQueue = async () => {
     setIsLoadingQueue(true);
     try {
@@ -1434,6 +1471,17 @@ export function EmailTab() {
                       >
                         <RotateCcw size={13} className={isLoadingQueue ? "animate-spin" : ""} />
                         <span>Aggiorna</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleSimulateQueueError}
+                        disabled={isSimulatingQueue}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-400/10 hover:bg-amber-400/20 text-xs font-bold text-amber-400 transition-all cursor-pointer border border-amber-400/20"
+                        title="Inserisce un'email di prova bloccata in coda per testare il cron notturno"
+                      >
+                        <Sparkles size={13} className={isSimulatingQueue ? "animate-spin" : ""} />
+                        <span>{isSimulatingQueue ? "Aggiunta..." : "Simula Errore in Coda"}</span>
                       </button>
 
                       {queueItems.length > 0 && (
