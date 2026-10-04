@@ -3,24 +3,57 @@ import { listFailedEmails, removeFailedEmail, clearAllFailedEmails, enqueueFaile
 
 export const dynamic = "force-dynamic";
 
-function isAuthorized(req: NextRequest): boolean {
+export function checkAdminAuth(req: NextRequest): { authorized: boolean; error?: string; status?: number } {
   // In development, allow local admin testing without requiring secrets
   if (process.env.NODE_ENV !== "production") {
-    return true;
+    return { authorized: true };
+  }
+
+  const configuredSecret = (process.env.ADMIN_SECRET || process.env.EMAIL_API_SECRET || "")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .trim();
+
+  if (!configuredSecret) {
+    return {
+      authorized: false,
+      status: 500,
+      error:
+        "ADMIN_SECRET non è configurato nelle variabili d'ambiente di Vercel per l'ambiente Preview. " +
+        "Vai su Vercel (Project Settings > Environment Variables), assicurati che ADMIN_SECRET sia abilitato per 'Preview', e avvia un nuovo Deploy della preview."
+    };
   }
 
   const url = new URL(req.url);
-  const secret =
-    req.headers.get("x-admin-secret")?.trim() ||
-    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")?.trim() ||
-    url.searchParams.get("secret")?.trim();
-  const configuredSecret = process.env.ADMIN_SECRET?.trim() || process.env.EMAIL_API_SECRET?.trim();
+  const secret = (
+    req.headers.get("x-admin-secret") ||
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    url.searchParams.get("secret") ||
+    ""
+  )
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .trim();
 
-  if (!configuredSecret) {
-    return false;
+  if (!secret) {
+    return {
+      authorized: false,
+      status: 401,
+      error:
+        "Password Admin non inviata nella richiesta (header x-admin-secret mancante o vuoto). Inserisci la Password Admin nella barra in alto."
+    };
   }
 
-  return secret === configuredSecret;
+  if (secret !== configuredSecret) {
+    return {
+      authorized: false,
+      status: 401,
+      error:
+        "Password Admin non valida. La password inserita non corrisponde a quella configurata in ADMIN_SECRET sul server Vercel."
+    };
+  }
+
+  return { authorized: true };
 }
 
 /**
@@ -29,11 +62,9 @@ function isAuthorized(req: NextRequest): boolean {
  */
 export async function GET(req: NextRequest) {
   try {
-    if (!isAuthorized(req)) {
-      return NextResponse.json(
-        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
-        { status: 401 }
-      );
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const items = await listFailedEmails();
@@ -42,6 +73,7 @@ export async function GET(req: NextRequest) {
       success: true,
       count: items.length,
       storage: isBlob ? "vercel-blob" : "local-memory",
+      blobConfigured: isBlob,
       items
     });
   } catch (error: any) {
@@ -59,11 +91,9 @@ export async function GET(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   try {
-    if (!isAuthorized(req)) {
-      return NextResponse.json(
-        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
-        { status: 401 }
-      );
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const url = new URL(req.url);
@@ -105,11 +135,9 @@ export async function DELETE(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    if (!isAuthorized(req)) {
-      return NextResponse.json(
-        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
-        { status: 401 }
-      );
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const body = await req.json().catch(() => ({}));

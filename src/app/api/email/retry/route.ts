@@ -10,25 +10,7 @@ import { sendTransactionalEmail } from "@/lib/email/resend";
 
 export const dynamic = "force-dynamic";
 
-function isAuthorized(req: NextRequest): boolean {
-  // In development, allow local admin testing without requiring secrets
-  if (process.env.NODE_ENV !== "production") {
-    return true;
-  }
-
-  const url = new URL(req.url);
-  const secret =
-    req.headers.get("x-admin-secret")?.trim() ||
-    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")?.trim() ||
-    url.searchParams.get("secret")?.trim();
-  const configuredSecret = process.env.ADMIN_SECRET?.trim() || process.env.EMAIL_API_SECRET?.trim();
-
-  if (!configuredSecret) {
-    return false;
-  }
-
-  return secret === configuredSecret;
-}
+import { checkAdminAuth } from "../queue/route";
 
 /**
  * Retries a single failed email record.
@@ -81,11 +63,9 @@ async function retrySingleRecord(record: FailedEmailRecord) {
  */
 export async function POST(req: NextRequest) {
   try {
-    if (!isAuthorized(req)) {
-      return NextResponse.json(
-        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
-        { status: 401 }
-      );
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const url = new URL(req.url);

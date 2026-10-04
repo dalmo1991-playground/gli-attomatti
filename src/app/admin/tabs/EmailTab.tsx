@@ -257,20 +257,29 @@ export function EmailTab() {
       const res = await fetch("/api/email/queue", {
         headers: { "x-admin-secret": secret || "" }
       });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const data = await res.json();
         setQueueItems(Array.isArray(data.items) ? data.items : []);
         if (data.storage) setQueueStorageType(data.storage);
+      } else {
+        if (data.error && secret) {
+          setQueueMessage({ type: "error", text: data.error });
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Failed to fetch email queue:", err);
+      if (secret) {
+        setQueueMessage({ type: "error", text: "Errore di connessione a /api/email/queue: " + (err?.message || "errore di rete") });
+      }
     } finally {
       setIsLoadingQueue(false);
     }
   };
 
   useEffect(() => {
-    fetchQueue();
+    if (adminSecret) {
+      fetchQueue(adminSecret);
+    }
   }, [adminSecret]);
 
   const handleRetrySingle = async (id: string) => {
@@ -2682,7 +2691,7 @@ export function EmailTab() {
                                   <div className="p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10 flex items-center gap-3">
                                     <span className="text-base select-none">🗓️</span>
                                     <div className="text-[11px] text-foreground/70 leading-relaxed">
-                                      Nell&apos;email vengono generati direttamente 3 pulsanti di aggiunta all&apos;agenda: <strong>Google Calendar</strong>, <strong>Apple / iCal (.ics)</strong> e <strong>Outlook</strong>.
+                                      Nell&apos;email vengono generati direttamente 3 link in accent color per l&apos;aggiunta all&apos;agenda: <strong>Google Calendar</strong>, <strong>Apple / iCal (.ics)</strong> e <strong>Outlook</strong>.
                                     </div>
                                   </div>
                                 </div>

@@ -165,15 +165,32 @@ export function AdminNavbar({
                 <input
                   type="password"
                   value={tempSecret}
-                  onChange={(e) => setTempSecret(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempSecret(val);
+                    if (val.trim()) {
+                      setAdminSecret(val.trim());
+                    }
+                  }}
+                  onBlur={() => {
+                    if (tempSecret.trim()) {
+                      handleSaveSecret();
+                    }
+                  }}
                   placeholder="Inserisci password..."
                   className="w-full p-3 rounded-xl bg-muted/40 border border-foreground/10 focus:border-primary text-xs font-mono outline-none text-foreground"
                   autoFocus
                   onKeyDown={(e) => e.key === "Enter" && handleSaveSecret()}
                 />
                 <div className="flex justify-between items-center pt-1">
-                  <span className="text-[10px] text-foreground/40">
-                    Salvata nella sessione locale
+                  <span className="text-[10px]">
+                    {adminSecret ? (
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <Check size={11} /> Password attiva
+                      </span>
+                    ) : (
+                      <span className="text-foreground/40">Salvata nella sessione locale</span>
+                    )}
                   </span>
                   <button
                     onClick={handleSaveSecret}

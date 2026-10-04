@@ -55,79 +55,91 @@ const LOCAL_FILE = path.join(LOCAL_DIR, "email-dlq.json");
 // In-memory fallback if file system is read-only (e.g. serverless without Blob token)
 let memoryQueue: Map<string, FailedEmailRecord> = new Map();
 
+function getBlobToken(): string | undefined {
+  const raw = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!raw) return undefined;
+  const clean = raw.trim().replace(/^["']|["']$/g, "").trim();
+  return clean || undefined;
+}
+
 /**
  * Checks if Vercel Blob storage is configured and available.
  * Requires an active BLOB_READ_WRITE_TOKEN.
  */
 export function isBlobStorageAvailable(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+  return Boolean(getBlobToken());
 }
 
 /**
- * Writes a blob with auto-detection for Public vs Private store access.
+ * Writes a blob with auto-detection for Private vs Public store access.
+ * Prioritizes private access since DLQ email payloads contain private recipient data.
  */
 async function putToBlob(pathname: string, content: string): Promise<void> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  const token = getBlobToken();
   if (!token) {
-    throw new Error("BLOB_READ_WRITE_TOKEN non configurato");
+    throw new Error("BLOB_READ_WRITE_TOKEN non configurato sul server");
   }
 
-  // 1. Try public access (most standard across Vercel Blob stores)
+  // 1. Try private access first (standard for private stores)
   try {
     await put(pathname, content, {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
       token
     });
     return;
-  } catch (publicErr: any) {
-    // 2. If the store is configured as private-only, retry with private
+  } catch (privErr: any) {
+    // 2. If the store is configured as public-only, fallback to public
     try {
       await put(pathname, content, {
-        access: "private",
+        access: "public",
         addRandomSuffix: false,
         token
       });
       return;
     } catch {
-      throw publicErr;
+      throw privErr;
     }
   }
 }
 
 /**
- * Reads a blob content supporting direct fetch (fastest for public), public get, and private stream.
+ * Reads a blob content supporting private stream, public get, and direct fetch fallback.
  */
 async function readFromBlob(blob: { pathname: string; url: string; downloadUrl?: string }): Promise<FailedEmailRecord | null> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+  const token = getBlobToken();
 
-  // 1. Direct fetch (fastest and zero-dependency for public blobs)
+  // 1. Try get() with private access (Mandatory for private stores)
+  if (token) {
+    try {
+      const target = blob.pathname || blob.url;
+      const res = await get(target, { access: "private", token, useCache: false });
+      if (res?.statusCode === 200 && res.stream) {
+        const text = await new Response(res.stream).text();
+        return JSON.parse(text) as FailedEmailRecord;
+      }
+    } catch {
+      // Fall through to public options
+    }
+
+    // 2. Try get() with public access
+    try {
+      const target = blob.pathname || blob.url;
+      const res = await get(target, { access: "public", token });
+      if (res?.statusCode === 200 && res.stream) {
+        const text = await new Response(res.stream).text();
+        return JSON.parse(text) as FailedEmailRecord;
+      }
+    } catch {}
+  }
+
+  // 3. Direct fetch fallback (for public blobs if token is missing or store is public)
   const targetUrl = blob.downloadUrl || blob.url;
   if (targetUrl) {
     try {
       const res = await fetch(targetUrl, { cache: "no-store" });
       if (res.ok) {
         return (await res.json()) as FailedEmailRecord;
-      }
-    } catch {}
-  }
-
-  // 2. Try get() with public access
-  if (token) {
-    try {
-      const res = await get(blob.pathname || blob.url, { access: "public", token });
-      if (res?.stream) {
-        const data = (await new Response(res.stream).json()) as FailedEmailRecord;
-        return data;
-      }
-    } catch {}
-
-    // 3. Try get() with private access (for private-only stores)
-    try {
-      const res = await get(blob.pathname || blob.url, { access: "private", token });
-      if (res?.stream) {
-        const data = (await new Response(res.stream).json()) as FailedEmailRecord;
-        return data;
       }
     } catch {}
   }
@@ -216,7 +228,7 @@ export async function enqueueFailedEmail(
 export async function listFailedEmails(): Promise<FailedEmailRecord[]> {
   if (isBlobStorageAvailable()) {
     try {
-      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const token = getBlobToken();
       const { blobs } = await list({ prefix: "email-dlq/", token });
       const records: FailedEmailRecord[] = [];
 
@@ -250,7 +262,7 @@ export async function getFailedEmail(id: string): Promise<FailedEmailRecord | nu
 
   if (isBlobStorageAvailable()) {
     try {
-      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const token = getBlobToken();
       const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
       if (blobs.length > 0) {
         return await readFromBlob(blobs[0]);
@@ -273,7 +285,7 @@ export async function removeFailedEmail(id: string): Promise<boolean> {
   let removedFromBlob = false;
   if (isBlobStorageAvailable()) {
     try {
-      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const token = getBlobToken();
       const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
       if (blobs.length > 0) {
         await del(blobs.map((b) => b.url), { token });
@@ -303,7 +315,7 @@ export async function clearAllFailedEmails(): Promise<number> {
 
   if (isBlobStorageAvailable()) {
     try {
-      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const token = getBlobToken();
       const { blobs } = await list({ prefix: "email-dlq/", token });
       if (blobs.length > 0) {
         await del(blobs.map((b) => b.url), { token });

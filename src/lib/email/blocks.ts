@@ -694,64 +694,23 @@ export function renderEmailBlocksHtml({
                               📅 ${escapeHtml(formattedDateLine)} • ${escapeHtml(formattedTimeLine)}
                             </div>
                             ${eventLocation ? `
-                              <div style="font-size: 12px; font-weight: 500; color: ${textColor}; opacity: 0.75;">
+                              <div style="font-size: 12px; font-weight: 500; color: ${textColor}; opacity: 0.75; margin-bottom: 4px;">
                                 📍 ${escapeHtml(eventLocation)}
                               </div>
                             ` : ""}
                             ${eventDesc ? `
-                              <div style="font-size: 12px; color: ${textColor}; opacity: 0.65; margin-top: 6px; line-height: 1.4;">
+                              <div style="font-size: 12px; color: ${textColor}; opacity: 0.65; margin-top: 4px; line-height: 1.4;">
                                 ${escapeHtml(eventDesc)}
                               </div>
                             ` : ""}
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
 
-                  <!-- 3 Direct Action Buttons: Google Calendar, Apple / iCal, Outlook -->
-                  <tr>
-                    <td style="padding: 0 20px 18px 20px;">
-                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="font-size: 0; line-height: 0;">
-                            <!-- Google Calendar -->
-                            <div style="display: inline-block; vertical-align: top; margin-right: 8px; margin-bottom: 8px;">
-                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                  <td align="center" style="background-color: ${primaryColor}; border-radius: 9999px;">
-                                    <a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${primaryText}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
-                                      Google Calendar
-                                    </a>
-                                  </td>
-                                </tr>
-                              </table>
-                            </div>
-
-                            <!-- Apple / iCal (.ics) -->
-                            <div style="display: inline-block; vertical-align: top; margin-right: 8px; margin-bottom: 8px;">
-                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                  <td align="center" style="background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.12)" : "rgba(15, 23, 42, 0.08)"}; border: ${bubbleBorder}; border-radius: 9999px;">
-                                    <a href="${escapeHtml(icsDownloadUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${textColor}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
-                                      Apple / iCal (.ics)
-                                    </a>
-                                  </td>
-                                </tr>
-                              </table>
-                            </div>
-
-                            <!-- Outlook -->
-                            <div style="display: inline-block; vertical-align: top; margin-bottom: 8px;">
-                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                  <td align="center" style="background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.12)" : "rgba(15, 23, 42, 0.08)"}; border: ${bubbleBorder}; border-radius: 9999px;">
-                                    <a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${textColor}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
-                                      Outlook
-                                    </a>
-                                  </td>
-                                </tr>
-                              </table>
+                            <!-- Direct Calendar Links in Accent Color (Aligned with text column) -->
+                            <div style="font-size: 13px; line-height: 1.5; margin-top: 10px;">
+                              <a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" style="color: ${accentColor}; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;">Google Calendar</a>
+                              <span style="color: ${textColor}; opacity: 0.35; padding: 0 8px;">•</span>
+                              <a href="${escapeHtml(icsDownloadUrl)}" target="_blank" rel="noopener noreferrer" style="color: ${accentColor}; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;">Apple / iCal (.ics)</a>
+                              <span style="color: ${textColor}; opacity: 0.35; padding: 0 8px;">•</span>
+                              <a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" style="color: ${accentColor}; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;">Outlook</a>
                             </div>
                           </td>
                         </tr>
