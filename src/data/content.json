@@ -126,7 +126,8 @@
           "cta_href": "/Iniziative/cineforum",
           "secondary_cta": "Offerta Libera",
           "secondary_cta_href": "",
-          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp"
+          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "image_align": "left"
         }
       ],
       "fallback_show_alt": "Spettacolo",
@@ -1045,7 +1046,8 @@
               "url": "/images/1791099912910-ha2u-P00_7908.webp",
               "alt": "ha2u P00 7908"
             }
-          ]
+          ],
+          "hero_image_align": "left"
         }
       ],
       "discover_initiative_cta": "Scopri l'iniziativa",
@@ -1401,7 +1403,8 @@
           "primary_cta_label": "Info & Biglietti",
           "primary_cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
           "secondary_cta_label": "Scopri di più",
-          "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40"
+          "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
+          "hero_image_align": "center"
         },
         {
           "id": "b-1790870877640-2",
@@ -1514,7 +1517,8 @@
           "primary_cta_label": "Riserva il tuo Posto",
           "primary_cta_href": "#registrazione",
           "secondary_cta_label": "Guarda il Programma",
-          "secondary_cta_href": "#programma"
+          "secondary_cta_href": "#programma",
+          "hero_image_align": "left"
         },
         {
           "id": "b-cineforum-synopsis",
