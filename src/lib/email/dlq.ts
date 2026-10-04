@@ -102,8 +102,8 @@ async function readFromBlob(blob: { pathname: string; url: string; downloadUrl?:
   // 1. Try get() with private access (handles private stores and OIDC)
   try {
     const res = await get(blob.pathname || blob.url, { access: "private", token });
-    if (res?.body) {
-      const data = (await new Response(res.body).json()) as FailedEmailRecord;
+    if (res?.stream) {
+      const data = (await new Response(res.stream).json()) as FailedEmailRecord;
       return data;
     }
   } catch {}
@@ -121,8 +121,8 @@ async function readFromBlob(blob: { pathname: string; url: string; downloadUrl?:
   // 3. Try get() with public access
   try {
     const res = await get(blob.pathname || blob.url, { access: "public", token });
-    if (res?.body) {
-      const data = (await new Response(res.body).json()) as FailedEmailRecord;
+    if (res?.stream) {
+      const data = (await new Response(res.stream).json()) as FailedEmailRecord;
       return data;
     }
   } catch {}
