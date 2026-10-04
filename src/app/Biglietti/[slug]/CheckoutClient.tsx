@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Ticket, ExternalLink, ShieldCheck, Info } from "lucide-react";
 import { trackInitiateCheckout } from "@/lib/tracking";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 interface TicketingPageData {
@@ -26,6 +27,8 @@ interface CheckoutClientProps {
 
 export default function CheckoutClient({ page: initialPage }: CheckoutClientProps) {
   const liveContent = useLiveContent(null);
+  const checkoutUi = liveContent?.ticketing_hub?.checkout_page || {};
+
   const page = React.useMemo(() => {
     if (liveContent?.ticketing_pages) {
       const match = liveContent.ticketing_pages.find(
@@ -66,14 +69,14 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
             className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
           >
             <ArrowLeft size={16} />
-            {page.back_link_label || "Torna al sito"}
+            {page.back_link_label || checkoutUi.default_back_link || "Torna al sito"}
           </Link>
 
           <Link
             href="/Termini"
             className="text-xs text-foreground/40 hover:text-foreground font-medium underline transition-colors"
           >
-            Termini di Biglietteria
+            {checkoutUi.terms_link || "Termini di Biglietteria"}
           </Link>
         </div>
 
@@ -81,7 +84,7 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
         <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-3 glass">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-wider">
             <Ticket size={12} />
-            {page.category || "Biglietteria Ufficiale"}
+            {page.category || checkoutUi.default_category || "Biglietteria Ufficiale"}
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-foreground">
@@ -90,7 +93,7 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
 
           {page.description && (
             <p className="text-sm text-foreground/70 leading-relaxed max-w-2xl font-medium pt-1">
-              {page.description}
+              <FormattedText text={page.description} />
             </p>
           )}
         </div>
@@ -114,7 +117,7 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/60">
               <div className="flex items-center gap-2">
                 <Info size={16} className="text-primary shrink-0" />
-                <span>Difficoltà di visualizzazione con il riquadro? Puoi completare l&apos;acquisto sul portale esterno:</span>
+                <span>{checkoutUi.iframe_trouble_notice || "Difficoltà di visualizzazione con il riquadro? Puoi completare l'acquisto sul portale esterno:"}</span>
               </div>
               <a
                 href={ticketUrl}
@@ -123,7 +126,7 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
                 onClick={handleExternalClick}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs uppercase tracking-wider transition-colors shrink-0"
               >
-                <span>Apri su Eventfrog</span>
+                <span>{checkoutUi.open_on_eventfrog || "Apri su Eventfrog"}</span>
                 <ExternalLink size={12} />
               </a>
             </div>
@@ -135,17 +138,17 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
             </div>
             <div className="max-w-md mx-auto space-y-2">
               <h2 className="text-xl font-bold text-foreground">
-                Prevendita non ancora configurata
+                {checkoutUi.not_configured_title || "Prevendita non ancora configurata"}
               </h2>
               <p className="text-sm text-foreground/60 leading-relaxed font-medium">
-                La prevendita per questa pagina non è al momento collegata a un evento attivo.
+                {checkoutUi.not_configured_description || "La prevendita per questa pagina non è al momento collegata a un evento attivo."}
               </p>
             </div>
             <Link
               href={page.back_link_href || "/"}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-all"
             >
-              {page.back_link_label || "Torna al sito"}
+              {page.back_link_label || checkoutUi.default_back_link || "Torna al sito"}
             </Link>
           </div>
         )}
@@ -154,14 +157,14 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
         <div className="pt-4 border-t border-foreground/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground/40 font-medium">
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-emerald-400" />
-            <span>Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)</span>
+            <span>{checkoutUi.secure_transaction_notice || "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)"}</span>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/Termini" className="hover:text-foreground transition-colors underline">
-              Regolamento e Rimborsi
+              {checkoutUi.rules_refunds_link || "Regolamento e Rimborsi"}
             </Link>
             <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
-              Informativa Privacy
+              {checkoutUi.privacy_link || "Informativa Privacy"}
             </Link>
           </div>
         </div>

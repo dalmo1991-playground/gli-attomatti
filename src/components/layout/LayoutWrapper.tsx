@@ -35,7 +35,7 @@ function LayoutInner({
 
   return (
     <>
-      <PreviewBanner />
+      <PreviewBanner content={liveContent?.ui?.preview_banner} />
 
       <TrackingScripts
         integrations={liveContent?.integrations}
@@ -56,6 +56,7 @@ function LayoutInner({
 
       <CookieBanner
         integrations={liveContent?.integrations}
+        uiContent={liveContent?.ui?.cookie_banner}
         onConsentChange={setConsent}
       />
 
@@ -75,7 +76,7 @@ export function LayoutWrapper({
   const isLanding = pathname?.startsWith("/landing");
 
   return (
-    <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess}>
+    <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess} devGateContent={content?.ui?.dev_gate}>
       {isAdmin ? (
         <main className="min-h-screen">{children}</main>
       ) : (

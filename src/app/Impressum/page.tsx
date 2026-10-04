@@ -1,16 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Users, Mail, Globe, ShieldAlert } from "lucide-react";
+import { getContent } from "@/lib/data";
+import { FormattedText } from "@/components/ui/FormattedText";
 
-export const metadata: Metadata = {
-  title: "Note Legali & Impressum",
-  description: "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
-  alternates: {
-    canonical: "/Impressum",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getContent();
+  const imp = content?.pages?.impressum || {};
+  return {
+    title: imp.meta?.title || "Note Legali & Impressum",
+    description: imp.meta?.description || "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
+    alternates: {
+      canonical: "/Impressum",
+    },
+  };
+}
 
-export default function ImpressumPage() {
+export default async function ImpressumPage() {
+  const content = await getContent();
+  const imp = content?.pages?.impressum || {};
+  const org = imp.organization || {};
+  const contacts = imp.contacts || {};
+  const liability = imp.liability || {};
+  const copyright = imp.copyright || {};
+
   return (
     <div className="min-h-screen py-16 px-6">
       <div className="max-w-4xl mx-auto space-y-12">
@@ -20,19 +33,19 @@ export default function ImpressumPage() {
           className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
         >
           <ArrowLeft size={16} />
-          Torna alla home
+          {imp.back_link || "Torna alla home"}
         </Link>
 
         {/* Header */}
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
-            Note Legali
+            {imp.badge || "Note Legali"}
           </div>
           <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-foreground">
-            Impressum
+            {imp.title || "Impressum"}
           </h1>
           <p className="text-lg text-foreground/60 max-w-2xl font-medium">
-            Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici.
+            <FormattedText text={imp.description || "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici."} />
           </p>
         </div>
 
@@ -46,9 +59,9 @@ export default function ImpressumPage() {
               </div>
               <div className="space-y-1">
                 <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                  Organizzazione
+                  {org.section_title || "Organizzazione"}
                 </h2>
-                <p className="text-2xl font-bold text-foreground">Gli Attomatti</p>
+                <p className="text-2xl font-bold text-foreground">{org.name || "Gli Attomatti"}</p>
               </div>
             </div>
 
@@ -56,20 +69,20 @@ export default function ImpressumPage() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
                   <MapPin size={14} />
-                  Indirizzo
+                  {org.address_label || "Indirizzo"}
                 </div>
                 <p className="text-foreground/80 leading-relaxed font-medium">
-                  Alte Landstrasse 4, 8802 Kilchberg, Svizzera
+                  {org.address || "Alte Landstrasse 4, 8802 Kilchberg, Svizzera"}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
                   <Users size={14} />
-                  Rappresentato da
+                  {org.represented_by_label || "Rappresentato da"}
                 </div>
                 <p className="text-foreground/80 leading-relaxed font-medium">
-                  Domenico Scotti di Carlo
+                  {org.represented_by || "Domenico Scotti di Carlo"}
                 </p>
               </div>
             </div>
@@ -78,30 +91,30 @@ export default function ImpressumPage() {
           {/* Contatti & Web */}
           <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
             <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-              Contatti telematici
+              {contacts.section_title || "Contatti telematici"}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
                   <Mail size={14} />
-                  Email
+                  {contacts.email_label || "Email"}
                 </div>
                 <p className="text-foreground/80 font-medium break-all">
-                  compagniateatralegliattomatti@gmail.com
+                  {contacts.email || "compagniateatralegliattomatti@gmail.com"}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
                   <Globe size={14} />
-                  Sito web
+                  {contacts.website_label || "Sito web"}
                 </div>
                 <Link
-                  href="https://gliattomatti.ch"
+                  href={contacts.website_url || "https://gliattomatti.ch"}
                   className="text-primary hover:underline font-medium inline-block"
                 >
-                  https://gliattomatti.ch
+                  {contacts.website_url || "https://gliattomatti.ch"}
                 </Link>
               </div>
             </div>
@@ -114,18 +127,18 @@ export default function ImpressumPage() {
                 <ShieldAlert size={20} />
               </div>
               <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                Esclusione di responsabilità (Haftungsausschluss)
+                {liability.section_title || "Esclusione di responsabilità (Haftungsausschluss)"}
               </h2>
             </div>
             <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
               <p>
-                <strong>Contenuti del sito:</strong> I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento.
+                <strong>{liability.contents_title || "Contenuti del sito:"}</strong> <FormattedText text={liability.contents_text || "I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento."} />
               </p>
               <p>
-                <strong>Collegamenti esterni e servizi incorporati (iframe embed):</strong> Il nostro sito include collegamenti telematici a siti terzi nonché <strong>servizi digitali incorporati direttamente nelle pagine</strong>, in particolare la piattaforma svizzera di biglietteria <strong>Eventfrog AG</strong> (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di <strong>Tally BV</strong> (Muinklaan 23, 9000 Gand, Belgio).
+                <strong>{liability.links_title || "Collegamenti esterni e servizi incorporati (iframe embed):"}</strong> <FormattedText text={liability.links_text_1 || "Il nostro sito include collegamenti telematici a siti terzi nonché servizi digitali incorporati direttamente nelle pagine, in particolare la piattaforma svizzera di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di Tally BV (Muinklaan 23, 9000 Gand, Belgio)."} />
               </p>
               <p>
-                L&apos;accesso, la compilazione e l&apos;utilizzo di tali servizi terzi avvengono a esclusivo rischio dell&apos;utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori.
+                <FormattedText text={liability.links_text_2 || "L'accesso, la compilazione e l'utilizzo di tali servizi terzi avvengono a esclusivo rischio dell'utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori."} />
               </p>
             </div>
           </div>
@@ -137,11 +150,11 @@ export default function ImpressumPage() {
                 <ShieldAlert size={20} />
               </div>
               <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                Diritto d&apos;autore (Copyright)
+                {copyright.section_title || "Diritto d'autore (Copyright)"}
               </h2>
             </div>
             <p className="text-foreground/80 leading-relaxed font-medium">
-              I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d&apos;autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d&apos;autore richiede il previo consenso scritto dell&apos;autore o degli autori in questione.
+              <FormattedText text={copyright.text || "I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d'autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d'autore richiede il previo consenso scritto dell'autore o degli autori in questione."} />
             </p>
           </div>
         </div>

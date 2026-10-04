@@ -13,7 +13,8 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function SpettacoloDettaglioClient({ content: initialContent, slug }: { content: any, slug: string }) {
   const content = useLiveContent(initialContent);
-  const show = (content?.pages?.spettacoli?.archive_sections || []).find((s: any) => s?.slug === slug);
+  const spettacoli = content?.pages?.spettacoli || {};
+  const show = (spettacoli?.archive_sections || []).find((s: any) => s?.slug === slug);
 
   useEffect(() => {
     if (show?.title) {
@@ -30,8 +31,10 @@ export default function SpettacoloDettaglioClient({ content: initialContent, slu
   if (!show) {
     return (
       <div className="pt-32 text-center">
-        <h1 className="text-4xl font-bold">Spettacolo non trovato</h1>
-        <Link href="/Spettacoli" className="text-primary mt-4 inline-block">Torna all'archivio</Link>
+        <h1 className="text-4xl font-bold">{spettacoli.not_found_title || "Spettacolo non trovato"}</h1>
+        <Link href={spettacoli.archive_href || "/Spettacoli"} className="text-primary mt-4 inline-block">
+          {spettacoli.back_to_archive_label || "Torna all'archivio"}
+        </Link>
       </div>
     );
   }
@@ -42,8 +45,9 @@ export default function SpettacoloDettaglioClient({ content: initialContent, slu
       <DetailHero
         title={show.title}
         heroImage={show.hero_image}
-        backLink={{ href: "/Spettacoli", label: "Torna all'Archivio" }}
-        subtitle={`Stagione ${show.year}`}
+        imageAlign={show.hero_image_align || show.image_align}
+        backLink={{ href: spettacoli.archive_href || "/Spettacoli", label: spettacoli.back_to_archive_label || "Torna all'Archivio" }}
+        subtitle={`${spettacoli.season_prefix || "Stagione"} ${show.year}`}
       />
 
       {/* Description & Dates Section */}
@@ -51,7 +55,9 @@ export default function SpettacoloDettaglioClient({ content: initialContent, slu
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-16 items-start">
           {/* Main Content */}
           <div className="lg:col-span-7 xl:col-span-8">
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-8">Lo Spettacolo</h2>
+            <h2 className="text-3xl font-black uppercase tracking-tight mb-8">
+              {spettacoli.detail_main_heading || "Lo Spettacolo"}
+            </h2>
             <div className="prose prose-xl prose-invert max-w-none">
               <RichText
                 content={show.text}
@@ -70,11 +76,11 @@ export default function SpettacoloDettaglioClient({ content: initialContent, slu
           {/* Sidebar: Dates & Details */}
           <div className="lg:col-span-5 xl:col-span-4">
             <DetailSidebar
-              datesTitle="Date e Biglietti"
+              datesTitle={spettacoli.detail_dates_title || "Date e Biglietti"}
               dates={show.dates}
-              detailsTitle="Info Spettacolo"
+              detailsTitle={spettacoli.detail_info_title || "Info Spettacolo"}
               details={show.details}
-              emptyDatesMessage="Nessuna data futura programmata per questo spettacolo."
+              emptyDatesMessage={spettacoli.detail_empty_dates_message || "Nessuna data futura programmata per questo spettacolo."}
               onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
             />
           </div>
@@ -85,6 +91,7 @@ export default function SpettacoloDettaglioClient({ content: initialContent, slu
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
+        uiContent={content?.ui?.lightbox}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
     </div>

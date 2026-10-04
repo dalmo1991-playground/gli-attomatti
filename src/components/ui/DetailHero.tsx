@@ -7,10 +7,12 @@ import { BackLink } from "./BackLink";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getPageHeroTitleSizeClass } from "@/lib/typography";
+import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
 
 interface DetailHeroProps {
   title: string;
   heroImage?: string;
+  imageAlign?: ImageAlign;
   backLink: {
     href: string;
     label: string;
@@ -22,6 +24,7 @@ interface DetailHeroProps {
 export function DetailHero({
   title,
   heroImage,
+  imageAlign = "center",
   backLink,
   subtitle,
   className
@@ -43,7 +46,8 @@ export function DetailHero({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center"
+            className={cn("object-cover", getImagePositionClass(imageAlign))}
+            style={{ objectPosition: getImageObjectPositionStyle(imageAlign) }}
           />
           {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
           <div className="absolute top-1/4 -left-20 w-80 h-80 bg-accent/15 rounded-full blur-3xl pointer-events-none" />

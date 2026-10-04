@@ -5,12 +5,14 @@ import Link from "next/link";
 import { ArrowRight, Calendar, MapPin, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn, stripHtmlPreservingBreaks } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 
 const MotionImage = motion.create(Image);
 
@@ -98,10 +100,11 @@ export default function HomeClient({ content: initialContent }: { content: any }
               >
                 <Image
                   src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={activeShows[currentShowIndex].title || "Spettacolo"}
+                  alt={activeShows[currentShowIndex].title || home.fallback_show_alt || "Spettacolo"}
                   fill
                   sizes="100vw"
-                  className="object-cover opacity-40"
+                  className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
+                  style={{ objectPosition: getImageObjectPositionStyle(activeShows[currentShowIndex].image_align) }}
                   priority
                 />
 
@@ -117,7 +120,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/1782553290530-TheaterCurtain.webp"
-              alt="Sipario teatrale — Compagnia Gli Attomatti Zurigo"
+              alt={home.curtain_alt || "Sipario teatrale — Compagnia Gli Attomatti Zurigo"}
               fill
               sizes="100vw"
               className="object-cover opacity-30 scale-105"
@@ -152,7 +155,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   {/* Presenter */}
                   {activeShows[currentShowIndex].presenter && (
                     <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-2 md:mb-3 opacity-90 drop-shadow-sm">
-                      {activeShows[currentShowIndex].presenter}
+                      <FormattedText text={activeShows[currentShowIndex].presenter} />
                     </p>
                   )}
 
@@ -161,7 +164,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                     getHeroTitleSizeClass(activeShows[currentShowIndex].title),
                     "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
                   )}>
-                    {activeShows[currentShowIndex].title}
+                    <FormattedText text={activeShows[currentShowIndex].title} />
                   </h1>
 
                   {/* Tagline */}
@@ -170,7 +173,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                       getTaglineSizeClass(activeShows[currentShowIndex].tagline),
                       "mt-3 md:mt-4 font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm text-balance break-words"
                     )}>
-                      {activeShows[currentShowIndex].tagline}
+                      <FormattedText text={activeShows[currentShowIndex].tagline} />
                     </p>
                   )}
 
@@ -261,7 +264,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                 />
 
                 <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-                  {hero.subtitle}
+                  <FormattedText text={hero.subtitle} />
                 </p>
                 <div className={cn(
                   "flex gap-4 sm:gap-6 justify-center items-center w-full",
@@ -317,7 +320,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   setCurrentShowIndex(idx);
                 }}
                 className="p-2 sm:p-2.5 flex items-center justify-center cursor-pointer"
-                aria-label={`Slide ${idx + 1}`}
+                aria-label={`${home.slide_aria_prefix || "Slide"} ${idx + 1}`}
               >
                 <span
                   className={cn(
@@ -342,15 +345,17 @@ export default function HomeClient({ content: initialContent }: { content: any }
       <Section className="bg-muted/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-4xl font-bold mb-6">{introduction.title}</h2>
-            <p className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
-              {stripHtmlPreservingBreaks(introduction.text)}
-            </p>
+            <h2 className="text-4xl font-bold mb-6">
+              <FormattedText text={introduction.title} />
+            </h2>
+            <div className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
+              <FormattedText text={introduction.text} />
+            </div>
             <Link
               href="/Chi_Siamo"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
             >
-              <span>Scopri la nostra storia</span>
+              <span>{introduction.story_button_label || "Scopri la nostra storia"}</span>
               <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -365,7 +370,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                 <MotionImage
                   key={introIndex}
                   src={introImages[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={introImages[introIndex]?.alt || "Introduzione"}
+                  alt={introImages[introIndex]?.alt || introduction.fallback_alt || "Introduzione"}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -393,6 +398,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
+        uiContent={content?.ui?.lightbox}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
     </div>

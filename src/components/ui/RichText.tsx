@@ -3,6 +3,8 @@
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
 
+import { FormattedText } from "./FormattedText";
+
 interface RichTextProps {
   content?: string;
   className?: string;
@@ -48,11 +50,16 @@ export function RichText({
     return null;
   }
 
-  const hasHtml = useMemo(() => isHtml(content), [content]);
+  // Pre-process markdown links [text](url) -> <a href="url">text</a>
+  const processedContent = useMemo(() => {
+    return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  }, [content]);
+
+  const hasHtml = useMemo(() => isHtml(processedContent), [processedContent]);
 
   // If HTML is present, render with safe markup and refined typography
   if (hasHtml) {
-    const cleanHtml = sanitizeHtml(content);
+    const cleanHtml = sanitizeHtml(processedContent);
     return (
       <Component
         className={cn(
@@ -71,10 +78,10 @@ export function RichText({
     );
   }
 
-  // Fallback for legacy plain text: preserve natural paragraph breaks and line breaks
+  // Fallback for plain text: support markdown links, raw URLs, bold, and line breaks
   return (
     <Component className={cn("whitespace-pre-line leading-relaxed", className)}>
-      {content}
+      <FormattedText text={content} />
     </Component>
   );
 }

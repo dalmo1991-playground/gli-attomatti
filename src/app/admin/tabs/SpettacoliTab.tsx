@@ -268,7 +268,9 @@ export function SpettacoliTab() {
                       label="Immagine Hero / Copertina di Testata (Opzionale)"
                       value={show.hero_image || ""}
                       onChange={(url) => updateShow(actualIdx, "hero_image", url)}
-                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata con un elegante filtro scuro e gradiente per garantire la leggibilità del titolo."
+                      align={show.hero_image_align || show.image_align || "center"}
+                      onAlignChange={(align) => updateShow(actualIdx, "hero_image_align", align)}
+                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata. Seleziona l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo su mobile."
                     />
                   </div>
 

@@ -259,7 +259,7 @@ export function TicketingTab() {
                       <FormField
                         label="URL Evento o Prevendita Eventfrog"
                         value={page.eventfrog_url || ""}
-                        onChange={(v) => updatePage(idx, "eventfrog_url", v.trim())}
+                        onChange={(v) => updatePage(idx, "eventfrog_url", v)}
                         placeholder="https://eventfrog.ch/it/p/teatro-arte-cultura/teatro/..."
                         helpText="Incolla l'URL pubblico di Eventfrog dell'evento. Verrà incorporato nell'iframe della pagina."
                         required

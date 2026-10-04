@@ -6,7 +6,7 @@ import { RichText } from "@/components/ui/RichText";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { stripHtml } from "@/lib/utils";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function ParlanoDiNoiClient({ content: initialContent }: { content: any }) {
@@ -26,7 +26,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
       <PageHeader
         title={parlano_di_noi.title || "Dicono di Noi"}
         description={parlano_di_noi.description || "Gli attomatti nella stampa"}
-        backLink={{ href: "/Chi_Siamo", label: "Torna a Chi Siamo" }}
+        backLink={{ href: parlano_di_noi.back_href || "/Chi_Siamo", label: parlano_di_noi.back_label || "Torna a Chi Siamo" }}
         compact
       />
 
@@ -37,7 +37,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
             const CardContent = (
               <div className="relative z-10">
                 <blockquote className="text-xl sm:text-2xl md:text-3xl font-serif italic text-foreground/80 leading-relaxed mb-6 sm:mb-8 whitespace-pre-wrap text-pretty">
-                  {stripHtml(item.quote)}
+                  <FormattedText text={item.quote} />
                 </blockquote>
                 
                 <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 border-t border-foreground/10 pt-6 sm:pt-8">
@@ -51,7 +51,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
                         {item.source_href && <ExternalLink size={14} className="ml-2 opacity-40 group-hover:opacity-100 transition-opacity" />}
                       </div>
                       <p className="text-accent text-xs sm:text-sm font-bold uppercase tracking-widest mt-0.5">
-                        Anno {item.date}
+                        {parlano_di_noi.year_prefix || "Anno "}{item.date}
                       </p>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
             )}
             {press_contact.text && (
               <p className="text-lg text-foreground/60 mb-10">
-                {press_contact.text}
+                <FormattedText text={press_contact.text} />
               </p>
             )}
             {press_contact.cta_label && (

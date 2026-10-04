@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ClipboardList, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 interface RegistrationItem {
@@ -112,7 +113,7 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
 
                     {item.description && (
                       <p className="text-sm text-foreground/70 leading-relaxed line-clamp-3">
-                        {item.description}
+                        <FormattedText text={item.description} />
                       </p>
                     )}
 
@@ -140,7 +141,7 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
                       href={item.registrationHref}
                       className="flex-1 py-3 px-5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:-translate-y-0.5"
                     >
-                      <span>Iscriviti Online</span>
+                      <span>{hub.register_online_cta || "Iscriviti Online"}</span>
                       <ArrowRight size={14} />
                     </Link>
 
@@ -149,7 +150,7 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
                         href={item.detailsHref}
                         className="py-3 px-4 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center"
                       >
-                        Info
+                        {hub.info_cta || "Info"}
                       </Link>
                     )}
                   </div>
@@ -163,16 +164,16 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
               <ClipboardList size={32} />
             </div>
             <h2 className="text-2xl font-black uppercase tracking-tight mb-3">
-              Nessuna iscrizione aperta
+              {hub.empty_title || "Nessuna iscrizione aperta"}
             </h2>
             <p className="text-foreground/60 text-sm leading-relaxed mb-8">
-              Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!
+              {hub.empty_description || "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!"}
             </p>
             <Link
               href="/Iniziative"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-primary/20"
             >
-              <span>Vedi Iniziative</span>
+              <span>{hub.view_initiatives_cta || "Vedi Iniziative"}</span>
               <ArrowRight size={16} />
             </Link>
           </div>

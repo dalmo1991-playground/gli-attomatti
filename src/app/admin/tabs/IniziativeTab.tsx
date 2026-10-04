@@ -251,7 +251,9 @@ export function IniziativeTab() {
                       label="Immagine Hero / Copertina di Testata (Opzionale)"
                       value={item.hero_image || ""}
                       onChange={(url) => updateInitiative(actualIdx, "hero_image", url)}
-                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata con un elegante filtro scuro e gradiente per garantire la leggibilità del titolo."
+                      align={item.hero_image_align || item.image_align || "center"}
+                      onAlignChange={(align) => updateInitiative(actualIdx, "hero_image_align", align)}
+                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata. Seleziona l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo su mobile."
                     />
                   </div>
 

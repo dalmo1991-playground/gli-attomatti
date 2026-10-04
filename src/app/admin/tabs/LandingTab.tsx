@@ -835,6 +835,9 @@ export function LandingTab({
                                       label="Immagine di Sfondo Hero"
                                       value={block.hero_image || ""}
                                       onChange={(url) => updateBlock(actualIdx, bIdx, "hero_image", url)}
+                                      align={block.hero_image_align || block.image_align || "center"}
+                                      onAlignChange={(align) => updateBlock(actualIdx, bIdx, "hero_image_align", align)}
+                                      helpText="Imposta l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo durante il ritaglio su mobile."
                                     />
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                       <div>
@@ -968,7 +971,7 @@ export function LandingTab({
                                     <FormField
                                       label="URL Evento Eventfrog (Link Prevendita Ufficiale)"
                                       value={block.eventfrog_url || ""}
-                                      onChange={(v) => updateBlock(actualIdx, bIdx, "eventfrog_url", v.trim())}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "eventfrog_url", v)}
                                       placeholder="https://eventfrog.ch/it/p/teatro-arte-cultura/teatro/..."
                                       helpText="Incolla l'indirizzo del tuo evento Eventfrog. Verrà incorporato a tutta larghezza in un elegante riquadro di acquisto sicuro."
                                     />
@@ -1038,7 +1041,7 @@ export function LandingTab({
                                     <FormField
                                       label="URL Modulo Tally.so (Link del Form)"
                                       value={block.tally_url || ""}
-                                      onChange={(v) => updateBlock(actualIdx, bIdx, "tally_url", v.trim())}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "tally_url", v)}
                                       placeholder="https://tally.so/r/LZaPOz"
                                       helpText="Incolla l'indirizzo del tuo form Tally. Verrà incorporato a tutta larghezza in un riquadro fluido."
                                     />

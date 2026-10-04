@@ -60,7 +60,9 @@ export default function ContattiClient({ content: initialContent }: { content: a
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 sm:mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                 <Mail size={32} className="sm:w-10 sm:h-10" />
               </div>
-              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">Email</h2>
+              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">
+                {contatti.email_label || "Email"}
+              </h2>
               <Link 
                 href={`mailto:${contatti.email}`}
                 onClick={() => trackContact("email", contatti.email)}

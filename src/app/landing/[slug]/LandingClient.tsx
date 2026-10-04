@@ -23,10 +23,12 @@ import {
   Menu
 } from "lucide-react";
 import { cn, stripHtml, stripHtmlPreservingBreaks } from "@/lib/utils";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { getLandingTheme, getLandingThemeStyles } from "@/lib/landingThemes";
 import { getRelativeLuminance } from "@/lib/devTheme";
+import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 import { getBlockAnchor } from "@/lib/landingAnchors";
 import { notFound } from "next/navigation";
 import { trackInitiateCheckout } from "@/lib/tracking";
@@ -36,10 +38,12 @@ interface LandingClientProps {
   landing: any;
   site: any;
   slug?: string;
+  ui?: any;
 }
 
-export default function LandingClient({ landing: initialLanding, site, slug }: LandingClientProps) {
+export default function LandingClient({ landing: initialLanding, site, slug, ui }: LandingClientProps) {
   const liveContent = useLiveContent(null);
+  const landingDefaults = liveContent?.ui?.landing_defaults || ui || {};
   const landing = useMemo(() => {
     if (liveContent?.landings) {
       const match = liveContent.landings.find(
@@ -145,7 +149,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
         <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-4">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-            <span className="text-xs uppercase tracking-widest text-white/50">Caricamento anteprima...</span>
+            <span className="text-xs uppercase tracking-widest text-white/50">{landingDefaults.preview_loading || "Caricamento anteprima..."}</span>
           </div>
         </div>
       );
@@ -167,7 +171,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
           <Link
             href="/"
             className="flex items-center gap-3 group shrink-0"
-            title="Torna alla Home"
+            title={landingDefaults.back_to_home || "Torna alla Home"}
           >
             <Image
               src={resolvedLogo}
@@ -182,7 +186,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                 {header.logo_text || site?.name || "Gli Attomatti"}
               </span>
               <span className="text-[10px] text-foreground/50 font-bold uppercase tracking-widest">
-                {header.subtitle || "Teatro a Zurigo"}
+                {header.subtitle || landingDefaults.header_subtitle || "Teatro a Zurigo"}
               </span>
             </div>
           </Link>
@@ -274,11 +278,12 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                     <div className="absolute inset-0 z-0">
                       <Image
                         src={block.hero_image}
-                        alt={block.title || "Hero"}
+                        alt={block.title || landingDefaults.hero_alt || "Hero"}
                         fill
                         sizes="100vw"
                         priority
-                        className="object-cover object-center"
+                        className={cn("object-cover", getImagePositionClass(block.hero_image_align || block.image_align))}
+                        style={{ objectPosition: getImageObjectPositionStyle(block.hero_image_align || block.image_align) }}
                       />
                       <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px]" />
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/70" />
@@ -325,7 +330,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           "text-foreground/80 font-medium max-w-2xl mx-auto leading-relaxed text-balance break-words"
                         )}
                       >
-                        {stripHtmlPreservingBreaks(block.tagline)}
+                        <FormattedText text={block.tagline} />
                       </motion.p>
                     )}
 
@@ -390,7 +395,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           )}
 
                           <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
-                            {stripHtml(block.title || "Data e Informazioni")}
+                            {stripHtml(block.title || landingDefaults.event_details_title || "Data e Informazioni")}
                           </h2>
 
                           <div className="space-y-4">
@@ -401,7 +406,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                                 </div>
                                 <div>
                                   <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
-                                    Data & Ora
+                                    {landingDefaults.date_time_label || "Data & Ora"}
                                   </div>
                                   <div className="text-base sm:text-lg font-bold text-foreground">
                                     {stripHtml(block.date)}
@@ -417,7 +422,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                                 </div>
                                 <div>
                                   <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
-                                    Luogo
+                                    {landingDefaults.location_label || "Luogo"}
                                   </div>
                                   <div className="text-base sm:text-lg font-bold text-foreground">
                                     {stripHtml(block.location)}
@@ -429,7 +434,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                                       rel="noopener noreferrer"
                                       className="inline-flex items-center gap-1 text-xs text-foreground/60 hover:text-primary mt-1 font-bold transition-colors"
                                     >
-                                      <span>Apri su Google Maps</span>
+                                      <span>{landingDefaults.google_maps_label || "Apri su Google Maps"}</span>
                                       <ExternalLink size={12} />
                                     </Link>
                                   )}
@@ -444,7 +449,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           {block.price && (
                             <div className="text-center sm:text-right">
                               <span className="text-xs text-foreground/40 uppercase tracking-widest font-bold block">
-                                Biglietto
+                                {landingDefaults.ticket_label || "Biglietto"}
                               </span>
                               <span className="text-3xl sm:text-4xl font-black text-foreground drop-shadow-xs">
                                 {stripHtml(block.price)}
@@ -488,25 +493,25 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                   <div className="max-w-4xl mx-auto space-y-12">
                     <div className="text-center max-w-2xl mx-auto">
                       <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">
-                        {block.title || "La Trama"}
+                        {block.title || landingDefaults.synopsis_title || "La Trama"}
                       </h2>
                       <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                       <div className={cn("space-y-6", block.image ? "md:col-span-7" : "md:col-span-12")}>
-                        <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">
-                          {stripHtmlPreservingBreaks(block.text)}
-                        </p>
+                        <div className="text-lg sm:text-xl text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">
+                          <FormattedText text={block.text} />
+                        </div>
 
                         {block.quote && (
                           <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border-l-4 border-primary/60 space-y-3">
                             <p className="italic text-base sm:text-lg text-foreground/90 font-serif leading-relaxed">
-                              &ldquo;{stripHtml(block.quote)}&rdquo;
+                              &ldquo;<FormattedText text={block.quote} />&rdquo;
                             </p>
                             {block.quote_author && (
                               <p className="text-xs uppercase font-black tracking-wider text-foreground/60">
-                                — {stripHtml(block.quote_author)}
+                                — <FormattedText text={block.quote_author} />
                               </p>
                             )}
                           </div>
@@ -518,7 +523,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 group hover:border-foreground/20 transition-colors">
                             <Image
                               src={block.image}
-                              alt={block.title || "Foto spettacolo"}
+                              alt={block.title || landingDefaults.synopsis_image_alt || "Foto spettacolo"}
                               fill
                               sizes="(max-width: 768px) 100vw, 40vw"
                               className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -590,7 +595,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           >
                             <Image
                               src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                              alt={img.alt || "Scena"}
+                              alt={img.alt || landingDefaults.gallery_image_alt || "Scena"}
                               fill
                               sizes="(max-width: 768px) 100vw, 50vw"
                               className={`transition-transform duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
@@ -625,7 +630,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                   <div className="max-w-4xl mx-auto space-y-12">
                     <div className="text-center">
                       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
-                        {block.title || "Dicono di Noi"}
+                        {block.title || landingDefaults.reviews_title || "Dicono di Noi"}
                       </h2>
                       <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
                     </div>
@@ -643,7 +648,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           </div>
 
                           <p className="italic font-serif text-lg text-foreground/85 leading-snug">
-                            &ldquo;{stripHtml(rev.quote)}&rdquo;
+                            &ldquo;<FormattedText text={rev.quote} />&rdquo;
                           </p>
 
                           <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
@@ -675,7 +680,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                   <div className="max-w-3xl mx-auto space-y-8">
                     <div className="text-center mb-10">
                       <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
-                        {block.title || "Domande Frequenti"}
+                        {block.title || landingDefaults.faq_title || "Domande Frequenti"}
                       </h2>
                       <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
                     </div>
@@ -715,7 +720,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                                   transition={{ duration: 0.2 }}
                                 >
                                   <div className="px-5 pb-5 text-foreground/70 text-sm leading-relaxed border-t border-foreground/5 pt-4 whitespace-pre-wrap">
-                                    {stripHtmlPreservingBreaks(f.answer)}
+                                    <FormattedText text={f.answer} />
                                   </div>
                                 </motion.div>
                               )}
@@ -759,10 +764,10 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                     <div className="text-center space-y-4 max-w-2xl mx-auto">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-black uppercase tracking-wider">
                         <Ticket size={14} />
-                        Biglietteria Ufficiale
+                        {landingDefaults.eventfrog_badge || "Biglietteria Ufficiale"}
                       </div>
                       <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
-                        {block.title || "Acquista Biglietti"}
+                        {block.title || landingDefaults.eventfrog_title || "Acquista Biglietti"}
                       </h2>
                       {block.subtitle && (
                         <p className="text-base sm:text-lg text-foreground/70 font-medium leading-relaxed">
@@ -777,7 +782,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                         <div className="w-full bg-white rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 min-h-[680px] relative">
                           <iframe
                             src={embedUrl}
-                            title={block.title || "Biglietti Eventfrog"}
+                            title={block.title || landingDefaults.eventfrog_iframe_title || "Biglietti Eventfrog"}
                             className="w-full h-[720px] sm:h-[760px] border-0"
                             allow="payment"
                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
@@ -790,7 +795,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/60">
                           <div className="flex items-center gap-2">
                             <Info size={16} className="text-primary shrink-0" />
-                            <span>Problemi con il riquadro? Puoi completare l&apos;acquisto anche sul portale esterno:</span>
+                            <span>{landingDefaults.eventfrog_fallback_trouble || "Problemi con il riquadro? Puoi completare l'acquisto anche sul portale esterno:"}</span>
                           </div>
                           <a
                             href={embedUrl}
@@ -799,7 +804,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                             onClick={() => trackInitiateCheckout(landing.title, embedUrl)}
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider transition-colors shrink-0 shadow-sm"
                           >
-                            <span>{block.fallback_label || "Apri su Eventfrog"}</span>
+                            <span>{block.fallback_label || landingDefaults.eventfrog_fallback_button || "Apri su Eventfrog"}</span>
                             <ExternalLink size={12} />
                           </a>
                         </div>
@@ -808,7 +813,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                       <div className="p-12 rounded-3xl bg-muted/20 border border-foreground/5 text-center space-y-3 glass">
                         <Ticket size={36} className="mx-auto text-foreground/30" />
                         <p className="text-foreground/60 font-medium">
-                          La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell&apos;Admin.
+                          {landingDefaults.eventfrog_not_configured || "La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell'Admin."}
                         </p>
                       </div>
                     )}
@@ -818,14 +823,14 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground/40 font-medium">
                         <div className="flex items-center gap-2">
                           <ShieldCheck size={16} className="text-emerald-400" />
-                          <span>Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)</span>
+                          <span>{landingDefaults.eventfrog_security_notice || "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)"}</span>
                         </div>
                         <div className="flex items-center gap-4">
                           <Link href="/Termini" className="hover:text-foreground transition-colors underline">
-                            Termini di Biglietteria
+                            {landingDefaults.eventfrog_terms_link || "Termini di Biglietteria"}
                           </Link>
                           <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
-                            Informativa Privacy
+                            {landingDefaults.eventfrog_privacy_link || "Informativa Privacy"}
                           </Link>
                         </div>
                       </div>
@@ -870,10 +875,10 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                     <div className="text-center space-y-4 max-w-2xl mx-auto">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-wider">
                         <ClipboardList size={14} />
-                        Modulo di Iscrizione
+                        {landingDefaults.tally_badge || "Modulo di Iscrizione"}
                       </div>
                       <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
-                        {block.title || "Iscriviti o Registrati"}
+                        {block.title || landingDefaults.tally_title || "Iscriviti o Registrati"}
                       </h2>
                       {block.subtitle && (
                         <p className="text-base sm:text-lg text-foreground/70 font-medium leading-relaxed">
@@ -889,7 +894,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                           <iframe
                             data-tally-src={embedUrl}
                             src={embedUrl}
-                            title={block.title || "Modulo Tally"}
+                            title={block.title || landingDefaults.tally_iframe_title || "Modulo Tally"}
                             className="w-full h-[780px] sm:h-[840px] border-0 block bg-white"
                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
                             loading="lazy"
@@ -901,7 +906,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/60">
                           <div className="flex items-center gap-2">
                             <Info size={16} className="text-foreground/50 shrink-0" />
-                            <span>Problemi con il modulo? Puoi compilarlo a schermo intero:</span>
+                            <span>{landingDefaults.tally_fallback_trouble || "Problemi con il modulo? Puoi compilarlo a schermo intero:"}</span>
                           </div>
                           <a
                             href={rawUrl || embedUrl}
@@ -909,7 +914,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider transition-colors shrink-0 shadow-sm"
                           >
-                            <span>{block.fallback_label || "Apri su Tally"}</span>
+                            <span>{block.fallback_label || landingDefaults.tally_fallback_button || "Apri su Tally"}</span>
                             <ExternalLink size={12} />
                           </a>
                         </div>
@@ -918,7 +923,7 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                       <div className="p-12 rounded-3xl bg-muted/20 border border-foreground/5 text-center space-y-3 glass">
                         <ClipboardList size={36} className="mx-auto text-foreground/30" />
                         <p className="text-foreground/60 font-medium">
-                          Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell&apos;Admin.
+                          {landingDefaults.tally_not_configured || "Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell'Admin."}
                         </p>
                       </div>
                     )}
@@ -928,14 +933,14 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground/40 font-medium">
                         <div className="flex items-center gap-2">
                           <ShieldCheck size={16} className="text-emerald-400" />
-                          <span>Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)</span>
+                          <span>{landingDefaults.tally_security_notice || "Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)"}</span>
                         </div>
                         <div className="flex items-center gap-4">
                           <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
-                            Informativa Privacy
+                            {landingDefaults.tally_privacy_link || "Informativa Privacy"}
                           </Link>
                           <Link href="/Contatti" className="hover:text-foreground transition-colors underline">
-                            Contattaci
+                            {landingDefaults.tally_contact_link || "Contattaci"}
                           </Link>
                         </div>
                       </div>
@@ -961,12 +966,12 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
                     <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                     <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground relative z-10">
-                      {stripHtml(block.title || "Non Perdere lo Spettacolo")}
+                      {stripHtml(block.title || landingDefaults.closing_cta_title || "Non Perdere lo Spettacolo")}
                     </h2>
                     {block.text && (
-                      <p className="text-lg text-foreground/80 max-w-xl mx-auto font-medium relative z-10 whitespace-pre-wrap">
-                        {stripHtmlPreservingBreaks(block.text)}
-                      </p>
+                      <div className="text-lg text-foreground/80 max-w-xl mx-auto font-medium relative z-10 whitespace-pre-wrap">
+                        <FormattedText text={block.text} />
+                      </div>
                     )}
                     {block.cta_label && (
                       <div className="pt-4 relative z-10">
@@ -1000,11 +1005,11 @@ export default function LandingClient({ landing: initialLanding, site, slug }: L
             href="/"
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground/60 hover:text-foreground hover:underline transition-colors"
           >
-            <span>Visita il sito ufficiale Gli Attomatti</span>
+            <span>{landingDefaults.footer_home_link || "Visita il sito ufficiale Gli Attomatti"}</span>
             <ChevronRight size={14} />
           </Link>
           <p className="text-xs text-foreground/40 font-medium">
-            © {new Date().getFullYear()} Gli Attomatti. Tutti i diritti riservati. Zurigo, Svizzera.
+            © {new Date().getFullYear()} {site?.name || "Gli Attomatti"}. {landingDefaults.footer_copyright || "Tutti i diritti riservati. Zurigo, Svizzera."}
           </p>
         </div>
       </footer>

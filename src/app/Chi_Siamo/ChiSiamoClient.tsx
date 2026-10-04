@@ -16,10 +16,14 @@ const MotionImage = motion.create(Image);
 
 function SectionPhotoCarousel({
   images,
-  onImageClick
+  onImageClick,
+  fallbackAlt,
+  ariaPrefix
 }: {
   images: Array<{ url: string; alt?: string; no_crop?: boolean }>;
   onImageClick: (index: number) => void;
+  fallbackAlt?: string;
+  ariaPrefix?: string;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -46,7 +50,7 @@ function SectionPhotoCarousel({
         <MotionImage
           key={currentIndex}
           src={images[currentIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-          alt={images[currentIndex]?.alt || "Foto"}
+          alt={images[currentIndex]?.alt || fallbackAlt || "Foto"}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -69,7 +73,7 @@ function SectionPhotoCarousel({
                 setCurrentIndex(i);
               }}
               className="p-2 flex items-center justify-center"
-              aria-label={`Foto ${i + 1}`}
+              aria-label={`${ariaPrefix || "Foto"} ${i + 1}`}
             >
               <span
                 className={cn(
@@ -143,6 +147,8 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
                 {section.images && section.images.length > 0 && (
                   <SectionPhotoCarousel
                     images={section.images}
+                    fallbackAlt={chi_siamo.fallback_photo_alt}
+                    ariaPrefix={chi_siamo.photo_aria_prefix}
                     onImageClick={(imgIdx) =>
                       setLightbox({
                         isOpen: true,
@@ -205,6 +211,7 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
+        uiContent={content?.ui?.lightbox}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
     </div>

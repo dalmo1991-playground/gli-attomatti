@@ -16,11 +16,18 @@ interface LightboxProps {
   initialIndex: number;
   isOpen?: boolean;
   onClose: () => void;
+  uiContent?: {
+    close_aria_label?: string;
+    prev_aria_label?: string;
+    next_aria_label?: string;
+    default_alt?: string;
+  };
 }
 
-export function Lightbox({ images, initialIndex, isOpen = true, onClose }: LightboxProps) {
+export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiContent }: LightboxProps) {
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const ui = uiContent || {};
 
   useEffect(() => {
     setMounted(true);
@@ -94,7 +101,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
           {/* Close button with safe-area support */}
           <button
             onClick={onClose}
-            aria-label="Chiudi galleria"
+            aria-label={ui.close_aria_label || "Chiudi galleria"}
             className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-50 p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90"
           >
             <X size={26} />
@@ -104,14 +111,14 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                aria-label="Foto precedente"
+                aria-label={ui.prev_aria_label || "Foto precedente"}
                 className="hidden sm:flex absolute left-4 md:left-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:-translate-x-1"
               >
                 <ChevronLeft size={36} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                aria-label="Foto successiva"
+                aria-label={ui.next_aria_label || "Foto successiva"}
                 className="hidden sm:flex absolute right-4 md:right-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:translate-x-1"
               >
                 <ChevronRight size={36} />
@@ -131,7 +138,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose }: Light
                 exit={{ opacity: 0, scale: 1.04 }}
                 transition={{ duration: 0.2 }}
                 src={images[currentIndex]?.url || images[currentIndex]?.src || ""}
-                alt={images[currentIndex]?.alt || `Image ${currentIndex + 1}`}
+                alt={images[currentIndex]?.alt || `${ui.default_alt || "Foto"} ${currentIndex + 1}`}
                 className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
               />
             </AnimatePresence>

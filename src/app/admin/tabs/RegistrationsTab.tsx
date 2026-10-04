@@ -258,7 +258,7 @@ export function RegistrationsTab() {
                       <FormField
                         label="URL Modulo Tally.so"
                         value={page.tally_url || ""}
-                        onChange={(v) => updatePage(idx, "tally_url", v.trim())}
+                        onChange={(v) => updatePage(idx, "tally_url", v)}
                         placeholder="https://tally.so/r/LZaPOz"
                         helpText="Incolla l'URL pubblico o di condivisione del form Tally. Verrà incorporato fluidamente nella pagina."
                         required

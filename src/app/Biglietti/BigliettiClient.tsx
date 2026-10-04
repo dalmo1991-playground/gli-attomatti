@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Ticket, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
@@ -103,7 +104,7 @@ export default function BigliettiClient({ content: initialContent }: { content: 
 
                     {item.description && (
                       <p className="text-sm text-foreground/70 leading-relaxed line-clamp-3">
-                        {item.description}
+                        <FormattedText text={item.description} />
                       </p>
                     )}
 
@@ -132,7 +133,7 @@ export default function BigliettiClient({ content: initialContent }: { content: 
                       onClick={() => trackInitiateCheckout(item.title, item.checkoutHref)}
                       className="flex-1 py-3 px-5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:-translate-y-0.5"
                     >
-                      <span>Acquista Biglietto</span>
+                      <span>{hub.buy_ticket_cta || "Acquista Biglietto"}</span>
                       <ArrowRight size={14} />
                     </Link>
 
@@ -141,7 +142,7 @@ export default function BigliettiClient({ content: initialContent }: { content: 
                         href={item.detailsHref}
                         className="py-3 px-4 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center"
                       >
-                        Dettagli
+                        {hub.details_cta || "Dettagli"}
                       </Link>
                     )}
                   </div>
@@ -155,16 +156,16 @@ export default function BigliettiClient({ content: initialContent }: { content: 
               <Ticket size={32} />
             </div>
             <h2 className="text-2xl font-black uppercase tracking-tight mb-3">
-              Nessuna prevendita aperta
+              {hub.empty_title || "Nessuna prevendita aperta"}
             </h2>
             <p className="text-foreground/60 text-sm leading-relaxed mb-8">
-              Al momento non ci sono biglietti in vendita diretta. Scopri il nostro cartellone e i prossimi spettacoli in arrivo!
+              {hub.empty_description || "Al momento non ci sono biglietti in vendita diretta. Scopri il nostro cartellone e i prossimi spettacoli in arrivo!"}
             </p>
             <Link
               href="/Spettacoli"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-primary/20"
             >
-              <span>Vedi Spettacoli</span>
+              <span>{hub.view_shows_cta || "Vedi Spettacoli"}</span>
               <ArrowRight size={16} />
             </Link>
           </div>

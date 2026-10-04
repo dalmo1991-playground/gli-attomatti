@@ -8,11 +8,14 @@ import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
 import { compressImageClient } from "@/lib/clientImageCompress";
+import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
 
 interface ImageUploadFieldProps {
   label?: string;
   value: string;
   onChange: (url: string) => void;
+  align?: ImageAlign;
+  onAlignChange?: (align: "left" | "center" | "right") => void;
   aspect?: "video" | "square" | "portrait";
   layout?: "horizontal" | "vertical" | "auto";
   helpText?: string;
@@ -23,6 +26,8 @@ export function ImageUploadField({
   label,
   value,
   onChange,
+  align = "center",
+  onAlignChange,
   aspect = "video",
   layout = "auto",
   helpText,
@@ -132,7 +137,8 @@ export function ImageUploadField({
                 alt="Preview"
                 fill
                 sizes="250px"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className={cn("object-cover group-hover:scale-105 transition-transform duration-500", getImagePositionClass(align))}
+                style={{ objectPosition: getImageObjectPositionStyle(align) }}
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <button
@@ -291,6 +297,65 @@ export function ImageUploadField({
           <p className="text-[10px] text-foreground/40 font-medium leading-snug">
             {helpText || "Scegli una foto dalla Galleria per riutilizzarla, oppure trascina/carica un nuovo file."}
           </p>
+
+          {/* Focal Point / Mobile Crop Alignment Selector */}
+          {value && onAlignChange && (
+            <div className="pt-2.5 mt-2 border-t border-foreground/5 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-foreground/70">
+                  Ritaglio Mobile / Ancoraggio elemento:
+                </span>
+                <span className="text-[10px] text-primary font-bold uppercase tracking-wider">
+                  {String(align).toLowerCase() === "left" || String(align).toLowerCase() === "sinistra"
+                    ? "Sinistra"
+                    : String(align).toLowerCase() === "right" || String(align).toLowerCase() === "destra"
+                    ? "Destra"
+                    : "Centro"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5 p-1 bg-background/60 rounded-xl border border-foreground/5 text-xs">
+                <button
+                  type="button"
+                  onClick={() => onAlignChange("left")}
+                  className={cn(
+                    "py-1.5 px-2 rounded-lg font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer text-xs",
+                    String(align).toLowerCase() === "left" || String(align).toLowerCase() === "sinistra"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                  )}
+                  title="Ancora a sinistra: su schermi stretti/smartphone viene preservata la parte sinistra della foto"
+                >
+                  <span>◀ Sinistra</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onAlignChange("center")}
+                  className={cn(
+                    "py-1.5 px-2 rounded-lg font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer text-xs",
+                    !align || String(align).toLowerCase() === "center" || String(align).toLowerCase() === "centro"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                  )}
+                  title="Ancora al centro: ritaglio simmetrico standard"
+                >
+                  <span>● Centro</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onAlignChange("right")}
+                  className={cn(
+                    "py-1.5 px-2 rounded-lg font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer text-xs",
+                    String(align).toLowerCase() === "right" || String(align).toLowerCase() === "destra"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                  )}
+                  title="Ancora a destra: su schermi stretti/smartphone viene preservata la parte destra della foto"
+                >
+                  <span>Destra ▶</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

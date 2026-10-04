@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, ChevronDown, ChevronUp, Check, X, Sliders } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FormattedText } from "@/components/ui/FormattedText";
 
 export interface StoredConsent {
   version: number;
@@ -15,10 +16,17 @@ export interface StoredConsent {
 
 interface CookieBannerProps {
   integrations?: any;
+  uiContent?: any;
   onConsentChange: (consent: { analytics: boolean; marketing: boolean }) => void;
 }
 
-export function CookieBanner({ integrations, onConsentChange }: CookieBannerProps) {
+export function CookieBanner({ integrations, uiContent, onConsentChange }: CookieBannerProps) {
+  const ui = uiContent || {};
+  const cat = ui.categories || {};
+  const necCat = cat.necessary || {};
+  const anaCat = cat.analytics || {};
+  const mktCat = cat.marketing || {};
+
   const ga = integrations?.google_analytics;
   const meta = integrations?.meta_pixel;
 
@@ -135,6 +143,13 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
 
   if (!isAnyTrackerActive || !isOpen) return null;
 
+  const renderedDescription = ui.description
+    ? ui.description
+        .replace("{ga}", isGaActive ? "Google Analytics" : "")
+        .replace("{meta}", isMetaActive ? "Meta Pixel" : "")
+        .replace("()", "")
+    : `Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi (${isGaActive && "Google Analytics"}) e marketing (${isMetaActive && "Meta Pixel"}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.`;
+
   return (
     <AnimatePresence>
       <motion.div
@@ -153,24 +168,24 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-black uppercase tracking-tight">
-                  Preferenze sui Cookie & Privacy
+                  {ui.title || "Preferenze sui Cookie & Privacy"}
                 </h3>
                 <span className="text-[11px] font-bold text-foreground/50 uppercase tracking-wider">
-                  Approccio Trasparente (Opt-in)
+                  {ui.badge || "Approccio Trasparente (Opt-in)"}
                 </span>
               </div>
             </div>
 
             {hasNewTrackingNotice && (
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold border border-amber-500/20">
-                Nuovi strumenti attivati: richiesto consenso
+                {ui.new_tools_notice || "Nuovi strumenti attivati: richiesto consenso"}
               </span>
             )}
           </div>
 
           {/* Description */}
           <p className="text-sm text-foreground/80 leading-relaxed font-medium">
-            Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi ({isGaActive && "Google Analytics"}) e marketing ({isMetaActive && "Meta Pixel"}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.
+            <FormattedText text={renderedDescription} />
           </p>
 
           {/* Expandable Customization Details */}
@@ -184,13 +199,15 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
               {/* Necessari */}
               <div className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4">
                 <div>
-                  <span className="font-bold text-foreground block text-sm">Cookie Tecnici Necessari</span>
+                  <span className="font-bold text-foreground block text-sm">
+                    {necCat.title || "Cookie Tecnici Necessari"}
+                  </span>
                   <span className="text-foreground/60 leading-relaxed">
-                    Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi.
+                    {necCat.description || "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi."}
                   </span>
                 </div>
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider shrink-0">
-                  Sempre Attivi
+                  {necCat.badge || "Sempre Attivi"}
                 </span>
               </div>
 
@@ -198,9 +215,11 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
               {isGaActive && (
                 <label className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4 cursor-pointer hover:bg-foreground/10 transition-colors">
                   <div>
-                    <span className="font-bold text-foreground block text-sm">Statistici e Analisi (Google Analytics 4)</span>
+                    <span className="font-bold text-foreground block text-sm">
+                      {anaCat.title || "Statistici e Analisi (Google Analytics 4)"}
+                    </span>
                     <span className="text-foreground/60 leading-relaxed">
-                      Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati.
+                      {anaCat.description || "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati."}
                     </span>
                   </div>
                   <input
@@ -216,9 +235,11 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
               {isMetaActive && (
                 <label className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4 cursor-pointer hover:bg-foreground/10 transition-colors">
                   <div>
-                    <span className="font-bold text-foreground block text-sm">Marketing e Social (Meta Pixel / Instagram)</span>
+                    <span className="font-bold text-foreground block text-sm">
+                      {mktCat.title || "Marketing e Social (Meta Pixel / Instagram)"}
+                    </span>
                     <span className="text-foreground/60 leading-relaxed">
-                      Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook.
+                      {mktCat.description || "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook."}
                     </span>
                   </div>
                   <input
@@ -241,11 +262,11 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                 className="hover:text-primary transition-colors inline-flex items-center gap-1 font-bold underline"
               >
                 <Sliders size={13} />
-                <span>{showDetails ? "Chiudi personalizzazione" : "Personalizza scelte"}</span>
+                <span>{showDetails ? (ui.customize_close || "Chiudi personalizzazione") : (ui.customize_open || "Personalizza scelte")}</span>
               </button>
 
               <Link href="/Privacy" className="hover:text-primary transition-colors underline">
-                Informativa Privacy
+                {ui.privacy_policy_link || "Informativa Privacy"}
               </Link>
             </div>
 
@@ -255,7 +276,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                 onClick={handleRejectAll}
                 className="flex-1 sm:flex-initial px-5 py-2.5 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/70 hover:text-foreground text-xs font-bold uppercase tracking-wider transition-all"
               >
-                Rifiuta non necessari
+                {ui.reject_all_label || "Rifiuta non necessari"}
               </button>
 
               {showDetails ? (
@@ -264,7 +285,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                   onClick={handleSaveCustom}
                   className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
                 >
-                  Salva preferenze
+                  {ui.save_preferences_label || "Salva preferenze"}
                 </button>
               ) : (
                 <button
@@ -272,7 +293,7 @@ export function CookieBanner({ integrations, onConsentChange }: CookieBannerProp
                   onClick={handleAcceptAll}
                   className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
                 >
-                  Accetta tutti
+                  {ui.accept_all_label || "Accetta tutti"}
                 </button>
               )}
             </div>

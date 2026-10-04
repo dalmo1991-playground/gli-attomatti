@@ -18,6 +18,7 @@ export function Navbar({ content }: { content: any }) {
 
   const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
   const siteName = content?.site?.name || "Gli Attomatti";
+  const uiNavbar = content?.ui?.navbar || {};
 
   const getSafeHref = (href?: string) => {
     if (!href) return "/";
@@ -145,7 +146,7 @@ export function Navbar({ content }: { content: any }) {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8 items-center" aria-label="Navigazione principale">
+        <nav className="hidden md:flex space-x-8 items-center" aria-label={uiNavbar.main_nav_aria_label || "Navigazione principale"}>
           {navigation.map((link: any, idx: number) => {
             const safeHref = getSafeHref(link.href);
             const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
@@ -216,7 +217,7 @@ export function Navbar({ content }: { content: any }) {
         <button
           className="md:hidden text-foreground min-w-[44px] min-h-[44px] p-2 -mr-2 rounded-xl flex items-center justify-center hover:bg-foreground/5 transition-all active:scale-95"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Chiudi menu" : "Apri menu"}
+          aria-label={isOpen ? (uiNavbar.close_menu_aria_label || "Chiudi menu") : (uiNavbar.open_menu_aria_label || "Apri menu")}
           aria-expanded={isOpen}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -234,7 +235,7 @@ export function Navbar({ content }: { content: any }) {
             className="md:hidden w-full max-h-[calc(100dvh-4.5rem)] bg-background/95 backdrop-blur-xl border-t border-foreground/10 flex flex-col"
           >
             <div className="w-full overflow-y-auto overscroll-contain custom-scrollbar touch-pan-y flex-1 min-h-0">
-              <nav className="flex flex-col gap-6 px-6 pt-6 pb-[max(5rem,calc(env(safe-area-inset-bottom)+3rem))]" aria-label="Navigazione mobile">
+              <nav className="flex flex-col gap-6 px-6 pt-6 pb-[max(5rem,calc(env(safe-area-inset-bottom)+3rem))]" aria-label={uiNavbar.mobile_nav_aria_label || "Navigazione mobile"}>
                 {navigation.map((link: any, idx: number) => {
                   const safeHref = getSafeHref(link.href);
                   const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
@@ -289,7 +290,7 @@ export function Navbar({ content }: { content: any }) {
                     className="w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                   >
                     <Ticket size={16} />
-                    <span>Acquista Biglietti</span>
+                    <span>{uiNavbar.buy_tickets_label || "Acquista Biglietti"}</span>
                   </Link>
 
                   <Link
@@ -297,7 +298,7 @@ export function Navbar({ content }: { content: any }) {
                     onClick={() => setIsOpen(false)}
                     className="w-full py-3 px-6 rounded-2xl bg-muted/40 hover:bg-muted/70 text-foreground/80 font-bold text-xs uppercase tracking-wider flex items-center justify-center transition-all active:scale-[0.98] border border-foreground/5"
                   >
-                    <span>Contattaci / Scrivici</span>
+                    <span>{uiNavbar.contact_us_label || "Contattaci / Scrivici"}</span>
                   </Link>
                 </div>
               </nav>

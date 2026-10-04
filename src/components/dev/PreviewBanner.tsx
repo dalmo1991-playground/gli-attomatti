@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Eye, X, ArrowLeft } from "lucide-react";
 
-export function PreviewBanner() {
+export function PreviewBanner({ content }: { content?: any }) {
   const [show, setShow] = useState(false);
+  const ui = content || {};
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -55,7 +56,7 @@ export function PreviewBanner() {
 
   return (
     <aside
-      aria-label="Modalità Anteprima Bozza"
+      aria-label={ui.aria_label || "Modalità Anteprima Bozza"}
       className="fixed top-0 left-0 right-0 z-[60] h-10 sm:h-11 bg-amber-500/95 hover:bg-amber-500 text-slate-950 shadow-lg backdrop-blur-md transition-all flex items-center justify-between px-3 sm:px-6 text-xs select-none border-b border-amber-600/30"
     >
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -66,11 +67,11 @@ export function PreviewBanner() {
 
         <div className="flex items-center gap-1.5 shrink-0 uppercase tracking-wider font-black text-[10px] sm:text-xs bg-slate-950 text-amber-400 px-2.5 py-0.5 rounded-full shadow-sm">
           <Eye size={12} />
-          <span>Anteprima Live</span>
+          <span>{ui.badge || "Anteprima Live"}</span>
         </div>
 
         <span className="hidden md:inline truncate text-[11px] text-slate-900 font-semibold">
-          Stai visualizzando il sito con le modifiche non pubblicate sincronizzate in tempo reale dal CMS.
+          {ui.message || "Stai visualizzando il sito con le modifiche non pubblicate sincronizzate in tempo reale dal CMS."}
         </span>
       </div>
 
@@ -78,20 +79,20 @@ export function PreviewBanner() {
         <Link
           href="/admin"
           className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/15 hover:bg-slate-950/25 text-slate-950 transition-colors text-[11px] font-bold"
-          title="Torna al pannello di amministrazione"
+          title={ui.admin_title || "Torna al pannello di amministrazione"}
         >
           <ArrowLeft size={12} />
-          <span>Pannello CMS</span>
+          <span>{ui.admin_button || "Pannello CMS"}</span>
         </Link>
 
         <button
           type="button"
           onClick={handleExit}
           className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-950 text-white hover:bg-slate-900 transition-colors text-[11px] font-bold shadow-sm"
-          title="Esci dalla modalità anteprima e torna alla versione pubblica"
+          title={ui.exit_title || "Esci dalla modalità anteprima e torna alla versione pubblica"}
         >
           <X size={12} />
-          <span>Esci dall&apos;anteprima</span>
+          <span>{ui.exit_button || "Esci dall'anteprima"}</span>
         </button>
       </div>
     </aside>

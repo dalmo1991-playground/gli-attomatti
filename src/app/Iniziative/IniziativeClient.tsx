@@ -37,7 +37,7 @@ export default function IniziativeClient({ content: initialContent }: { content:
                 {section.year && (
                   <div className="inline-flex items-center px-4 py-1.5 bg-accent/15 text-accent border border-accent/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_12px_rgba(251,191,36,0.15)]">
                     <Calendar size={14} className="mr-2" />
-                    Anno {section.year}
+                    {(iniziative.year_prefix || "Anno ")}{section.year}
                   </div>
                 )}
                 {section.slug ? (
@@ -64,7 +64,7 @@ export default function IniziativeClient({ content: initialContent }: { content:
                     href={`/Iniziative/${section.slug}`}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
                   >
-                    <span>Scopri l&apos;iniziativa</span>
+                    <span>{section.discover_cta || iniziative.discover_cta || "Scopri l'iniziativa"}</span>
                     <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 )}
@@ -84,9 +84,11 @@ export default function IniziativeClient({ content: initialContent }: { content:
       ) : (
         <Section className="py-24 text-center">
           <Calendar className="mx-auto text-primary/40 mb-4" size={48} />
-          <h3 className="text-2xl font-bold mb-2">Nuove iniziative in arrivo</h3>
+          <h3 className="text-2xl font-bold mb-2">
+            {iniziative.empty_title || "Nuove iniziative in arrivo"}
+          </h3>
           <p className="text-foreground/60 max-w-md mx-auto">
-            Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!
+            {iniziative.empty_description || "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!"}
           </p>
         </Section>
       )}

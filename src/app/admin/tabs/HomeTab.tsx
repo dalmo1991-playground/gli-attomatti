@@ -286,10 +286,13 @@ export function HomeTab() {
               </div>
 
               <ImageUploadField
-                label="Locandina o Foto di Scena"
+                label="Locandina o Foto di Scena (Sfondo Hero)"
                 value={show.image}
                 onChange={(url) => updateShowField(idx, "image", url)}
+                align={show.image_align || show.image_position || "center"}
+                onAlignChange={(align) => updateShowField(idx, "image_align", align)}
                 aspect="video"
+                helpText="Se la foto ha un elemento principale a destra o a sinistra, imposta l'ancoraggio per preservarlo durante il ritaglio su mobile."
               />
             </AccordionCard>
           ))}

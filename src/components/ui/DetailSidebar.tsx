@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { FormattedText } from "./FormattedText";
+
 export interface DetailDate {
   date: string;
   location?: string;
@@ -113,7 +115,7 @@ export function DetailSidebar({
                   {detail.label}
                 </span>
                 <span className="font-black text-primary text-right leading-snug break-words">
-                  {detail.value}
+                  <FormattedText text={detail.value} />
                 </span>
               </div>
             ))}

@@ -104,7 +104,7 @@ export function IntegrationsTab() {
               <FormField
                 label="Measurement ID (ID di Misurazione)"
                 value={ga.measurement_id || ""}
-                onChange={(v) => updateContent("integrations.google_analytics.measurement_id", v.trim())}
+                onChange={(v) => updateContent("integrations.google_analytics.measurement_id", v)}
                 placeholder="es. G-XXXXXXXXXX"
                 helpText="Trovi il Measurement ID nelle impostazioni del flusso di dati su Google Analytics."
               />
@@ -137,7 +137,7 @@ export function IntegrationsTab() {
               <FormField
                 label="ID Pixel Meta"
                 value={meta.pixel_id || ""}
-                onChange={(v) => updateContent("integrations.meta_pixel.pixel_id", v.trim())}
+                onChange={(v) => updateContent("integrations.meta_pixel.pixel_id", v)}
                 placeholder="es. 123456789012345"
                 helpText="ID numerico ricavabile da Gestione Eventi (Meta Business Suite)."
               />

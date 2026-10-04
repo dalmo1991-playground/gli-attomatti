@@ -2,7 +2,32 @@
   "site": {
     "name": "Gli Attomatti",
     "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
-    "language": "it"
+    "language": "it",
+    "seo": {
+      "site_name": "Gli Attomatti",
+      "title_template": "%s | Gli Attomatti",
+      "default_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
+      "default_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
+      "default_image": "/images/1782553290530-TheaterCurtain.webp",
+      "locale": "it_CH",
+      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
+      "logo_alt": "Gli Attomatti",
+      "keywords": [
+        "compagnia teatrale zurigo",
+        "teatro italiano zurigo",
+        "spettacoli zurigo",
+        "teatro amatoriale svizzera",
+        "gli attomatti",
+        "commedia teatrale zurigo",
+        "cultura italiana zurigo",
+        "eventi italiani zurigo",
+        "biglietti teatro zurigo"
+      ],
+      "socials": [
+        "https://www.instagram.com/gliattomatti/",
+        "https://www.facebook.com/p/Gli-Attomatti-61572328015344/"
+      ]
+    }
   },
   "navigation": [
     {
@@ -104,8 +129,13 @@
           "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp"
         }
       ],
+      "fallback_show_alt": "Spettacolo",
+      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
+      "slide_aria_prefix": "Slide",
       "introduction": {
         "title": "Gli Attomatti",
+        "story_button_label": "Scopri la nostra storia",
+        "fallback_alt": "Introduzione",
         "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e la voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione",
         "images": [
           {
@@ -174,12 +204,30 @@
             "url": "https://www.instagram.com/gliattomatti/p/DcgCuHCoxwz/",
             "title": ""
           }
-        ]
-      }
+        ],
+        "badge": "Social & Backstage",
+        "enable_all_label": "Abilita tutti i post",
+        "prev_aria": "Precedente",
+        "next_aria": "Successivo",
+        "card": {
+          "badge": "Protezione Privacy (2-Click)",
+          "default_title": "Post Instagram",
+          "privacy_explanation": "Per tutelare la tua privacy, i contenuti esterni di Meta sono bloccati. Cliccando accetti il caricamento dell'incorporamento da Instagram e la trasmissione del tuo indirizzo IP a Meta Platforms Ireland Ltd.",
+          "load_post_button": "Carica questo post",
+          "show_all_button": "Mostra tutti i post",
+          "privacy_link": "Informativa Privacy",
+          "open_on_instagram": "Apri su Instagram",
+          "loading_text": "Caricamento post..."
+        }
+      },
+      "discover_story_cta": "Scopri la nostra storia",
+      "slide_aria_prefix": "Slide"
     },
     "chi_siamo": {
       "title": "Chi Siamo",
       "description": "Portiamo la passione del teatro italiano nel cuore di Zurigo.",
+      "fallback_photo_alt": "Foto",
+      "photo_aria_prefix": "Foto",
       "content_sections": [
         {
           "title": "La Nostra Storia",
@@ -238,10 +286,19 @@
           "icon": "message-square",
           "visible": true
         }
-      ]
+      ],
+      "photo_alt": "Foto",
+      "carousel_photo_aria": "Foto"
     },
     "attori": {
       "title": "Persone",
+      "description": "Le persone che rendono possibile la magia del teatro Attomatti.",
+      "back_label": "Torna a Chi Siamo",
+      "back_href": "/Chi_Siamo",
+      "empty_message": "Nessun membro attualmente inserito.",
+      "modal_close_aria": "Chiudi scheda attore",
+      "shows_heading": "Spettacoli e Ruoli",
+      "fallback_actor_alt": "Attore",
       "list": [
         {
           "name": "Domenico",
@@ -553,11 +610,20 @@
         "text": "Siamo sempre alla ricerca di nuovi talenti, sia sul palco che dietro le quinte. Se hai passione per il teatro e voglia di metterti in gioco, contattaci!",
         "cta_label": "Diventa un Attomatto",
         "cta_href": "/Contatti"
-      }
+      },
+      "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
+      "back_link_label": "Torna a Chi Siamo",
+      "empty_list": "Nessun membro attualmente inserito.",
+      "shows_heading": "Spettacoli e Ruoli",
+      "close_modal_aria": "Chiudi scheda attore",
+      "default_actor_alt": "Attore"
     },
     "parlano_di_noi": {
       "title": "Dicono di Noi",
       "description": "Gli attomatti nella stampa",
+      "back_label": "Torna a Chi Siamo",
+      "back_href": "/Chi_Siamo",
+      "year_prefix": "Anno ",
       "press": [
         {
           "source": "RSI",
@@ -580,11 +646,24 @@
         "text": "Sei un giornalista o un blogger e vuoi parlare della nostra compagnia? Contattaci per ricevere il press kit o per fissare un'intervista.",
         "cta_label": "Contattaci",
         "cta_href": "/Contatti"
-      }
+      },
+      "back_link_label": "Torna a Chi Siamo",
+      "year_prefix": "Anno"
     },
     "spettacoli": {
       "title": "I Nostri fantastici show",
       "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
+      "year_prefix": "Anno ",
+      "discover_cta": "Scopri lo spettacolo",
+      "empty_message": "Nessuno spettacolo in archivio al momento.",
+      "not_found_title": "Spettacolo non trovato",
+      "back_to_archive_label": "Torna all'archivio",
+      "archive_href": "/Spettacoli",
+      "season_prefix": "Stagione",
+      "detail_main_heading": "Lo Spettacolo",
+      "detail_dates_title": "Date e Biglietti",
+      "detail_info_title": "Info Spettacolo",
+      "detail_empty_dates_message": "Nessuna data futura programmata per questo spettacolo.",
       "archive_sections": [
         {
           "title": "Non Sottovalutare i 40",
@@ -810,11 +889,36 @@
           ],
           "visible": true
         }
-      ]
+      ],
+      "year_prefix": "Anno",
+      "discover_show_cta": "Scopri lo spettacolo",
+      "empty_archive": "Nessuno spettacolo in archivio al momento.",
+      "detail": {
+        "back_link_label": "Torna all'Archivio",
+        "season_prefix": "Stagione",
+        "show_heading": "Lo Spettacolo",
+        "dates_title": "Date e Biglietti",
+        "details_title": "Info Spettacolo",
+        "empty_dates": "Nessuna data futura programmata per questo spettacolo.",
+        "not_found_title": "Spettacolo non trovato",
+        "not_found_cta": "Torna all'archivio"
+      }
     },
     "iniziative": {
       "title": "Le Nostre Iniziative",
       "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
+      "year_prefix": "Anno ",
+      "discover_cta": "Scopri l'iniziativa",
+      "empty_title": "Nuove iniziative in arrivo",
+      "empty_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
+      "not_found_title": "Iniziativa non trovata",
+      "back_to_list_label": "Torna all'elenco iniziative",
+      "archive_href": "/Iniziative",
+      "edition_prefix": "Edizione",
+      "detail_main_heading": "L'Iniziativa",
+      "detail_dates_title": "Date e Iscrizioni",
+      "detail_info_title": "Info Iniziativa",
+      "detail_empty_dates_message": "Nessun calendario al momento programmato.",
       "archive_sections": [
         {
           "slug": "laboratorio-teatrale",
@@ -947,7 +1051,21 @@
             }
           ]
         }
-      ]
+      ],
+      "year_prefix": "Anno",
+      "discover_initiative_cta": "Scopri l'iniziativa",
+      "empty_archive_title": "Nuove iniziative in arrivo",
+      "empty_archive_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
+      "detail": {
+        "back_link_label": "Torna alle Iniziative",
+        "edition_prefix": "Edizione",
+        "initiative_heading": "L'Iniziativa",
+        "dates_title": "Date e Iscrizioni",
+        "details_title": "Info Iniziativa",
+        "empty_dates": "Nessun calendario al momento programmato.",
+        "not_found_title": "Iniziativa non trovata",
+        "not_found_cta": "Torna all'elenco iniziative"
+      }
     },
     "contatti": {
       "title": "Contattaci",
@@ -966,7 +1084,268 @@
           "handle": "Gli Attomatti",
           "visible": true
         }
+      ],
+      "email_label": "Email"
+    },
+    "impressum": {
+      "meta": {
+        "title": "Note Legali & Impressum",
+        "description": "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti."
+      },
+      "back_link": "Torna alla home",
+      "badge": "Note Legali",
+      "title": "Impressum",
+      "description": "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici.",
+      "organization": {
+        "section_title": "Organizzazione",
+        "name": "Gli Attomatti",
+        "address_label": "Indirizzo",
+        "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
+        "represented_by_label": "Rappresentato da",
+        "represented_by": "Domenico Scotti di Carlo"
+      },
+      "contacts": {
+        "section_title": "Contatti telematici",
+        "email_label": "Email",
+        "email": "compagniateatralegliattomatti@gmail.com",
+        "website_label": "Sito web",
+        "website_url": "https://gliattomatti.ch"
+      },
+      "liability": {
+        "section_title": "Esclusione di responsabilità (Haftungsausschluss)",
+        "contents_title": "Contenuti del sito:",
+        "contents_text": "I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento.",
+        "links_title": "Collegamenti esterni e servizi incorporati (iframe embed):",
+        "links_text_1": "Il nostro sito include collegamenti telematici a siti terzi nonché servizi digitali incorporati direttamente nelle pagine, in particolare la piattaforma svizzera di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+        "links_text_2": "L'accesso, la compilazione e l'utilizzo di tali servizi terzi avvengono a esclusivo rischio dell'utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori."
+      },
+      "copyright": {
+        "section_title": "Diritto d'autore (Copyright)",
+        "text": "I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d'autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d'autore richiede il previo consenso scritto dell'autore o degli autori in questione."
+      }
+    },
+    "termini": {
+      "meta": {
+        "title": "Termini di Biglietteria e Iscrizioni",
+        "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione agli eventi e l'accesso agli spettacoli teatrali della compagnia Gli Attomatti a Zurigo."
+      },
+      "back_link": "Torna alla home",
+      "badge": "Regolamento Spettacoli & Eventi",
+      "title": "Termini e Condizioni",
+      "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione a corsi ed eventi teatrali, e regolamento di sala della compagnia teatrale Gli Attomatti.",
+      "sections": [
+        {
+          "id": "scope",
+          "title": "1. Ambito di applicazione e canali di fruizione",
+          "intro": "Le presenti Condizioni Generali disciplinano il rapporto tra l'utente e l'organizzatore Gli Attomatti (Zurigo, Svizzera) in merito alla partecipazione agli spettacoli teatrali, corsi, laboratori ed eventi culturali promossi.",
+          "items": [
+            {
+              "label": "Biglietti per spettacoli a pagamento:",
+              "text": "l'acquisto può essere completato direttamente sul portale di ticketing o mediante le casse incorporate (iframe embed) integrate nelle nostre pagine dell'hub /Biglietti e delle sezioni /Biglietti/[slug]. L'elaborazione tecnica della transazione e l'emissione del titolo d'accesso con QR code sono gestiti dalla piattaforma partner svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera), alle cui condizioni contrattuali per gli acquirenti si rimanda per gli aspetti transazionali."
+            },
+            {
+              "label": "Iscrizioni a eventi gratuiti, workshop o audizioni:",
+              "text": "la prenotazione avviene tramite moduli interattivi (anche incorporati via iframe) forniti dalla piattaforma Tally BV (Gand, Belgio) raggiungibili all'hub /Registrazioni, alle pagine /Registrazioni/[slug] o link associati."
+            },
+            {
+              "label": "Richieste per affitto sala (Saalvermietung) o contatti speciali:",
+              "text": "i moduli compilabili sul sito hanno valore di richiesta informativa preliminare e non costituiscono di per sé un contratto di locazione perfezionato, il quale richiede espressa conferma scritta e stipula tra le parti."
+            }
+          ]
+        },
+        {
+          "id": "pricing",
+          "title": "2. Prezzi, acquisto e perfezionamento delle registrazioni",
+          "paragraphs": [
+            "Tutti i prezzi dei biglietti per gli spettacoli sono espressi in Franchi Svizzeri (CHF). L'acquisto si perfeziona con il buon fine del pagamento su Eventfrog e l'invio telematico del biglietto elettronico recante codice QR univoco.",
+            "Per gli eventi gestiti tramite registrazione via form (Tally), la partecipazione è confermata unicamente a seguito del completamento del modulo."
+          ]
+        },
+        {
+          "id": "refunds",
+          "title": "3. Rimborsi, rinuncia e politica di presenza responsabile (No-Show)",
+          "intro": "Di norma, i biglietti acquistati per gli spettacoli non sono rimborsabili da parte dell'organizzatore in caso di mancata partecipazione o rinuncia per motivi personali dell'acquirente. I biglietti possono essere liberamente ceduti a terzi.",
+          "cards": [
+            {
+              "title": "Copertura assicurativa facoltativa Eventfrog",
+              "text": "In fase di acquisto sulla cassa Eventfrog, l'acquirente può facoltativamente sottoscrivere l'assicurazione di annullamento e rimborso offerta direttamente da Eventfrog o da compagnie partner. In tal caso, il diritto al rimborso è disciplinato esclusivamente dalla polizza sottoscritta ed è gestito direttamente con Eventfrog."
+            },
+            {
+              "title": "Presenza responsabile per eventi gratuiti su registrazione (Tally)",
+              "text": "Per i corsi, workshop o spettacoli gratuiti a posti limitati, l'iscrizione impegna il partecipante a presenziare. Qualora sopraggiungesse un impedimento, è richiesto di comunicare la disdetta con tempestività (scrivendo a compagniateatralegliattomatti@gmail.com) al fine di consentire lo scorrimento della lista d'attesa ad altre persone interessate."
+            }
+          ]
+        },
+        {
+          "id": "cancellation",
+          "title": "4. Annullamento o rinvio dell'evento",
+          "paragraphs": [
+            "In caso di annullamento definitivo di uno spettacolo o evento per cause di forza maggiore, disposizioni di pubblica sicurezza o impedimenti organizzativi insormontabili, l'importo nominale dei biglietti acquistati sarà rimborsato all'acquirente secondo le modalità operative della piattaforma Eventfrog.",
+            "In caso di rinvio a data alternativa, il biglietto o l'iscrizione rimane valido per la nuova data comunicata. Qualora l'utente non possa partecipare nella nuova data, avrà facoltà di richiedere il rimborso o cancellare l'iscrizione secondo le tempistiche indicate tempestivamente dall'organizzatore."
+          ]
+        },
+        {
+          "id": "hall_access",
+          "title": "5. Accesso in sala, orari e puntualità",
+          "paragraphs": [
+            "Gli orari esatti di apertura delle porte, del botteghino e di inizio della rappresentazione sono indicati caso per caso nelle informazioni specifiche di ciascuno spettacolo sul sito web e sul biglietto emesso.",
+            "Si raccomanda di presentarsi con congruo anticipo. Per tutelare il lavoro degli interpreti e la concentrazione del pubblico, a spettacolo iniziato l'ingresso in sala potrebbe non essere consentito fino all'eventuale primo intervallo utile, a discrezione del personale di sala."
+          ]
+        },
+        {
+          "id": "rules",
+          "title": "6. Norme di sala, riprese e divieti",
+          "text": "Durante la rappresentazione è severamente vietato effettuare riprese audio/video integrali o utilizzare il flash fotografico. I telefoni cellulari e altri dispositivi elettronici devono essere silenziati prima dell'inizio dello spettacolo. L'organizzatore si riserva il diritto di allontanare dalla sala chiunque turbi il regolare svolgimento della recita."
+        },
+        {
+          "id": "photo_policy",
+          "title": "7. Foto, riprese video e diritto all'immagine",
+          "intro": "Durante gli spettacoli, i workshop, le prove aperte e gli eventi organizzati dalla compagnia teatrale Gli Attomatti, possono essere effettuate riprese fotografiche e registrazioni video a scopo di documentazione culturale, archivio storico e divulgazione artistica. Tali contenuti possono essere pubblicati sui canali ufficiali della compagnia (inclusi il presente sito web, i profili social ufficiali come Instagram e Facebook, o materiali promozionali e rassegne stampa).",
+          "notice_box": {
+            "title": "Preferisci non comparire? Basta dircelo!",
+            "paragraphs": [
+              "Rispettiamo pienamente la riservatezza e le preferenze di ciascun spettatore e partecipante: se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all'ingresso o in qualsiasi momento durante la serata. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.",
+              "Inoltre, se in seguito dovessi notare una tua immagine in una foto o in un video già pubblicato e desiderassi la rimozione o l'oscuramento, puoi richiederlo in qualsiasi momento scrivendoci a compagniateatralegliattomatti@gmail.com: provvederemo con la massima tempestività."
+            ]
+          }
+        },
+        {
+          "id": "third_party",
+          "title": "8. Servizi terzi incorporati e limitazione di responsabilità tecnica",
+          "text": "L'incorporamento dei moduli e delle casse digitali (iframe di Eventfrog AG e Tally BV) avviene nel rispetto dei migliori standard di sicurezza web. Tuttavia, Gli Attomatti non possono essere ritenuti responsabili per temporanee interruzioni di rete, indisponibilità dei server terzi, malfunzionamenti dei gateway bancari o ritardi nella consegna delle notifiche telematiche imputabili ai rispettivi fornitori esterni indipendenti."
+        },
+        {
+          "id": "jurisdiction",
+          "title": "9. Diritto applicabile e foro competente",
+          "text": "Il rapporto contrattuale è disciplinato esclusivamente dal diritto materiale svizzero. Per qualsiasi controversia il foro competente esclusivo è quello di Zurigo, Svizzera."
+        }
       ]
+    },
+    "privacy": {
+      "meta": {
+        "title": "Informativa sulla Privacy",
+        "description": "Informativa sul trattamento dei dati personali (Datenschutzerklärung) ai sensi della nLPD svizzera."
+      },
+      "back_link": "Torna alla home",
+      "badge": "Datenschutzerklärung",
+      "title": "Informativa sulla Privacy",
+      "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD) e al principio di trasparenza (Opt-in).",
+      "data_controller": {
+        "title": "Titolare del trattamento",
+        "name": "Gli Attomatti",
+        "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
+        "email_label": "Contatto email:",
+        "email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "general_processing": {
+        "title": "Trattamento generale dei dati",
+        "text": "Trattiamo i dati personali solo ed esclusivamente nella misura necessaria per fornire un sito web funzionante e per offrire i nostri servizi teatrali, prevendite, registrazioni a eventi e comunicazioni informative."
+      },
+      "server_logs": {
+        "title": "File di log del server",
+        "text": "Il nostro fornitore di hosting, Vercel, raccoglie e memorizza automaticamente dati tecnici nei file di log del server che il tuo browser ci trasmette. Questi includono indirizzo IP, tipo e versione del browser, sistema operativo utilizzato, URL di riferimento e ora della richiesta al server. Questi dati sono necessari per il funzionamento sicuro del server e non vengono incrociati o uniti ad altre fonti di dati."
+      },
+      "cookie_opt_in": {
+        "title": "Cookie, sessioni e servizi incorporati (Opt-in)",
+        "intro_1": "Questo sito adotta una politica rigorosa di consenso preventivo (Opt-in): nessun cookie o tracker analitico o di marketing viene attivato prima che tu abbia espresso il tuo consenso esplicito tramite il banner delle preferenze.",
+        "intro_2": "Per garantire il corretto funzionamento dell'interfaccia, della biglietteria e dei moduli di registrazione, vengono impiegati elementi tecnici strettamente necessari (cookie propri o sessioni di terze parti integrate tramite iframe). Tali elementi tecnici non profilano l'utente e non richiedono consenso preventivo ai sensi della nLPD e del GDPR, ma sono elencati di seguito per assoluta trasparenza:",
+        "table_heading": "Tabella dei cookie e componenti attivi:",
+        "columns": {
+          "name": "Nome / Origine",
+          "provider": "Fornitore",
+          "duration": "Durata",
+          "purpose": "Finalità"
+        },
+        "rows": {
+          "own_consent": {
+            "name": "attomatti_cookie_consent",
+            "provider": "Sito proprio (Locale)",
+            "duration": "1 anno",
+            "purpose": "Tecnico essenziale: memorizza le scelte di consenso privacy espresse nel banner."
+          },
+          "eventfrog": {
+            "name": "eventfrog.ch (iframe)",
+            "provider": "Eventfrog AG (Svizzera)",
+            "duration": "Sessione di acquisto",
+            "purpose": "Tecnico essenziale: gestione del carrello, sicurezza della transazione e avanzamento del checkout nei widget di cassa incorporati."
+          },
+          "tally": {
+            "name": "tally.so (iframe)",
+            "provider": "Tally BV (Belgio / UE)",
+            "duration": "Sessione modulo",
+            "purpose": "Tecnico essenziale: token di sicurezza anti-CSRF e conservazione temporanea dello stato di compilazione del form. Nessuna profilazione pubblicitaria sui rispondenti."
+          },
+          "google_analytics": {
+            "name": "_ga, _ga_*",
+            "provider": "Google LLC (USA)",
+            "duration": "2 anni",
+            "purpose": "Analitico (previo consenso): statistiche aggregate e anonimizzate sulle visite."
+          },
+          "meta_pixel": {
+            "name": "_fbp",
+            "provider": "Meta Platforms Ireland Ltd.",
+            "duration": "90 giorni",
+            "purpose": "Marketing (previo consenso): misurazione dell'efficacia delle campagne Instagram/Facebook."
+          }
+        }
+      },
+      "google_analytics": {
+        "title": "Google Analytics 4 (Google LLC)",
+        "paragraphs": [
+          "Sul sito è integrato lo strumento di analisi web Google Analytics 4, gestito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
+          "In conformità alla Google Consent Mode v2, Google Analytics è configurato per rimanere completamente bloccato finché non viene prestato il consenso analitico. L'indirizzo IP del visitatore viene anonimizzato prima della registrazione.",
+          "I dati raccolti possono essere elaborati su server situati negli Stati Uniti sulla base del Swiss-US Data Privacy Framework. Puoi revocare il consenso in qualsiasi momento tramite il nostro gestore delle preferenze."
+        ]
+      },
+      "meta_pixel": {
+        "title": "Meta Pixel (Meta Platforms Ireland Limited)",
+        "paragraphs": [
+          "Utilizziamo il Meta Pixel per monitorare l'efficacia delle inserzioni pubblicitarie su Instagram e Facebook e per promuovere la vendita dei biglietti per i nostri spettacoli. Il servizio è fornito da Meta Platforms Ireland Limited (Merrion Road, Dublin 4, D04 X2K5, Irlanda).",
+          "Il Pixel entra in funzione esclusivamente dopo il tuo esplicito opt-in per la categoria marketing. Il pixel consente a Meta di identificare i visitatori del nostro sito come gruppo target per la visualizzazione di annunci. Maggiori informazioni nella privacy policy di Meta: privacycenter.instagram.com/policy."
+        ],
+        "privacy_url": "https://privacycenter.instagram.com/policy"
+      },
+      "eventfrog": {
+        "title": "Biglietteria Online e Casse Incorporate (Eventfrog AG)",
+        "paragraphs": [
+          "Per la vendita, prevendita ed emissione dei biglietti teatrali ci avvaliamo della piattaforma svizzera specializzata Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera).",
+          "I servizi di cassa possono essere raggiunti tramite link esterni o incorporati direttamente (embedded) tramite iframe all'interno delle pagine del nostro sito (in particolare nell'hub /Biglietti, nelle sezioni /Biglietti/[slug] e nelle schede dedicate agli spettacoli).",
+          "Quando acquisti un biglietto (tramite la cassa incorporata o sul sito Eventfrog), la transazione avviene tramite connessione cifrata diretta con i server di Eventfrog AG. I dati anagrafici, di recapito e di pagamento necessari al perfezionamento dell'ordine vengono trattati direttamente da Eventfrog AG in qualità di titolare indipendente e fornitore del servizio, in piena conformità alla Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
+          "La compagnia Gli Attomatti riceve unicamente i dati necessari per la gestione degli ingressi in sala (nominativo, tipologia di biglietto, codice QR) e non ha accesso né archivia dati di carte di credito o coordinate bancarie. Per l'informativa completa di Eventfrog AG consultare: eventfrog.ch/it/privacy.html."
+        ],
+        "privacy_url": "https://eventfrog.ch/it/privacy.html"
+      },
+      "tally": {
+        "title": "Moduli di Registrazione, Iscrizione e Contatto Incorporati (Tally.so)",
+        "paragraphs": [
+          "Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci) e per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su /Saalvermietung), utilizziamo la piattaforma di moduli interattivi fornita da Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+          "I moduli possono essere compilati tramite incorporamento diretto (iframe embed) all'interno delle nostre pagine dedicate (nell'hub /Registrazioni, nelle sezioni /Registrazioni/[slug], landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.",
+          "Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o preferenze) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all'interno dell'Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
+          "La compagnia teatrale Gli Attomatti utilizza le risposte raccolte unicamente per dare seguito alla specifica finalità per cui sono state fornite (es. invio istruzioni per l'evento, organizzazione della lista presenze, preventivo per l'affitto della sala). I dati non vengono ceduti a terzi né utilizzati per scopi promozionali non autorizzati. I moduli Tally integrati non utilizzano cookie o pixel pubblicitari di profilazione sui rispondenti.",
+          "Per maggiori informazioni sull'infrastruttura di sicurezza e la gestione privacy di Tally BV consultare: tally.so/help/privacy-policy."
+        ],
+        "privacy_url": "https://tally.so/help/privacy-policy"
+      },
+      "typography_social": {
+        "title": "Risorse tipografiche e social",
+        "fonts_title": "Font tipografici (Google Fonts)",
+        "fonts_text": "Per garantire una resa grafica uniforme, questo sito utilizza font forniti da Google. Il caricamento tecnico di tali risorse può comportare la trasmissione dell'indirizzo IP del visitatore ai server di Google LLC.",
+        "social_title": "Contenuti social Instagram (Soluzione 2-Click)",
+        "social_text": "I post incorporati di Instagram nella home page sono protetti da un meccanismo a due clic (2-Click): all'apertura del sito nessun dato viene trasmesso a Meta. Solo cliccando attivamente su \"Carica questo post\" viene stabilita una connessione diretta con i server di Instagram."
+      },
+      "photo_rights": {
+        "title": "Fotografie e riprese durante gli eventi (Diritto all'immagine)",
+        "paragraphs": [
+          "Durante le rappresentazioni teatrali, i workshop e gli eventi promossi dalla compagnia, possono essere realizzate riprese fotografiche e audiovisive destinate alla documentazione artistica e alla comunicazione istituzionale sui nostri canali ufficiali (sito web e social network quali Instagram e Facebook).",
+          "Nel pieno rispetto della nLPD e della sfera privata di ciascuno, chiunque partecipi ha la facoltà di opporsi in qualsiasi momento alla propria ripresa: è sufficiente informare il personale di sala all'ingresso o durante l'evento. Inoltre, è sempre possibile richiedere la rimozione tempestiva di fotografie o video in cui si compare inviando un'email a: compagniateatralegliattomatti@gmail.com."
+        ],
+        "contact_email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "your_rights": {
+        "title": "I tuoi diritti (nLPD)",
+        "text": "Ai sensi della nuova Legge federale sulla protezione dei dati (nLPD), hai il diritto di richiedere in qualsiasi momento informazioni riguardo ai dati personali che trattiamo sul tuo conto, nonché la correzione, il blocco o la cancellazione di tali dati contattandoci all'indirizzo email: compagniateatralegliattomatti@gmail.com.",
+        "contact_email": "compagniateatralegliattomatti@gmail.com"
+      }
     }
   },
   "landings": [
@@ -1283,13 +1662,47 @@
   "ticketing_hub": {
     "active": true,
     "title": "Biglietti",
-    "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento"
+    "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento",
+    "buy_ticket_cta": "Acquista Biglietto",
+    "details_cta": "Dettagli",
+    "empty_title": "Nessuna prevendita aperta",
+    "empty_description": "Al momento non ci sono biglietti in vendita diretta. Scopri il nostro cartellone e i prossimi spettacoli in arrivo!",
+    "view_shows_cta": "Vedi Spettacoli",
+    "checkout_page": {
+      "default_back_link": "Torna al sito",
+      "terms_link": "Termini di Biglietteria",
+      "default_category": "Biglietteria Ufficiale",
+      "iframe_trouble_notice": "Difficoltà di visualizzazione con il riquadro? Puoi completare l'acquisto sul portale esterno:",
+      "open_on_eventfrog": "Apri su Eventfrog",
+      "not_configured_title": "Prevendita non ancora configurata",
+      "not_configured_description": "La prevendita per questa pagina non è al momento collegata a un evento attivo.",
+      "secure_transaction_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
+      "rules_refunds_link": "Regolamento e Rimborsi",
+      "privacy_link": "Informativa Privacy"
+    }
   },
   "ticketing_pages": [],
   "registration_hub": {
     "active": true,
     "title": "Registrazioni",
-    "description": "Questa pagina raccoglie tutte le registrazioni attive al momento"
+    "description": "Questa pagina raccoglie tutte le registrazioni attive al momento",
+    "register_online_cta": "Iscriviti Online",
+    "info_cta": "Info",
+    "empty_title": "Nessuna iscrizione aperta",
+    "empty_description": "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!",
+    "view_initiatives_cta": "Vedi Iniziative",
+    "registration_page": {
+      "default_back_link": "Torna al sito",
+      "privacy_link": "Informativa Privacy",
+      "default_category": "Modulo di Iscrizione",
+      "iframe_trouble_notice": "Difficoltà di compilazione? Puoi aprire il modulo in una nuova finestra:",
+      "open_on_tally": "Apri su Tally",
+      "not_configured_title": "Modulo non ancora configurato",
+      "not_configured_description": "Il modulo di registrazione per questa pagina non è al momento collegato a un form Tally attivo.",
+      "secure_form_notice": "Modulo sicuro e conforme nLPD / GDPR (Tally BV, server UE)",
+      "terms_link": "Termini & Regolamento",
+      "contact_link": "Hai domande? Contattaci"
+    }
   },
   "registration_pages": [
     {
@@ -1359,6 +1772,142 @@
       "view_content": true,
       "initiate_checkout": true,
       "contact": true
+    }
+  },
+  "ui": {
+    "navbar": {
+      "main_nav_aria_label": "Navigazione principale",
+      "mobile_nav_aria_label": "Navigazione mobile",
+      "open_menu_aria_label": "Apri menu",
+      "close_menu_aria_label": "Chiudi menu",
+      "buy_tickets_label": "Acquista Biglietti",
+      "contact_us_label": "Contattaci / Scrivici"
+    },
+    "footer": {
+      "nav_title": "Sito",
+      "contact_title": "Contattaci",
+      "contact_cta_label": "Scrivici ora",
+      "copyright_notice": "Tutti i diritti riservati.",
+      "legal_links": {
+        "terms": "Termini",
+        "impressum": "Impressum",
+        "privacy": "Privacy"
+      }
+    },
+    "not_found": {
+      "meta_title": "Pagina non trovata",
+      "meta_description": "La pagina cercata non è stata trovata o è stata spostata.",
+      "badge": "Errore 404 • Fuori Scena",
+      "code": "404",
+      "heading": "Questa scena è ancora dietro le quinte",
+      "message": "Sembra che il copione abbia preso un’altra direzione o che la pagina cercata sia stata spostata nel foyer.",
+      "home_button": "Torna alla Home",
+      "shows_button": "I Nostri Spettacoli"
+    },
+    "lightbox": {
+      "close_aria_label": "Chiudi galleria",
+      "prev_aria_label": "Foto precedente",
+      "next_aria_label": "Foto successiva",
+      "default_alt": "Foto"
+    },
+    "cookie_banner": {
+      "title": "Preferenze sui Cookie & Privacy",
+      "badge": "Approccio Trasparente (Opt-in)",
+      "new_tools_notice": "Nuovi strumenti attivati: richiesto consenso",
+      "description": "Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi ({ga}) e marketing ({meta}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.",
+      "customize_open": "Personalizza scelte",
+      "customize_close": "Chiudi personalizzazione",
+      "privacy_policy_link": "Informativa Privacy",
+      "reject_all_label": "Rifiuta non necessari",
+      "accept_all_label": "Accetta tutti",
+      "save_preferences_label": "Salva preferenze",
+      "categories": {
+        "necessary": {
+          "title": "Cookie Tecnici Necessari",
+          "badge": "Sempre Attivi",
+          "description": "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi."
+        },
+        "analytics": {
+          "title": "Statistici e Analisi (Google Analytics 4)",
+          "description": "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati."
+        },
+        "marketing": {
+          "title": "Marketing e Social (Meta Pixel / Instagram)",
+          "description": "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook."
+        }
+      }
+    },
+    "privacy_consent_button": {
+      "label": "Modifica preferenze sui cookie"
+    },
+    "dev_gate": {
+      "badge": "Ambiente di Sviluppo",
+      "title": "Gli Attomatti",
+      "description": "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:",
+      "live_site_cta": "Vai al sito vero (gliattomatti.ch)",
+      "divider_label": "Accesso Team & Anteprima",
+      "form_prompt": "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:",
+      "placeholder": "Inserisci password...",
+      "error_message": "Password errata. Riprova.",
+      "submit_label": "Sblocca e prosegui",
+      "cookie_notice": "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser."
+    },
+    "preview_banner": {
+      "aria_label": "Modalità Anteprima Bozza",
+      "badge": "Anteprima Live",
+      "message": "Stai visualizzando il sito con le modifiche non pubblicate sincronizzate in tempo reale dal CMS.",
+      "cms_link": "Pannello CMS",
+      "cms_link_title": "Torna al pannello di amministrazione",
+      "exit_button": "Esci dall'anteprima",
+      "exit_button_title": "Esci dalla modalità anteprima e torna alla versione pubblica"
+    },
+    "shared_detail": {
+      "dates_title": "Date e Biglietti",
+      "details_title": "Info Spettacolo",
+      "empty_dates_message": "Nessuna data programmata al momento.",
+      "back_to_archive": "Torna all'archivio",
+      "back_to_initiatives": "Torna all'elenco iniziative",
+      "back_to_home": "Torna alla home",
+      "year_prefix": "Anno",
+      "season_prefix": "Stagione",
+      "edition_prefix": "Edizione"
+    },
+    "landing_defaults": {
+      "preview_loading": "Caricamento anteprima...",
+      "back_to_home": "Torna alla Home",
+      "header_subtitle": "Teatro a Zurigo",
+      "hero_alt": "Hero",
+      "event_details_title": "Data e Informazioni",
+      "date_time_label": "Data & Ora",
+      "location_label": "Luogo",
+      "google_maps_label": "Apri su Google Maps",
+      "ticket_label": "Biglietto",
+      "synopsis_title": "La Trama",
+      "synopsis_image_alt": "Foto spettacolo",
+      "gallery_image_alt": "Scena",
+      "reviews_title": "Dicono di Noi",
+      "faq_title": "Domande Frequenti",
+      "eventfrog_badge": "Biglietteria Ufficiale",
+      "eventfrog_title": "Acquista Biglietti",
+      "eventfrog_iframe_title": "Biglietti Eventfrog",
+      "eventfrog_fallback_trouble": "Problemi con il riquadro? Puoi completare l'acquisto anche sul portale esterno:",
+      "eventfrog_fallback_button": "Apri su Eventfrog",
+      "eventfrog_not_configured": "La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell'Admin.",
+      "eventfrog_security_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
+      "eventfrog_terms_link": "Termini di Biglietteria",
+      "eventfrog_privacy_link": "Informativa Privacy",
+      "tally_badge": "Modulo di Iscrizione",
+      "tally_title": "Iscriviti o Registrati",
+      "tally_iframe_title": "Modulo Tally",
+      "tally_fallback_trouble": "Problemi con il modulo? Puoi compilarlo a schermo intero:",
+      "tally_fallback_button": "Apri su Tally",
+      "tally_not_configured": "Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell'Admin.",
+      "tally_security_notice": "Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)",
+      "tally_privacy_link": "Informativa Privacy",
+      "tally_contact_link": "Contattaci",
+      "closing_cta_title": "Non Perdere lo Spettacolo",
+      "footer_home_link": "Visita il sito ufficiale Gli Attomatti",
+      "footer_copyright": "Tutti i diritti riservati. Zurigo, Svizzera."
     }
   }
 }

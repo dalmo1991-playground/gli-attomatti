@@ -13,7 +13,8 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function IniziativaDettaglioClient({ content: initialContent, slug }: { content: any, slug: string }) {
   const content = useLiveContent(initialContent);
-  const initiative = (content?.pages?.iniziative?.archive_sections || []).find((s: any) => s?.slug === slug);
+  const iniziative = content?.pages?.iniziative || {};
+  const initiative = (iniziative?.archive_sections || []).find((s: any) => s?.slug === slug);
 
   useEffect(() => {
     if (initiative?.title) {
@@ -30,9 +31,11 @@ export default function IniziativaDettaglioClient({ content: initialContent, slu
   if (!initiative) {
     return (
       <div className="pt-32 text-center min-h-[60vh] flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-4">Iniziativa non trovata</h1>
-        <Link href="/Iniziative" className="text-primary font-bold hover:underline">
-          Torna all'elenco iniziative
+        <h1 className="text-4xl font-bold mb-4">
+          {iniziative.not_found_title || "Iniziativa non trovata"}
+        </h1>
+        <Link href={iniziative.archive_href || "/Iniziative"} className="text-primary font-bold hover:underline">
+          {iniziative.back_to_list_label || "Torna all'elenco iniziative"}
         </Link>
       </div>
     );
@@ -44,8 +47,9 @@ export default function IniziativaDettaglioClient({ content: initialContent, slu
       <DetailHero
         title={initiative.title}
         heroImage={initiative.hero_image}
-        backLink={{ href: "/Iniziative", label: "Torna alle Iniziative" }}
-        subtitle={`Edizione ${initiative.year}`}
+        imageAlign={initiative.hero_image_align || initiative.image_align}
+        backLink={{ href: iniziative.archive_href || "/Iniziative", label: iniziative.back_to_list_label || "Torna alle Iniziative" }}
+        subtitle={`${iniziative.edition_prefix || "Edizione"} ${initiative.year}`}
       />
 
       {/* Description & Dates Section */}
@@ -53,7 +57,9 @@ export default function IniziativaDettaglioClient({ content: initialContent, slu
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-16 items-start">
           {/* Main Content */}
           <div className="lg:col-span-7 xl:col-span-8">
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-8">L'Iniziativa</h2>
+            <h2 className="text-3xl font-black uppercase tracking-tight mb-8">
+              {iniziative.detail_main_heading || "L'Iniziativa"}
+            </h2>
             <div className="prose prose-xl prose-invert max-w-none">
               <RichText
                 content={initiative.text}
@@ -72,11 +78,11 @@ export default function IniziativaDettaglioClient({ content: initialContent, slu
           {/* Sidebar: Dates & Registration */}
           <div className="lg:col-span-5 xl:col-span-4">
             <DetailSidebar
-              datesTitle="Date e Iscrizioni"
+              datesTitle={iniziative.detail_dates_title || "Date e Iscrizioni"}
               dates={initiative.dates}
-              detailsTitle="Info Iniziativa"
+              detailsTitle={iniziative.detail_info_title || "Info Iniziativa"}
               details={initiative.details}
-              emptyDatesMessage="Nessun calendario al momento programmato."
+              emptyDatesMessage={iniziative.detail_empty_dates_message || "Nessun calendario al momento programmato."}
             />
           </div>
         </div>
@@ -86,6 +92,7 @@ export default function IniziativaDettaglioClient({ content: initialContent, slu
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
+        uiContent={content?.ui?.lightbox}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
     </div>
