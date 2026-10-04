@@ -7,8 +7,9 @@ import {
   replaceVariables,
   EmailTemplateConfig
 } from "@/lib/email/template";
-import { sendTransactionalEmail } from "@/lib/email/resend";
+import { sendTransactionalEmail, SendEmailAttachment } from "@/lib/email/resend";
 import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
+import { parseEventDate, generateIcsCalendarContent } from "@/lib/email/calendar";
 
 export const dynamic = "force-dynamic";
 
@@ -111,13 +112,47 @@ export async function POST(req: NextRequest) {
 
     const fromHeader = fromEmail ? `${fromName} <${fromEmail}>` : undefined;
 
+    // Attach .ics invite if calendar block exists in template
+    const attachments: SendEmailAttachment[] = [];
+    const calendarBlock = (template.blocks || []).find(
+      (b: any) => b.type === "calendar" && b.enabled !== false
+    ) as any;
+
+    if (calendarBlock) {
+      const calTitle = replaceVariables(calendarBlock.title || subject, mergedVariables);
+      const calStart = replaceVariables(calendarBlock.start_date || "", mergedVariables);
+      const calEnd = replaceVariables(calendarBlock.end_date || "", mergedVariables);
+      const calLoc = replaceVariables(calendarBlock.location || "", mergedVariables);
+      const calDesc = replaceVariables(calendarBlock.description || "", mergedVariables);
+
+      const startDate = parseEventDate(calStart) || new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const endDate = parseEventDate(calEnd) || new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+
+      const icsContent = generateIcsCalendarContent({
+        title: calTitle,
+        description: calDesc,
+        location: calLoc,
+        startDate,
+        endDate,
+        organizerName: fromName,
+        organizerEmail: fromEmail
+      });
+
+      attachments.push({
+        filename: "invito-evento.ics",
+        content: Buffer.from(icsContent, "utf-8"),
+        contentType: "text/calendar; charset=utf-8; method=PUBLISH"
+      });
+    }
+
     const sendResult = await sendTransactionalEmail({
       to,
       subject,
       html: emailHtml,
       text: emailText,
       from: fromHeader,
-      replyTo
+      replyTo,
+      attachments: attachments.length > 0 ? attachments : undefined
     });
 
     if (!sendResult.success) {

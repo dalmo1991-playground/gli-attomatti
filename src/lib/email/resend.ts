@@ -1,5 +1,12 @@
 import { Resend } from "resend";
 
+export interface SendEmailAttachment {
+  filename: string;
+  content?: string | Buffer;
+  path?: string;
+  contentType?: string;
+}
+
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
@@ -7,6 +14,7 @@ export interface SendEmailOptions {
   text?: string;
   from?: string;
   replyTo?: string;
+  attachments?: SendEmailAttachment[];
 }
 
 export interface SendEmailResult {
@@ -63,7 +71,8 @@ export async function sendTransactionalEmail(options: SendEmailOptions): Promise
       replyTo: options.replyTo?.trim() || undefined,
       subject: options.subject,
       html: options.html,
-      text: options.text || undefined
+      text: options.text || undefined,
+      attachments: options.attachments
     });
 
     if (error) {

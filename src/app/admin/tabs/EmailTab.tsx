@@ -41,7 +41,9 @@ import {
   Maximize2,
   FileJson,
   Search,
-  Database
+  Database,
+  Bell,
+  Clock
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -72,6 +74,7 @@ import {
 } from "@/lib/email/blocks";
 import { LANDING_THEME_PRESETS, LandingThemeColors } from "@/lib/landingThemes";
 import { getAutoContrastColor } from "@/lib/devTheme";
+import { FailedEmailRecord } from "@/lib/email/dlq";
 
 const DEFAULT_SAMPLE_TALLY_JSON = JSON.stringify(
   {
@@ -120,8 +123,8 @@ const BLOCK_DEFINITIONS: { type: EmailBlockType; label: string; desc: string; ic
   { type: "badge", label: "Badge Pillola", desc: "Etichetta decorativa di categoria", icon: Tag },
   { type: "heading", label: "Titolo Principale", desc: "H1 / H2 con allineamento e colore", icon: Type },
   { type: "text", label: "Paragrafo / Testo Ricco", desc: "Testo formattato con markdown, grassetto e link", icon: FileText },
-  { type: "button", label: "Pulsante d'Azione (CTA)", desc: "Pulsante con link e stile personalizzabile", icon: MousePointerClick },
-  { type: "info_box", label: "Card Info Evento", desc: "Box dettagli per Data, Ora, Luogo e Posti", icon: Calendar },
+  { type: "info_box", label: "Card Info Evento", desc: "Box dettagli per Data, Ora, Luogo e Posti", icon: Info },
+  { type: "calendar", label: "Appuntamento Calendario", desc: "Box 'Aggiungi al Calendario' (Google, Apple iCal, Outlook) con download .ics", icon: Calendar },
   { type: "image", label: "Immagine / Locandina", desc: "Foto o locandina con didascalia e link", icon: ImageIcon },
   { type: "two_column", label: "Due Colonne", desc: "Due colonne di testo affiancate responsive", icon: Columns2 },
   { type: "divider", label: "Divisore / Spaziatore", desc: "Linea sfumata luminosa o spazio vuoto", icon: Minus },
@@ -143,13 +146,164 @@ export function EmailTab() {
   const activeTemplate = templates[selectedIndex] || templates[0] || null;
 
   // View state
-  const [activeTabSection, setActiveTabSection] = useState<"builder" | "theme" | "subcases" | "sender" | "fields" | "api" | "preview">("builder");
+  const [activeTabSection, setActiveTabSection] = useState<"theme" | "details" | "builder" | "personalization" | "api" | "preview" | "queue">("theme");
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile" | "fluid">("desktop");
   const [isPreviewJsonOpen, setIsPreviewJsonOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const [copiedCustomSnippet, setCopiedCustomSnippet] = useState(false);
   const [copiedSubcaseSnippet, setCopiedSubcaseSnippet] = useState<string | null>(null);
+
+  // DLQ (Dead Letter Queue) state
+  const [queueItems, setQueueItems] = useState<FailedEmailRecord[]>([]);
+  const [isLoadingQueue, setIsLoadingQueue] = useState(false);
+  const [isRetryingQueue, setIsRetryingQueue] = useState(false);
+  const [retryingQueueId, setRetryingQueueId] = useState<string | null>(null);
+  const [queueMessage, setQueueMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [expandedQueueId, setExpandedQueueId] = useState<string | null>(null);
+
+  // DLQ Cron Notification Test State
+  const [isTestingDlqNotify, setIsTestingDlqNotify] = useState(false);
+  const [notifyTestResult, setNotifyTestResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const handleTestDlqNotify = async () => {
+    setIsTestingDlqNotify(true);
+    setNotifyTestResult(null);
+    try {
+      const res = await fetch("/api/cron/email-dlq-notify?force=true", {
+        headers: { "x-admin-secret": adminSecret || "" }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifyTestResult({
+          type: "success",
+          text: `Email di notifica inviata con successo a: ${data.notifiedTo || settings.dlq_alert_email || "admin"}!`
+        });
+      } else {
+        setNotifyTestResult({
+          type: "error",
+          text: data.error || data.reason || "Errore durante l'invio della notifica di test."
+        });
+      }
+    } catch (err: any) {
+      setNotifyTestResult({
+        type: "error",
+        text: err?.message || "Errore di connessione."
+      });
+    } finally {
+      setIsTestingDlqNotify(false);
+    }
+  };
+
+  const fetchQueue = async () => {
+    setIsLoadingQueue(true);
+    try {
+      const res = await fetch("/api/email/queue", {
+        headers: { "x-admin-secret": adminSecret || "" }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setQueueItems(Array.isArray(data.items) ? data.items : []);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch email queue:", err);
+    } finally {
+      setIsLoadingQueue(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQueue();
+  }, [adminSecret]);
+
+  const handleRetrySingle = async (id: string) => {
+    setRetryingQueueId(id);
+    setQueueMessage(null);
+    try {
+      const res = await fetch("/api/email/retry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret || ""
+        },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setQueueMessage({ type: "success", text: "Email reinviata con successo e rimossa dalla coda!" });
+        await fetchQueue();
+      } else {
+        setQueueMessage({ type: "error", text: data.error || data.message || "Tentativo di re-invio fallito." });
+        await fetchQueue();
+      }
+    } catch (err: any) {
+      setQueueMessage({ type: "error", text: "Errore di connessione durante il re-invio: " + err?.message });
+    } finally {
+      setRetryingQueueId(null);
+    }
+  };
+
+  const handleRetryAll = async () => {
+    setIsRetryingQueue(true);
+    setQueueMessage(null);
+    try {
+      const res = await fetch("/api/email/retry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret || ""
+        },
+        body: JSON.stringify({ all: true })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setQueueMessage({
+          type: "success",
+          text: `Completato! ${data.succeeded || 0} email inviate con successo.`
+        });
+      } else {
+        setQueueMessage({
+          type: "error",
+          text: `Elaborate: ${data.succeeded || 0} inviate, ${data.failed || 0} ancora in errore.`
+        });
+      }
+      await fetchQueue();
+    } catch (err: any) {
+      setQueueMessage({ type: "error", text: "Errore durante il re-invio in blocco: " + err?.message });
+    } finally {
+      setIsRetryingQueue(false);
+    }
+  };
+
+  const handleDeleteQueueItem = async (id: string) => {
+    if (!confirm("Sei sicuro di voler scartare questa email dalla coda di recupero?")) return;
+    try {
+      const res = await fetch(`/api/email/queue?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { "x-admin-secret": adminSecret || "" }
+      });
+      if (res.ok) {
+        await fetchQueue();
+      }
+    } catch (err) {
+      console.warn("Failed to delete queue item:", err);
+    }
+  };
+
+  const handleClearAllQueue = async () => {
+    if (!confirm("Sei sicuro di voler svuotare l'intera coda di email fallite? Tutte le richieste non inviate verranno eliminate definitivamente.")) return;
+    try {
+      const res = await fetch("/api/email/queue?all=true", {
+        method: "DELETE",
+        headers: { "x-admin-secret": adminSecret || "" }
+      });
+      if (res.ok) {
+        await fetchQueue();
+      }
+    } catch (err) {
+      console.warn("Failed to clear queue:", err);
+    }
+  };
 
   // Subcases state
   const [selectedSubcaseId, setSelectedSubcaseId] = useState<string | null>(null);
@@ -201,6 +355,7 @@ export function EmailTab() {
   // Add block modal state
   const [isAddBlockOpen, setIsAddBlockOpen] = useState(false);
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
+  const [lastExpandedBlockId, setLastExpandedBlockId] = useState<string | null>(null);
 
   // Media Library state for image blocks
   const [mediaPickerBlockId, setMediaPickerBlockId] = useState<string | null>(null);
@@ -242,6 +397,56 @@ export function EmailTab() {
 
     return vars;
   }, [parsedSampleJson, activeTemplate?.field_mapping?.variables_mapping, activeTemplate?.subcases, selectedSubcaseId]);
+
+  // All available tags for autocomplete in text inputs & textareas
+  const allAvailableTags = useMemo(() => {
+    const map = new Map<string, { key: string; source?: string; example?: string }>();
+
+    // 1. Standard tags
+    const standardList = [
+      { key: "name", example: "Mario Rossi", source: "standard" },
+      { key: "email", example: "mario.rossi@example.com", source: "standard" },
+      { key: "event_title", example: "Cineforum", source: "standard" },
+      { key: "event_date", example: "14 Novembre 2026", source: "standard" },
+      { key: "event_time", example: "20:30", source: "standard" },
+      { key: "event_location", example: "Kulturhaus Helferei, Zurigo", source: "standard" },
+      { key: "ticket_count", example: "2", source: "standard" },
+      { key: "notes", example: "Posto riservato", source: "standard" },
+      { key: "subcase", example: selectedSubcaseId || "default", source: "standard" }
+    ];
+    standardList.forEach((t) => map.set(t.key, t));
+
+    // 2. Subcase custom fields
+    (activeTemplate?.subcases || []).forEach((sub) => {
+      if (sub.custom_fields) {
+        Object.entries(sub.custom_fields).forEach(([k, val]) => {
+          map.set(k, { key: k, source: "subcase", example: String(val) });
+        });
+      }
+    });
+
+    // 3. Custom variable mappings
+    if (activeTemplate?.field_mapping?.variables_mapping) {
+      Object.entries(activeTemplate.field_mapping.variables_mapping).forEach(([k, path]) => {
+        map.set(k, { key: k, source: "mapping", example: path });
+      });
+    }
+
+    // 4. Extracted fields from sample JSON
+    extractedFields.forEach((f) => {
+      if (f.path && !f.path.includes(" ") && f.path.length < 50) {
+        if (!map.has(f.path)) {
+          map.set(f.path, {
+            key: f.path,
+            source: "json",
+            example: typeof f.sampleValue === "string" ? f.sampleValue : JSON.stringify(f.sampleValue)
+          });
+        }
+      }
+    });
+
+    return Array.from(map.values());
+  }, [activeTemplate?.subcases, activeTemplate?.field_mapping?.variables_mapping, extractedFields, selectedSubcaseId]);
 
   // Live evaluated technical fields (TO, Name, Subject, Preheader, From, Reply-To)
   const resolvedTechnicalFields = useMemo(() => {
@@ -490,8 +695,28 @@ export function EmailTab() {
           ]
         };
         break;
+      case "calendar":
+        newBlock = {
+          id: newId,
+          type: "calendar",
+          header_label: "Promemoria Evento in Agenda",
+          title: "Spettacolo Teatrale Gli Attomatti",
+          start_date: "{{event_date}}",
+          end_date: "",
+          location: "Balberstrasse 47, Zurich (Wollishofen)",
+          description: "Ti aspettiamo in sala!",
+          align: "center"
+        };
+        break;
       case "image":
-        newBlock = { id: newId, type: "image", image_url: `${siteBaseUrl}/images/1782553290530-TheaterCurtain.webp`, alt: "Locandina Evento", align: "center" };
+        newBlock = {
+          id: newId,
+          type: "image",
+          image_url: `${siteBaseUrl}/images/1782553290530-TheaterCurtain.webp`,
+          alt: "Locandina Evento",
+          align: "center",
+          full_width: false
+        };
         break;
       case "two_column":
         newBlock = { id: newId, type: "two_column", col1_title: "Ingresso in Sala", col1_text: "Apertura porte 30 minuti prima dell'inizio.", col2_title: "Come Raggiungerci", col2_text: "Fermata tram nelle immediate vicinanze." };
@@ -507,9 +732,24 @@ export function EmailTab() {
         break;
     }
 
-    const updated = [...activeBlocks, newBlock];
+    // Determine insertion position: immediately after the currently or last expanded block
+    const targetId = expandedBlockId || lastExpandedBlockId;
+    const targetIndex = targetId ? activeBlocks.findIndex((b) => b.id === targetId) : -1;
+
+    let updated: EmailBlock[];
+    if (targetIndex !== -1) {
+      updated = [
+        ...activeBlocks.slice(0, targetIndex + 1),
+        newBlock,
+        ...activeBlocks.slice(targetIndex + 1)
+      ];
+    } else {
+      updated = [...activeBlocks, newBlock];
+    }
+
     handleUpdateBlocks(updated);
     setExpandedBlockId(newId);
+    setLastExpandedBlockId(newId);
     setIsAddBlockOpen(false);
   };
 
@@ -690,7 +930,7 @@ export function EmailTab() {
         description="Nome, indirizzo mittente certificato e casella di ricezione risposte."
         icon={Sliders}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <FormField
             label="Nome Mittente"
             value={settings.from_name ?? "Gli Attomatti"}
@@ -710,6 +950,13 @@ export function EmailTab() {
             onChange={(v) => updateContent("emails.settings.reply_to", v)}
             placeholder="compagniateatralegliattomatti@gmail.com"
             helpText="Qualsiasi email (anche una casella Gmail)."
+          />
+          <FormField
+            label="Email Notifiche Cron DLQ"
+            value={settings.dlq_alert_email ?? "compagniateatralegliattomatti@gmail.com"}
+            onChange={(v) => updateContent("emails.settings.dlq_alert_email", v)}
+            placeholder="admin@gliattomatti.ch"
+            helpText="Riceve l'alert ogni notte alle 00:10 UTC se ci sono email bloccate in coda."
           />
         </div>
       </AdminSection>
@@ -754,33 +1001,7 @@ export function EmailTab() {
             {/* Template Sub-Nav Switcher & Global Actions */}
             <div className="flex flex-wrap items-center justify-between border-b border-foreground/10 pb-2 gap-4 text-xs font-bold uppercase tracking-wider">
               <div className="flex flex-wrap items-center gap-2 sm:gap-6">
-                <button
-                  type="button"
-                  onClick={() => setActiveTabSection("builder")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "builder" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
-                >
-                  <Layers size={15} /> Componenti ({activeBlocks.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTabSection("subcases")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "subcases" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
-                >
-                  <Tag size={15} /> Subcases & Tag ({activeTemplate.subcases?.length || 0})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTabSection("sender")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "sender" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
-                >
-                  <Mail size={15} /> Profilo Mittente
-                </button>
+                {/* 1. Tema & Colori */}
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("theme")}
@@ -790,15 +1011,41 @@ export function EmailTab() {
                 >
                   <Palette size={15} /> Tema & Colori
                 </button>
+
+                {/* 2. Dettagli Email */}
                 <button
                   type="button"
-                  onClick={() => setActiveTabSection("fields")}
+                  onClick={() => setActiveTabSection("details")}
                   className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "fields" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    activeTabSection === "details" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  <FileJson size={15} /> Campi & JSON {extractedFields.length > 0 ? `(${extractedFields.length})` : ""}
+                  <Mail size={15} /> Dettagli Email
                 </button>
+
+                {/* 3. Componenti */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTabSection("builder")}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "builder" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <Layers size={15} /> Componenti ({activeBlocks.length})
+                </button>
+
+                {/* 4. Personalizzazione (Campi, JSON & Subcases) */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTabSection("personalization")}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "personalization" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <Sliders size={15} /> Personalizzazione {activeTemplate.subcases?.length ? `(${activeTemplate.subcases.length})` : ""}
+                </button>
+
+                {/* 5. Integrazione (API & Trigger) */}
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("api")}
@@ -806,8 +1053,10 @@ export function EmailTab() {
                     activeTabSection === "api" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  <Code size={15} /> API & Trigger
+                  <Code size={15} /> Integrazione (API & Trigger)
                 </button>
+
+                {/* 6. Anteprima */}
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("preview")}
@@ -816,6 +1065,26 @@ export function EmailTab() {
                   }`}
                 >
                   <Eye size={15} /> Anteprima Tutta Pagina
+                </button>
+
+                {/* 7. Coda Errori (DLQ) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTabSection("queue");
+                    fetchQueue();
+                  }}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "queue" ? "border-rose-400 text-rose-400 font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <RotateCcw size={15} className={queueItems.length > 0 ? "text-rose-400 animate-spin-slow" : ""} />
+                  <span>Coda Errori</span>
+                  {queueItems.length > 0 ? (
+                    <span className="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-black">
+                      {queueItems.length}
+                    </span>
+                  ) : null}
                 </button>
               </div>
 
@@ -831,6 +1100,28 @@ export function EmailTab() {
                 </button>
               </div>
             </div>
+
+            {/* DLQ Alert Warning Banner when queue has failed emails */}
+            {queueItems.length > 0 && activeTabSection !== "queue" && (
+              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-rose-300">
+                <div className="flex items-center gap-2.5">
+                  <AlertCircle size={18} className="text-rose-400 shrink-0" />
+                  <span>
+                    <strong>Attenzione:</strong> Ci sono <strong>{queueItems.length} email in coda di errore</strong> non consegnate (per limite Resend o errori temporanei).
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTabSection("queue");
+                    fetchQueue();
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-rose-500 text-white font-bold text-xs hover:bg-rose-600 transition-colors cursor-pointer shrink-0 self-start sm:self-auto shadow-xs"
+                >
+                  Visualizza & Riprova Invii
+                </button>
+              </div>
+            )}
 
             {/* FULL-WIDTH PREVIEW SECTION */}
             {activeTabSection === "preview" ? (
@@ -1117,545 +1408,303 @@ export function EmailTab() {
                   </div>
                 </div>
               </div>
+            ) : activeTabSection === "queue" ? (
+              /* FULL-WIDTH DEAD LETTER QUEUE (DLQ) SECTION */
+              <div className="space-y-6 w-full">
+                {/* DLQ Header & Action Bar */}
+                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-foreground/5 pb-4">
+                    <div>
+                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                        <RotateCcw size={18} className="text-rose-400" />
+                        Coda Errori & Invii Falliti (Dead Letter Queue)
+                      </h4>
+                      <p className="text-xs text-foreground/60 mt-0.5">
+                        Cattura tutte le email non consegnate (limite 100/giorno di Resend, disservizi o errori di rete). Puoi ritriggerarle in qualsiasi momento.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={fetchQueue}
+                        disabled={isLoadingQueue}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs font-bold text-foreground transition-all cursor-pointer border border-foreground/10"
+                        title="Ricarica stato coda"
+                      >
+                        <RotateCcw size={13} className={isLoadingQueue ? "animate-spin" : ""} />
+                        <span>Aggiorna</span>
+                      </button>
+
+                      {queueItems.length > 0 && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleClearAllQueue}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-xs font-bold text-rose-400 transition-all cursor-pointer border border-rose-500/20"
+                            title="Elimina tutte le email in coda"
+                          >
+                            <Trash2 size={13} />
+                            <span>Svuota Coda</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleRetryAll}
+                            disabled={isRetryingQueue}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-background font-black text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                          >
+                            <Send size={13} />
+                            <span>{isRetryingQueue ? "Re-invio in corso..." : `Riprova Tutte (${queueItems.length})`}</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Feedback Message */}
+                  {queueMessage && (
+                    <div
+                      className={`p-3.5 rounded-xl text-xs flex items-center justify-between gap-3 ${
+                        queueMessage.type === "success"
+                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                          : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {queueMessage.type === "success" ? (
+                          <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                        ) : (
+                          <AlertCircle size={16} className="text-rose-400 shrink-0" />
+                        )}
+                        <span>{queueMessage.text}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setQueueMessage(null)}
+                        className="text-foreground/40 hover:text-foreground cursor-pointer text-xs"
+                      >
+                        Chiudi
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Cron Notification Configuration Card */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-foreground/[0.03] border border-foreground/10 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0">
+                          <Clock size={16} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-foreground flex items-center gap-2">
+                            <span>Notifica Automatica Cron (Mezzanotte e 10 UTC)</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-300 font-mono font-medium border border-amber-400/20">
+                              10 0 * * *
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-foreground/60 mt-0.5">
+                            Se ci sono email non recapitate in coda, invia un alert 10 minuti dopo il ripristino della quota giornaliera di 100 email di Resend.
+                          </p>
+                        </div>
+                      </div>
+
+                      <label className="flex items-center gap-2 cursor-pointer self-start sm:self-auto shrink-0 bg-background/50 px-3 py-1.5 rounded-xl border border-foreground/10">
+                        <input
+                          type="checkbox"
+                          checked={settings.dlq_alert_enabled !== false}
+                          onChange={(e) => updateContent("emails.settings.dlq_alert_enabled", e.target.checked)}
+                          className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer accent-primary"
+                        />
+                        <span className="text-xs font-bold text-foreground">
+                          {settings.dlq_alert_enabled !== false ? "Notifica Attiva" : "Disattivata"}
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-foreground/5 items-end">
+                      <div className="sm:col-span-2">
+                        <FormField
+                          label="Email Admin per la Notifica"
+                          value={settings.dlq_alert_email ?? "compagniateatralegliattomatti@gmail.com"}
+                          onChange={(v) => updateContent("emails.settings.dlq_alert_email", v)}
+                          placeholder="compagniateatralegliattomatti@gmail.com"
+                          helpText="Riceverà l'avviso con l'elenco delle email bloccate e il link rapido per ritriggerarle."
+                        />
+                      </div>
+                      <div className="pb-1">
+                        <button
+                          type="button"
+                          onClick={handleTestDlqNotify}
+                          disabled={isTestingDlqNotify}
+                          className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs font-bold text-foreground border border-foreground/15 transition-all cursor-pointer disabled:opacity-50"
+                        >
+                          <Bell size={13} className={isTestingDlqNotify ? "animate-bounce" : ""} />
+                          <span>{isTestingDlqNotify ? "Invio test in corso..." : "Invia Test Notifica"}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {notifyTestResult && (
+                      <div
+                        className={`p-3 rounded-xl text-xs flex items-center justify-between gap-2 ${
+                          notifyTestResult.type === "success"
+                            ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                            : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {notifyTestResult.type === "success" ? (
+                            <CheckCircle2 size={14} className="shrink-0 text-emerald-400" />
+                          ) : (
+                            <AlertCircle size={14} className="shrink-0 text-rose-400" />
+                          )}
+                          <span>{notifyTestResult.text}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setNotifyTestResult(null)}
+                          className="text-foreground/40 hover:text-foreground text-[11px] cursor-pointer"
+                        >
+                          Chiudi
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Empty State */}
+                  {queueItems.length === 0 && !isLoadingQueue && (
+                    <div className="text-center py-12 space-y-3">
+                      <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mx-auto">
+                        <CheckCircle2 size={28} />
+                      </div>
+                      <h5 className="text-sm font-bold text-foreground">Nessuna email in errore</h5>
+                      <p className="text-xs text-foreground/50 max-w-md mx-auto">
+                        Tutte le email transazionali inviate sono state consegnate correttamente. In caso di quota Resend superata o errori di rete, compariranno automaticamente qui per essere ritriggerate.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Queue Items List */}
+                  {queueItems.length > 0 && (
+                    <div className="space-y-3 pt-2">
+                      {queueItems.map((item) => {
+                        const isExpanded = expandedQueueId === item.id;
+                        const isRetrying = retryingQueueId === item.id;
+
+                        return (
+                          <div
+                            key={item.id}
+                            className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3 transition-all hover:border-foreground/20"
+                          >
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              {/* Left Info */}
+                              <div className="space-y-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-xs font-mono font-bold text-foreground">
+                                    {Array.isArray(item.recipient.email) ? item.recipient.email.join(", ") : item.recipient.email}
+                                  </span>
+                                  {item.recipient.name && (
+                                    <span className="text-[11px] text-foreground/60">
+                                      ({item.recipient.name})
+                                    </span>
+                                  )}
+                                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-foreground/5 border border-foreground/10 text-foreground/60 font-mono">
+                                    {item.templateId || "Template generico"}
+                                  </span>
+                                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                                    {item.attempts} {item.attempts === 1 ? "tentativo" : "tentativi"}
+                                  </span>
+                                </div>
+
+                                <div className="text-xs text-foreground/80 font-medium">
+                                  Oggetto: <span className="text-foreground">{item.subject}</span>
+                                </div>
+                                <div className="text-[11px] text-foreground/40 font-mono">
+                                  Fallita il: {new Date(item.createdAt).toLocaleString("it-IT")}
+                                </div>
+                              </div>
+
+                              {/* Right Actions */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => setExpandedQueueId(isExpanded ? null : item.id)}
+                                  className="px-2.5 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground text-[11px] font-semibold transition-colors cursor-pointer border border-foreground/5"
+                                >
+                                  {isExpanded ? "Nascondi Payload" : "Vedi Payload"}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteQueueItem(item.id)}
+                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+                                  title="Scarta da coda"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={isRetrying || isRetryingQueue}
+                                  onClick={() => handleRetrySingle(item.id)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-background font-bold text-xs hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                                >
+                                  <Send size={12} />
+                                  <span>{isRetrying ? "Invio..." : "Riprova"}</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Error Reason Banner */}
+                            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-2 text-xs">
+                              <AlertCircle size={15} className="text-rose-400 shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-bold text-rose-400 mr-2">Motivo Errore:</span>
+                                <span className="font-mono text-rose-300">{item.error.message}</span>
+                              </div>
+                            </div>
+
+                            {/* Expanded Payload & Inspection */}
+                            {isExpanded && (
+                              <div className="p-4 rounded-xl bg-slate-950 border border-foreground/10 space-y-2 text-xs font-mono">
+                                <div className="text-[11px] text-foreground/50 font-bold uppercase tracking-wider">
+                                  Dettagli Richiesta Originale & Payload:
+                                </div>
+                                <pre className="text-[11px] text-emerald-400 overflow-x-auto max-h-60 p-2 rounded bg-black/40 border border-foreground/5">
+                                  {JSON.stringify(
+                                    {
+                                      id: item.id,
+                                      templateId: item.templateId,
+                                      subcaseId: item.subcaseId,
+                                      recipient: item.recipient,
+                                      subject: item.subject,
+                                      originalRequest: item.originalRequest,
+                                      compiledOptions: {
+                                        to: item.compiledOptions.to,
+                                        subject: item.compiledOptions.subject,
+                                        from: item.compiledOptions.from,
+                                        replyTo: item.compiledOptions.replyTo,
+                                        hasAttachments: Boolean(item.compiledOptions.attachments?.length)
+                                      }
+                                    },
+                                    null,
+                                    2
+                                  )}
+                                </pre>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left 6 Cols: Builder Controls */}
                 <div className="lg:col-span-6 space-y-6">
 
-              {/* SECTION 1: BUILDER COMPONENTS */}
-              {activeTabSection === "builder" && (
-                <div className="space-y-5">
-                  {/* Subject & Preheader Card */}
-                  <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
-                    <div className="flex items-center justify-between border-b border-foreground/5 pb-3">
-                      <span className="text-xs font-black uppercase tracking-wider text-primary">
-                        Informazioni & Oggetto
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          role="switch"
-                          id="email-template-enabled-toggle"
-                          aria-checked={activeTemplate.enabled !== false}
-                          onClick={() => handleUpdateTemplate((t) => ({ ...t, enabled: t.enabled === false }))}
-                          title={activeTemplate.enabled !== false ? "Disattiva invio di questa email" : "Attiva invio di questa email"}
-                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${
-                            activeTemplate.enabled !== false
-                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25"
-                              : "bg-foreground/5 text-foreground/50 border-foreground/10 hover:bg-foreground/10"
-                          }`}
-                        >
-                          <span className={`relative inline-block w-7 h-4 rounded-full transition-colors ${activeTemplate.enabled !== false ? "bg-emerald-400" : "bg-foreground/20"}`}>
-                            <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-background transition-all ${activeTemplate.enabled !== false ? "left-3.5" : "left-0.5"}`} />
-                          </span>
-                          {activeTemplate.enabled !== false ? "Attiva" : "Disattivata"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDuplicateTemplate(selectedIndex)}
-                          title="Duplica intero template"
-                          className="p-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
-                        >
-                          <CopyPlus size={15} />
-                        </button>
-                        {templates.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTemplate(selectedIndex)}
-                            title="Elimina template"
-                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <FormField
-                        label="Nome Template (Interno)"
-                        value={activeTemplate.name || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, name: v }))}
-                        placeholder="es. Conferma Iscrizione Cineforum"
-                      />
-                      <FormField
-                        label="Identificativo ID"
-                        value={activeTemplate.id || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, id: v }))}
-                        placeholder="cineforum-confirmation"
-                        helpText="Usato nei bottoni: href='#email:ID'"
-                      />
-                    </div>
-
-                    <FormField
-                      label="Oggetto dell'Email"
-                      value={activeTemplate.subject || ""}
-                      onChange={(v) => handleUpdateTemplate((t) => ({ ...t, subject: v }))}
-                      placeholder="Iscrizione confermata: {{event_title}} — Gli Attomatti"
-                    />
-
-                    <FormField
-                      label="Preheader (Testo di Anteprima Inbox)"
-                      value={activeTemplate.preheader || ""}
-                      onChange={(v) => handleUpdateTemplate((t) => ({ ...t, preheader: v }))}
-                      placeholder="Breve frase visibile nell'elenco della posta in arrivo"
-                    />
-                  </div>
-
-                  {/* Component Blocks List */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-wider text-foreground/70">
-                        Struttura dell'Email a Blocchi
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setIsAddBlockOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all cursor-pointer"
-                      >
-                        <Plus size={14} /> Aggiungi Componente
-                      </button>
-                    </div>
-
-                    {activeBlocks.map((block, idx) => {
-                      const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
-                      const Icon = def.icon;
-                      const isExpanded = expandedBlockId === block.id;
-
-                      return (
-                        <div
-                          key={block.id}
-                          className="rounded-2xl bg-muted/20 border border-foreground/5 overflow-hidden transition-all glass hover:border-foreground/10"
-                        >
-                          {/* Block Header */}
-                          <div className="p-3.5 flex items-center justify-between gap-3 bg-foreground/[0.02]">
-                            <div
-                              onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
-                              className="flex items-center gap-3 flex-1 cursor-pointer select-none"
-                            >
-                              <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-primary shrink-0">
-                                <Icon size={16} />
-                              </div>
-                              <div>
-                                <span className="font-bold text-xs text-foreground block">
-                                  {def.label}
-                                </span>
-                                <span className="text-[10px] text-foreground/50 block">
-                                  {def.desc}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Block Action Controls */}
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                disabled={idx === 0}
-                                onClick={() => handleMoveBlock(idx, "up")}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
-                                title="Sposta su"
-                              >
-                                <ArrowUp size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={idx === activeBlocks.length - 1}
-                                onClick={() => handleMoveBlock(idx, "down")}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
-                                title="Sposta giù"
-                              >
-                                <ArrowDown size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDuplicateBlock(idx)}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
-                                title="Duplica blocco"
-                              >
-                                <Copy size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteBlock(idx)}
-                                className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
-                                title="Elimina blocco"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer ml-1"
-                              >
-                                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Block Inspector (Expanded properties) */}
-                          {isExpanded && (
-                            <div className="p-5 border-t border-foreground/5 space-y-4 bg-background/30">
-                              
-                              {/* Header Block Properties */}
-                              {block.type === "header" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Nome Marchio / Brand"
-                                    value={block.brand_name || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { brand_name: v })}
-                                    placeholder="GLI ATTOMATTI"
-                                  />
-                                  <FormField
-                                    label="Sottotitolo / Payoff"
-                                    value={block.tagline || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { tagline: v })}
-                                    placeholder="Teatro Italiano • Zurigo"
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "center"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Centrato", value: "center" },
-                                      { label: "A Sinistra", value: "left" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Badge Block Properties */}
-                              {block.type === "badge" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Testo del Badge"
-                                    value={block.text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
-                                    placeholder="es. Cineforum, Workshop"
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "center"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Centrato", value: "center" },
-                                      { label: "A Sinistra", value: "left" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Heading Block Properties */}
-                              {block.type === "heading" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Testo del Titolo"
-                                    value={block.text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
-                                    placeholder="La tua prenotazione è confermata!"
-                                  />
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Dimensione / Livello"
-                                      value={block.level || "h1"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { level: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Grande (H1 - 24px)", value: "h1" },
-                                        { label: "Medio (H2 - 20px)", value: "h2" },
-                                        { label: "Compatto (H3 - 17px)", value: "h3" }
-                                      ]}
-                                    />
-                                    <FormField
-                                      label="Allineamento"
-                                      value={block.align || "left"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "A Sinistra", value: "left" },
-                                        { label: "Centrato", value: "center" }
-                                      ]}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Text Block Properties */}
-                              {block.type === "text" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Contenuto del Messaggio"
-                                    value={block.content || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { content: v })}
-                                    type="textarea"
-                                    rows={5}
-                                    helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "left"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "A Sinistra", value: "left" },
-                                      { label: "Centrato", value: "center" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Button Block Properties */}
-                              {block.type === "button" && (
-                                <div className="space-y-3">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Etichetta Pulsante"
-                                      value={block.label || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { label: v })}
-                                      placeholder="es. Dettagli Evento"
-                                    />
-                                    <FormField
-                                      label="Indirizzo URL"
-                                      value={block.url || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { url: v })}
-                                      placeholder="https://gliattomatti.ch o {{event_url}}"
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Allineamento / Larghezza"
-                                      value={block.align || "center"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Centrato", value: "center" },
-                                        { label: "A Sinistra", value: "left" },
-                                        { label: "Larghezza Piena (Full Width)", value: "full" }
-                                      ]}
-                                    />
-                                    <FormField
-                                      label="Stile Angoli"
-                                      value={block.style || "pill"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Arrotondato (Pillola)", value: "pill" },
-                                        { label: "Morbido (12px)", value: "rounded" },
-                                        { label: "Squadrato (4px)", value: "square" }
-                                      ]}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Info Box Properties */}
-                              {block.type === "info_box" && (
-                                <div className="space-y-4">
-                                  <FormField
-                                    label="Titolo Box Info"
-                                    value={block.title || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
-                                    placeholder="Riepilogo Evento"
-                                  />
-                                  <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
-                                      Voci della Scheda Info:
-                                    </label>
-                                    {(block.items || []).map((item, itemIdx) => (
-                                      <div key={itemIdx} className="flex gap-2 items-center">
-                                        <input
-                                          type="text"
-                                          value={item.label}
-                                          onChange={(e) => {
-                                            const updatedItems = [...block.items];
-                                            updatedItems[itemIdx] = { ...updatedItems[itemIdx], label: e.target.value };
-                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                          }}
-                                          placeholder="Etichetta (es. Data)"
-                                          className="w-1/3 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground"
-                                        />
-                                        <input
-                                          type="text"
-                                          value={item.value}
-                                          onChange={(e) => {
-                                            const updatedItems = [...block.items];
-                                            updatedItems[itemIdx] = { ...updatedItems[itemIdx], value: e.target.value };
-                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                          }}
-                                          placeholder="Valore (es. {{event_date}})"
-                                          className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground"
-                                        />
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            const updatedItems = block.items.filter((_, i) => i !== itemIdx);
-                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                          }}
-                                          className="p-1.5 text-rose-400 hover:text-rose-300 transition-colors"
-                                        >
-                                          <Trash2 size={14} />
-                                        </button>
-                                      </div>
-                                    ))}
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const updatedItems = [...(block.items || []), { label: "Nuova Voce", value: "" }];
-                                        handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                      }}
-                                      className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-[11px] font-bold text-foreground transition-colors cursor-pointer"
-                                    >
-                                      <Plus size={12} /> Aggiungi Voce
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Image Block Properties */}
-                              {block.type === "image" && (
-                                <div className="space-y-3">
-                                  <div className="flex gap-2">
-                                    <div className="flex-1">
-                                      <FormField
-                                        label="URL Immagine"
-                                        value={block.image_url || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { image_url: v })}
-                                        placeholder="https://gliattomatti.ch/images/locandina.webp"
-                                      />
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => setMediaPickerBlockId(block.id)}
-                                      className="self-end mb-1 px-3 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0"
-                                    >
-                                      Galleria
-                                    </button>
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Didascalia (Opzionale)"
-                                      value={block.caption || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { caption: v })}
-                                      placeholder="Scena dello spettacolo"
-                                    />
-                                    <FormField
-                                      label="Link al click (Opzionale)"
-                                      value={block.link_url || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { link_url: v })}
-                                      placeholder="https://gliattomatti.ch"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Two Column Properties */}
-                              {block.type === "two_column" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <div className="space-y-3">
-                                    <FormField
-                                      label="Titolo Colonna 1"
-                                      value={block.col1_title || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
-                                    />
-                                    <FormField
-                                      label="Testo Colonna 1"
-                                      value={block.col1_text || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
-                                      type="textarea"
-                                      rows={3}
-                                    />
-                                  </div>
-                                  <div className="space-y-3">
-                                    <FormField
-                                      label="Titolo Colonna 2"
-                                      value={block.col2_title || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
-                                    />
-                                    <FormField
-                                      label="Testo Colonna 2"
-                                      value={block.col2_text || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
-                                      type="textarea"
-                                      rows={3}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Divider Properties */}
-                              {block.type === "divider" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Stile Divisore"
-                                    value={block.style || "gradient"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Gradiente Sfumato Luminoso", value: "gradient" },
-                                      { label: "Linea Sottile Piatta", value: "solid" },
-                                      { label: "Solo Spaziatore Trasparente", value: "spacer" }
-                                    ]}
-                                  />
-                                  <FormField
-                                    label="Spaziatura"
-                                    value={block.spacing || "md"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { spacing: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Compatta (12px)", value: "sm" },
-                                      { label: "Media (20px)", value: "md" },
-                                      { label: "Ampia (32px)", value: "lg" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Social Block Properties */}
-                              {block.type === "social_links" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Link Instagram"
-                                    value={block.instagram_url || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { instagram_url: v })}
-                                    placeholder="https://instagram.com/..."
-                                  />
-                                  <FormField
-                                    label="Link Sito Web"
-                                    value={block.website_url || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { website_url: v })}
-                                    placeholder="https://gliattomatti.ch"
-                                  />
-                                </div>
-                              )}
-
-                              {/* Footer Block Properties */}
-                              {block.type === "footer" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Testo Istituzionale"
-                                    value={block.legal_text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { legal_text: v })}
-                                    placeholder="Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera"
-                                  />
-                                  <FormField
-                                    label="Nota di Conformità Privacy"
-                                    value={block.privacy_note || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { privacy_note: v })}
-                                  />
-                                </div>
-                              )}
-
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION 2: THEME & COLOR CUSTOMIZER */}
+              {/* SECTION 1: THEME & COLOR CUSTOMIZER */}
               {activeTabSection === "theme" && (
                 <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
                   <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
@@ -1851,9 +1900,889 @@ export function EmailTab() {
                 </div>
               )}
 
-              {/* SECTION: SUBCASES & TAGS */}
-              {activeTabSection === "subcases" && (
-                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+              {/* SECTION 2: DETTAGLI EMAIL (METADATI, SENDER & DESTINATARIO) */}
+              {activeTabSection === "details" && (
+                <div className="space-y-6">
+                  {/* Card 1: Informazioni Template, Oggetto & Preheader */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
+                    <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
+                      <div>
+                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                          <FileText size={18} className="text-primary" />
+                          Informazioni & Oggetto Email
+                        </h4>
+                        <p className="text-xs text-foreground/60 mt-0.5">
+                          Definisci nome, identificatore, oggetto della mail e testo di anteprima per la posta in arrivo.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          role="switch"
+                          id="email-template-enabled-toggle"
+                          aria-checked={activeTemplate.enabled !== false}
+                          onClick={() => handleUpdateTemplate((t) => ({ ...t, enabled: t.enabled === false }))}
+                          title={activeTemplate.enabled !== false ? "Disattiva invio di questa email" : "Attiva invio di questa email"}
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${
+                            activeTemplate.enabled !== false
+                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25"
+                              : "bg-foreground/5 text-foreground/50 border-foreground/10 hover:bg-foreground/10"
+                          }`}
+                        >
+                          <span className={`relative inline-block w-7 h-4 rounded-full transition-colors ${activeTemplate.enabled !== false ? "bg-emerald-400" : "bg-foreground/20"}`}>
+                            <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-background transition-all ${activeTemplate.enabled !== false ? "left-3.5" : "left-0.5"}`} />
+                          </span>
+                          {activeTemplate.enabled !== false ? "Attiva" : "Disattivata"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDuplicateTemplate(selectedIndex)}
+                          title="Duplica intero template"
+                          className="p-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+                        >
+                          <CopyPlus size={15} />
+                        </button>
+                        {templates.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTemplate(selectedIndex)}
+                            title="Elimina template"
+                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <FormField
+                        label="Nome Template (Interno)"
+                        value={activeTemplate.name || ""}
+                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, name: v }))}
+                        placeholder="es. Conferma Iscrizione Cineforum"
+                      />
+                      <FormField
+                        label="Identificativo ID"
+                        value={activeTemplate.id || ""}
+                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, id: v }))}
+                        placeholder="cineforum-confirmation"
+                        helpText="Usato nei bottoni del sito: href='#email:ID'"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        label="Oggetto dell'Email"
+                        value={activeTemplate.subject || ""}
+                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, subject: v }))}
+                        placeholder="Iscrizione confermata: {{event_title}} — Gli Attomatti"
+                        autocompleteTags={allAvailableTags}
+                        helpText="Supporta tag dinamici come {{event_title}} o {{nome}}"
+                      />
+
+                      <FormField
+                        label="Preheader (Testo di Anteprima Inbox)"
+                        value={activeTemplate.preheader || ""}
+                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, preheader: v }))}
+                        placeholder="Breve frase visibile nell'elenco della posta in arrivo"
+                        autocompleteTags={allAvailableTags}
+                        helpText="Visibile prima dell'apertura dell'email nei client di posta"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Card 2: Destinatario (A / To) */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                      <div>
+                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                          <Send size={18} className="text-primary" />
+                          Destinatario (A / To)
+                        </h4>
+                        <p className="text-xs text-foreground/60 mt-0.5">
+                          Definisci da dove estrarre l'email e il nome del destinatario. Supporta campi form, variabili o percorsi JSON per webhook e payload terzi.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* to_path */}
+                      <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold text-foreground block">
+                            Percorso Email Destinatario (<code className="text-primary font-mono">to_path</code>)
+                          </label>
+                          {fieldMapping.recipient_email_path && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateFieldMapping({ recipient_email_path: "" })}
+                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
+                            >
+                              Reimposta automatico
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={fieldMapping.recipient_email_path || ""}
+                          onChange={(e) => handleUpdateFieldMapping({ recipient_email_path: e.target.value })}
+                          placeholder="es. {{data.fields[0].value}}, email, customer.email"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                        />
+                        {/* Live preview badge for to_path */}
+                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
+                          <span className="text-foreground/60 font-semibold">Valore risolto:</span>
+                          {resolvedTechnicalFields.to ? (
+                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                              {resolvedTechnicalFields.to}
+                            </span>
+                          ) : (
+                            <span className="font-mono text-amber-400 italic">
+                              {parsedSampleJson ? "Nessuna email trovata per questo percorso" : "Nessun JSON di test fornito"}
+                            </span>
+                          )}
+                          <span className="text-[10px] text-foreground/40 font-mono ml-auto">
+                            ({resolvedTechnicalFields.toSource})
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-foreground/50">
+                          Supporta percorsi come <code className="font-mono text-primary">{"{{data.fields[0].value}}"}</code>, <code className="font-mono text-primary">customer.email</code> o filtri RFC JSONPath. Se vuoto, cerca in automatico campi email noti.
+                        </p>
+                      </div>
+
+                      {/* name_path */}
+                      <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold text-foreground block">
+                            Percorso Nome Destinatario (<code className="text-primary font-mono">name_path</code>)
+                          </label>
+                          {fieldMapping.recipient_name_path && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateFieldMapping({ recipient_name_path: "" })}
+                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
+                            >
+                              Reimposta automatico
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={fieldMapping.recipient_name_path || ""}
+                          onChange={(e) => handleUpdateFieldMapping({ recipient_name_path: e.target.value })}
+                          placeholder="es. {{data.fields[0].value}}, customer.first_name, cliente.nome"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                        />
+                        {/* Live preview badge for name_path */}
+                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
+                          <span className="text-foreground/60 font-semibold">Valore risolto:</span>
+                          {resolvedTechnicalFields.name ? (
+                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                              {resolvedTechnicalFields.name}
+                            </span>
+                          ) : (
+                            <span className="font-mono text-foreground/40 italic">
+                              {parsedSampleJson ? "Nessun nome rilevato con questo percorso" : "Nessun JSON di test fornito"}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-foreground/50">
+                          Viene iniettato automaticamente nelle variabili <code className="font-mono">{"{{name}}"}</code> e <code className="font-mono">{"{{nome}}"}</code>.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Profilo Mittente (Da / From & Reply-To) */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                      <div>
+                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                          <Mail size={18} className="text-primary" />
+                          Profilo Mittente Personalizzato & Dinamico (Da / From & Reply-To)
+                        </h4>
+                        <p className="text-xs text-foreground/60 mt-0.5">
+                          Definisci chi appare come mittente e l'indirizzo di risposta per questo template. Puoi usare testo fisso o tag dinamici <code className="text-primary font-mono">{"{{...}}"}</code> estratti dal form, dai webhook o dai custom fields!
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* From Name */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <FormField
+                          label="Nome Mittente (From Name):"
+                          value={activeTemplate.sender_profile?.from_name ?? ""}
+                          onChange={(val) => {
+                            handleUpdateTemplate((t) => ({
+                              ...t,
+                              sender_profile: {
+                                ...(t.sender_profile || {}),
+                                from_name: val
+                              }
+                            }));
+                          }}
+                          placeholder={`Default: ${settings.from_name || "Gli Attomatti"} (o es. {{event_title}})`}
+                          helpText="Es. Gli Attomatti Cineforum o dinamico {{organizzatore}}"
+                          autocompleteTags={allAvailableTags}
+                        />
+                      </div>
+
+                      {/* From Email */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <FormField
+                          label="Email Mittente (From Email):"
+                          value={activeTemplate.sender_profile?.from_email ?? ""}
+                          onChange={(val) => {
+                            handleUpdateTemplate((t) => ({
+                              ...t,
+                              sender_profile: {
+                                ...(t.sender_profile || {}),
+                                from_email: val
+                              }
+                            }));
+                          }}
+                          placeholder={`Default: ${settings.from_email || "no-reply@mail.gliattomatti.ch"}`}
+                          helpText="Deve appartenere al dominio verificato su Resend (es. mail.gliattomatti.ch)"
+                        />
+                      </div>
+
+                      {/* Reply-To */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <FormField
+                          label="Indirizzo Reply-To (Rispondi a):"
+                          value={activeTemplate.sender_profile?.reply_to ?? ""}
+                          onChange={(val) => {
+                            handleUpdateTemplate((t) => ({
+                              ...t,
+                              sender_profile: {
+                                ...(t.sender_profile || {}),
+                                reply_to: val
+                              }
+                            }));
+                          }}
+                          placeholder={`Default: ${settings.reply_to || "compagniateatralegliattomatti@gmail.com"}`}
+                          helpText="Dove riceverai le risposte dei destinatari. Supporta anche tag come {{x-reply-to}}"
+                          autocompleteTags={allAvailableTags}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Resolved preview badge */}
+                    <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+                      <div>
+                        <span className="text-xs font-bold text-foreground block">Intestazione Mittente Risolta:</span>
+                        <span className="text-xs font-mono text-primary mt-0.5 block">
+                          {resolvedTechnicalFields.from}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[11px] text-foreground/50 block">Reply-To attivo:</span>
+                        <span className="text-xs font-mono text-foreground/80 mt-0.5 block">
+                          {resolvedTechnicalFields.replyTo}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SECTION 3: BUILDER COMPONENTS */}
+              {activeTabSection === "builder" && (
+                <div className="space-y-5">
+
+                  {/* Component Blocks List */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black uppercase tracking-wider text-foreground/70">
+                        Struttura dell'Email a Blocchi
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsAddBlockOpen(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all cursor-pointer"
+                      >
+                        <Plus size={14} /> Aggiungi Componente
+                      </button>
+                    </div>
+
+                    {activeBlocks.map((block, idx) => {
+                      const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
+                      const Icon = def.icon;
+                      const isExpanded = expandedBlockId === block.id;
+
+                      return (
+                        <div
+                          key={block.id}
+                          className="rounded-2xl bg-muted/20 border border-foreground/5 overflow-hidden transition-all glass hover:border-foreground/10"
+                        >
+                          {/* Block Header */}
+                          <div className="p-3.5 flex items-center justify-between gap-3 bg-foreground/[0.02]">
+                            <div
+                              onClick={() => {
+                                const next = isExpanded ? null : block.id;
+                                setExpandedBlockId(next);
+                                if (!isExpanded) {
+                                  setLastExpandedBlockId(block.id);
+                                }
+                              }}
+                              className="flex items-center gap-3 flex-1 cursor-pointer select-none"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-primary shrink-0">
+                                <Icon size={16} />
+                              </div>
+                              <div>
+                                <span className="font-bold text-xs text-foreground block">
+                                  {def.label}
+                                </span>
+                                <span className="text-[10px] text-foreground/50 block">
+                                  {def.desc}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Block Action Controls */}
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => handleMoveBlock(idx, "up")}
+                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
+                                title="Sposta su"
+                              >
+                                <ArrowUp size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === activeBlocks.length - 1}
+                                onClick={() => handleMoveBlock(idx, "down")}
+                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
+                                title="Sposta giù"
+                              >
+                                <ArrowDown size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDuplicateBlock(idx)}
+                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
+                                title="Duplica blocco"
+                              >
+                                <Copy size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteBlock(idx)}
+                                className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+                                title="Elimina blocco"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
+                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer ml-1"
+                              >
+                                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Block Inspector (Expanded properties) */}
+                          {isExpanded && (
+                            <div className="p-5 border-t border-foreground/5 space-y-4 bg-background/30">
+                              
+                              {/* Header Block Properties */}
+                              {block.type === "header" && (
+                                <div className="space-y-3">
+                                  <FormField
+                                    label="Nome Marchio / Brand"
+                                    value={block.brand_name || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { brand_name: v })}
+                                    placeholder="GLI ATTOMATTI"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <FormField
+                                    label="Sottotitolo / Payoff"
+                                    value={block.tagline || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { tagline: v })}
+                                    placeholder="Teatro Italiano • Zurigo"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <FormField
+                                    label="Allineamento"
+                                    value={block.align || "center"}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                    type="select"
+                                    options={[
+                                      { label: "Centrato", value: "center" },
+                                      { label: "A Sinistra", value: "left" }
+                                    ]}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Badge Block Properties */}
+                              {block.type === "badge" && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <FormField
+                                    label="Testo del Badge"
+                                    value={block.text || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
+                                    placeholder="es. Cineforum, Workshop"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <FormField
+                                    label="Allineamento"
+                                    value={block.align || "center"}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                    type="select"
+                                    options={[
+                                      { label: "Centrato", value: "center" },
+                                      { label: "A Sinistra", value: "left" }
+                                    ]}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Heading Block Properties */}
+                              {block.type === "heading" && (
+                                <div className="space-y-3">
+                                  <FormField
+                                    label="Testo del Titolo"
+                                    value={block.text || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
+                                    placeholder="La tua prenotazione è confermata!"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Dimensione / Livello"
+                                      value={block.level || "h1"}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { level: v })}
+                                      type="select"
+                                      options={[
+                                        { label: "Grande (H1 - 24px)", value: "h1" },
+                                        { label: "Medio (H2 - 20px)", value: "h2" },
+                                        { label: "Compatto (H3 - 17px)", value: "h3" }
+                                      ]}
+                                    />
+                                    <FormField
+                                      label="Allineamento"
+                                      value={block.align || "left"}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                      type="select"
+                                      options={[
+                                        { label: "A Sinistra", value: "left" },
+                                        { label: "Centrato", value: "center" }
+                                      ]}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Text Block Properties */}
+                              {block.type === "text" && (
+                                <div className="space-y-3">
+                                  <FormField
+                                    label="Contenuto del Messaggio"
+                                    value={block.content || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { content: v })}
+                                    type="textarea"
+                                    rows={5}
+                                    helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <FormField
+                                    label="Allineamento"
+                                    value={block.align || "left"}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                    type="select"
+                                    options={[
+                                      { label: "A Sinistra", value: "left" },
+                                      { label: "Centrato", value: "center" }
+                                    ]}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Button Block Properties */}
+                              {block.type === "button" && (
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Etichetta Pulsante"
+                                      value={block.label || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { label: v })}
+                                      placeholder="es. Dettagli Evento"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Indirizzo URL"
+                                      value={block.url || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { url: v })}
+                                      placeholder="https://gliattomatti.ch o {{event_url}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Allineamento / Larghezza"
+                                      value={block.align || "center"}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                      type="select"
+                                      options={[
+                                        { label: "Centrato", value: "center" },
+                                        { label: "A Sinistra", value: "left" },
+                                        { label: "Larghezza Piena (Full Width)", value: "full" }
+                                      ]}
+                                    />
+                                    <FormField
+                                      label="Stile Angoli"
+                                      value={block.style || "pill"}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
+                                      type="select"
+                                      options={[
+                                        { label: "Arrotondato (Pillola)", value: "pill" },
+                                        { label: "Morbido (12px)", value: "rounded" },
+                                        { label: "Squadrato (4px)", value: "square" }
+                                      ]}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Info Box Properties */}
+                              {block.type === "info_box" && (
+                                <div className="space-y-4">
+                                  <FormField
+                                    label="Titolo Box Info"
+                                    value={block.title || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
+                                    placeholder="Riepilogo Evento"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
+                                      Voci della Scheda Info:
+                                    </label>
+                                    {(block.items || []).map((item, itemIdx) => (
+                                      <div key={itemIdx} className="flex gap-2 items-center">
+                                        <input
+                                          type="text"
+                                          value={item.label}
+                                          onChange={(e) => {
+                                            const updatedItems = [...block.items];
+                                            updatedItems[itemIdx] = { ...updatedItems[itemIdx], label: e.target.value };
+                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                          }}
+                                          placeholder="Etichetta (es. Data)"
+                                          className="w-1/3 px-3 py-2 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary shrink-0 self-start mt-0.5"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                          <FormField
+                                            label=""
+                                            value={item.value}
+                                            onChange={(v) => {
+                                              const updatedItems = [...block.items];
+                                              updatedItems[itemIdx] = { ...updatedItems[itemIdx], value: v };
+                                              handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                            }}
+                                            placeholder="Valore (es. {{event_date}})"
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updatedItems = block.items.filter((_, i) => i !== itemIdx);
+                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                          }}
+                                          className="p-1.5 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer shrink-0 self-start mt-1.5"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    ))}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedItems = [...(block.items || []), { label: "Nuova Voce", value: "" }];
+                                        handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                      }}
+                                      className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-[11px] font-bold text-foreground transition-colors cursor-pointer"
+                                    >
+                                      <Plus size={12} /> Aggiungi Voce
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Calendar Appointment Block Properties */}
+                              {block.type === "calendar" && (
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Testo Header / Badge Superiore"
+                                      value={block.header_label ?? ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { header_label: v })}
+                                      placeholder="Default: Promemoria Evento in Agenda"
+                                      helpText="Es. Promemoria Evento in Agenda, Save the Date, o {{badge_text}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Titolo Appuntamento / Evento"
+                                      value={block.title || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
+                                      placeholder="Spettacolo Teatrale Gli Attomatti o {{event_title}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Data & Ora Inizio"
+                                      value={block.start_date || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { start_date: v })}
+                                      placeholder="2026-11-14T18:00:00 o {{event_date}}"
+                                      helpText="Formato ISO (es. 2026-11-14T18:00:00) o tag dinamico {{event_date}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Data & Ora Fine (Opzionale)"
+                                      value={block.end_date || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { end_date: v })}
+                                      placeholder="2026-11-14T20:30:00 (default: +2 ore)"
+                                      helpText="Se non specificata, calcola automaticamente +2 ore"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Luogo Evento"
+                                      value={block.location || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { location: v })}
+                                      placeholder="Balberstrasse 47, Zurigo o {{event_location}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Descrizione Promemoria (Opzionale)"
+                                      value={block.description || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { description: v })}
+                                      placeholder="Porta con te la conferma della prenotazione!"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+
+                                  <div className="p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10 flex items-center gap-3">
+                                    <span className="text-base select-none">🗓️</span>
+                                    <div className="text-[11px] text-foreground/70 leading-relaxed">
+                                      Nell&apos;email vengono generati direttamente 3 pulsanti di aggiunta all&apos;agenda: <strong>Google Calendar</strong>, <strong>Apple / iCal (.ics)</strong> e <strong>Outlook</strong>.
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Image Block Properties */}
+                              {block.type === "image" && (
+                                <div className="space-y-4">
+                                  <div className="flex gap-2">
+                                    <div className="flex-1">
+                                      <FormField
+                                        label="URL Immagine"
+                                        value={block.image_url || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { image_url: v })}
+                                        placeholder="https://gliattomatti.ch/images/locandina.webp o {{poster_image}}"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setMediaPickerBlockId(block.id)}
+                                      className="self-end mb-1 px-3 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0"
+                                    >
+                                      Galleria
+                                    </button>
+                                  </div>
+
+                                  {/* Full width toggle */}
+                                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10">
+                                    <div className="space-y-0.5 pr-4">
+                                      <label className="text-xs font-bold text-foreground block cursor-pointer">
+                                        Larghezza Piena (Full Width a filo scheda)
+                                      </label>
+                                      <span className="text-[11px] text-foreground/50 block">
+                                        Estende l&apos;immagine al 100% da bordo a bordo della scheda bianca (senza margini laterali).
+                                      </span>
+                                    </div>
+                                    <input
+                                      type="checkbox"
+                                      checked={Boolean(block.full_width || block.align === "full")}
+                                      onChange={(e) => {
+                                        const isFull = e.target.checked;
+                                        handleUpdateSingleBlock(block.id, {
+                                          full_width: isFull,
+                                          align: isFull ? "full" : "center"
+                                        });
+                                      }}
+                                      className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
+                                    />
+                                  </div>
+
+                                  {/* Alignment if not full width */}
+                                  {!(block.full_width || block.align === "full") && (
+                                    <FormField
+                                      label="Allineamento"
+                                      value={block.align || "center"}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v as any })}
+                                      type="select"
+                                      options={[
+                                        { label: "Centrato", value: "center" },
+                                        { label: "A Sinistra", value: "left" },
+                                        { label: "A Destra", value: "right" }
+                                      ]}
+                                    />
+                                  )}
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <FormField
+                                      label="Didascalia (Opzionale)"
+                                      value={block.caption || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { caption: v })}
+                                      placeholder="Scena dello spettacolo"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Link al click (Opzionale)"
+                                      value={block.link_url || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { link_url: v })}
+                                      placeholder="https://gliattomatti.ch o {{cta_url}}"
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Two Column Properties */}
+                              {block.type === "two_column" && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <div className="space-y-3">
+                                    <FormField
+                                      label="Titolo Colonna 1"
+                                      value={block.col1_title || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Testo Colonna 1"
+                                      value={block.col1_text || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
+                                      type="textarea"
+                                      rows={3}
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+                                  <div className="space-y-3">
+                                    <FormField
+                                      label="Titolo Colonna 2"
+                                      value={block.col2_title || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                    <FormField
+                                      label="Testo Colonna 2"
+                                      value={block.col2_text || ""}
+                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
+                                      type="textarea"
+                                      rows={3}
+                                      autocompleteTags={allAvailableTags}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Divider Properties */}
+                              {block.type === "divider" && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <FormField
+                                    label="Stile Divisore"
+                                    value={block.style || "gradient"}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
+                                    type="select"
+                                    options={[
+                                      { label: "Gradiente Sfumato Luminoso", value: "gradient" },
+                                      { label: "Linea Sottile Piatta", value: "solid" },
+                                      { label: "Solo Spaziatore Trasparente", value: "spacer" }
+                                    ]}
+                                  />
+                                  <FormField
+                                    label="Spaziatura"
+                                    value={block.spacing || "md"}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { spacing: v })}
+                                    type="select"
+                                    options={[
+                                      { label: "Compatta (12px)", value: "sm" },
+                                      { label: "Media (20px)", value: "md" },
+                                      { label: "Ampia (32px)", value: "lg" }
+                                    ]}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Social Block Properties */}
+                              {block.type === "social_links" && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <FormField
+                                    label="Link Instagram"
+                                    value={block.instagram_url || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { instagram_url: v })}
+                                    placeholder="https://instagram.com/..."
+                                  />
+                                  <FormField
+                                    label="Link Sito Web"
+                                    value={block.website_url || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { website_url: v })}
+                                    placeholder="https://gliattomatti.ch"
+                                  />
+                                </div>
+                              )}
+
+                              {/* Footer Block Properties */}
+                              {block.type === "footer" && (
+                                <div className="space-y-3">
+                                  <FormField
+                                    label="Testo Istituzionale"
+                                    value={block.legal_text || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { legal_text: v })}
+                                    placeholder="Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera"
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                  <FormField
+                                    label="Nota di Conformità Privacy"
+                                    value={block.privacy_note || ""}
+                                    onChange={(v) => handleUpdateSingleBlock(block.id, { privacy_note: v })}
+                                    autocompleteTags={allAvailableTags}
+                                  />
+                                </div>
+                              )}
+
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+
+
+              {/* SECTION 4: PERSONALIZZAZIONE (SUBCASES + CAMPI/JSON) */}
+              {activeTabSection === "personalization" && (
+                <div className="space-y-6">
+                  {/* Card 1: Subcases & Varianti Controllate da Tag */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
                     <div>
                       <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
@@ -2113,125 +3042,10 @@ export function EmailTab() {
                       })}
                     </div>
                   )}
-                </div>
-              )}
-
-              {/* SECTION: SENDER PROFILE */}
-              {activeTabSection === "sender" && (
-                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                    <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                        <Mail size={18} className="text-primary" />
-                        Profilo Mittente Personalizzato & Dinamico
-                      </h4>
-                      <p className="text-xs text-foreground/60 mt-0.5">
-                        Definisci chi appare come mittente e l'indirizzo di risposta per questo template. Puoi usare testo fisso o tag dinamici <code className="text-primary font-mono">{"{{...}}"}</code> estratti dal form, dai webhook o dai custom fields!
-                      </p>
-                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* From Name */}
-                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                      <label className="text-xs font-bold text-foreground block">
-                        Nome Mittente (From Name):
-                      </label>
-                      <input
-                        type="text"
-                        value={activeTemplate.sender_profile?.from_name ?? ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleUpdateTemplate((t) => ({
-                            ...t,
-                            sender_profile: {
-                              ...(t.sender_profile || {}),
-                              from_name: val
-                            }
-                          }));
-                        }}
-                        placeholder={`Default: ${settings.from_name || "Gli Attomatti"} (o es. {{event_title}})`}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
-                      />
-                      <p className="text-[11px] text-foreground/50">
-                        Es. <code className="text-primary font-mono">Gli Attomatti Cineforum</code> o dinamico <code className="text-primary font-mono">{"{{organizzatore}}"}</code>
-                      </p>
-                    </div>
-
-                    {/* From Email */}
-                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                      <label className="text-xs font-bold text-foreground block">
-                        Email Mittente (From Email):
-                      </label>
-                      <input
-                        type="text"
-                        value={activeTemplate.sender_profile?.from_email ?? ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleUpdateTemplate((t) => ({
-                            ...t,
-                            sender_profile: {
-                              ...(t.sender_profile || {}),
-                              from_email: val
-                            }
-                          }));
-                        }}
-                        placeholder={`Default: ${settings.from_email || "no-reply@mail.gliattomatti.ch"}`}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                      />
-                      <p className="text-[11px] text-foreground/50">
-                        Deve appartenere al dominio verificato su Resend (es. <code className="text-primary font-mono">mail.gliattomatti.ch</code>)
-                      </p>
-                    </div>
-
-                    {/* Reply-To */}
-                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                      <label className="text-xs font-bold text-foreground block">
-                        Indirizzo Reply-To (Rispondi a):
-                      </label>
-                      <input
-                        type="text"
-                        value={activeTemplate.sender_profile?.reply_to ?? ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleUpdateTemplate((t) => ({
-                            ...t,
-                            sender_profile: {
-                              ...(t.sender_profile || {}),
-                              reply_to: val
-                            }
-                          }));
-                        }}
-                        placeholder={`Default: ${settings.reply_to || "compagniateatralegliattomatti@gmail.com"}`}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                      />
-                      <p className="text-[11px] text-foreground/50">
-                        Dove riceverai le risposte dei destinatari. Supporta anche tag dinamici come <code className="text-primary font-mono">{"{{headers['x-reply-to']}}"}</code>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Resolved preview badge */}
-                  <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
-                    <div>
-                      <span className="text-xs font-bold text-foreground block">Intestazione Mittente Risolta:</span>
-                      <span className="text-xs font-mono text-primary mt-0.5 block">
-                        {resolvedTechnicalFields.from}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[11px] text-foreground/50 block">Reply-To attivo:</span>
-                      <span className="text-xs font-mono text-foreground/80 mt-0.5 block">
-                        {resolvedTechnicalFields.replyTo}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION: CUSTOM FIELDS & JSON ANALYZER */}
-              {activeTabSection === "fields" && (
-                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                  {/* Card 2: Campi Personalizzati & Analizzatore JSON */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
                     <div>
                       <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
@@ -2447,6 +3261,7 @@ export function EmailTab() {
                       <strong className="text-foreground">Sincronizzazione Live con l'Anteprima:</strong> I valori rilevati da questo JSON vengono usati automaticamente come dati di prova nell'anteprima dell'email a destra e a schermo intero! Se modifichi il JSON qui sopra, l'anteprima si aggiorna all'istante con i tuoi dati reali.
                     </div>
                   </div>
+                  </div>
                 </div>
               )}
 
@@ -2478,88 +3293,24 @@ export function EmailTab() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-bold text-foreground block">
-                            Percorso Email Destinatario (<code className="text-primary font-mono">to_path</code>)
-                          </label>
-                          {fieldMapping.recipient_email_path && (
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateFieldMapping({ recipient_email_path: "" })}
-                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
-                            >
-                              Reimposta automatico
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="text"
-                          value={fieldMapping.recipient_email_path || ""}
-                          onChange={(e) => handleUpdateFieldMapping({ recipient_email_path: e.target.value })}
-                          placeholder="es. {{data.fields[0].value}}, data.fields[1].value, pippo"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        {/* Live preview badge for to_path */}
-                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
-                          <span className="text-foreground/60 font-semibold">Valore risolto dal JSON:</span>
-                          {resolvedTechnicalFields.to ? (
-                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
-                              {resolvedTechnicalFields.to}
-                            </span>
-                          ) : (
-                            <span className="font-mono text-amber-400 italic">
-                              {parsedSampleJson ? "Nessuna email trovata per questo percorso" : "Nessun JSON di test fornito"}
-                            </span>
-                          )}
-                          <span className="text-[10px] text-foreground/40 font-mono ml-auto">
-                            ({resolvedTechnicalFields.toSource})
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-foreground/50">
-                          Supporta percorsi come <code className="font-mono text-primary">{"{{data.fields[0].value}}"}</code>, <code className="font-mono text-primary">data.fields[1].value</code> o filtri RFC JSONPath. Se vuoto, cerca in automatico campi email noti.
-                        </p>
+                    {/* Pointer to Dettagli Email for to_path & name_path */}
+                    <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2 text-foreground/80">
+                        <Info size={16} className="text-primary shrink-0" />
+                        <span>
+                          La configurazione del <strong>Destinatario (Email & Nome)</strong> è ora nella scheda{" "}
+                          <button
+                            type="button"
+                            onClick={() => setActiveTabSection("details")}
+                            className="text-primary underline font-semibold hover:opacity-80 cursor-pointer"
+                          >
+                            Dettagli Email
+                          </button>.
+                        </span>
                       </div>
-
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-bold text-foreground block">
-                            Percorso Nome Destinatario (<code className="text-primary font-mono">name_path</code>)
-                          </label>
-                          {fieldMapping.recipient_name_path && (
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateFieldMapping({ recipient_name_path: "" })}
-                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
-                            >
-                              Reimposta automatico
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="text"
-                          value={fieldMapping.recipient_name_path || ""}
-                          onChange={(e) => handleUpdateFieldMapping({ recipient_name_path: e.target.value })}
-                          placeholder="es. {{data.fields[0].value}}, customer.first_name, cliente.nome"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        {/* Live preview badge for name_path */}
-                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
-                          <span className="text-foreground/60 font-semibold">Valore risolto dal JSON:</span>
-                          {resolvedTechnicalFields.name ? (
-                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
-                              {resolvedTechnicalFields.name}
-                            </span>
-                          ) : (
-                            <span className="font-mono text-foreground/40 italic">
-                              {parsedSampleJson ? "Nessun nome rilevato con questo percorso" : "Nessun JSON di test fornito"}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-foreground/50">
-                          Viene iniettato automaticamente nelle variabili <code className="font-mono">{"{{name}}"}</code> e <code className="font-mono">{"{{nome}}"}</code>.
-                        </p>
+                      <div className="flex items-center gap-2 text-[11px] font-mono shrink-0">
+                        <span className="text-foreground/50">to:</span>
+                        <span className="text-emerald-400 font-bold">{resolvedTechnicalFields.to || "non rilevata"}</span>
                       </div>
                     </div>
 
@@ -2961,10 +3712,25 @@ export function EmailTab() {
             <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
               <div>
                 <h4 className="text-lg font-black uppercase tracking-tight text-foreground">
-                  Aggiungi Componente all'Email
+                  Aggiungi Componente all&apos;Email
                 </h4>
                 <p className="text-xs text-foreground/60">
-                  Scegli il blocco da inserire nella sequenza.
+                  {(() => {
+                    const targetId = expandedBlockId || lastExpandedBlockId;
+                    const targetBlock = targetId ? activeBlocks.find((b) => b.id === targetId) : null;
+                    const targetDef = targetBlock ? BLOCK_DEFINITIONS.find((d) => d.type === targetBlock.type) : null;
+                    if (targetDef) {
+                      return (
+                        <>
+                          Verrà inserito subito dopo:{" "}
+                          <span className="text-primary font-bold">
+                            {targetDef.label}
+                          </span>
+                        </>
+                      );
+                    }
+                    return "Scegli il blocco da inserire nella sequenza.";
+                  })()}
                 </p>
               </div>
               <button

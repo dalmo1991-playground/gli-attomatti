@@ -61,6 +61,9 @@ export interface EmailSettingsConfig {
   reply_to?: string;
   footer_text?: string;
   privacy_note?: string;
+  test_recipient?: string;
+  dlq_alert_email?: string;
+  dlq_alert_enabled?: boolean;
 }
 
 /**

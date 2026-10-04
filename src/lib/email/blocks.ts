@@ -1,5 +1,14 @@
 import { LandingThemeColors, DEFAULT_THEME_PRESET } from "@/lib/landingThemes";
+import { getRelativeLuminance, hexToRgb } from "@/lib/devTheme";
 import { getValueByJsonPath } from "./jsonPath";
+import {
+  parseEventDate,
+  generateGoogleCalendarUrl,
+  generateOutlookCalendarUrl,
+  generateOffice365CalendarUrl,
+  generateIcsCalendarContent,
+  generateIcsDownloadUrl
+} from "./calendar";
 
 export type EmailBlockType =
   | "header"
@@ -8,6 +17,7 @@ export type EmailBlockType =
   | "text"
   | "button"
   | "info_box"
+  | "calendar"
   | "image"
   | "two_column"
   | "divider"
@@ -70,13 +80,27 @@ export interface InfoBoxBlock extends BaseEmailBlock {
   items: InfoItem[];
 }
 
+export interface CalendarBlock extends BaseEmailBlock {
+  type: "calendar";
+  header_label?: string;
+  title: string;
+  start_date: string;
+  end_date?: string;
+  location?: string;
+  description?: string;
+  button_label?: string;
+  show_direct_links?: boolean;
+  align?: "left" | "center";
+}
+
 export interface ImageBlock extends BaseEmailBlock {
   type: "image";
   image_url: string;
   alt?: string;
   caption?: string;
   link_url?: string;
-  align?: "left" | "center" | "full";
+  align?: "left" | "center" | "right" | "full";
+  full_width?: boolean;
 }
 
 export interface TwoColumnBlock extends BaseEmailBlock {
@@ -116,6 +140,7 @@ export type EmailBlock =
   | TextBlock
   | ButtonBlock
   | InfoBoxBlock
+  | CalendarBlock
   | ImageBlock
   | TwoColumnBlock
   | DividerBlock
@@ -360,19 +385,52 @@ export function renderEmailBlocksHtml({
   const primaryText = colors.primaryForeground || "#0f172a";
   const accentColor = colors.accent || "#fbbf24";
 
+  let isDarkCard = true;
+  let isDarkCanvas = true;
+  try {
+    isDarkCard = getRelativeLuminance(cardBg) < 0.5;
+  } catch {
+    isDarkCard = true;
+  }
+  try {
+    isDarkCanvas = getRelativeLuminance(bgColor) < 0.5;
+  } catch {
+    isDarkCanvas = true;
+  }
+
+  // Dynamic bubble container styles (info_box, two_column) that adapt to both dark and light card themes
+  const bubbleRgb = isDarkCard ? "255, 255, 255" : (hexToRgb(textColor) || "15, 23, 42");
+  const bubbleBg = `rgba(${bubbleRgb}, ${isDarkCard ? "0.04" : "0.035"})`;
+  const bubbleBorder = `1px solid rgba(${bubbleRgb}, ${isDarkCard ? "0.08" : "0.1"})`;
+  const dividerColor = `rgba(${bubbleRgb}, ${isDarkCard ? "0.1" : "0.12"})`;
+
+  // Dynamic card container border & shadow
+  const cardBorderRgb = isDarkCanvas ? "255, 255, 255" : "15, 23, 42";
+  const cardBorder = `1px solid rgba(${cardBorderRgb}, ${isDarkCanvas ? "0.1" : "0.08"})`;
+  const cardShadow = isDarkCanvas
+    ? "0 20px 40px -15px rgba(0, 0, 0, 0.5)"
+    : "0 10px 30px -10px rgba(0, 0, 0, 0.08)";
+
   // Render individual block to HTML table row
-  const renderedBlocksHtml = blocks
-    .filter((b) => b.enabled !== false)
-    .map((block) => {
+  const enabledBlocks = blocks.filter((b) => b.enabled !== false);
+
+  // Render individual block to HTML table row
+  const renderedBlocksHtml = enabledBlocks
+    .map((block, idx) => {
+      const isFirst = idx === 0;
+      const isLast = idx === enabledBlocks.length - 1;
+
       switch (block.type) {
         case "header": {
           const brand = r(block.brand_name?.trim() ? block.brand_name : "GLI ATTOMATTI");
           const tag = r(block.tagline?.trim() || "");
           const align = block.align || "center";
           const logoUrl = block.logo_url ? toAbsoluteEmailUrl(r(block.logo_url), baseUrl) : "";
+          const pt = isFirst ? "36px" : "16px";
+          const pb = isLast ? "36px" : "24px";
           return `
             <tr>
-              <td align="${align}" style="padding-bottom: 24px;">
+              <td align="${align}" style="padding: ${pt} 32px ${pb} 32px;">
                 ${logoUrl ? `
                   <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(brand)}" style="max-height: 48px; width: auto; margin-bottom: 8px; border: 0;" />
                 ` : `
@@ -395,9 +453,11 @@ export function renderEmailBlocksHtml({
           if (!text) return "";
           const badgeColor = block.color_override || primaryColor;
           const align = block.align || "center";
+          const pt = isFirst ? "36px" : "0px";
+          const pb = isLast ? "36px" : "16px";
           return `
             <tr>
-              <td align="${align}" style="padding-bottom: 16px;">
+              <td align="${align}" style="padding: ${pt} 32px ${pb} 32px;">
                 <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td style="background-color: rgba(251, 113, 133, 0.15); border: 1px solid rgba(251, 113, 133, 0.3); border-radius: 9999px; padding: 4px 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: ${badgeColor};">
@@ -416,9 +476,11 @@ export function renderEmailBlocksHtml({
           const align = block.align || "left";
           const color = block.color_override || textColor;
           const fontSize = block.level === "h2" ? "20px" : block.level === "h3" ? "17px" : "24px";
+          const pt = isFirst ? "36px" : "0px";
+          const pb = isLast ? "36px" : "18px";
           return `
             <tr>
-              <td align="${align}" style="padding-bottom: 18px;">
+              <td align="${align}" style="padding: ${pt} 32px ${pb} 32px;">
                 <h1 style="margin: 0; font-size: ${fontSize}; font-weight: 800; line-height: 1.25; color: ${color}; letter-spacing: -0.02em;">
                   ${escapeHtml(text)}
                 </h1>
@@ -432,9 +494,11 @@ export function renderEmailBlocksHtml({
           if (!content) return "";
           const align = block.align || "left";
           const bodyHtml = formatMarkdown(content, primaryColor);
+          const pt = isFirst ? "36px" : "0px";
+          const pb = isLast ? "36px" : "8px";
           return `
             <tr>
-              <td align="${align}" style="padding-bottom: 8px; font-size: 15px; line-height: 1.6; color: ${textColor}; opacity: 0.95;">
+              <td align="${align}" style="padding: ${pt} 32px ${pb} 32px; font-size: 15px; line-height: 1.6; color: ${textColor}; opacity: 0.95;">
                 ${bodyHtml}
               </td>
             </tr>
@@ -450,10 +514,11 @@ export function renderEmailBlocksHtml({
           const radius = block.style === "square" ? "4px" : block.style === "rounded" ? "12px" : "9999px";
           const btnBg = block.bg_color || primaryColor;
           const btnText = block.text_color || primaryText;
+          const pb = isLast ? "36px" : "24px";
 
           return `
             <tr>
-              <td align="${align}" style="padding-top: 16px; padding-bottom: 24px;">
+              <td align="${align}" style="padding: 16px 32px ${pb} 32px;">
                 <table role="presentation" border="0" cellspacing="0" cellpadding="0" ${block.align === "full" ? 'width="100%"' : ""}>
                   <tr>
                     <td align="center" style="border-radius: ${radius}; background-color: ${btnBg};">
@@ -479,11 +544,12 @@ export function renderEmailBlocksHtml({
 
           if (evaluatedItems.length === 0) return "";
           const title = r(block.title);
+          const pb = isLast ? "36px" : "20px";
 
           return `
             <tr>
-              <td style="padding-top: 8px; padding-bottom: 20px;">
-                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px;">
+              <td style="padding: 8px 32px ${pb} 32px;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 14px;">
                   ${title ? `
                     <tr>
                       <td style="padding: 12px 18px 0 18px;">
@@ -511,6 +577,194 @@ export function renderEmailBlocksHtml({
           `;
         }
 
+        case "calendar": {
+          const rawHeader = block.header_label !== undefined ? r(block.header_label) : "Promemoria Evento in Agenda";
+          const headerLabel = rawHeader.trim();
+          const rawTitle = r(block.title);
+          const rawStart = r(block.start_date);
+          const rawEnd = r(block.end_date);
+          const rawLoc = r(block.location);
+          const rawDesc = r(block.description);
+          const align = block.align || "center";
+          const pb = isLast ? "36px" : "20px";
+
+          // Parse start and end date
+          const parsedStart = parseEventDate(rawStart) || new Date(Date.now() + 24 * 60 * 60 * 1000);
+          const parsedEnd = parseEventDate(rawEnd) || new Date(parsedStart.getTime() + 2 * 60 * 60 * 1000);
+
+          const eventTitle = rawTitle || "Appuntamento Teatrale Gli Attomatti";
+          const eventLocation = rawLoc || "Zurigo, Svizzera";
+          const eventDesc = rawDesc || "";
+
+          // Formatted human date & time
+          const monthShortNames = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+          const monthLongNames = [
+            "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+            "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+          ];
+          const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+          
+          const monthShort = monthShortNames[parsedStart.getMonth()] || "EVENTO";
+          const dayNum = String(parsedStart.getDate()).padStart(2, "0");
+          const dayName = dayNames[parsedStart.getDay()] || "";
+          const monthLong = monthLongNames[parsedStart.getMonth()] || "";
+          const year = parsedStart.getFullYear();
+          const startHours = String(parsedStart.getHours()).padStart(2, "0");
+          const startMins = String(parsedStart.getMinutes()).padStart(2, "0");
+          const endHours = String(parsedEnd.getHours()).padStart(2, "0");
+          const endMins = String(parsedEnd.getMinutes()).padStart(2, "0");
+
+          const formattedDateLine = `${dayName}, ${dayNum} ${monthLong} ${year}`;
+          const formattedTimeLine = `${startHours}:${startMins} - ${endHours}:${endMins}`;
+
+          // Deep Links
+          const googleUrl = generateGoogleCalendarUrl({
+            title: eventTitle,
+            description: eventDesc,
+            location: eventLocation,
+            startDate: parsedStart,
+            endDate: parsedEnd
+          });
+
+          const outlookUrl = generateOutlookCalendarUrl({
+            title: eventTitle,
+            description: eventDesc,
+            location: eventLocation,
+            startDate: parsedStart,
+            endDate: parsedEnd
+          });
+
+          const icsDownloadUrl = generateIcsDownloadUrl({
+            title: eventTitle,
+            description: eventDesc,
+            location: eventLocation,
+            startDate: rawStart || parsedStart.toISOString(),
+            endDate: rawEnd || parsedEnd.toISOString(),
+            baseUrl
+          });
+
+          return `
+            <tr>
+              <td align="${align}" style="padding: 10px 32px ${pb} 32px;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 16px; overflow: hidden;">
+                  
+                  ${headerLabel ? `
+                  <!-- Top Badge Line -->
+                  <tr>
+                    <td style="padding: 14px 20px 0 20px;">
+                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="background-color: ${primaryColor}; width: 6px; height: 6px; border-radius: 50%; font-size: 0; line-height: 0;">&nbsp;</td>
+                          <td style="padding-left: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: ${accentColor};">
+                            ${escapeHtml(headerLabel)}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  ` : ""}
+
+                  <!-- Main Content: Date Tile + Event Info -->
+                  <tr>
+                    <td style="padding: 14px 20px 18px 20px;">
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <!-- Date Tile -->
+                          <td width="64" valign="top" style="padding-right: 16px;">
+                            <table role="presentation" width="64" border="0" cellspacing="0" cellpadding="0" style="background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.06)" : "rgba(15, 23, 42, 0.05)"}; border: ${bubbleBorder}; border-radius: 12px; overflow: hidden; text-align: center;">
+                              <tr>
+                                <td style="background-color: ${primaryColor}; color: ${primaryText}; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; padding: 4px 0; text-transform: uppercase;">
+                                  ${monthShort}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 6px 0 8px 0; font-size: 22px; font-weight: 900; line-height: 1; color: ${textColor};">
+                                  ${dayNum}
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+
+                          <!-- Event Info -->
+                          <td valign="top" style="font-size: 14px; line-height: 1.4;">
+                            <div style="font-size: 16px; font-weight: 800; color: ${textColor}; margin-bottom: 4px; letter-spacing: -0.01em;">
+                              ${escapeHtml(eventTitle)}
+                            </div>
+                            <div style="font-size: 13px; font-weight: 600; color: ${textColor}; opacity: 0.9; margin-bottom: 4px;">
+                              📅 ${escapeHtml(formattedDateLine)} • ${escapeHtml(formattedTimeLine)}
+                            </div>
+                            ${eventLocation ? `
+                              <div style="font-size: 12px; font-weight: 500; color: ${textColor}; opacity: 0.75;">
+                                📍 ${escapeHtml(eventLocation)}
+                              </div>
+                            ` : ""}
+                            ${eventDesc ? `
+                              <div style="font-size: 12px; color: ${textColor}; opacity: 0.65; margin-top: 6px; line-height: 1.4;">
+                                ${escapeHtml(eventDesc)}
+                              </div>
+                            ` : ""}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- 3 Direct Action Buttons: Google Calendar, Apple / iCal, Outlook -->
+                  <tr>
+                    <td style="padding: 0 20px 18px 20px;">
+                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="font-size: 0; line-height: 0;">
+                            <!-- Google Calendar -->
+                            <div style="display: inline-block; vertical-align: top; margin-right: 8px; margin-bottom: 8px;">
+                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                  <td align="center" style="background-color: ${primaryColor}; border-radius: 9999px;">
+                                    <a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${primaryText}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
+                                      Google Calendar
+                                    </a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+
+                            <!-- Apple / iCal (.ics) -->
+                            <div style="display: inline-block; vertical-align: top; margin-right: 8px; margin-bottom: 8px;">
+                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                  <td align="center" style="background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.12)" : "rgba(15, 23, 42, 0.08)"}; border: ${bubbleBorder}; border-radius: 9999px;">
+                                    <a href="${escapeHtml(icsDownloadUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${textColor}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
+                                      Apple / iCal (.ics)
+                                    </a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+
+                            <!-- Outlook -->
+                            <div style="display: inline-block; vertical-align: top; margin-bottom: 8px;">
+                              <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                  <td align="center" style="background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.12)" : "rgba(15, 23, 42, 0.08)"}; border: ${bubbleBorder}; border-radius: 9999px;">
+                                    <a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: ${textColor}; text-decoration: none; border-radius: 9999px; white-space: nowrap;">
+                                      Outlook
+                                    </a>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          `;
+        }
+
         case "image": {
           const rawImgUrl = r(block.image_url);
           if (!rawImgUrl) return "";
@@ -519,13 +773,35 @@ export function renderEmailBlocksHtml({
           const caption = r(block.caption);
           const rawLink = r(block.link_url);
           const link = rawLink ? toAbsoluteEmailUrl(rawLink, baseUrl) : "";
-          const align = block.align || "center";
+          const isFullWidth = Boolean(block.full_width || block.align === "full");
 
-          const imgTag = `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(alt)}" style="display: block; max-width: 100%; border-radius: 12px; border: 0;" />`;
+          if (isFullWidth) {
+            const pt = isFirst ? "0px" : "8px";
+            const pb = isLast ? (caption ? "16px" : "0px") : "16px";
+            const imgTag = `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(alt)}" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;" />`;
+
+            return `
+              <tr>
+                <td align="center" style="padding: ${pt} 0 ${pb} 0;">
+                  ${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">${imgTag}</a>` : imgTag}
+                  ${caption ? `
+                    <div style="font-size: 12px; color: ${textColor}; opacity: 0.6; padding: 8px 32px 0 32px; text-align: center;">
+                      ${escapeHtml(caption)}
+                    </div>
+                  ` : ""}
+                </td>
+              </tr>
+            `;
+          }
+
+          const pt = isFirst ? "36px" : "8px";
+          const pb = isLast ? "36px" : "20px";
+          const align = block.align === "right" ? "right" : block.align === "left" ? "left" : "center";
+          const imgTag = `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(alt)}" style="display: block; max-width: 100%; height: auto; border-radius: 12px; border: 0;" />`;
 
           return `
             <tr>
-              <td align="${align}" style="padding-top: 8px; padding-bottom: 20px;">
+              <td align="${align}" style="padding: ${pt} 32px ${pb} 32px;">
                 ${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${imgTag}</a>` : imgTag}
                 ${caption ? `
                   <div style="font-size: 12px; color: ${textColor}; opacity: 0.6; margin-top: 6px; text-align: ${align};">
@@ -542,18 +818,19 @@ export function renderEmailBlocksHtml({
           const c1Text = r(block.col1_text);
           const c2Title = r(block.col2_title);
           const c2Text = r(block.col2_text);
+          const pb = isLast ? "36px" : "20px";
 
           return `
             <tr>
-              <td style="padding-top: 8px; padding-bottom: 20px;">
+              <td style="padding: 8px 32px ${pb} 32px;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td width="48%" valign="top" style="background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px 16px;">
+                    <td width="48%" valign="top" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 14px 16px;">
                       ${c1Title ? `<div style="font-size: 13px; font-weight: 700; color: ${accentColor}; margin-bottom: 4px;">${escapeHtml(c1Title)}</div>` : ""}
                       <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c1Text)}</div>
                     </td>
                     <td width="4%">&nbsp;</td>
-                    <td width="48%" valign="top" style="background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px 16px;">
+                    <td width="48%" valign="top" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 14px 16px;">
                       ${c2Title ? `<div style="font-size: 13px; font-weight: 700; color: ${accentColor}; margin-bottom: 4px;">${escapeHtml(c2Title)}</div>` : ""}
                       <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c2Text)}</div>
                     </td>
@@ -567,12 +844,12 @@ export function renderEmailBlocksHtml({
         case "divider": {
           const spacingPx = block.spacing === "lg" ? "32px" : block.spacing === "sm" ? "12px" : "20px";
           if (block.style === "spacer") {
-            return `<tr><td height="${spacingPx}"></td></tr>`;
+            return `<tr><td height="${spacingPx}" style="font-size: 0; line-height: 0; padding: 0;">&nbsp;</td></tr>`;
           }
           if (block.style === "gradient") {
             return `
               <tr>
-                <td style="padding: ${spacingPx} 0;">
+                <td style="padding: ${spacingPx} 32px;">
                   <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
                       <td height="2" style="background: linear-gradient(90deg, transparent, ${primaryColor}, ${accentColor}, transparent);"></td>
@@ -584,10 +861,10 @@ export function renderEmailBlocksHtml({
           }
           return `
             <tr>
-              <td style="padding: ${spacingPx} 0;">
+              <td style="padding: ${spacingPx} 32px;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td height="1" style="background-color: rgba(255, 255, 255, 0.1);"></td>
+                    <td height="1" style="background-color: ${dividerColor};"></td>
                   </tr>
                 </table>
               </td>
@@ -600,9 +877,10 @@ export function renderEmailBlocksHtml({
           const websiteUrl = block.website_url ? toAbsoluteEmailUrl(r(block.website_url), baseUrl) : "";
           const instagramUrl = block.instagram_url ? toAbsoluteEmailUrl(r(block.instagram_url), baseUrl) : "";
           const facebookUrl = block.facebook_url ? toAbsoluteEmailUrl(r(block.facebook_url), baseUrl) : "";
+          const pb = isLast ? "36px" : "16px";
           return `
             <tr>
-              <td align="${align}" style="padding-top: 12px; padding-bottom: 16px;">
+              <td align="${align}" style="padding: 12px 32px ${pb} 32px;">
                 <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     ${websiteUrl ? `
@@ -641,7 +919,7 @@ export function renderEmailBlocksHtml({
 
           return `
             <tr>
-              <td align="center" style="padding-top: 24px; padding-bottom: 8px; font-size: 12px; line-height: 1.6; color: ${textColor}; opacity: 0.55;">
+              <td align="center" style="padding: 24px 32px 36px 32px; font-size: 12px; line-height: 1.6; color: ${textColor}; opacity: 0.55;">
                 <p style="margin: 0 0 6px 0; font-weight: 600;">${escapeHtml(legal)}</p>
                 <p style="margin: 0 0 10px 0;">${escapeHtml(privacy)}</p>
                 ${block.show_privacy_link !== false ? `
@@ -683,16 +961,16 @@ export function renderEmailBlocksHtml({
           <!-- Card Container -->
           <tr>
             <td>
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${cardBg}; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${cardBg}; border: ${cardBorder}; border-radius: 20px; overflow: hidden; box-shadow: ${cardShadow};">
                 
                 <!-- Glowing Top Accent Line -->
                 <tr>
-                  <td height="4" style="background: linear-gradient(90deg, ${primaryColor}, ${accentColor});"></td>
+                  <td height="4" style="background: linear-gradient(90deg, ${primaryColor}, ${accentColor}); font-size: 0; line-height: 0;">&nbsp;</td>
                 </tr>
 
-                <!-- Content Padding Table -->
+                <!-- Content Table -->
                 <tr>
-                  <td style="padding: 36px 32px 32px 32px;">
+                  <td style="padding: 0;">
                     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                       ${renderedBlocksHtml}
                     </table>
@@ -779,6 +1057,55 @@ export function renderEmailBlocksText({
             });
             out += `\n`;
           }
+          break;
+        }
+        case "calendar": {
+          const rawHeader = block.header_label !== undefined ? r(block.header_label) : "APPUNTAMENTO IN AGENDA";
+          const headerLabel = rawHeader.trim();
+          const rawTitle = r(block.title || "Evento Teatrale");
+          const rawStart = r(block.start_date);
+          const rawEnd = r(block.end_date);
+          const rawLoc = r(block.location);
+          const rawDesc = r(block.description);
+
+          const parsedStart = parseEventDate(rawStart) || new Date();
+          const parsedEnd = parseEventDate(rawEnd) || new Date(parsedStart.getTime() + 2 * 60 * 60 * 1000);
+
+          const googleUrl = generateGoogleCalendarUrl({
+            title: rawTitle,
+            description: rawDesc,
+            location: rawLoc,
+            startDate: parsedStart,
+            endDate: parsedEnd
+          });
+
+          const outlookUrl = generateOutlookCalendarUrl({
+            title: rawTitle,
+            description: rawDesc,
+            location: rawLoc,
+            startDate: parsedStart,
+            endDate: parsedEnd
+          });
+
+          const icsDownloadUrl = generateIcsDownloadUrl({
+            title: rawTitle,
+            description: rawDesc,
+            location: rawLoc,
+            startDate: rawStart || parsedStart.toISOString(),
+            endDate: rawEnd || parsedEnd.toISOString(),
+            baseUrl
+          });
+
+          if (headerLabel) {
+            out += `=== ${headerLabel.toUpperCase()} ===\n`;
+          }
+          out += `${rawTitle}\n`;
+          if (rawStart) out += `Data e Ora: ${rawStart}\n`;
+          if (rawLoc) out += `Luogo: ${rawLoc}\n`;
+          out += `Aggiungi al Calendario:\n`;
+          out += `• Google Calendar: ${googleUrl}\n`;
+          out += `• Apple / iCal (.ics): ${icsDownloadUrl}\n`;
+          out += `• Outlook: ${outlookUrl}\n\n`;
           break;
         }
         case "two_column": {

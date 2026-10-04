@@ -8,14 +8,16 @@ import {
   EmailTemplateConfig,
   EmailSubcaseConfig
 } from "@/lib/email/template";
-import { sendTransactionalEmail } from "@/lib/email/resend";
+import { sendTransactionalEmail, SendEmailAttachment } from "@/lib/email/resend";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
+import { parseEventDate, generateIcsCalendarContent } from "@/lib/email/calendar";
 import {
   getValueByJsonPath,
   flattenJsonToDotNotation,
   resolveRecipientEmail,
   resolveRecipientName
 } from "@/lib/email/jsonPath";
+import { enqueueFailedEmail } from "@/lib/email/dlq";
 
 export const dynamic = "force-dynamic";
 
@@ -308,6 +310,39 @@ export async function POST(req: NextRequest) {
 
     const fromHeader = fromEmail ? `${fromName} <${fromEmail}>` : undefined;
 
+    // 8b. Check for Calendar Appointment block and attach universal .ics file
+    const attachments: SendEmailAttachment[] = [];
+    const calendarBlock = (selectedTemplate.blocks || []).find(
+      (b: any) => b.type === "calendar" && b.enabled !== false
+    ) as any;
+
+    if (calendarBlock) {
+      const calTitle = replaceVariables(calendarBlock.title || resolvedSubject, variables);
+      const calStart = replaceVariables(calendarBlock.start_date || "", variables);
+      const calEnd = replaceVariables(calendarBlock.end_date || "", variables);
+      const calLoc = replaceVariables(calendarBlock.location || "", variables);
+      const calDesc = replaceVariables(calendarBlock.description || "", variables);
+
+      const startDate = parseEventDate(calStart) || new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const endDate = parseEventDate(calEnd) || new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+
+      const icsContent = generateIcsCalendarContent({
+        title: calTitle,
+        description: calDesc,
+        location: calLoc,
+        startDate,
+        endDate,
+        organizerName: fromName,
+        organizerEmail: fromEmail
+      });
+
+      attachments.push({
+        filename: "invito-evento.ics",
+        content: Buffer.from(icsContent, "utf-8"),
+        contentType: "text/calendar; charset=utf-8; method=PUBLISH"
+      });
+    }
+
     // 9. Dispatch Email via Resend
     const sendResult = await sendTransactionalEmail({
       to: recipientEmail,
@@ -315,12 +350,48 @@ export async function POST(req: NextRequest) {
       html: emailHtml,
       text: emailText,
       from: fromHeader,
-      replyTo
+      replyTo,
+      attachments: attachments.length > 0 ? attachments : undefined
     });
 
     if (!sendResult.success) {
+      // Save failed email to DLQ for on-demand retry via Admin or API
+      const queuedRecord = await enqueueFailedEmail({
+        error: {
+          message: sendResult.error || "Errore sconosciuto durante l'invio dell'email"
+        },
+        recipient: {
+          email: recipientEmail,
+          name: recipientName
+        },
+        subject: resolvedSubject,
+        templateId: selectedTemplate.id || selectedTemplate.name,
+        subcaseId: activeSubcase?.id,
+        compiledOptions: {
+          to: recipientEmail,
+          subject: resolvedSubject,
+          html: emailHtml,
+          text: emailText,
+          from: fromHeader,
+          replyTo,
+          attachments: attachments.length > 0 ? attachments : undefined
+        },
+        originalRequest: {
+          url: req.url,
+          body,
+          templateParam: rawTemplateParam,
+          subcaseParam: requestedSubcaseId
+        }
+      });
+
       return NextResponse.json(
-        { error: sendResult.error || "Errore sconosciuto durante l'invio dell'email" },
+        {
+          success: false,
+          queued: true,
+          queueId: queuedRecord.id,
+          message: "Invio fallito. L'email è stata salvata nella coda di recupero (DLQ) per essere ritriggerata.",
+          error: sendResult.error || "Errore sconosciuto durante l'invio dell'email"
+        },
         { status: 500 }
       );
     }

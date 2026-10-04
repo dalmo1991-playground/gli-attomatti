@@ -1945,7 +1945,9 @@
       "reply_to": "compagniateatralegliattomatti@gmail.com",
       "footer_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
       "privacy_note": "Ricevi questa email in seguito alla tua registrazione a un nostro evento o iniziativa teatrale.",
-      "test_recipient": "info@gliattomatti.ch"
+      "test_recipient": "info@gliattomatti.ch",
+      "dlq_alert_email": "compagniateatralegliattomatti@gmail.com",
+      "dlq_alert_enabled": true
     },
     "templates": [
       {
@@ -2077,7 +2079,8 @@
             "type": "image",
             "image_url": "https://gliattomatti.ch/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
             "alt": "Locandina Evento",
-            "align": "center"
+            "align": "full",
+            "full_width": true
           },
           {
             "id": "block-social",
