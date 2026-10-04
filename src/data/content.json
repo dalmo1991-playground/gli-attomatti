@@ -2017,6 +2017,14 @@
             "align": "center"
           },
           {
+            "id": "block-1791142683214",
+            "type": "image",
+            "image_url": "https://gli-attomatti.vercel.app/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+            "alt": "Locandina Evento",
+            "align": "full",
+            "full_width": true
+          },
+          {
             "id": "block-1791126590992",
             "type": "divider",
             "style": "spacer",
@@ -2032,27 +2040,19 @@
           {
             "id": "block-body",
             "type": "text",
-            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**, in programma il **{{event_date}}**.",
+            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**, in programma il **{{event_date}}**. Numero partecipanti: **{{data.fields[label=Numero di partecipanti].value}}**",
             "align": "left"
           },
           {
-            "id": "block-1791126756564",
-            "type": "info_box",
-            "title": "Dettagli Evento",
-            "items": [
-              {
-                "label": "Data",
-                "value": "{{event_date}}"
-              },
-              {
-                "label": "Luogo",
-                "value": "Balberstrasse 47, Zurich (Wollishofen)"
-              },
-              {
-                "label": "Posti prenotati",
-                "value": "{{data.fields[label=Numero di partecipanti].value}}"
-              }
-            ]
+            "id": "block-1791142839814",
+            "type": "calendar",
+            "header_label": "",
+            "title": "Cineforum - {{event_title}}",
+            "start_date": "{{event_date}}",
+            "end_date": "",
+            "location": "Balberstrasse 47, Zurich (Wollishofen)",
+            "description": "",
+            "align": "center"
           },
           {
             "id": "block-1791126717083",
@@ -2079,8 +2079,8 @@
             "type": "image",
             "image_url": "https://gliattomatti.ch/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
             "alt": "Locandina Evento",
-            "align": "full",
-            "full_width": true
+            "align": "center",
+            "full_width": false
           },
           {
             "id": "block-social",
