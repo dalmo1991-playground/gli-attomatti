@@ -4,11 +4,11 @@
  * and stores full payloads for on-demand retry via the Admin Console or API.
  *
  * Storage Strategy:
- * 1. In Production on Vercel: Uses Vercel Blob (@vercel/blob) when BLOB_READ_WRITE_TOKEN is configured.
+ * 1. In Production on Vercel: Uses Vercel Blob (@vercel/blob) supporting both Private and Public stores.
  * 2. In Development or Fallback: Uses a local JSON file in `.data/email-dlq.json` (or memory fallback).
  */
 
-import { put, list, del } from "@vercel/blob";
+import { put, list, del, get } from "@vercel/blob";
 import fs from "fs";
 import path from "path";
 import { SendEmailAttachment } from "./resend";
@@ -56,10 +56,86 @@ const LOCAL_FILE = path.join(LOCAL_DIR, "email-dlq.json");
 let memoryQueue: Map<string, FailedEmailRecord> = new Map();
 
 /**
- * Checks if Vercel Blob storage is available.
+ * Checks if Vercel Blob storage is configured and available.
  */
-function isBlobStorageAvailable(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+export function isBlobStorageAvailable(): boolean {
+  return Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
+    process.env.BLOB_STORE_ID?.trim() ||
+    process.env.VERCEL_OIDC_TOKEN?.trim()
+  );
+}
+
+/**
+ * Writes a blob with auto-detection for Private vs Public store access.
+ */
+async function putToBlob(pathname: string, content: string): Promise<void> {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+  try {
+    // Try private access first (default for modern Vercel Blob stores)
+    await put(pathname, content, {
+      access: "private",
+      addRandomSuffix: false,
+      token
+    });
+  } catch (err: any) {
+    const msg = String(err?.message || "").toLowerCase();
+    // If store was created with public access, retry with public
+    if (msg.includes("public") || msg.includes("not allowed")) {
+      await put(pathname, content, {
+        access: "public",
+        addRandomSuffix: false,
+        token
+      });
+    } else {
+      throw err;
+    }
+  }
+}
+
+/**
+ * Reads a blob content supporting both private (stream/authenticated) and public blobs.
+ */
+async function readFromBlob(blob: { pathname: string; url: string; downloadUrl?: string }): Promise<FailedEmailRecord | null> {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+
+  // 1. Try get() with private access (handles private stores and OIDC)
+  try {
+    const res = await get(blob.pathname || blob.url, { access: "private", token });
+    if (res?.body) {
+      const data = (await new Response(res.body).json()) as FailedEmailRecord;
+      return data;
+    }
+  } catch {}
+
+  // 2. Try downloadUrl if available
+  if (blob.downloadUrl) {
+    try {
+      const res = await fetch(blob.downloadUrl, { cache: "no-store" });
+      if (res.ok) {
+        return (await res.json()) as FailedEmailRecord;
+      }
+    } catch {}
+  }
+
+  // 3. Try get() with public access
+  try {
+    const res = await get(blob.pathname || blob.url, { access: "public", token });
+    if (res?.body) {
+      const data = (await new Response(res.body).json()) as FailedEmailRecord;
+      return data;
+    }
+  } catch {}
+
+  // 4. Try standard public fetch
+  try {
+    const res = await fetch(blob.url, { cache: "no-store" });
+    if (res.ok) {
+      return (await res.json()) as FailedEmailRecord;
+    }
+  } catch {}
+
+  return null;
 }
 
 /**
@@ -122,13 +198,10 @@ export async function enqueueFailedEmail(
 
   if (isBlobStorageAvailable()) {
     try {
-      await put(`email-dlq/${id}.json`, JSON.stringify(record, null, 2), {
-        access: "public",
-        addRandomSuffix: false
-      });
+      await putToBlob(`email-dlq/${id}.json`, JSON.stringify(record, null, 2));
       return record;
-    } catch (blobErr) {
-      console.error("[DLQ] Error saving to Vercel Blob, falling back to local/memory:", blobErr);
+    } catch (blobErr: any) {
+      console.error("[DLQ] Error saving to Vercel Blob, falling back to local/memory:", blobErr?.message || blobErr);
     }
   }
 
@@ -146,21 +219,13 @@ export async function enqueueFailedEmail(
 export async function listFailedEmails(): Promise<FailedEmailRecord[]> {
   if (isBlobStorageAvailable()) {
     try {
-      const { blobs } = await list({ prefix: "email-dlq/" });
+      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const { blobs } = await list({ prefix: "email-dlq/", token });
       const records: FailedEmailRecord[] = [];
 
       // Fetch blob contents in parallel with small batching
       const fetchPromises = blobs.map(async (blob) => {
-        try {
-          const res = await fetch(blob.url, { cache: "no-store" });
-          if (res.ok) {
-            const data = (await res.json()) as FailedEmailRecord;
-            return data;
-          }
-        } catch (fetchErr) {
-          console.warn(`[DLQ] Failed to fetch blob ${blob.url}:`, fetchErr);
-        }
-        return null;
+        return readFromBlob(blob);
       });
 
       const results = await Promise.all(fetchPromises);
@@ -170,8 +235,8 @@ export async function listFailedEmails(): Promise<FailedEmailRecord[]> {
 
       // Sort newest first
       return records.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } catch (err) {
-      console.error("[DLQ] Error listing from Vercel Blob, checking local queue:", err);
+    } catch (err: any) {
+      console.error("[DLQ] Error listing from Vercel Blob, checking local queue:", err?.message || err);
     }
   }
 
@@ -188,15 +253,13 @@ export async function getFailedEmail(id: string): Promise<FailedEmailRecord | nu
 
   if (isBlobStorageAvailable()) {
     try {
-      const { blobs } = await list({ prefix: `email-dlq/${id}.json` });
+      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
       if (blobs.length > 0) {
-        const res = await fetch(blobs[0].url, { cache: "no-store" });
-        if (res.ok) {
-          return (await res.json()) as FailedEmailRecord;
-        }
+        return await readFromBlob(blobs[0]);
       }
-    } catch (err) {
-      console.warn(`[DLQ] Error getting ${id} from Blob:`, err);
+    } catch (err: any) {
+      console.warn(`[DLQ] Error getting ${id} from Blob:`, err?.message || err);
     }
   }
 
@@ -213,13 +276,14 @@ export async function removeFailedEmail(id: string): Promise<boolean> {
   let removedFromBlob = false;
   if (isBlobStorageAvailable()) {
     try {
-      const { blobs } = await list({ prefix: `email-dlq/${id}.json` });
+      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
       if (blobs.length > 0) {
-        await del(blobs.map((b) => b.url));
+        await del(blobs.map((b) => b.url), { token });
         removedFromBlob = true;
       }
-    } catch (err) {
-      console.warn(`[DLQ] Error deleting ${id} from Blob:`, err);
+    } catch (err: any) {
+      console.warn(`[DLQ] Error deleting ${id} from Blob:`, err?.message || err);
     }
   }
 
@@ -242,13 +306,15 @@ export async function clearAllFailedEmails(): Promise<number> {
 
   if (isBlobStorageAvailable()) {
     try {
-      const { blobs } = await list({ prefix: "email-dlq/" });
+      const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+      const { blobs } = await list({ prefix: "email-dlq/", token });
       if (blobs.length > 0) {
-        await del(blobs.map((b) => b.url));
+        await del(blobs.map((b) => b.url), { token });
         count += blobs.length;
       }
-    } catch (err) {
-      console.warn("[DLQ] Error clearing blobs:", err);
+      return count;
+    } catch (err: any) {
+      console.warn("[DLQ] Error clearing blobs:", err?.message || err);
     }
   }
 
@@ -279,13 +345,10 @@ export async function updateFailedEmailAttempt(
 
   if (isBlobStorageAvailable()) {
     try {
-      await put(`email-dlq/${id}.json`, JSON.stringify(existing, null, 2), {
-        access: "public",
-        addRandomSuffix: false
-      });
+      await putToBlob(`email-dlq/${id}.json`, JSON.stringify(existing, null, 2));
       return existing;
-    } catch (err) {
-      console.warn(`[DLQ] Error updating ${id} in Blob:`, err);
+    } catch (err: any) {
+      console.warn(`[DLQ] Error updating ${id} in Blob:`, err?.message || err);
     }
   }
 

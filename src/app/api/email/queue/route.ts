@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listFailedEmails, removeFailedEmail, clearAllFailedEmails, enqueueFailedEmail } from "@/lib/email/dlq";
+import { listFailedEmails, removeFailedEmail, clearAllFailedEmails, enqueueFailedEmail, isBlobStorageAvailable } from "@/lib/email/dlq";
 
 export const dynamic = "force-dynamic";
 
@@ -30,9 +30,11 @@ export async function GET(req: NextRequest) {
     }
 
     const items = await listFailedEmails();
+    const isBlob = isBlobStorageAvailable();
     return NextResponse.json({
       success: true,
       count: items.length,
+      storage: isBlob ? "vercel-blob" : "local-memory",
       items
     });
   } catch (error: any) {
@@ -121,9 +123,13 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    const isBlob = isBlobStorageAvailable();
     return NextResponse.json({
       success: true,
-      message: "Email di simulazione aggiunta con successo alla Coda DLQ!",
+      storage: isBlob ? "vercel-blob" : "local-memory",
+      message: isBlob
+        ? "Email di simulazione salvata con successo su Vercel Blob!"
+        : "Email di simulazione salvata (in memoria locale/fallback).",
       item: record
     });
   } catch (error: any) {

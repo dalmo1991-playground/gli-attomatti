@@ -161,6 +161,7 @@ export function EmailTab() {
   const [retryingQueueId, setRetryingQueueId] = useState<string | null>(null);
   const [queueMessage, setQueueMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [expandedQueueId, setExpandedQueueId] = useState<string | null>(null);
+  const [queueStorageType, setQueueStorageType] = useState<string>("auto");
 
   // DLQ Cron Notification Test State
   const [isTestingDlqNotify, setIsTestingDlqNotify] = useState(false);
@@ -241,6 +242,7 @@ export function EmailTab() {
       if (res.ok) {
         const data = await res.json();
         setQueueItems(Array.isArray(data.items) ? data.items : []);
+        if (data.storage) setQueueStorageType(data.storage);
       }
     } catch (err) {
       console.warn("Failed to fetch email queue:", err);
@@ -1452,9 +1454,18 @@ export function EmailTab() {
                 <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-foreground/5 pb-4">
                     <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2 flex-wrap">
                         <RotateCcw size={18} className="text-rose-400" />
-                        Coda Errori & Invii Falliti (Dead Letter Queue)
+                        <span>Coda Errori & Invii Falliti (Dead Letter Queue)</span>
+                        {queueStorageType === "vercel-blob" ? (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 font-bold">
+                            🟢 Vercel Blob Attivo
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/25 font-bold">
+                            🟡 Storage Locale / Memoria
+                          </span>
+                        )}
                       </h4>
                       <p className="text-xs text-foreground/60 mt-0.5">
                         Cattura tutte le email non consegnate (limite 100/giorno di Resend, disservizi o errori di rete). Puoi ritriggerarle in qualsiasi momento.
