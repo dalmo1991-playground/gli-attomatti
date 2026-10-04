@@ -123,13 +123,15 @@ export function renderEmailHtml({
   variables = {},
   rawJsonObj,
   themeColors,
-  settings
+  settings,
+  baseUrl
 }: {
   template: EmailTemplateConfig;
   variables?: Record<string, string>;
   rawJsonObj?: any;
   themeColors?: LandingThemeColors;
   settings?: EmailSettingsConfig;
+  baseUrl?: string;
 }): string {
   const blocks = convertLegacyToBlocks(template);
 
@@ -151,7 +153,8 @@ export function renderEmailHtml({
     rawJsonObj,
     themeColors,
     subject: template.subject || "Notifica da Gli Attomatti",
-    preheader: template.preheader || ""
+    preheader: template.preheader || "",
+    baseUrl
   });
 }
 
@@ -162,17 +165,20 @@ export function renderEmailText({
   template,
   variables = {},
   rawJsonObj,
-  settings
+  settings,
+  baseUrl
 }: {
   template: EmailTemplateConfig;
   variables?: Record<string, string>;
   rawJsonObj?: any;
   settings?: EmailSettingsConfig;
+  baseUrl?: string;
 }): string {
   const blocks = convertLegacyToBlocks(template);
   return renderEmailBlocksText({
     blocks,
     variables,
-    rawJsonObj
+    rawJsonObj,
+    baseUrl
   });
 }

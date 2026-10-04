@@ -74,18 +74,25 @@ export async function POST(req: NextRequest) {
     };
 
     const themeColors = resolveEmailTheme(template.theme || "default", content?.landings || [], template.customColors);
+    const baseUrl =
+      req.nextUrl?.origin && !req.nextUrl.origin.includes("localhost")
+        ? req.nextUrl.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || "https://gliattomatti.ch");
+
     const emailHtml = renderEmailHtml({
       template,
       variables: mergedVariables,
       rawJsonObj,
       themeColors,
-      settings: emailSettings
+      settings: emailSettings,
+      baseUrl
     });
     const emailText = renderEmailText({
       template,
       variables: mergedVariables,
       rawJsonObj,
-      settings: emailSettings
+      settings: emailSettings,
+      baseUrl
     });
 
     const subjectTemplate = template.subject || "Notifica di prova — Gli Attomatti";

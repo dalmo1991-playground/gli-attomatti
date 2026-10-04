@@ -313,6 +313,12 @@ export function EmailTab() {
   }, [parsedSampleJson, activeTemplate, selectedSubcaseId, sampleVariables, settings]);
 
   const originUrl = typeof window !== "undefined" ? window.location.origin : "https://gliattomatti.ch";
+  const siteBaseUrl =
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1"
+      ? window.location.origin
+      : "https://gliattomatti.ch";
   const apiEndpointUrl = `${originUrl}/api/email/send?template=${activeTemplate?.id || "template-id"}&secret=TUO_SEGRETO`;
 
   // Get active blocks, converting legacy templates on the fly if needed
@@ -459,7 +465,7 @@ export function EmailTab() {
 
     switch (type) {
       case "header":
-        newBlock = { id: newId, type: "header", brand_name: "GLI ATTOMATTI", tagline: "Teatro Italiano • Zurigo", align: "center" };
+        newBlock = { id: newId, type: "header", brand_name: "GLI ATTOMATTI", tagline: "", align: "center" };
         break;
       case "badge":
         newBlock = { id: newId, type: "badge", text: "Notifica Speciale", align: "center" };
@@ -485,7 +491,7 @@ export function EmailTab() {
         };
         break;
       case "image":
-        newBlock = { id: newId, type: "image", image_url: "/images/1782553290530-TheaterCurtain.webp", alt: "Locandina Evento", align: "center" };
+        newBlock = { id: newId, type: "image", image_url: `${siteBaseUrl}/images/1782553290530-TheaterCurtain.webp`, alt: "Locandina Evento", align: "center" };
         break;
       case "two_column":
         newBlock = { id: newId, type: "two_column", col1_title: "Ingresso in Sala", col1_text: "Apertura porte 30 minuti prima dell'inizio.", col2_title: "Come Raggiungerci", col2_text: "Fermata tram nelle immediate vicinanze." };
@@ -518,7 +524,7 @@ export function EmailTab() {
       preheader: "Dettagli importanti sulla tua partecipazione",
       theme: "default",
       blocks: [
-        { id: "b1", type: "header", brand_name: "GLI ATTOMATTI", tagline: "Teatro Italiano • Zurigo", align: "center" },
+        { id: "b1", type: "header", brand_name: "GLI ATTOMATTI", tagline: "", align: "center" },
         { id: "b2", type: "badge", text: "Conferma Iscrizione", align: "center" },
         { id: "b3", type: "heading", text: "La tua prenotazione è confermata!", level: "h1", align: "left" },
         { id: "b4", type: "text", content: "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per **{{event_title}}**.\n\nTi aspettiamo in sala!", align: "left" },
@@ -625,9 +631,10 @@ export function EmailTab() {
       variables: sampleVariables,
       rawJsonObj: parsedSampleJson,
       themeColors: resolvedColors,
-      settings
+      settings,
+      baseUrl: siteBaseUrl
     });
-  }, [activeTemplate, activeBlocks, sampleVariables, parsedSampleJson, resolvedColors, settings]);
+  }, [activeTemplate, activeBlocks, sampleVariables, parsedSampleJson, resolvedColors, settings, siteBaseUrl]);
 
   // Open live HTML in a clean new tab
   const handleOpenInNewTab = () => {
@@ -1514,7 +1521,7 @@ export function EmailTab() {
                                         label="URL Immagine"
                                         value={block.image_url || ""}
                                         onChange={(v) => handleUpdateSingleBlock(block.id, { image_url: v })}
-                                        placeholder="/images/locandina.webp"
+                                        placeholder="https://gliattomatti.ch/images/locandina.webp"
                                       />
                                     </div>
                                     <button
@@ -3004,7 +3011,12 @@ export function EmailTab() {
         onClose={() => setMediaPickerBlockId(null)}
         onSelect={(selected) => {
           if (mediaPickerBlockId && selected[0]) {
-            handleUpdateSingleBlock(mediaPickerBlockId, { image_url: selected[0] });
+            const rawUrl = selected[0];
+            const fullUrl =
+              rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
+                ? rawUrl
+                : `${siteBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+            handleUpdateSingleBlock(mediaPickerBlockId, { image_url: fullUrl });
           }
           setMediaPickerBlockId(null);
         }}

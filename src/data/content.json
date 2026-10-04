@@ -2009,7 +2009,7 @@
             "id": "block-header",
             "type": "header",
             "brand_name": "GLI ATTOMATTI",
-            "tagline": "Teatro Italiano • Zurigo",
+            "tagline": "",
             "align": "center"
           },
           {
@@ -2042,7 +2042,7 @@
           {
             "id": "block-1791118336869",
             "type": "image",
-            "image_url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+            "image_url": "https://gliattomatti.ch/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
             "alt": "Locandina Evento",
             "align": "center"
           },

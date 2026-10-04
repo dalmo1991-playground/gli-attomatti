@@ -241,19 +241,26 @@ export async function POST(req: NextRequest) {
     const customColors = body.customColors || selectedTemplate.customColors;
     const themeColors = resolveEmailTheme(chosenTheme, content?.landings || [], customColors);
 
+    const baseUrl =
+      req.nextUrl?.origin && !req.nextUrl.origin.includes("localhost")
+        ? req.nextUrl.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || "https://gliattomatti.ch");
+
     const emailHtml = renderEmailHtml({
       template: selectedTemplate,
       variables,
       rawJsonObj: payloadContext,
       themeColors,
-      settings: emailSettings
+      settings: emailSettings,
+      baseUrl
     });
 
     const emailText = renderEmailText({
       template: selectedTemplate,
       variables,
       rawJsonObj: payloadContext,
-      settings: emailSettings
+      settings: emailSettings,
+      baseUrl
     });
 
     const subjectTemplate = body.subject || selectedTemplate.subject || "Notifica da Gli Attomatti";

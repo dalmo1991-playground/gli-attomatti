@@ -61,12 +61,18 @@ export async function GET(req: NextRequest) {
       ...(activeSubcase?.custom_fields || {})
     };
 
+    const baseUrl =
+      req.nextUrl?.origin && !req.nextUrl.origin.includes("localhost")
+        ? req.nextUrl.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || "https://gliattomatti.ch");
+
     const html = renderEmailHtml({
       template: selectedTemplate,
       variables,
       rawJsonObj,
       themeColors,
-      settings
+      settings,
+      baseUrl
     });
 
     return new Response(html, {

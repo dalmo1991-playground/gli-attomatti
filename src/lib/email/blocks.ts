@@ -206,7 +206,7 @@ export function convertLegacyToBlocks(template: any): EmailBlock[] {
     id: "block-header",
     type: "header",
     brand_name: "GLI ATTOMATTI",
-    tagline: "Teatro Italiano • Zurigo",
+    tagline: template?.tagline || "",
     align: "center"
   });
 
@@ -300,6 +300,34 @@ export function convertLegacyToBlocks(template: any): EmailBlock[] {
 }
 
 /**
+ * Ensures any relative URL (e.g. /images/... or /Iniziative/...) is converted to an absolute URL
+ * for email clients (Gmail, Apple Mail, Outlook) which cannot resolve relative paths.
+ */
+export function toAbsoluteEmailUrl(url?: string, customBaseUrl?: string): string {
+  if (!url || !url.trim()) return "";
+  const trimmed = url.trim();
+  if (
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("data:") ||
+    trimmed.startsWith("mailto:") ||
+    trimmed.startsWith("tel:") ||
+    trimmed.startsWith("#")
+  ) {
+    return trimmed;
+  }
+  const defaultBase =
+    customBaseUrl?.trim() ||
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    process.env.SITE_URL?.trim() ||
+    "https://gliattomatti.ch";
+
+  const cleanBase = defaultBase.replace(/\/+$/, "");
+  const cleanPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return `${cleanBase}${cleanPath}`;
+}
+
+/**
  * Renders all blocks into a unified, responsive table-based email HTML string.
  */
 export function renderEmailBlocksHtml({
@@ -308,7 +336,8 @@ export function renderEmailBlocksHtml({
   rawJsonObj,
   themeColors,
   subject = "Notifica da Gli Attomatti",
-  preheader = ""
+  preheader = "",
+  baseUrl
 }: {
   blocks: EmailBlock[];
   variables?: Record<string, string>;
@@ -316,6 +345,7 @@ export function renderEmailBlocksHtml({
   themeColors?: LandingThemeColors;
   subject?: string;
   preheader?: string;
+  baseUrl?: string;
 }): string {
   const colors = themeColors || DEFAULT_THEME_PRESET.colors;
   const r = (txt?: string) => replaceVars(txt || "", variables, rawJsonObj);
@@ -336,14 +366,15 @@ export function renderEmailBlocksHtml({
     .map((block) => {
       switch (block.type) {
         case "header": {
-          const brand = r(block.brand_name || "GLI ATTOMATTI");
-          const tag = r(block.tagline || "Teatro Italiano • Zurigo");
+          const brand = r(block.brand_name?.trim() ? block.brand_name : "GLI ATTOMATTI");
+          const tag = r(block.tagline?.trim() || "");
           const align = block.align || "center";
+          const logoUrl = block.logo_url ? toAbsoluteEmailUrl(r(block.logo_url), baseUrl) : "";
           return `
             <tr>
               <td align="${align}" style="padding-bottom: 24px;">
-                ${block.logo_url ? `
-                  <img src="${escapeHtml(block.logo_url)}" alt="${escapeHtml(brand)}" style="max-height: 48px; width: auto; margin-bottom: 8px; border: 0;" />
+                ${logoUrl ? `
+                  <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(brand)}" style="max-height: 48px; width: auto; margin-bottom: 8px; border: 0;" />
                 ` : `
                   <span style="font-size: 20px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: ${primaryColor};">
                     ${escapeHtml(brand)}
@@ -412,8 +443,9 @@ export function renderEmailBlocksHtml({
 
         case "button": {
           const label = r(block.label);
-          const url = r(block.url);
-          if (!label || !url) return "";
+          const rawUrl = r(block.url);
+          if (!label || !rawUrl) return "";
+          const url = toAbsoluteEmailUrl(rawUrl, baseUrl);
           const align = block.align || "center";
           const radius = block.style === "square" ? "4px" : block.style === "rounded" ? "12px" : "9999px";
           const btnBg = block.bg_color || primaryColor;
@@ -480,11 +512,13 @@ export function renderEmailBlocksHtml({
         }
 
         case "image": {
-          const imgUrl = r(block.image_url);
-          if (!imgUrl) return "";
+          const rawImgUrl = r(block.image_url);
+          if (!rawImgUrl) return "";
+          const imgUrl = toAbsoluteEmailUrl(rawImgUrl, baseUrl);
           const alt = r(block.alt || "Immagine");
           const caption = r(block.caption);
-          const link = r(block.link_url);
+          const rawLink = r(block.link_url);
+          const link = rawLink ? toAbsoluteEmailUrl(rawLink, baseUrl) : "";
           const align = block.align || "center";
 
           const imgTag = `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(alt)}" style="display: block; max-width: 100%; border-radius: 12px; border: 0;" />`;
@@ -563,28 +597,31 @@ export function renderEmailBlocksHtml({
 
         case "social_links": {
           const align = block.align || "center";
+          const websiteUrl = block.website_url ? toAbsoluteEmailUrl(r(block.website_url), baseUrl) : "";
+          const instagramUrl = block.instagram_url ? toAbsoluteEmailUrl(r(block.instagram_url), baseUrl) : "";
+          const facebookUrl = block.facebook_url ? toAbsoluteEmailUrl(r(block.facebook_url), baseUrl) : "";
           return `
             <tr>
               <td align="${align}" style="padding-top: 12px; padding-bottom: 16px;">
                 <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    ${block.website_url ? `
+                    ${websiteUrl ? `
                       <td style="padding: 0 8px;">
-                        <a href="${escapeHtml(block.website_url)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${textColor}; text-decoration: none; opacity: 0.75;">
+                        <a href="${escapeHtml(websiteUrl)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${textColor}; text-decoration: none; opacity: 0.75;">
                           Sito Web
                         </a>
                       </td>
                     ` : ""}
-                    ${block.instagram_url ? `
+                    ${instagramUrl ? `
                       <td style="padding: 0 8px;">
-                        <a href="${escapeHtml(block.instagram_url)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${primaryColor}; text-decoration: none;">
+                        <a href="${escapeHtml(instagramUrl)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${primaryColor}; text-decoration: none;">
                           Instagram
                         </a>
                       </td>
                     ` : ""}
-                    ${block.facebook_url ? `
+                    ${facebookUrl ? `
                       <td style="padding: 0 8px;">
-                        <a href="${escapeHtml(block.facebook_url)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${textColor}; text-decoration: none; opacity: 0.75;">
+                        <a href="${escapeHtml(facebookUrl)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: ${textColor}; text-decoration: none; opacity: 0.75;">
                           Facebook
                         </a>
                       </td>
@@ -599,6 +636,8 @@ export function renderEmailBlocksHtml({
         case "footer": {
           const legal = r(block.legal_text || "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera");
           const privacy = r(block.privacy_note || "Ricevi questa email in seguito a una registrazione sul nostro sito.");
+          const siteUrl = toAbsoluteEmailUrl("/", baseUrl);
+          const privacyUrl = toAbsoluteEmailUrl("/Privacy", baseUrl);
 
           return `
             <tr>
@@ -607,8 +646,8 @@ export function renderEmailBlocksHtml({
                 <p style="margin: 0 0 10px 0;">${escapeHtml(privacy)}</p>
                 ${block.show_privacy_link !== false ? `
                   <p style="margin: 0;">
-                    <a href="https://gliattomatti.ch" target="_blank" style="color: inherit; text-decoration: underline;">gliattomatti.ch</a> • 
-                    <a href="https://gliattomatti.ch/Privacy" target="_blank" style="color: inherit; text-decoration: underline;">Informativa sulla Privacy</a>
+                    <a href="${escapeHtml(siteUrl)}" target="_blank" style="color: inherit; text-decoration: underline;">gliattomatti.ch</a> • 
+                    <a href="${escapeHtml(privacyUrl)}" target="_blank" style="color: inherit; text-decoration: underline;">Informativa sulla Privacy</a>
                   </p>
                 ` : ""}
               </td>
@@ -678,11 +717,13 @@ export function renderEmailBlocksHtml({
 export function renderEmailBlocksText({
   blocks,
   variables = {},
-  rawJsonObj
+  rawJsonObj,
+  baseUrl
 }: {
   blocks: EmailBlock[];
   variables?: Record<string, string>;
   rawJsonObj?: any;
+  baseUrl?: string;
 }): string {
   let out = "";
   const r = (txt?: string) => replaceVars(txt || "", variables, rawJsonObj);
@@ -711,7 +752,19 @@ export function renderEmailBlocksText({
           break;
         }
         case "button": {
-          out += `>> ${r(block.label)}: ${r(block.url)}\n\n`;
+          const label = r(block.label);
+          const rawUrl = r(block.url);
+          if (label && rawUrl) {
+            out += `>> ${label}: ${toAbsoluteEmailUrl(rawUrl, baseUrl)}\n\n`;
+          }
+          break;
+        }
+        case "image": {
+          const imgUrl = r(block.image_url);
+          if (imgUrl) {
+            const alt = r(block.alt || "Immagine");
+            out += `[${alt}: ${toAbsoluteEmailUrl(imgUrl, baseUrl)}]\n\n`;
+          }
           break;
         }
         case "info_box": {
@@ -736,7 +789,7 @@ export function renderEmailBlocksText({
           break;
         }
         case "footer": {
-          out += `---\n${r(block.legal_text)}\nhttps://gliattomatti.ch\n`;
+          out += `---\n${r(block.legal_text)}\n${toAbsoluteEmailUrl("/", baseUrl)}\n`;
           break;
         }
       }
