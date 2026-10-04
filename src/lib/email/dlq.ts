@@ -80,27 +80,12 @@ async function putToBlob(pathname: string, content: string): Promise<void> {
     throw new Error("BLOB_READ_WRITE_TOKEN non configurato sul server");
   }
 
-  // 1. Try private access first (standard for private stores)
-  try {
-    await put(pathname, content, {
-      access: "private",
-      addRandomSuffix: false,
-      token
-    });
-    return;
-  } catch (privErr: any) {
-    // 2. If the store is configured as public-only, fallback to public
-    try {
-      await put(pathname, content, {
-        access: "public",
-        addRandomSuffix: false,
-        token
-      });
-      return;
-    } catch {
-      throw privErr;
-    }
-  }
+  // Enforce private access: DLQ records contain private recipient and email data
+  await put(pathname, content, {
+    access: "private",
+    addRandomSuffix: false,
+    token
+  });
 }
 
 /**
@@ -195,6 +180,20 @@ export async function enqueueFailedEmail(
     lastAttemptAt: timestamp,
     attempts: 1
   };
+
+  // Sanitize original request to avoid persisting secrets or tokens in DLQ
+  if (record.originalRequest) {
+    if (record.originalRequest.url) {
+      record.originalRequest.url = record.originalRequest.url.replace(/([?&]secret=)[^&]+/gi, "$1[REDACTED]");
+    }
+    if (record.originalRequest.body && typeof record.originalRequest.body === "object") {
+      const sanitizedBody = { ...record.originalRequest.body };
+      delete sanitizedBody.secret;
+      delete sanitizedBody.recaptchaToken;
+      delete sanitizedBody.captcha_token;
+      record.originalRequest.body = sanitizedBody;
+    }
+  }
 
   // Structured server log for observability in Vercel Runtime Logs
   console.error(

@@ -10,26 +10,15 @@ import {
 import { sendTransactionalEmail, SendEmailAttachment } from "@/lib/email/resend";
 import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
 import { parseEventDate, generateIcsCalendarContent } from "@/lib/email/calendar";
+import { checkAdminAuth } from "../queue/route";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const secret = req.headers.get("x-admin-secret")?.trim();
-    const configuredSecret = process.env.ADMIN_SECRET?.trim();
-
-    if (!configuredSecret) {
-      return NextResponse.json(
-        { error: "ADMIN_SECRET non è configurato nelle variabili d'ambiente del server." },
-        { status: 500 }
-      );
-    }
-
-    if (secret !== configuredSecret) {
-      return NextResponse.json(
-        { error: "Accesso non autorizzato: chiave segreta admin non valida." },
-        { status: 401 }
-      );
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     const body = await req.json();

@@ -7,22 +7,25 @@ export async function verifyRecaptchaToken(
 ): Promise<{ success: boolean; score?: number; error?: string; simulated?: boolean }> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY?.trim().replace(/^["']|["']$/g, "").trim();
 
-  const isKnownStaging =
-    process.env.NODE_ENV !== "production" ||
+  // Only consider staging if strictly in development or Vercel preview deploy
+  const isStaging =
+    process.env.NODE_ENV === "development" ||
     process.env.VERCEL_ENV === "preview" ||
-    process.env.VERCEL_ENV === "development" ||
-    Boolean(process.env.VERCEL_URL) ||
-    process.env.VERCEL === "1";
+    process.env.VERCEL_ENV === "development";
 
   // If secret key is not set in environment
   if (!secretKey) {
-    console.info("[reCAPTCHA] RECAPTCHA_SECRET_KEY non configurata. Procedura consentita in modalità fallback.");
-    return { success: true, simulated: true, score: 1.0 };
+    if (isStaging) {
+      console.info("[reCAPTCHA] RECAPTCHA_SECRET_KEY non configurata in ambiente di test/preview. Procedura consentita.");
+      return { success: true, simulated: true, score: 1.0 };
+    }
+    console.error("[reCAPTCHA Error] RECAPTCHA_SECRET_KEY mancante in produzione Vercel.");
+    return { success: false, error: "Servizio di verifica di sicurezza temporaneamente non disponibile." };
   }
 
   // If token is missing
   if (!token?.trim()) {
-    if (isKnownStaging) {
+    if (isStaging) {
       console.info("[reCAPTCHA] Token assente in ambiente di preview/staging. Procedura consentita.");
       return { success: true, simulated: true, score: 1.0 };
     }
@@ -54,7 +57,7 @@ export async function verifyRecaptchaToken(
         data.hostname.includes("vercel") ||
         data.hostname === "localhost" ||
         data.hostname === "127.0.0.1" ||
-        isKnownStaging;
+        isStaging;
 
       // In staging/preview, Google reCAPTCHA frequently fails due to hostname-mismatch,
       // invalid-input-response or domain registration limits. Allow test submissions through.
@@ -77,7 +80,7 @@ export async function verifyRecaptchaToken(
 
     // For reCAPTCHA v3, check score threshold (0.3+ accepted)
     if (typeof data.score === "number" && data.score < 0.3) {
-      if (isKnownStaging) {
+      if (isStaging) {
         return { success: true, score: data.score, simulated: true };
       }
       console.warn(`[reCAPTCHA Low Score: ${data.score}]`);
@@ -94,7 +97,7 @@ export async function verifyRecaptchaToken(
     };
   } catch (err: any) {
     console.error("[reCAPTCHA Exception]", err);
-    if (isKnownStaging) {
+    if (isStaging) {
       return { success: true, simulated: true, score: 1.0 };
     }
     return {

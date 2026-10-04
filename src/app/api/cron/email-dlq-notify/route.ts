@@ -6,6 +6,8 @@ import { SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+import { constantTimeCompare, checkRateLimit, getClientIp } from "@/lib/security";
+
 /**
  * Validates whether the incoming request is authorized by Vercel Cron or an Admin.
  */
@@ -18,24 +20,29 @@ function isCronAuthorized(req: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET?.trim();
   const adminSecret = process.env.ADMIN_SECRET?.trim() || process.env.EMAIL_API_SECRET?.trim();
 
-  // If Vercel CRON_SECRET is configured, check Bearer token
-  if (cronSecret && bearerToken === cronSecret) {
+  // 1. If Vercel CRON_SECRET is configured, check Bearer token in constant time
+  if (cronSecret && bearerToken && constantTimeCompare(bearerToken, cronSecret)) {
     return true;
   }
 
-  // If ADMIN_SECRET is provided (e.g. test button from UI)
-  if (adminSecret && (adminSecretHeader === adminSecret || bearerToken === adminSecret || querySecret === adminSecret)) {
+  // 2. If ADMIN_SECRET is provided (e.g. test button from Admin UI)
+  if (adminSecret) {
+    if (adminSecretHeader && constantTimeCompare(adminSecretHeader, adminSecret)) return true;
+    if (bearerToken && constantTimeCompare(bearerToken, adminSecret)) return true;
+    if (querySecret && constantTimeCompare(querySecret, adminSecret)) return true;
+  }
+
+  // 3. Allow in local development
+  if (process.env.NODE_ENV === "development") {
     return true;
   }
 
-  // Allow in development or preview if secrets are not explicitly set
-  if (!cronSecret && !adminSecret && process.env.NODE_ENV !== "production") {
-    return true;
-  }
-
-  // If request has Vercel-specific cron header and CRON_SECRET is not configured
+  // 4. Fallback for Vercel Cron if CRON_SECRET has not been set yet
+  // Rate-limited to max 2 executions per 10 minutes to prevent malicious email flooding
   if (!cronSecret && req.headers.get("x-vercel-cron") === "1") {
-    return true;
+    const clientIp = getClientIp(req);
+    const cronRate = checkRateLimit(`cron-unauthenticated:${clientIp}`, 2, 600_000);
+    return cronRate.allowed;
   }
 
   return false;

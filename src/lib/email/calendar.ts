@@ -227,8 +227,9 @@ export function generateIcsCalendarContent(event: CalendarEventDetails): string 
       .replace(/,/g, "\\,")
       .replace(/\r?\n/g, "\\n");
 
-  const organizerName = event.organizerName || "Compagnia Teatrale Gli Attomatti";
-  const organizerEmail = event.organizerEmail || "no-reply@mail.gliattomatti.ch";
+  const cleanParam = (str: string = "") => str.replace(/[\r\n":;]/g, "").trim();
+  const safeOrgName = cleanParam(event.organizerName || "Compagnia Teatrale Gli Attomatti");
+  const safeOrgEmail = cleanParam(event.organizerEmail || "no-reply@mail.gliattomatti.ch");
 
   return [
     "BEGIN:VCALENDAR",
@@ -244,7 +245,7 @@ export function generateIcsCalendarContent(event: CalendarEventDetails): string 
     `SUMMARY:${escapeIcs(event.title || "Evento Teatrale Gli Attomatti")}`,
     `DESCRIPTION:${escapeIcs(event.description || "")}`,
     `LOCATION:${escapeIcs(event.location || "Zurigo, Svizzera")}`,
-    `ORGANIZER;CN="${organizerName}":mailto:${organizerEmail}`,
+    `ORGANIZER;CN="${safeOrgName}":mailto:${safeOrgEmail}`,
     "STATUS:CONFIRMED",
     "TRANSP:OPAQUE",
     "SEQUENCE:0",

@@ -186,8 +186,18 @@ export function replaceVars(
   });
 }
 
+export function escapeHtml(str: string = ""): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /**
  * Converts markdown bold and links to safe inline email HTML.
+ * Escapes HTML entities first to prevent arbitrary HTML/script injection from dynamic variables.
  */
 export function formatMarkdown(text: string = "", linkColor: string = "#fb7185"): string {
   if (!text) return "";
@@ -195,7 +205,8 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
 
   return paragraphs
     .map((p) => {
-      let html = p.trim();
+      // Escape raw HTML entities first to protect against user-supplied HTML injection
+      let html = escapeHtml(p.trim());
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: inherit; font-weight: 700;">$1</strong>');
       html = html.replace(
         /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
@@ -205,15 +216,6 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
       return `<p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: inherit;">${html}</p>`;
     })
     .join("");
-}
-
-export function escapeHtml(str: string = ""): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 /**
@@ -331,10 +333,16 @@ export function convertLegacyToBlocks(template: any): EmailBlock[] {
 export function toAbsoluteEmailUrl(url?: string, customBaseUrl?: string): string {
   if (!url || !url.trim()) return "";
   const trimmed = url.trim();
+
+  // Neutralize dangerous pseudo-protocols
+  if (/^(javascript|vbscript|data:text\/html)/i.test(trimmed)) {
+    return "#";
+  }
+
   if (
     trimmed.startsWith("http://") ||
     trimmed.startsWith("https://") ||
-    trimmed.startsWith("data:") ||
+    trimmed.startsWith("data:image/") ||
     trimmed.startsWith("mailto:") ||
     trimmed.startsWith("tel:") ||
     trimmed.startsWith("#")

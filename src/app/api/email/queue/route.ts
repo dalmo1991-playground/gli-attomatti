@@ -3,10 +3,22 @@ import { listFailedEmails, removeFailedEmail, clearAllFailedEmails, enqueueFaile
 
 export const dynamic = "force-dynamic";
 
+import { constantTimeCompare, getClientIp, checkRateLimit } from "@/lib/security";
+
 export function checkAdminAuth(req: NextRequest): { authorized: boolean; error?: string; status?: number } {
-  // In development, allow local admin testing without requiring secrets
-  if (process.env.NODE_ENV !== "production") {
+  // In local development, allow admin testing without requiring secrets
+  if (process.env.NODE_ENV === "development") {
     return { authorized: true };
+  }
+
+  const clientIp = getClientIp(req);
+  const rateCheck = checkRateLimit(`admin-auth:${clientIp}`, 30, 60_000);
+  if (!rateCheck.allowed) {
+    return {
+      authorized: false,
+      status: 429,
+      error: "Troppi tentativi di accesso. Riprova tra un minuto."
+    };
   }
 
   const configuredSecret = (process.env.ADMIN_SECRET || process.env.EMAIL_API_SECRET || "")
@@ -19,8 +31,8 @@ export function checkAdminAuth(req: NextRequest): { authorized: boolean; error?:
       authorized: false,
       status: 500,
       error:
-        "ADMIN_SECRET non è configurato nelle variabili d'ambiente di Vercel per l'ambiente Preview. " +
-        "Vai su Vercel (Project Settings > Environment Variables), assicurati che ADMIN_SECRET sia abilitato per 'Preview', e avvia un nuovo Deploy della preview."
+        "ADMIN_SECRET non è configurato nelle variabili d'ambiente di Vercel per questo ambiente. " +
+        "Vai su Vercel (Project Settings > Environment Variables) e assicurati che ADMIN_SECRET sia impostato."
     };
   }
 
@@ -40,16 +52,16 @@ export function checkAdminAuth(req: NextRequest): { authorized: boolean; error?:
       authorized: false,
       status: 401,
       error:
-        "Password Admin non inviata nella richiesta (header x-admin-secret mancante o vuoto). Inserisci la Password Admin nella barra in alto."
+        "Password Admin non inviata nella richiesta (header x-admin-secret mancante o vuoto). Inserisci la Password Admin nel pannello."
     };
   }
 
-  if (secret !== configuredSecret) {
+  if (!constantTimeCompare(secret, configuredSecret)) {
     return {
       authorized: false,
       status: 401,
       error:
-        "Password Admin non valida. La password inserita non corrisponde a quella configurata in ADMIN_SECRET sul server Vercel."
+        "Password Admin non valida. La password inserita non corrisponde a quella configurata in ADMIN_SECRET sul server."
     };
   }
 

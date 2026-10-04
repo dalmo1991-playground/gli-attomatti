@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       body = {};
     }
 
-    // 3. Security Check (Secret OR reCAPTCHA OR Same-Origin Browser Form)
+    // 3. Security & Access Control Check
     const configuredApiSecret = (process.env.EMAIL_API_SECRET || process.env.ADMIN_SECRET || "")
       .trim()
       .replace(/^["']|["']$/g, "")
@@ -76,36 +76,41 @@ export async function POST(req: NextRequest) {
       .replace(/^["']|["']$/g, "")
       .trim();
 
-    let isAuthorized = false;
+    // Import security utilities
+    const { constantTimeCompare, getClientIp, checkRateLimit, verifyTallySignature } = await import("@/lib/security");
+    const clientIp = getClientIp(req);
 
-    // A. Check Secret Authorization (for Zapier, Make, cURL, Admin, Backend)
-    if (configuredApiSecret && providedSecret === configuredApiSecret) {
-      isAuthorized = true;
+    let isSecretAuthorized = false;
+
+    // A. Check Secret Authorization (for Zapier, Make, cURL, Admin, Backend, Webhooks)
+    if (configuredApiSecret && providedSecret) {
+      isSecretAuthorized = constantTimeCompare(configuredApiSecret, providedSecret);
     }
 
-    // B. Check reCAPTCHA Token (for public website buttons & modals)
-    const recaptchaToken = body.recaptchaToken || body.captcha_token;
-    if (!isAuthorized && recaptchaToken) {
-      const captchaResult = await verifyRecaptchaToken(recaptchaToken);
-      if (captchaResult.success) {
-        isAuthorized = true;
-      } else {
-        return NextResponse.json(
-          { error: captchaResult.error || "Verifica di sicurezza anti-bot reCAPTCHA non superata." },
-          { status: 403 }
-        );
+    // B. Check Tally Webhook cryptographic signature (if tally-signature header is present)
+    const tallySignature = req.headers.get("tally-signature");
+    if (!isSecretAuthorized && tallySignature && configuredApiSecret) {
+      const rawBodyText = JSON.stringify(body);
+      const tallySigningSecret = process.env.TALLY_SIGNING_SECRET?.trim() || configuredApiSecret;
+      if (verifyTallySignature(rawBodyText, tallySignature, tallySigningSecret)) {
+        isSecretAuthorized = true;
       }
     }
 
-    // C. Check Same-Origin Browser Submission with Multi-Tier Honeypot & Timing Traps
-    // Protects against spam scrapers and bot automation while ensuring legitimate users
-    // (including preview deployments, adblocker users, or clients without Google keys) are never locked out.
-    if (!isAuthorized) {
-      const origin = req.headers.get("origin") || "";
-      const referer = req.headers.get("referer") || "";
-      const host = req.headers.get("host") || "";
+    let isPublicFormAuthorized = false;
 
-      // Decoy fields inspection
+    // C. Public Browser Submission (Modal form on Gli Attomatti website)
+    if (!isSecretAuthorized) {
+      // Apply strict rate limiting on public submissions (max 10 email sends / 60 seconds per IP)
+      const rateCheck = checkRateLimit(`email-send-public:${clientIp}`, 10, 60_000);
+      if (!rateCheck.allowed) {
+        return NextResponse.json(
+          { error: "Troppe richieste inviate in poco tempo. Attendi un momento prima di riprovare." },
+          { status: 429 }
+        );
+      }
+
+      // 1. Decoy honeypot fields inspection
       const honeypotWebsite = body.website_url_check || body.website;
       const honeypotCompany = body.business_company_name || body.company;
       const honeypotHoney = body.bot_field_honey || body.honeypot;
@@ -116,7 +121,7 @@ export async function POST(req: NextRequest) {
         (typeof honeypotHoney === "string" && honeypotHoney.trim().length > 0)
       );
 
-      // Speed trap inspection: Humans take > 600ms between opening the modal and clicking submit
+      // 2. Speed trap inspection: Humans take > 600ms between opening the modal and clicking submit
       const openedAt = Number(body.openedAt) || 0;
       const submittedAt = Number(body.submittedAt) || Date.now();
       const elapsedMs = openedAt > 0 ? submittedAt - openedAt : 9999;
@@ -124,10 +129,10 @@ export async function POST(req: NextRequest) {
 
       if (isHoneypotTriggered || isSpeedTrapTriggered) {
         console.warn(
-          `[HONEYPOT BOT INTERCEPTED] Automated submission silently dropped:` +
+          `[HONEYPOT BOT INTERCEPTED] Automated submission silently dropped from IP ${clientIp}:` +
           ` website="${honeypotWebsite || ""}", company="${honeypotCompany || ""}", elapsedMs=${elapsedMs}ms`
         );
-        // Silently return 200 OK so automated bots do not mutate their attack vector
+        // Silently return 200 OK so automated bots do not learn or mutate their attack vector
         return NextResponse.json({
           success: true,
           simulated: true,
@@ -135,24 +140,28 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      const isSameOrigin =
-        (origin && host && (origin.includes(host) || host.includes(origin.replace(/^https?:\/\//, "")))) ||
-        (referer && host && (referer.includes(host) || host.includes(referer.replace(/^https?:\/\//, "")))) ||
-        origin.includes("gliattomatti.ch") ||
-        origin.includes("vercel.app") ||
-        origin.includes("localhost") ||
-        referer.includes("gliattomatti.ch") ||
-        referer.includes("vercel.app") ||
-        referer.includes("localhost") ||
-        process.env.NODE_ENV !== "production" ||
-        process.env.VERCEL_ENV === "preview";
-
-      if (isSameOrigin) {
-        isAuthorized = true;
+      // 3. Verify anti-bot reCAPTCHA token
+      const recaptchaToken = body.recaptchaToken || body.captcha_token;
+      const captchaResult = await verifyRecaptchaToken(recaptchaToken);
+      if (!captchaResult.success) {
+        return NextResponse.json(
+          { error: captchaResult.error || "Verifica di sicurezza anti-bot reCAPTCHA non superata." },
+          { status: 403 }
+        );
       }
+
+      // 4. CRITICAL DEFENSE: Public submissions CANNOT send custom ad-hoc blocks or spoof sender headers!
+      if (Array.isArray(body.blocks) && body.blocks.length > 0) {
+        return NextResponse.json(
+          { error: "L'invio di blocchi email ad-hoc richiede autenticazione tramite chiave segreta API." },
+          { status: 403 }
+        );
+      }
+
+      isPublicFormAuthorized = true;
     }
 
-    if (!isAuthorized) {
+    if (!isSecretAuthorized && !isPublicFormAuthorized) {
       return NextResponse.json(
         {
           error: "Non autorizzato. Includi il parametro ?secret=... (o header x-api-secret) oppure compila il modulo direttamente dal sito."
@@ -340,24 +349,21 @@ export async function POST(req: NextRequest) {
     // 8. Resolve Sender Profile (Subcase -> Template -> Global Settings)
     const senderProfile = activeSubcase?.sender_profile || selectedTemplate.sender_profile || {};
 
+    // Only secret-authorized callers (Zapier, Admin, Server API) can override fromName and fromEmail directly
     let fromName =
-      body.from_name ||
-      req.headers.get("x-sender-name")?.trim() ||
+      (isSecretAuthorized ? (body.from_name || req.headers.get("x-sender-name")?.trim()) : null) ||
       senderProfile.from_name ||
       emailSettings.from_name ||
       "Gli Attomatti";
     fromName = replaceVariables(fromName, variables);
 
     const fromEmail =
-      body.from_email ||
-      req.headers.get("x-from-email")?.trim() ||
+      (isSecretAuthorized ? (body.from_email || req.headers.get("x-from-email")?.trim()) : null) ||
       senderProfile.from_email ||
       emailSettings.from_email;
 
     let replyTo =
-      body.reply_to ||
-      body.replyTo ||
-      req.headers.get("x-reply-to")?.trim() ||
+      (isSecretAuthorized ? (body.reply_to || body.replyTo || req.headers.get("x-reply-to")?.trim()) : null) ||
       senderProfile.reply_to ||
       emailSettings.reply_to ||
       undefined;

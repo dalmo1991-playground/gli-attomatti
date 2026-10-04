@@ -24,6 +24,18 @@ export async function POST(request: Request) {
   const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
   const targetBranch = resolveTargetBranch(host);
 
+  const { constantTimeCompare, getClientIp, checkRateLimit } = await import('@/lib/security');
+  const clientIp = getClientIp(request);
+
+  // Rate limiting anti-brute force / anti-flooding
+  const rateCheck = checkRateLimit(`content-save:${clientIp}`, 30, 60_000);
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Troppe richieste di pubblicazione ravvicinate. Attendi un momento prima di riprovare.' },
+      { status: 429 }
+    );
+  }
+
   // If ADMIN_SECRET is not configured on the server
   if (!configuredSecret) {
     console.error('ADMIN_SECRET environment variable is missing on server.');
@@ -36,8 +48,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // Basic security check
-  if (secret !== configuredSecret) {
+  // Timing-safe security check
+  if (!constantTimeCompare(secret, configuredSecret)) {
     return NextResponse.json(
       { error: 'Password non autorizzata. Verifica la chiave inserita.' },
       { status: 401 }
@@ -46,6 +58,14 @@ export async function POST(request: Request) {
 
   try {
     const json = await request.json();
+
+    // Sanity check to prevent saving invalid or empty schema that would crash Next.js
+    if (!json || typeof json !== 'object' || Array.isArray(json) || Object.keys(json).length < 2) {
+      return NextResponse.json(
+        { error: 'Payload del contenuto non valido. Deve essere un oggetto JSON con le sezioni del sito.' },
+        { status: 400 }
+      );
+    }
 
     // In development, also write directly to the local filesystem for immediate hot-reloading
     if (process.env.NODE_ENV === 'development') {

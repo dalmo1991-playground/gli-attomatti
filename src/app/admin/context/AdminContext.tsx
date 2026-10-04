@@ -93,7 +93,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     try {
       if (secret) {
         sessionStorage.setItem("attomatti_admin_secret", secret);
-        localStorage.setItem("attomatti_admin_secret", secret);
+        // Clean up from persistent localStorage to prevent long-term credential leakage
+        localStorage.removeItem("attomatti_admin_secret");
       } else {
         sessionStorage.removeItem("attomatti_admin_secret");
         localStorage.removeItem("attomatti_admin_secret");
