@@ -1963,13 +1963,13 @@
         "cta_label": "Tutte le date del Cineforum",
         "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
         "field_mapping": {
-          "sample_payload_json": "{\n  \"eventId\": \"c96982f1-8cae-4adb-bb69-d709e339842f\",\n  \"createdAt\": \"2026-10-04T12:06:50.446Z\",\n  \"data\": {\n    \"responseId\": \"9259bf77-7204-4044-be7e-67bd47252b78\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"Eky7ON\",\n    \"formName\": \"Cineforum - Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/Eky7ON/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJFa3k3T04iLCJpYXQiOjE3OTExMTU2MTB9.BUV80r1h02qw49xG9fb-jb0g_YWleLW9GEAFvAca598&signature=af555554c6419629a485a71e57bc1815b82c2fb87289235ce97ef7c59eeafc4e\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/Eky7ON/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJFa3k3T04iLCJpYXQiOjE3OTExMTU2MTB9.BUV80r1h02qw49xG9fb-jb0g_YWleLW9GEAFvAca598&signature=af555554c6419629a485a71e57bc1815b82c2fb87289235ce97ef7c59eeafc4e\",\n    \"fields\": [\n      {\n        \"key\": \"question_JkjZo4\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"Name Surname\"\n      },\n      {\n        \"key\": \"question_gNPxzl\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_yqAp1B\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_rrMWlR\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
+          "sample_payload_json": "{\n  \"eventId\": \"10356a55-a1ac-450c-9867-55796553770f\",\n  \"createdAt\": \"2026-10-04T14:14:04.897Z\",\n  \"data\": {\n    \"responseId\": \"a78e6b0c-dedd-48cb-9404-1b42c10dedd8\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"2EQGpV\",\n    \"formName\": \"Cineforum - I vitelloni - 16 Gennaio 2027, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/2EQGpV/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/2EQGpV/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"fields\": [\n      {\n        \"key\": \"question_2xdg0e\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_xNbLKd\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_ZRkL0V\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_V1Oy8g\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
           "recipient_email_path": "data.fields[label=Email].value",
           "recipient_name_path": "data.fields[label=Nome e Cognome].value"
         },
         "sender_profile": {
-          "from_name": "Gli Attomatti • Cineforum",
-          "from_email": "no-reply@mail.gliattomatti.ch",
+          "from_name": "Gli Attomatti & UNITRE",
+          "from_email": "cineforum@mail.gliattomatti.ch",
           "reply_to": "compagniateatralegliattomatti@gmail.com"
         },
         "subcases": [
@@ -1978,29 +1978,31 @@
             "name": "Le vacanze di Monsieur Hulot (14 Novembre)",
             "custom_fields": {
               "event_title": "Le vacanze di Monsieur Hulot",
-              "event_date": "14 novembre 2026, ore 18:00",
-              "event_location": "Kulturhaus Helferei, Zurigo",
-              "event_url": "https://gliattomatti.ch/Iniziative/cineforum"
+              "event_date": "14 novembre 2026, ore 18:00"
             }
           },
           {
             "id": "cineforum-2",
-            "name": "I Vitelloni (12 Dicembre)",
+            "name": "I vitelloni",
             "custom_fields": {
-              "event_title": "I Vitelloni",
-              "event_date": "12 dicembre 2026, ore 18:00",
-              "event_location": "Kulturhaus Helferei, Zurigo",
-              "event_url": "https://gliattomatti.ch/Iniziative/cineforum"
+              "event_title": "I vitelloni",
+              "event_date": "16 gennaio 2027, ore 18:00"
             }
           },
           {
             "id": "cineforum-3",
-            "name": "Nuovo Cinema Paradiso (16 Gennaio)",
+            "name": "Pane e tulipani",
             "custom_fields": {
-              "event_title": "Nuovo Cinema Paradiso",
-              "event_date": "16 gennaio 2027, ore 18:00",
-              "event_location": "Kulturhaus Helferei, Zurigo",
-              "event_url": "https://gliattomatti.ch/Iniziative/cineforum"
+              "event_title": "Pane e tulipani",
+              "event_date": "20 febbraio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-4",
+            "name": "Una storia vera",
+            "custom_fields": {
+              "event_title": "Una storia vera",
+              "event_date": "20 marzo 2027, ore 18:00"
             }
           }
         ],
@@ -2008,9 +2010,15 @@
           {
             "id": "block-header",
             "type": "header",
-            "brand_name": "GLI ATTOMATTI",
+            "brand_name": "GLI ATTOMATTI & Unitre",
             "tagline": "",
             "align": "center"
+          },
+          {
+            "id": "block-1791126590992",
+            "type": "divider",
+            "style": "spacer",
+            "spacing": "md"
           },
           {
             "id": "block-heading",
@@ -2022,14 +2030,39 @@
           {
             "id": "block-body",
             "type": "text",
-            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}** (in programma il **{{event_date}}**).\n\nDettagli della prenotazione:\n- Email: {{data.fields[label=Email].value}}\n- Telefono: {{data.fields[label=Telefono].value}}\n- Numero di partecipanti: {{data.fields[label=Numero di partecipanti].value}}\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**, in programma il **{{event_date}}**.",
+            "align": "left"
+          },
+          {
+            "id": "block-1791126756564",
+            "type": "info_box",
+            "title": "Dettagli Evento",
+            "items": [
+              {
+                "label": "Data",
+                "value": "{{event_date}}"
+              },
+              {
+                "label": "Luogo",
+                "value": "Balberstrasse 47, Zurich (Wollishofen)"
+              },
+              {
+                "label": "Posti prenotati",
+                "value": "{{data.fields[label=Numero di partecipanti].value}}"
+              }
+            ]
+          },
+          {
+            "id": "block-1791126717083",
+            "type": "text",
+            "content": "Siamo felici di averti con noi in sala! \n\nSe dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
             "align": "left"
           },
           {
             "id": "block-button",
             "type": "button",
-            "label": "Tutte le date del Cineforum",
-            "url": "https://gliattomatti.ch/Iniziative/cineforum",
+            "label": "Ulteriori informazioni",
+            "url": "https://gli-attomatti.vercel.app/landing/cineforum",
             "align": "center",
             "style": "pill"
           },
@@ -2056,7 +2089,7 @@
           {
             "id": "block-footer",
             "type": "footer",
-            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+            "legal_text": "Gli Attomatti & UNITRE • Zurigo, Svizzera",
             "privacy_note": "Ricevi questa email in seguito a una registrazione o richiesta sul sito gliattomatti.ch",
             "show_privacy_link": true
           }
