@@ -134,28 +134,42 @@ export function EmailActionModal() {
     setIsSubmitting(true);
 
     try {
-      // 2. Obtain reCAPTCHA token if configured
+      // 2. Obtain reCAPTCHA token if configured (capped at max 1.2s timeout so preview domains / adblockers never hang)
       let recaptchaToken: string | undefined = undefined;
       if (recaptchaSiteKey) {
         try {
-          if (!window.grecaptcha) {
-            // Wait up to 600ms for grecaptcha script to load
-            await new Promise<void>((resolve) => {
-              const start = Date.now();
-              const timer = setInterval(() => {
-                if (window.grecaptcha || Date.now() - start > 600) {
-                  clearInterval(timer);
+          const fetchTokenPromise = (async () => {
+            if (!window.grecaptcha) {
+              await new Promise<void>((resolve) => {
+                const start = Date.now();
+                const timer = setInterval(() => {
+                  if (window.grecaptcha || Date.now() - start > 600) {
+                    clearInterval(timer);
+                    resolve();
+                  }
+                }, 50);
+              });
+            }
+            if (window.grecaptcha) {
+              await new Promise<void>((resolve) => {
+                try {
+                  window.grecaptcha?.ready(resolve);
+                } catch {
                   resolve();
                 }
-              }, 50);
-            });
-          }
-          if (window.grecaptcha) {
-            await new Promise<void>((resolve) => window.grecaptcha?.ready(resolve));
-            recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: "email_modal_submit" });
-          }
+              });
+              return await window.grecaptcha.execute(recaptchaSiteKey, { action: "email_modal_submit" });
+            }
+            return undefined;
+          })();
+
+          const timeoutPromise = new Promise<undefined>((resolve) => {
+            setTimeout(() => resolve(undefined), 1200);
+          });
+
+          recaptchaToken = await Promise.race([fetchTokenPromise, timeoutPromise]);
         } catch (captchaErr) {
-          console.warn("[reCAPTCHA execution error]", captchaErr);
+          console.warn("[reCAPTCHA execution timed out or failed, falling back to honeypot validation]", captchaErr);
         }
       }
 
@@ -165,12 +179,15 @@ export function EmailActionModal() {
       if (options.subcaseId) params.set("subcase", options.subcaseId);
       const queryString = params.toString() ? `?${params.toString()}` : "";
 
+      const trimmedEmail = email.trim();
+      const trimmedName = name.trim();
+
       const res = await fetch(`/api/email/send${queryString}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: email.trim(),
-          name: name.trim() || undefined,
+          to: trimmedEmail,
+          name: trimmedName || undefined,
           subcase: options.subcaseId,
           recaptchaToken,
           website_url_check: honeypotWebsite || undefined,
@@ -179,7 +196,7 @@ export function EmailActionModal() {
           openedAt: openedAt || Date.now() - 3000,
           submittedAt: Date.now(),
           variables: {
-            ...(name.trim() ? { name: name.trim(), nome: name.trim() } : {}),
+            ...(trimmedName ? { name: trimmedName, nome: trimmedName } : {}),
             ...(options.eventTitle ? { event_title: options.eventTitle } : {}),
             ...(options.eventDate ? { event_date: options.eventDate } : {}),
             ...(options.eventLocation ? { event_location: options.eventLocation } : {}),
