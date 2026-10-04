@@ -82,7 +82,10 @@ async function retrySingleRecord(record: FailedEmailRecord) {
 export async function POST(req: NextRequest) {
   try {
     if (!isAuthorized(req)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
+        { status: 401 }
+      );
     }
 
     const url = new URL(req.url);

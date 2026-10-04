@@ -30,7 +30,10 @@ function isAuthorized(req: NextRequest): boolean {
 export async function GET(req: NextRequest) {
   try {
     if (!isAuthorized(req)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
+        { status: 401 }
+      );
     }
 
     const items = await listFailedEmails();
@@ -57,7 +60,10 @@ export async function GET(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     if (!isAuthorized(req)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
+        { status: 401 }
+      );
     }
 
     const url = new URL(req.url);
@@ -100,7 +106,10 @@ export async function DELETE(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     if (!isAuthorized(req)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Password di Amministrazione non valida o non inserita. Inserisci la Password Admin nella barra in alto." },
+        { status: 401 }
+      );
     }
 
     const body = await req.json().catch(() => ({}));

@@ -43,7 +43,8 @@ import {
   Search,
   Database,
   Bell,
-  Clock
+  Clock,
+  KeyRound
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -133,13 +134,27 @@ const BLOCK_DEFINITIONS: { type: EmailBlockType; label: string; desc: string; ic
 ];
 
 export function EmailTab() {
-  const { content, updateContent, adminSecret } = useAdmin();
+  const { content, updateContent, adminSecret, setAdminSecret } = useAdmin();
 
   const emailsConfig = content?.emails || {};
   const settings: EmailSettingsConfig = emailsConfig.settings || {};
   const templates: EmailTemplateConfig[] = Array.isArray(emailsConfig.templates) ? emailsConfig.templates : [];
   const registrationPages: any[] = Array.isArray(content?.registration_pages) ? content.registration_pages : [];
   const landings: any[] = Array.isArray(content?.landings) ? content.landings : [];
+
+  // Helper to ensure an admin secret is available for authenticated actions
+  const ensureAdminSecret = (): string => {
+    if (adminSecret) return adminSecret;
+    if (typeof window !== "undefined") {
+      const prompted = window.prompt("Inserisci la Password di Amministrazione per procedere:");
+      if (prompted?.trim()) {
+        const clean = prompted.trim();
+        setAdminSecret(clean);
+        return clean;
+      }
+    }
+    return "";
+  };
 
   // Selected template index
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -168,11 +183,12 @@ export function EmailTab() {
   const [notifyTestResult, setNotifyTestResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleTestDlqNotify = async () => {
+    const secret = ensureAdminSecret();
     setIsTestingDlqNotify(true);
     setNotifyTestResult(null);
     try {
       const res = await fetch("/api/cron/email-dlq-notify?force=true", {
-        headers: { "x-admin-secret": adminSecret || "" }
+        headers: { "x-admin-secret": secret || "" }
       });
       const data = await res.json();
       if (data.success) {
@@ -200,6 +216,7 @@ export function EmailTab() {
   const [isSimulatingQueue, setIsSimulatingQueue] = useState(false);
 
   const handleSimulateQueueError = async () => {
+    const secret = ensureAdminSecret();
     setIsSimulatingQueue(true);
     setQueueMessage(null);
     try {
@@ -207,7 +224,7 @@ export function EmailTab() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret || ""
+          "x-admin-secret": secret || ""
         },
         body: JSON.stringify({
           email: "test.mario.rossi@example.com",
@@ -222,7 +239,7 @@ export function EmailTab() {
           type: "success",
           text: "Email di prova aggiunta con successo alla Coda! Stanotte alle 00:10 UTC il cron la rileverà e invierà l'alert."
         });
-        await fetchQueue();
+        await fetchQueue(secret);
       } else {
         setQueueMessage({ type: "error", text: data.error || "Errore durante la simulazione." });
       }
@@ -233,11 +250,12 @@ export function EmailTab() {
     }
   };
 
-  const fetchQueue = async () => {
+  const fetchQueue = async (overrideSecret?: string) => {
     setIsLoadingQueue(true);
+    const secret = overrideSecret !== undefined ? overrideSecret : adminSecret;
     try {
       const res = await fetch("/api/email/queue", {
-        headers: { "x-admin-secret": adminSecret || "" }
+        headers: { "x-admin-secret": secret || "" }
       });
       if (res.ok) {
         const data = await res.json();
@@ -256,6 +274,7 @@ export function EmailTab() {
   }, [adminSecret]);
 
   const handleRetrySingle = async (id: string) => {
+    const secret = ensureAdminSecret();
     setRetryingQueueId(id);
     setQueueMessage(null);
     try {
@@ -263,17 +282,17 @@ export function EmailTab() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret || ""
+          "x-admin-secret": secret || ""
         },
         body: JSON.stringify({ id })
       });
       const data = await res.json();
       if (data.success) {
         setQueueMessage({ type: "success", text: "Email reinviata con successo e rimossa dalla coda!" });
-        await fetchQueue();
+        await fetchQueue(secret);
       } else {
         setQueueMessage({ type: "error", text: data.error || data.message || "Tentativo di re-invio fallito." });
-        await fetchQueue();
+        await fetchQueue(secret);
       }
     } catch (err: any) {
       setQueueMessage({ type: "error", text: "Errore di connessione durante il re-invio: " + err?.message });
@@ -283,6 +302,8 @@ export function EmailTab() {
   };
 
   const handleRetryAll = async () => {
+    const secret = ensureAdminSecret();
+    if (!confirm(`Sei sicuro di voler riprovare a inviare tutte le ${queueItems.length} email in coda?`)) return;
     setIsRetryingQueue(true);
     setQueueMessage(null);
     try {
@@ -290,7 +311,7 @@ export function EmailTab() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret || ""
+          "x-admin-secret": secret || ""
         },
         body: JSON.stringify({ all: true })
       });
@@ -306,7 +327,7 @@ export function EmailTab() {
           text: `Elaborate: ${data.succeeded || 0} inviate, ${data.failed || 0} ancora in errore.`
         });
       }
-      await fetchQueue();
+      await fetchQueue(secret);
     } catch (err: any) {
       setQueueMessage({ type: "error", text: "Errore durante il re-invio in blocco: " + err?.message });
     } finally {
@@ -316,13 +337,14 @@ export function EmailTab() {
 
   const handleDeleteQueueItem = async (id: string) => {
     if (!confirm("Sei sicuro di voler scartare questa email dalla coda di recupero?")) return;
+    const secret = ensureAdminSecret();
     try {
       const res = await fetch(`/api/email/queue?id=${encodeURIComponent(id)}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret || "" }
+        headers: { "x-admin-secret": secret || "" }
       });
       if (res.ok) {
-        await fetchQueue();
+        await fetchQueue(secret);
       }
     } catch (err) {
       console.warn("Failed to delete queue item:", err);
@@ -331,13 +353,14 @@ export function EmailTab() {
 
   const handleClearAllQueue = async () => {
     if (!confirm("Sei sicuro di voler svuotare l'intera coda di email fallite? Tutte le richieste non inviate verranno eliminate definitivamente.")) return;
+    const secret = ensureAdminSecret();
     try {
       const res = await fetch("/api/email/queue?all=true", {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret || "" }
+        headers: { "x-admin-secret": secret || "" }
       });
       if (res.ok) {
-        await fetchQueue();
+        await fetchQueue(secret);
       }
     } catch (err) {
       console.warn("Failed to clear queue:", err);
@@ -852,6 +875,7 @@ export function EmailTab() {
     }
     if (!activeTemplate) return;
 
+    const secret = ensureAdminSecret();
     setIsSendingTest(true);
     setTestResult(null);
 
@@ -865,7 +889,7 @@ export function EmailTab() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret || ""
+          "x-admin-secret": secret || ""
         },
         body: JSON.stringify({
           to: testEmailAddress.trim(),
@@ -1470,12 +1494,33 @@ export function EmailTab() {
                       <p className="text-xs text-foreground/60 mt-0.5">
                         Cattura tutte le email non consegnate (limite 100/giorno di Resend, disservizi o errori di rete). Puoi ritriggerarle in qualsiasi momento.
                       </p>
+                      {!adminSecret && (
+                        <div className="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-amber-300">
+                          <div className="flex items-center gap-2">
+                            <KeyRound size={14} className="text-amber-400 shrink-0" />
+                            <span>Password Admin non rilevata. Inseriscila per abilitare la gestione completa della coda.</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const val = window.prompt("Inserisci la Password Admin:");
+                              if (val?.trim()) {
+                                setAdminSecret(val.trim());
+                                fetchQueue(val.trim());
+                              }
+                            }}
+                            className="px-3 py-1 rounded-lg bg-amber-400 text-slate-900 font-bold hover:bg-amber-300 transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto text-xs"
+                          >
+                            Inserisci Password
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
-                        onClick={fetchQueue}
+                        onClick={() => fetchQueue()}
                         disabled={isLoadingQueue}
                         className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs font-bold text-foreground transition-all cursor-pointer border border-foreground/10"
                         title="Ricarica stato coda"
