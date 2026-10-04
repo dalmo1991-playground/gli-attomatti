@@ -24,6 +24,7 @@ import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
 import { GalleryTab } from "./tabs/GalleryTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
+import { EmailTab } from "./tabs/EmailTab";
 import { JsonTab } from "./tabs/JsonTab";
 
 const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): string => {
@@ -32,6 +33,7 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
     case "site":
     case "navigation":
     case "gallery":
+    case "emails":
     case "integrations":
       return "/";
     case "chi_siamo":
@@ -140,16 +142,17 @@ function AdminContent() {
               </div>
             </div>
           ) : (
-            <div className={cn("mx-auto transition-all", isPreviewOpen ? "max-w-[1850px] w-full" : "max-w-5xl")}>
+            <div className={cn("mx-auto transition-all", isPreviewOpen || activeTab === "emails" ? "max-w-[1850px] w-full" : "max-w-5xl")}>
               <DraftBanner />
 
               <div className={cn("flex gap-8 items-start", isPreviewOpen ? "flex-col xl:flex-row" : "")}>
                 {/* Editing Tab Pane */}
-                <div className={cn("w-full transition-all pb-24", isPreviewOpen ? "xl:w-1/2 min-w-0" : "max-w-5xl mx-auto")}>
+                <div className={cn("w-full transition-all pb-24", isPreviewOpen ? "xl:w-1/2 min-w-0" : activeTab === "emails" ? "w-full min-w-0" : "max-w-5xl mx-auto")}>
                   {activeTab === "site" && <SiteTab />}
                   {activeTab === "navigation" && <NavigationTab />}
                   {activeTab === "home" && <HomeTab />}
                   {activeTab === "gallery" && <GalleryTab onNavigateTab={(tab) => setActiveTab(tab)} />}
+                  {activeTab === "emails" && <EmailTab />}
                   {activeTab === "integrations" && <IntegrationsTab />}
                   {activeTab === "chi_siamo" && <ChiSiamoTab />}
                   {activeTab === "attori" && <AttoriTab />}

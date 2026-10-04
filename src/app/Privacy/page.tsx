@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
-import { ArrowLeft, ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail } from "lucide-react";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,6 +34,10 @@ export default async function PrivacyPage() {
     integrations?.tally?.enabled ||
     (content?.registration_pages && content.registration_pages.length > 0) ||
     (content?.landing_pages && content.landing_pages.some((lp: any) => lp.blocks?.some((b: any) => b.type === "registrazione" || b.tally_url)))
+  );
+  const isResendActive = Boolean(
+    content?.emails?.templates?.some((t: any) => t.enabled !== false) ||
+    content?.emails?.settings?.from_email
   );
   const isAnyTrackerActive = isGaActive || isMetaActive;
 
@@ -347,6 +351,68 @@ export default async function PrivacyPage() {
                       className="text-accent hover:underline inline-flex items-center gap-0.5"
                     >
                       {p.tally.privacy_url.replace("https://", "")} <ExternalLink size={12} />
+                    </Link>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Invio Notifiche ed Email Transazionali Resend (Parametrico) */}
+          {isResendActive && p?.resend && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Mail size={20} />
+                </div>
+                <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                  {p.resend.title}
+                </h2>
+              </div>
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.resend.paragraphs?.map((para: string, idx: number) => (
+                  <p key={idx}><FormattedText text={para} /></p>
+                ))}
+                {p.resend.privacy_url && (
+                  <p>
+                    <Link
+                      href={p.resend.privacy_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      {p.resend.privacy_url.replace("https://", "")} <ExternalLink size={12} />
+                    </Link>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Protezione Anti-Bot Google reCAPTCHA */}
+          {p?.recaptcha && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                  <ShieldCheck size={20} />
+                </div>
+                <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                  {p.recaptcha.title}
+                </h2>
+              </div>
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.recaptcha.paragraphs?.map((para: string, idx: number) => (
+                  <p key={idx}><FormattedText text={para} /></p>
+                ))}
+                {p.recaptcha.privacy_url && (
+                  <p>
+                    <Link
+                      href={p.recaptcha.privacy_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent hover:underline inline-flex items-center gap-0.5"
+                    >
+                      {p.recaptcha.privacy_url.replace("https://", "")} <ExternalLink size={12} />
                     </Link>
                   </p>
                 )}

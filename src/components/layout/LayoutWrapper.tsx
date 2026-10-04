@@ -10,6 +10,7 @@ import { DevThemeCustomizer } from "@/components/dev/DevThemeCustomizer";
 import { DevAccessGate } from "@/components/dev/DevAccessGate";
 import { LivePreviewProvider, useLiveContent } from "@/components/dev/LivePreviewContext";
 import { PreviewBanner } from "@/components/dev/PreviewBanner";
+import { EmailActionModal } from "@/components/ui/EmailActionModal";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -59,6 +60,8 @@ function LayoutInner({
         uiContent={liveContent?.ui?.cookie_banner}
         onConsentChange={setConsent}
       />
+
+      <EmailActionModal />
 
       <DevThemeCustomizer />
     </>

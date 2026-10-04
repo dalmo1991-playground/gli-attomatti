@@ -220,8 +220,7 @@
           "loading_text": "Caricamento post..."
         }
       },
-      "discover_story_cta": "Scopri la nostra storia",
-      "slide_aria_prefix": "Slide"
+      "discover_story_cta": "Scopri la nostra storia"
     },
     "chi_siamo": {
       "title": "Chi Siamo",
@@ -614,7 +613,6 @@
       "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
       "back_link_label": "Torna a Chi Siamo",
       "empty_list": "Nessun membro attualmente inserito.",
-      "shows_heading": "Spettacoli e Ruoli",
       "close_modal_aria": "Chiudi scheda attore",
       "default_actor_alt": "Attore"
     },
@@ -623,7 +621,7 @@
       "description": "Gli attomatti nella stampa",
       "back_label": "Torna a Chi Siamo",
       "back_href": "/Chi_Siamo",
-      "year_prefix": "Anno ",
+      "year_prefix": "Anno",
       "press": [
         {
           "source": "RSI",
@@ -647,13 +645,12 @@
         "cta_label": "Contattaci",
         "cta_href": "/Contatti"
       },
-      "back_link_label": "Torna a Chi Siamo",
-      "year_prefix": "Anno"
+      "back_link_label": "Torna a Chi Siamo"
     },
     "spettacoli": {
       "title": "I Nostri fantastici show",
       "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
-      "year_prefix": "Anno ",
+      "year_prefix": "Anno",
       "discover_cta": "Scopri lo spettacolo",
       "empty_message": "Nessuno spettacolo in archivio al momento.",
       "not_found_title": "Spettacolo non trovato",
@@ -890,7 +887,6 @@
           "visible": true
         }
       ],
-      "year_prefix": "Anno",
       "discover_show_cta": "Scopri lo spettacolo",
       "empty_archive": "Nessuno spettacolo in archivio al momento.",
       "detail": {
@@ -907,7 +903,7 @@
     "iniziative": {
       "title": "Le Nostre Iniziative",
       "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
-      "year_prefix": "Anno ",
+      "year_prefix": "Anno",
       "discover_cta": "Scopri l'iniziativa",
       "empty_title": "Nuove iniziative in arrivo",
       "empty_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
@@ -1052,7 +1048,6 @@
           ]
         }
       ],
-      "year_prefix": "Anno",
       "discover_initiative_cta": "Scopri l'iniziativa",
       "empty_archive_title": "Nuove iniziative in arrivo",
       "empty_archive_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
@@ -1345,6 +1340,35 @@
         "title": "I tuoi diritti (nLPD)",
         "text": "Ai sensi della nuova Legge federale sulla protezione dei dati (nLPD), hai il diritto di richiedere in qualsiasi momento informazioni riguardo ai dati personali che trattiamo sul tuo conto, nonché la correzione, il blocco o la cancellazione di tali dati contattandoci all'indirizzo email: compagniateatralegliattomatti@gmail.com.",
         "contact_email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "third_parties": {
+        "resend": {
+          "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+          "paragraphs": [
+            "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
+            "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+            "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
+          ],
+          "privacy_url": "https://resend.com/legal/privacy-policy"
+        }
+      },
+      "resend": {
+        "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+        "paragraphs": [
+          "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
+          "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+          "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
+        ],
+        "privacy_url": "https://resend.com/legal/privacy-policy"
+      },
+      "recaptcha": {
+        "title": "Sicurezza Tecnica e Protezione Anti-Bot (Google reCAPTCHA)",
+        "paragraphs": [
+          "Per proteggere i moduli telematici e le finestre modali di richiesta email contro abusi, spam automatizzato e attacchi di tipo brute-force, il nostro sito impiega il servizio di sicurezza reCAPTCHA fornito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
+          "reCAPTCHA analizza il comportamento del visitatore sul modulo (es. tempi di compilazione e indirizzo IP) al fine esclusivo di verificare se l'invio è operato da una persona reale o da uno script bot dannoso. Tale trattamento tecnico è fondato sul nostro legittimo interesse prevalente (art. 6 cpv. 1 lett. f GDPR e art. 31 cpv. 1 nLPD) a garantire la stabilità e la sicurezza informatica del sito web e a prevenire l'inoltro di email fraudolente.",
+          "L'uso di reCAPTCHA è soggetto alle Norme sulla privacy e ai Termini di servizio di Google: policies.google.com/privacy e policies.google.com/terms."
+        ],
+        "privacy_url": "https://policies.google.com/privacy"
       }
     }
   },
@@ -1710,7 +1734,7 @@
       "title": "Le vacanze di Monsieur Hulot",
       "slug": "14-11-26",
       "category": "Cineforum",
-      "description": "Attenzione: non siamo in grado al momento di inviare una email di conferma.",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
       "tally_url": "https://tally.so/r/Eky7ON",
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
@@ -1721,7 +1745,7 @@
       "title": " I vitelloni ",
       "slug": "16-01-27",
       "category": "Cineforum",
-      "description": "Attenzione: non siamo in grado al momento di inviare una email di conferma.",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
       "tally_url": "https://tally.so/r/2EQGpV",
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
@@ -1732,7 +1756,7 @@
       "title": "Pane e tulipani",
       "slug": "20-02-27",
       "category": "Cineforum",
-      "description": "Attenzione: non siamo in grado al momento di inviare una email di conferma.",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
       "tally_url": "https://tally.so/r/Gx8AZj",
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
@@ -1743,7 +1767,7 @@
       "title": "Una storia vera",
       "slug": "20-03-27",
       "category": "Cineforum",
-      "description": "Attenzione: non siamo in grado al momento di inviare una email di conferma.",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
       "tally_url": "https://tally.so/r/obXLq1",
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
@@ -1909,5 +1933,47 @@
       "footer_home_link": "Visita il sito ufficiale Gli Attomatti",
       "footer_copyright": "Tutti i diritti riservati. Zurigo, Svizzera."
     }
+  },
+  "emails": {
+    "settings": {
+      "from_name": "Gli Attomatti",
+      "from_email": "info@gliattomatti.ch",
+      "reply_to": "info@gliattomatti.ch",
+      "footer_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+      "privacy_note": "Ricevi questa email in seguito alla tua registrazione a un nostro evento o iniziativa teatrale.",
+      "test_recipient": "info@gliattomatti.ch"
+    },
+    "templates": [
+      {
+        "id": "cineforum-confirmation",
+        "name": "Conferma Iscrizione Cineforum",
+        "enabled": true,
+        "theme": "default",
+        "subject": "Iscrizione confermata: {{event_title}} — Gli Attomatti",
+        "preheader": "Abbiamo registrato la tua prenotazione per la serata di cineforum",
+        "badge": "Cineforum",
+        "heading": "La tua prenotazione è confermata!",
+        "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+        "event_date": "{{event_date}}",
+        "event_location": "Zurigo",
+        "cta_label": "Tutte le date del Cineforum",
+        "cta_url": "https://gliattomatti.ch/Iniziative/cineforum"
+      },
+      {
+        "id": "general-registration",
+        "name": "Conferma Iscrizione Evento o Workshop",
+        "enabled": true,
+        "theme": "default",
+        "subject": "Iscrizione confermata: {{event_title}} — Gli Attomatti",
+        "preheader": "Ti confermiamo la ricezione della tua registrazione",
+        "badge": "Iscrizione Evento",
+        "heading": "Iscrizione Confermata!",
+        "body": "Ciao {{name}},\n\nti confermiamo che la tua registrazione per **{{event_title}}** è andata a buon fine.\n\nSe hai domande o necessiti di ulteriori dettagli, puoi rispondere direttamente a questo messaggio.\n\nTi aspettiamo!",
+        "event_date": "{{event_date}}",
+        "event_location": "Zurigo",
+        "cta_label": "Scopri le nostre attività",
+        "cta_url": "https://gliattomatti.ch"
+      }
+    ]
   }
 }

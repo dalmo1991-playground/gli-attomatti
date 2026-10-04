@@ -18,7 +18,8 @@ import {
   Ticket,
   ClipboardList,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Send
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +40,7 @@ const navSections = [
       { id: "navigation", label: "Menu Navigazione", icon: MenuIcon },
       { id: "home", label: "Home Page", icon: HomeIcon },
       { id: "gallery", label: "Galleria Immagini", icon: Images },
+      { id: "emails", label: "Email & Notifiche", icon: Send },
       { id: "integrations", label: "Marketing & Privacy", icon: Sliders }
     ]
   },
