@@ -59,13 +59,22 @@ export async function POST(req: NextRequest) {
       body = {};
     }
 
-    // 3. Security Check (Secret OR reCAPTCHA)
-    const configuredApiSecret = process.env.EMAIL_API_SECRET?.trim() || process.env.ADMIN_SECRET?.trim();
-    const providedSecret =
+    // 3. Security Check (Secret OR reCAPTCHA OR Same-Origin Browser Form)
+    const configuredApiSecret = (process.env.EMAIL_API_SECRET || process.env.ADMIN_SECRET || "")
+      .trim()
+      .replace(/^["']|["']$/g, "")
+      .trim();
+
+    const providedSecret = (
       secretQuery ||
-      req.headers.get("x-api-secret")?.trim() ||
-      req.headers.get("x-admin-secret")?.trim() ||
-      req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")?.trim();
+      req.headers.get("x-api-secret") ||
+      req.headers.get("x-admin-secret") ||
+      req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+      ""
+    )
+      .trim()
+      .replace(/^["']|["']$/g, "")
+      .trim();
 
     let isAuthorized = false;
 
@@ -88,9 +97,57 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // C. In dev/test when neither secret nor reCAPTCHA key is configured in env
-    if (!isAuthorized && !configuredApiSecret && !process.env.RECAPTCHA_SECRET_KEY) {
-      if (process.env.NODE_ENV !== "production") {
+    // C. Check Same-Origin Browser Submission with Multi-Tier Honeypot & Timing Traps
+    // Protects against spam scrapers and bot automation while ensuring legitimate users
+    // (including preview deployments, adblocker users, or clients without Google keys) are never locked out.
+    if (!isAuthorized) {
+      const origin = req.headers.get("origin") || "";
+      const referer = req.headers.get("referer") || "";
+      const host = req.headers.get("host") || "";
+
+      // Decoy fields inspection
+      const honeypotWebsite = body.website_url_check || body.website;
+      const honeypotCompany = body.business_company_name || body.company;
+      const honeypotHoney = body.bot_field_honey || body.honeypot;
+
+      const isHoneypotTriggered = Boolean(
+        (typeof honeypotWebsite === "string" && honeypotWebsite.trim().length > 0) ||
+        (typeof honeypotCompany === "string" && honeypotCompany.trim().length > 0) ||
+        (typeof honeypotHoney === "string" && honeypotHoney.trim().length > 0)
+      );
+
+      // Speed trap inspection: Humans take > 600ms between opening the modal and clicking submit
+      const openedAt = Number(body.openedAt) || 0;
+      const submittedAt = Number(body.submittedAt) || Date.now();
+      const elapsedMs = openedAt > 0 ? submittedAt - openedAt : 9999;
+      const isSpeedTrapTriggered = openedAt > 0 && elapsedMs < 600;
+
+      if (isHoneypotTriggered || isSpeedTrapTriggered) {
+        console.warn(
+          `[HONEYPOT BOT INTERCEPTED] Automated submission silently dropped:` +
+          ` website="${honeypotWebsite || ""}", company="${honeypotCompany || ""}", elapsedMs=${elapsedMs}ms`
+        );
+        // Silently return 200 OK so automated bots do not mutate their attack vector
+        return NextResponse.json({
+          success: true,
+          simulated: true,
+          message: "Richiesta elaborata con successo."
+        });
+      }
+
+      const isSameOrigin =
+        (origin && host && (origin.includes(host) || host.includes(origin.replace(/^https?:\/\//, "")))) ||
+        (referer && host && (referer.includes(host) || host.includes(referer.replace(/^https?:\/\//, "")))) ||
+        origin.includes("gliattomatti.ch") ||
+        origin.includes("vercel.app") ||
+        origin.includes("localhost") ||
+        referer.includes("gliattomatti.ch") ||
+        referer.includes("vercel.app") ||
+        referer.includes("localhost") ||
+        process.env.NODE_ENV !== "production" ||
+        process.env.VERCEL_ENV === "preview";
+
+      if (isSameOrigin) {
         isAuthorized = true;
       }
     }
@@ -98,7 +155,7 @@ export async function POST(req: NextRequest) {
     if (!isAuthorized) {
       return NextResponse.json(
         {
-          error: "Non autorizzato. Includi il parametro ?secret=... (o header x-api-secret) oppure fornisci un token reCAPTCHA valido."
+          error: "Non autorizzato. Includi il parametro ?secret=... (o header x-api-secret) oppure compila il modulo direttamente dal sito."
         },
         { status: 401 }
       );

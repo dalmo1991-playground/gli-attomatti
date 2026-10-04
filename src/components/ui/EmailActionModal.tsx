@@ -31,7 +31,12 @@ export function EmailActionModal() {
   const [options, setOptions] = useState<EmailModalOptions>({});
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [honeypot, setHoneypot] = useState(""); // Anti-bot field
+  // Multi-tier Honeypot traps
+  const [honeypotWebsite, setHoneypotWebsite] = useState("");
+  const [honeypotCompany, setHoneypotCompany] = useState("");
+  const [honeypotHoney, setHoneypotHoney] = useState("");
+  const [openedAt, setOpenedAt] = useState<number>(0);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -55,7 +60,10 @@ export function EmailActionModal() {
     setOptions(opts);
     setName("");
     setEmail("");
-    setHoneypot("");
+    setHoneypotWebsite("");
+    setHoneypotCompany("");
+    setHoneypotHoney("");
+    setOpenedAt(Date.now());
     setIsSuccess(false);
     setErrorMessage(null);
     setIsOpen(true);
@@ -111,8 +119,9 @@ export function EmailActionModal() {
     e.preventDefault();
     setErrorMessage(null);
 
-    // 1. Honeypot check: If filled, silently pretend success to confuse bots
-    if (honeypot) {
+    // 1. Multi-tier Honeypot check: If any decoy field is filled, silently pretend success to confuse bots
+    if (honeypotWebsite || honeypotCompany || honeypotHoney) {
+      console.warn("[Honeypot Client Trap] Silently dropping automated submission.");
       setIsSuccess(true);
       return;
     }
@@ -130,15 +139,15 @@ export function EmailActionModal() {
       if (recaptchaSiteKey) {
         try {
           if (!window.grecaptcha) {
-            // Wait up to 2 seconds for grecaptcha script to load
+            // Wait up to 600ms for grecaptcha script to load
             await new Promise<void>((resolve) => {
               const start = Date.now();
               const timer = setInterval(() => {
-                if (window.grecaptcha || Date.now() - start > 2000) {
+                if (window.grecaptcha || Date.now() - start > 600) {
                   clearInterval(timer);
                   resolve();
                 }
-              }, 100);
+              }, 50);
             });
           }
           if (window.grecaptcha) {
@@ -164,6 +173,11 @@ export function EmailActionModal() {
           name: name.trim() || undefined,
           subcase: options.subcaseId,
           recaptchaToken,
+          website_url_check: honeypotWebsite || undefined,
+          business_company_name: honeypotCompany || undefined,
+          bot_field_honey: honeypotHoney || undefined,
+          openedAt: openedAt || Date.now() - 3000,
+          submittedAt: Date.now(),
           variables: {
             ...(name.trim() ? { name: name.trim(), nome: name.trim() } : {}),
             ...(options.eventTitle ? { event_title: options.eventTitle } : {}),
@@ -243,16 +257,52 @@ export function EmailActionModal() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Honeypot anti-bot invisible input */}
-                <input
-                  type="text"
-                  name="bot_field_honey"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
-                  style={{ display: "none", opacity: 0, position: "absolute", left: "-9999px" }}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
+                {/* Multi-tier Invisible Honeypot Traps */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    width: "1px",
+                    height: "1px",
+                    padding: 0,
+                    margin: "-1px",
+                    overflow: "hidden",
+                    clip: "rect(0, 0, 0, 0)",
+                    whiteSpace: "nowrap",
+                    border: 0,
+                    opacity: 0,
+                    pointerEvents: "none"
+                  }}
+                >
+                  <label htmlFor="website_url_check">Lascia vuoto questo campo</label>
+                  <input
+                    id="website_url_check"
+                    type="text"
+                    name="website_url_check"
+                    value={honeypotWebsite}
+                    onChange={(e) => setHoneypotWebsite(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  <label htmlFor="business_company_name">Azienda</label>
+                  <input
+                    id="business_company_name"
+                    type="text"
+                    name="business_company_name"
+                    value={honeypotCompany}
+                    onChange={(e) => setHoneypotCompany(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  <input
+                    type="text"
+                    name="bot_field_honey"
+                    value={honeypotHoney}
+                    onChange={(e) => setHoneypotHoney(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-wider text-foreground/70">
