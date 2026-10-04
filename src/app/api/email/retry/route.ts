@@ -11,6 +11,11 @@ import { sendTransactionalEmail } from "@/lib/email/resend";
 export const dynamic = "force-dynamic";
 
 function isAuthorized(req: NextRequest): boolean {
+  // In development, allow local admin testing without requiring secrets
+  if (process.env.NODE_ENV !== "production") {
+    return true;
+  }
+
   const url = new URL(req.url);
   const secret =
     req.headers.get("x-admin-secret")?.trim() ||
@@ -19,7 +24,7 @@ function isAuthorized(req: NextRequest): boolean {
   const configuredSecret = process.env.ADMIN_SECRET?.trim() || process.env.EMAIL_API_SECRET?.trim();
 
   if (!configuredSecret) {
-    return process.env.NODE_ENV !== "production";
+    return false;
   }
 
   return secret === configuredSecret;

@@ -57,83 +57,80 @@ let memoryQueue: Map<string, FailedEmailRecord> = new Map();
 
 /**
  * Checks if Vercel Blob storage is configured and available.
+ * Requires an active BLOB_READ_WRITE_TOKEN.
  */
 export function isBlobStorageAvailable(): boolean {
-  return Boolean(
-    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
-    process.env.BLOB_STORE_ID?.trim() ||
-    process.env.VERCEL_OIDC_TOKEN?.trim()
-  );
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
 }
 
 /**
- * Writes a blob with auto-detection for Private vs Public store access.
+ * Writes a blob with auto-detection for Public vs Private store access.
  */
 async function putToBlob(pathname: string, content: string): Promise<void> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  if (!token) {
+    throw new Error("BLOB_READ_WRITE_TOKEN non configurato");
+  }
+
+  // 1. Try public access (most standard across Vercel Blob stores)
   try {
-    // Try private access first (default for modern Vercel Blob stores)
     await put(pathname, content, {
-      access: "private",
+      access: "public",
       addRandomSuffix: false,
       token
     });
-  } catch (err: any) {
-    const msg = String(err?.message || "").toLowerCase();
-    // If store was created with public access, retry with public
-    if (msg.includes("public") || msg.includes("not allowed")) {
+    return;
+  } catch (publicErr: any) {
+    // 2. If the store is configured as private-only, retry with private
+    try {
       await put(pathname, content, {
-        access: "public",
+        access: "private",
         addRandomSuffix: false,
         token
       });
-    } else {
-      throw err;
+      return;
+    } catch {
+      throw publicErr;
     }
   }
 }
 
 /**
- * Reads a blob content supporting both private (stream/authenticated) and public blobs.
+ * Reads a blob content supporting direct fetch (fastest for public), public get, and private stream.
  */
 async function readFromBlob(blob: { pathname: string; url: string; downloadUrl?: string }): Promise<FailedEmailRecord | null> {
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim() || undefined;
 
-  // 1. Try get() with private access (handles private stores and OIDC)
-  try {
-    const res = await get(blob.pathname || blob.url, { access: "private", token });
-    if (res?.stream) {
-      const data = (await new Response(res.stream).json()) as FailedEmailRecord;
-      return data;
-    }
-  } catch {}
-
-  // 2. Try downloadUrl if available
-  if (blob.downloadUrl) {
+  // 1. Direct fetch (fastest and zero-dependency for public blobs)
+  const targetUrl = blob.downloadUrl || blob.url;
+  if (targetUrl) {
     try {
-      const res = await fetch(blob.downloadUrl, { cache: "no-store" });
+      const res = await fetch(targetUrl, { cache: "no-store" });
       if (res.ok) {
         return (await res.json()) as FailedEmailRecord;
       }
     } catch {}
   }
 
-  // 3. Try get() with public access
-  try {
-    const res = await get(blob.pathname || blob.url, { access: "public", token });
-    if (res?.stream) {
-      const data = (await new Response(res.stream).json()) as FailedEmailRecord;
-      return data;
-    }
-  } catch {}
+  // 2. Try get() with public access
+  if (token) {
+    try {
+      const res = await get(blob.pathname || blob.url, { access: "public", token });
+      if (res?.stream) {
+        const data = (await new Response(res.stream).json()) as FailedEmailRecord;
+        return data;
+      }
+    } catch {}
 
-  // 4. Try standard public fetch
-  try {
-    const res = await fetch(blob.url, { cache: "no-store" });
-    if (res.ok) {
-      return (await res.json()) as FailedEmailRecord;
-    }
-  } catch {}
+    // 3. Try get() with private access (for private-only stores)
+    try {
+      const res = await get(blob.pathname || blob.url, { access: "private", token });
+      if (res?.stream) {
+        const data = (await new Response(res.stream).json()) as FailedEmailRecord;
+        return data;
+      }
+    } catch {}
+  }
 
   return null;
 }
