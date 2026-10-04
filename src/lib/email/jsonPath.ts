@@ -76,14 +76,15 @@ export function getValueByJsonPath(obj: any, path: string): any {
         continue;
       }
 
-      // 3. JSONPath filter query: [?(@.label == 'Email')] or [label=Email]
+      // 3. JSONPath filter query: [?(@.label == 'Email')] or [label=Email] or [label='Nome e Cognome']
       const filterMatch =
-        inner.match(/^\?\(@?\.?([a-zA-Z0-9_-]+)\s*==?\s*['"]?([^'"]+?)['"]?\)?$/) ||
-        inner.match(/^([a-zA-Z0-9_-]+)\s*==?\s*['"]?([^'"]+?)['"]?$/);
+        inner.match(/^\?\(@?\.?([a-zA-Z0-9_-]+)\s*==?\s*(.+?)\)?$/) ||
+        inner.match(/^([a-zA-Z0-9_-]+)\s*==?\s*(.+)$/);
 
       if (filterMatch && Array.isArray(current)) {
-        const prop = filterMatch[1];
-        const val = filterMatch[2].trim();
+        const prop = filterMatch[1].trim();
+        const rawVal = filterMatch[2].trim();
+        const val = rawVal.replace(/^['"]|['"]$/g, "").trim();
         current = current.find(
           (item) =>
             item &&
@@ -106,6 +107,7 @@ export function getValueByJsonPath(obj: any, path: string): any {
  * - standard dot notation: "data.submissionId"
  * - array indexes: "data.fields[0].value"
  * - standard JSONPath filter queries: "data.fields[?(@.label=='Email')].value"
+ * - label aliases: "data.fields[label=Email].value"
  */
 export function flattenJsonToDotNotation(
   obj: any,
@@ -135,6 +137,8 @@ export function flattenJsonToDotNotation(
           const lbl = String(item.label).trim();
           const val = String(item.value !== null && item.value !== undefined ? item.value : "");
           result[`${prefix}[?(@.label=='${lbl}')].value`] = val;
+          result[`${prefix}[label=${lbl}].value`] = val;
+          result[`${prefix}[label='${lbl}'].value`] = val;
         }
       } else if (item !== undefined && item !== null) {
         result[dotKey] = String(item);
@@ -157,10 +161,10 @@ export function flattenJsonToDotNotation(
 }
 
 /**
- * Finds an email address in an object using:
+ * Finds an email address in an object using strictly:
  * 1. Specified path (if provided)
- * 2. Standard common email paths
- * 3. Deep search for any key containing 'email' or value matching email regex
+ * 2. Top-level direct properties (to, email, recipient_email)
+ * Does NOT perform fuzzy scans or guesswork.
  */
 export function resolveRecipientEmail(obj: any, explicitPath?: string | null): string {
   if (!obj || typeof obj !== "object") return "";
@@ -175,57 +179,14 @@ export function resolveRecipientEmail(obj: any, explicitPath?: string | null): s
     if (typeof val === "string" && val.includes("@")) {
       return val.trim();
     }
+    return "";
   }
 
-  // 2. Try common standard field paths
-  const commonPaths = [
-    "to",
-    "email",
-    "recipient",
-    "mail",
-    "email_address",
-    "customer.email",
-    "customer.email_address",
-    "user.email",
-    "contact.email",
-    "data.email",
-    "data.customer_email",
-    "data.object.customer_email",
-    "payload.email",
-    "data.fields[label=Email].value",
-    "data.fields[type=INPUT_EMAIL].value",
-    "fields[label=Email].value"
-  ];
-
-  for (const p of commonPaths) {
-    const val = getValueByJsonPath(obj, p);
-    if (typeof val === "string" && val.includes("@")) {
-      return val.trim();
-    }
-  }
-
-  // 3. Check Tally-style fields array (both at root obj.fields or nested obj.data.fields)
-  const fieldsArray = Array.isArray(obj.fields)
-    ? obj.fields
-    : Array.isArray(obj.data?.fields)
-    ? obj.data.fields
-    : null;
-
-  if (fieldsArray) {
-    for (const field of fieldsArray) {
-      const lbl = (field.label || "").toLowerCase();
-      const val = String(field.value || "").trim();
-      if ((field.type === "INPUT_EMAIL" || lbl.includes("email")) && val.includes("@")) {
-        return val;
-      }
-    }
-  }
-
-  // 4. Fallback: inspect flattened entries for any key with 'email'
-  const flat = flattenJsonToDotNotation(obj);
-  for (const [key, val] of Object.entries(flat)) {
-    if (key.toLowerCase().includes("email") && val.includes("@") && val.includes(".")) {
-      return val.trim();
+  // 2. Only check direct top-level properties (no guessing or crawling)
+  const directCandidates = [obj.to, obj.email, obj.recipient_email, obj.recipient];
+  for (const c of directCandidates) {
+    if (typeof c === "string" && c.includes("@")) {
+      return c.trim();
     }
   }
 
@@ -233,60 +194,23 @@ export function resolveRecipientEmail(obj: any, explicitPath?: string | null): s
 }
 
 /**
- * Finds a name in an object using explicit path or common conventions.
+ * Finds a name in an object using strictly:
+ * 1. Specified path (if provided)
+ * 2. Top-level direct properties (name, nome)
  */
 export function resolveRecipientName(obj: any, explicitPath?: string | null): string {
   if (!obj || typeof obj !== "object") return "";
 
-  if (explicitPath) {
+  if (explicitPath && typeof explicitPath === "string") {
     const val = getValueByJsonPath(obj, explicitPath);
     if (typeof val === "string" && val.trim()) {
       return val.trim();
     }
+    return "";
   }
 
-  const commonPaths = [
-    "name",
-    "nome",
-    "full_name",
-    "first_name",
-    "customer.name",
-    "customer.first_name",
-    "user.name",
-    "data.name",
-    "contact.name",
-    "data.fields[label=Nome].value",
-    "data.fields[label='Nome e Cognome'].value",
-    "fields[label='Nome e Cognome'].value"
-  ];
-
-  for (const p of commonPaths) {
-    const val = getValueByJsonPath(obj, p);
-    if (typeof val === "string" && val.trim()) {
-      return val.trim();
-    }
-  }
-
-  // Check Tally-style fields array (both at root obj.fields or nested obj.data.fields)
-  const fieldsArray = Array.isArray(obj.fields)
-    ? obj.fields
-    : Array.isArray(obj.data?.fields)
-    ? obj.data.fields
-    : null;
-
-  if (fieldsArray) {
-    for (const field of fieldsArray) {
-      const lbl = (field.label || "").toLowerCase();
-      const val = String(field.value || "").trim();
-      if (
-        (field.type === "INPUT_TEXT" && (lbl.includes("nome") || lbl.includes("name"))) ||
-        lbl === "nome" ||
-        lbl.includes("nome e cognome")
-      ) {
-        return val;
-      }
-    }
-  }
+  if (typeof obj.name === "string" && obj.name.trim()) return obj.name.trim();
+  if (typeof obj.nome === "string" && obj.nome.trim()) return obj.nome.trim();
 
   return "";
 }

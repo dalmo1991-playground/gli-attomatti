@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export interface EmailModalOptions {
   templateId?: string;
+  subcaseId?: string;
   title?: string;
   subtitle?: string;
   eventTitle?: string;
@@ -37,9 +38,9 @@ export function EmailActionModal() {
 
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim();
 
-  // Load Google reCAPTCHA v3 script dynamically if site key is configured
+  // Load Google reCAPTCHA v3 script on-demand ONLY when the modal is opened
   useEffect(() => {
-    if (!recaptchaSiteKey) return;
+    if (!isOpen || !recaptchaSiteKey) return;
     if (document.getElementById("recaptcha-v3-script")) return;
 
     const script = document.createElement("script");
@@ -47,7 +48,7 @@ export function EmailActionModal() {
     script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
     script.async = true;
     document.head.appendChild(script);
-  }, [recaptchaSiteKey]);
+  }, [isOpen, recaptchaSiteKey]);
 
   // Open modal handler
   const handleOpen = (opts: EmailModalOptions) => {
@@ -69,7 +70,7 @@ export function EmailActionModal() {
     };
     window.addEventListener("open-email-modal", onCustomEvent);
 
-    // Global click listener for any href="#email:template-id"
+    // Global click listener for href="#email:template-id:subcase-id" or "#email:template-id"
     const handleDocumentClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement)?.closest("a, button");
       if (!target) return;
@@ -79,12 +80,18 @@ export function EmailActionModal() {
 
       if (href.startsWith("#email:") || dataTemplate) {
         e.preventDefault();
-        const templateId = dataTemplate || href.replace("#email:", "").trim();
+        const raw = (dataTemplate || href.replace("#email:", "")).trim();
+        // Syntax strictly supported: #email:templateId:subcaseId
+        const parts = raw.split(":");
+        const templateId = parts[0]?.trim() || undefined;
+        const subcaseId = parts[1]?.trim() || undefined;
+
         const title = target.getAttribute("data-email-title") || "";
         const eventTitle = target.getAttribute("data-email-event") || "";
 
         handleOpen({
-          templateId: templateId || undefined,
+          templateId,
+          subcaseId,
           title: title || undefined,
           eventTitle: eventTitle || undefined
         });
@@ -120,30 +127,49 @@ export function EmailActionModal() {
     try {
       // 2. Obtain reCAPTCHA token if configured
       let recaptchaToken: string | undefined = undefined;
-      if (recaptchaSiteKey && window.grecaptcha) {
+      if (recaptchaSiteKey) {
         try {
-          await new Promise<void>((resolve) => window.grecaptcha?.ready(resolve));
-          recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: "email_modal_submit" });
+          if (!window.grecaptcha) {
+            // Wait up to 2 seconds for grecaptcha script to load
+            await new Promise<void>((resolve) => {
+              const start = Date.now();
+              const timer = setInterval(() => {
+                if (window.grecaptcha || Date.now() - start > 2000) {
+                  clearInterval(timer);
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+          if (window.grecaptcha) {
+            await new Promise<void>((resolve) => window.grecaptcha?.ready(resolve));
+            recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: "email_modal_submit" });
+          }
         } catch (captchaErr) {
           console.warn("[reCAPTCHA execution error]", captchaErr);
         }
       }
 
-      // 3. Call Send API
-      const templateParam = options.templateId ? `?template=${encodeURIComponent(options.templateId)}` : "";
-      const res = await fetch(`/api/email/send${templateParam}`, {
+      // 3. Call Send API with template & subcase
+      const params = new URLSearchParams();
+      if (options.templateId) params.set("template", options.templateId);
+      if (options.subcaseId) params.set("subcase", options.subcaseId);
+      const queryString = params.toString() ? `?${params.toString()}` : "";
+
+      const res = await fetch(`/api/email/send${queryString}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: email.trim(),
-          name: name.trim(),
+          name: name.trim() || undefined,
+          subcase: options.subcaseId,
           recaptchaToken,
           variables: {
-            name: name.trim() || "Gentile spettatore",
-            event_title: options.eventTitle || options.title || "Evento Teatrale",
-            event_date: options.eventDate || "",
-            event_location: options.eventLocation || "Zurigo",
-            event_url: options.eventUrl || window.location.href,
+            ...(name.trim() ? { name: name.trim(), nome: name.trim() } : {}),
+            ...(options.eventTitle ? { event_title: options.eventTitle } : {}),
+            ...(options.eventDate ? { event_date: options.eventDate } : {}),
+            ...(options.eventLocation ? { event_location: options.eventLocation } : {}),
+            ...(options.eventUrl ? { event_url: options.eventUrl } : {}),
             ...(options.variables || {})
           }
         })

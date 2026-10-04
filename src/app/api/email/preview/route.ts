@@ -7,8 +7,18 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const templateId = url.searchParams.get("template") || url.searchParams.get("id");
+    let rawTemplateParam = (url.searchParams.get("template") || url.searchParams.get("id") || "").trim();
+    let subcaseId = (url.searchParams.get("subcase") || url.searchParams.get("subcase_id") || "").trim();
     const themeQuery = url.searchParams.get("theme");
+
+    rawTemplateParam = rawTemplateParam.replace(/^#?email:/i, "").trim();
+    if (rawTemplateParam.includes(":")) {
+      const parts = rawTemplateParam.split(":");
+      rawTemplateParam = parts[0]?.trim();
+      if (!subcaseId) {
+        subcaseId = parts[1]?.trim();
+      }
+    }
 
     const content = await getContent();
     const emailsConfig = content?.emails || {};
@@ -16,7 +26,7 @@ export async function GET(req: NextRequest) {
     const templates: EmailTemplateConfig[] = Array.isArray(emailsConfig.templates) ? emailsConfig.templates : [];
 
     const selectedTemplate =
-      templates.find((t) => t.id === templateId || t.name?.toLowerCase() === templateId?.toLowerCase()) ||
+      templates.find((t) => t.id === rawTemplateParam || t.name?.toLowerCase() === rawTemplateParam.toLowerCase()) ||
       templates[0];
 
     if (!selectedTemplate) {
@@ -25,6 +35,13 @@ export async function GET(req: NextRequest) {
         headers: { "Content-Type": "text/html; charset=utf-8" }
       });
     }
+
+    // Resolve subcase if requested
+    const activeSubcase = subcaseId && Array.isArray(selectedTemplate.subcases)
+      ? selectedTemplate.subcases.find(
+          (s) => s.id?.toLowerCase() === subcaseId.toLowerCase() || s.name?.toLowerCase() === subcaseId.toLowerCase()
+        )
+      : undefined;
 
     const chosenTheme = themeQuery || selectedTemplate.theme || "default";
     const themeColors = resolveEmailTheme(chosenTheme, content?.landings || [], selectedTemplate.customColors);
@@ -39,7 +56,8 @@ export async function GET(req: NextRequest) {
       data: "14 Novembre 2026",
       event_location: "Kulturhaus Helferei, Zurigo",
       event_url: "https://gliattomatti.ch/Registrazioni/14-11-26",
-      form_name: "Prenotazione Cineforum"
+      form_name: "Prenotazione Cineforum",
+      ...(activeSubcase?.custom_fields || {})
     };
 
     const html = renderEmailHtml({

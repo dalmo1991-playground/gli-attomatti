@@ -4,9 +4,11 @@ import {
   renderEmailHtml,
   renderEmailText,
   resolveEmailTheme,
+  replaceVariables,
   EmailTemplateConfig
 } from "@/lib/email/template";
 import { sendTransactionalEmail } from "@/lib/email/resend";
+import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { to, template, variables = {} } = body;
+    const { to, template, variables = {}, rawJsonObj, subcaseId } = body;
 
     if (!to || !to.includes("@")) {
       return NextResponse.json(
@@ -50,45 +52,65 @@ export async function POST(req: NextRequest) {
     const emailsConfig = content?.emails || {};
     const emailSettings = emailsConfig.settings || {};
 
-    // Default sample variables if none provided
+    // Find subcase if selected
+    let activeSubcase: any = undefined;
+    if (subcaseId && Array.isArray(template.subcases)) {
+      activeSubcase = template.subcases.find(
+        (s: any) => s.id === subcaseId || s.name === subcaseId
+      );
+    }
+
+    // Flatten rawJsonObj if provided
+    const flattenedRaw = rawJsonObj && typeof rawJsonObj === "object"
+      ? flattenJsonToDotNotation(rawJsonObj)
+      : {};
+
+    // Strict variables: only data from json payload, subcase custom fields, and explicit test variables
     const mergedVariables: Record<string, string> = {
-      name: "Nome di Prova",
-      nome: "Nome di Prova",
-      email: to,
-      event_title: "Titolo Evento di Prova",
-      titolo: "Titolo Evento di Prova",
-      event_date: "14 Novembre 2026",
-      data: "14 Novembre 2026",
-      event_url: "https://gliattomatti.ch",
-      ...variables
+      ...flattenedRaw,
+      ...variables,
+      ...(activeSubcase?.custom_fields || {}),
+      email: to
     };
 
-    const themeColors = resolveEmailTheme(template.theme || "default", content?.landings || []);
+    const themeColors = resolveEmailTheme(template.theme || "default", content?.landings || [], template.customColors);
     const emailHtml = renderEmailHtml({
       template,
       variables: mergedVariables,
+      rawJsonObj,
       themeColors,
       settings: emailSettings
     });
     const emailText = renderEmailText({
       template,
       variables: mergedVariables,
+      rawJsonObj,
       settings: emailSettings
     });
 
-    const subject = template.subject
-      ? `[TEST] ${template.subject.replace(/\{\{\s*([a-zA-Z0-9_-]+)\s*\}\}/g, (_: string, k: string) => mergedVariables[k] || "")}`
-      : `[TEST] Notifica di prova — Gli Attomatti`;
+    const subjectTemplate = template.subject || "Notifica di prova — Gli Attomatti";
+    const subject = `[TEST] ${replaceVariables(subjectTemplate, mergedVariables)}`;
+
+    // Resolve Sender Profile (Subcase -> Template -> Global)
+    const senderProfile = activeSubcase?.sender_profile || template.sender_profile || {};
+    let fromName = senderProfile.from_name || emailSettings.from_name || "Gli Attomatti";
+    fromName = replaceVariables(fromName, mergedVariables);
+
+    const fromEmail = senderProfile.from_email || emailSettings.from_email;
+    let replyTo = senderProfile.reply_to || emailSettings.reply_to || undefined;
+    if (replyTo) {
+      replyTo = replaceVariables(replyTo, mergedVariables);
+    }
+
+    const fromHeader = fromEmail ? `${fromName} <${fromEmail}>` : undefined;
 
     const sendResult = await sendTransactionalEmail({
       to,
       subject,
       html: emailHtml,
       text: emailText,
-      from: emailSettings.from_email
-        ? `${emailSettings.from_name || "Gli Attomatti"} <${emailSettings.from_email}>`
-        : undefined,
-      replyTo: emailSettings.reply_to || undefined
+      from: fromHeader,
+      replyTo
     });
 
     if (!sendResult.success) {

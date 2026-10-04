@@ -130,3 +130,9 @@ html.has-preview-banner main:not(.pt-20) {
   }
 }
 
+/* Hide Google reCAPTCHA floating badge (terms & privacy are explicitly included in modal) */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+

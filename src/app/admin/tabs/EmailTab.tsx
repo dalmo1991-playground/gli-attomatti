@@ -51,6 +51,8 @@ import {
   renderEmailHtml,
   resolveEmailTheme,
   EmailTemplateConfig,
+  EmailSubcaseConfig,
+  EmailSenderProfile,
   EmailSettingsConfig,
   EmailFieldMapping
 } from "@/lib/email/template";
@@ -141,12 +143,21 @@ export function EmailTab() {
   const activeTemplate = templates[selectedIndex] || templates[0] || null;
 
   // View state
-  const [activeTabSection, setActiveTabSection] = useState<"builder" | "theme" | "fields" | "api" | "preview">("builder");
+  const [activeTabSection, setActiveTabSection] = useState<"builder" | "theme" | "subcases" | "sender" | "fields" | "api" | "preview">("builder");
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile" | "fluid">("desktop");
   const [isPreviewJsonOpen, setIsPreviewJsonOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const [copiedCustomSnippet, setCopiedCustomSnippet] = useState(false);
+  const [copiedSubcaseSnippet, setCopiedSubcaseSnippet] = useState<string | null>(null);
+
+  // Subcases state
+  const [selectedSubcaseId, setSelectedSubcaseId] = useState<string | null>(null);
+  const [newSubcaseId, setNewSubcaseId] = useState("");
+  const [newSubcaseName, setNewSubcaseName] = useState("");
+  const [activeSubcaseIndex, setActiveSubcaseIndex] = useState<number>(0);
+  const [newSubcaseFieldKey, setNewSubcaseFieldKey] = useState("");
+  const [newSubcaseFieldValue, setNewSubcaseFieldValue] = useState("");
 
   // Field mapping state for JSONPath configuration
   const [newVarName, setNewVarName] = useState("");
@@ -199,36 +210,48 @@ export function EmailTab() {
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testResult, setTestResult] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  // Sample variables for live preview (merging base defaults with custom JSON fields)
+  // Sample variables for live preview (strictly parsed from JSON + custom mappings + selected subcase)
+  // NO fake hardcoded defaults like "14 Novembre" or "Monsieur Hulot"
   const sampleVariables = useMemo(() => {
-    const base: Record<string, string> = {
-      name: "Mario Rossi",
-      nome: "Mario Rossi",
-      email: "mariorossi@gmail.com",
-      event_title: "Le vacanze di Monsieur Hulot",
-      titolo: "Le vacanze di Monsieur Hulot",
-      event_date: "14 Novembre 2026",
-      data: "14 Novembre 2026",
-      event_location: "Kulturhaus Helferei, Zurigo",
-      event_url: "https://gliattomatti.ch/Registrazioni/14-11-26",
-      form_name: "Prenotazione Cineforum"
-    };
+    const vars: Record<string, string> = {};
 
     if (parsedSampleJson) {
       const flattened = flattenJsonToDotNotation(parsedSampleJson);
-      return {
-        ...base,
-        ...flattened
-      };
+      Object.assign(vars, flattened);
     }
-    return base;
-  }, [parsedSampleJson]);
+
+    // Merge custom mapped variables
+    if (activeTemplate?.field_mapping?.variables_mapping && parsedSampleJson) {
+      for (const [varName, pathStr] of Object.entries(activeTemplate.field_mapping.variables_mapping)) {
+        const val = getValueByJsonPath(parsedSampleJson, pathStr);
+        if (val !== undefined && val !== null) {
+          vars[varName] = String(val);
+        }
+      }
+    }
+
+    // Merge active subcase custom fields (if selected)
+    if (selectedSubcaseId && Array.isArray(activeTemplate?.subcases)) {
+      const sub = activeTemplate.subcases.find(
+        (s) => s.id === selectedSubcaseId || s.name === selectedSubcaseId
+      );
+      if (sub?.custom_fields) {
+        Object.assign(vars, sub.custom_fields);
+      }
+    }
+
+    return vars;
+  }, [parsedSampleJson, activeTemplate?.field_mapping?.variables_mapping, activeTemplate?.subcases, selectedSubcaseId]);
 
   // Live evaluated technical fields (TO, Name, Subject, Preheader, From, Reply-To)
   const resolvedTechnicalFields = useMemo(() => {
     const payload = parsedSampleJson || {};
     const explicitToPath = activeTemplate?.field_mapping?.recipient_email_path || "";
     const explicitNamePath = activeTemplate?.field_mapping?.recipient_name_path || "";
+
+    const activeSubcase = selectedSubcaseId && Array.isArray(activeTemplate?.subcases)
+      ? activeTemplate.subcases.find((s) => s.id === selectedSubcaseId || s.name === selectedSubcaseId)
+      : undefined;
 
     // 1. Resolve TO email
     let resolvedTo = "";
@@ -241,7 +264,7 @@ export function EmailTab() {
       }
     } else {
       resolvedTo = resolveRecipientEmail(payload);
-      toSource = resolvedTo ? "rilevamento automatico" : "nessun percorso to_path";
+      toSource = resolvedTo ? "rilevamento automatico diretto" : "nessun percorso to_path";
     }
 
     // 2. Resolve Recipient Name
@@ -255,7 +278,7 @@ export function EmailTab() {
       }
     } else {
       resolvedName = resolveRecipientName(payload);
-      nameSource = resolvedName ? "rilevamento automatico" : "predefinito";
+      nameSource = resolvedName ? "rilevamento automatico diretto" : "non specificato";
     }
 
     // 3. Resolve Subject & Preheader with dynamic variables and JSONPath
@@ -265,9 +288,14 @@ export function EmailTab() {
     const rawPreheader = activeTemplate?.preheader || "";
     const resolvedPreheader = replaceVars(rawPreheader, sampleVariables, payload);
 
-    const fromName = settings.from_name || "Gli Attomatti";
-    const fromEmail = settings.from_email || "info@gliattomatti.ch";
-    const replyTo = settings.reply_to || fromEmail;
+    // 4. Resolve Sender Profile (Subcase -> Template -> Global Settings)
+    const senderProfile = activeSubcase?.sender_profile || activeTemplate?.sender_profile || {};
+    const rawFromName = senderProfile.from_name || settings.from_name || "Gli Attomatti";
+    const resolvedFromName = replaceVars(rawFromName, sampleVariables, payload);
+    const resolvedFromEmail = senderProfile.from_email || settings.from_email || "info@gliattomatti.ch";
+
+    const rawReplyTo = senderProfile.reply_to || settings.reply_to || "";
+    const resolvedReplyTo = replaceVars(rawReplyTo, sampleVariables, payload);
 
     return {
       to: resolvedTo,
@@ -278,11 +306,11 @@ export function EmailTab() {
       nameSource,
       subject: resolvedSubject,
       preheader: resolvedPreheader,
-      from: `${fromName} <${fromEmail}>`,
-      replyTo,
+      from: `${resolvedFromName} <${resolvedFromEmail}>`,
+      replyTo: resolvedReplyTo || "—",
       hasSampleJson: !!parsedSampleJson
     };
-  }, [parsedSampleJson, activeTemplate, sampleVariables, settings]);
+  }, [parsedSampleJson, activeTemplate, selectedSubcaseId, sampleVariables, settings]);
 
   const originUrl = typeof window !== "undefined" ? window.location.origin : "https://gliattomatti.ch";
   const apiEndpointUrl = `${originUrl}/api/email/send?template=${activeTemplate?.id || "template-id"}&secret=TUO_SEGRETO`;
@@ -557,7 +585,9 @@ export function EmailTab() {
         body: JSON.stringify({
           to: testEmailAddress.trim(),
           template: templateToTest,
-          variables: sampleVariables
+          variables: sampleVariables,
+          rawJsonObj: parsedSampleJson,
+          subcaseId: selectedSubcaseId || undefined
         })
       });
 
@@ -728,6 +758,24 @@ export function EmailTab() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setActiveTabSection("subcases")}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "subcases" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <Tag size={15} /> Subcases & Tag ({activeTemplate.subcases?.length || 0})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTabSection("sender")}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "sender" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <Mail size={15} /> Profilo Mittente
+                </button>
+                <button
+                  type="button"
                   onClick={() => setActiveTabSection("theme")}
                   className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                     activeTabSection === "theme" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
@@ -751,7 +799,7 @@ export function EmailTab() {
                     activeTabSection === "api" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
                   }`}
                 >
-                  <Code size={15} /> API & Trigger Esterni
+                  <Code size={15} /> API & Trigger
                 </button>
                 <button
                   type="button"
@@ -1796,6 +1844,387 @@ export function EmailTab() {
                 </div>
               )}
 
+              {/* SECTION: SUBCASES & TAGS */}
+              {activeTabSection === "subcases" && (
+                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                    <div>
+                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                        <Tag size={18} className="text-primary" />
+                        Subcases & Varianti Controllate da Tag
+                      </h4>
+                      <p className="text-xs text-foreground/60 mt-0.5">
+                        Un unico template email per gestire più date o varianti di evento (es. 3 Cineforum differenti). Ogni subcase definisce i propri custom fields e viene attivato sul sito tramite <code className="text-primary font-mono font-bold">#email:{activeTemplate.id}:subcase-id</code>.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Add Subcase Input Bar */}
+                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3">
+                    <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
+                      Aggiungi Nuovo Subcase / Variante:
+                    </span>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={newSubcaseId}
+                        onChange={(e) => setNewSubcaseId(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
+                        placeholder="ID / Tag univoco (es. cineforum-1)"
+                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <input
+                        type="text"
+                        value={newSubcaseName}
+                        onChange={(e) => setNewSubcaseName(e.target.value)}
+                        placeholder="Nome descrittivo (es. 14 Novembre - Monsieur Hulot)"
+                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <button
+                        type="button"
+                        disabled={!newSubcaseId.trim()}
+                        onClick={() => {
+                          const id = newSubcaseId.trim();
+                          const name = newSubcaseName.trim() || id;
+                          const existing = activeTemplate.subcases || [];
+                          if (existing.some((s) => s.id === id)) {
+                            alert(`Esiste già un subcase con ID "${id}".`);
+                            return;
+                          }
+                          const updatedSubcases: EmailSubcaseConfig[] = [
+                            ...existing,
+                            {
+                              id,
+                              name,
+                              custom_fields: {
+                                event_title: name,
+                                event_date: "Data da definire"
+                              }
+                            }
+                          ];
+                          handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                          setNewSubcaseId("");
+                          setNewSubcaseName("");
+                          setSelectedSubcaseId(id);
+                        }}
+                        className="px-4 py-2.5 rounded-xl bg-primary text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-40 transition-all cursor-pointer shrink-0"
+                      >
+                        + Aggiungi Subcase
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* List of existing subcases */}
+                  {(!activeTemplate.subcases || activeTemplate.subcases.length === 0) ? (
+                    <div className="p-8 rounded-2xl bg-foreground/[0.02] border border-dashed border-foreground/10 text-center space-y-2">
+                      <p className="text-xs text-foreground/60">
+                        Nessun subcase configurato per questo template.
+                      </p>
+                      <p className="text-[11px] text-foreground/40 max-w-md mx-auto">
+                        Aggiungendo dei subcase (es. <code className="text-primary font-mono">cineforum-1</code>, <code className="text-primary font-mono">cineforum-2</code>) potrai personalizzare titolo del film, data e orario per ciascun evento senza dover duplicare l'intero template email!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {activeTemplate.subcases.map((sub, sIdx) => {
+                        const isSelectedInPreview = selectedSubcaseId === sub.id;
+                        const subcaseTagSnippet = `#email:${activeTemplate.id}:${sub.id}`;
+                        const isCopied = copiedSubcaseSnippet === sub.id;
+
+                        return (
+                          <div
+                            key={sub.id}
+                            className={`p-5 rounded-2xl border transition-all space-y-4 ${
+                              isSelectedInPreview
+                                ? "bg-primary/5 border-primary/40 shadow-xs"
+                                : "bg-background/40 border-foreground/5 hover:border-foreground/15"
+                            }`}
+                          >
+                            {/* Subcase Header */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-foreground/5 pb-3">
+                              <div className="flex items-center gap-3">
+                                <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono text-xs font-bold text-primary px-2 py-0.5 rounded-md bg-primary/10">
+                                      {sub.id}
+                                    </span>
+                                    <span className="font-bold text-sm text-foreground">{sub.name}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap items-center gap-2">
+                                {/* Link Snippet Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(subcaseTagSnippet);
+                                    setCopiedSubcaseSnippet(sub.id);
+                                    setTimeout(() => setCopiedSubcaseSnippet(null), 2000);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-mono transition-colors cursor-pointer"
+                                  title="Copia link per i pulsanti del sito"
+                                >
+                                  {isCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                                  <span>{subcaseTagSnippet}</span>
+                                </button>
+
+                                {/* Preview Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedSubcaseId(isSelectedInPreview ? null : sub.id)}
+                                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                                    isSelectedInPreview
+                                      ? "bg-primary text-background"
+                                      : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground"
+                                  }`}
+                                >
+                                  {isSelectedInPreview ? "Attivo in Anteprima ✓" : "Anteprima"}
+                                </button>
+
+                                {/* Delete Subcase Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm(`Eliminare il subcase "${sub.name}" (${sub.id})?`)) {
+                                      const updated = (activeTemplate.subcases || []).filter((_, i) => i !== sIdx);
+                                      handleUpdateTemplate((t) => ({ ...t, subcases: updated }));
+                                      if (selectedSubcaseId === sub.id) setSelectedSubcaseId(null);
+                                    }
+                                  }}
+                                  className="p-1.5 rounded-xl text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                                  title="Elimina Subcase"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Subcase Custom Fields */}
+                            <div className="space-y-3">
+                              <span className="text-[11px] font-bold text-foreground/70 uppercase tracking-wider block">
+                                Custom Fields di questo Subcase:
+                              </span>
+
+                              {/* Existing fields grid */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {Object.entries(sub.custom_fields || {}).map(([fKey, fVal]) => (
+                                  <div
+                                    key={fKey}
+                                    className="p-2.5 rounded-xl bg-background/60 border border-foreground/5 flex items-center justify-between gap-2"
+                                  >
+                                    <div className="min-w-0 flex-1">
+                                      <span className="font-mono text-xs font-bold text-primary block truncate">
+                                        {"{{" + fKey + "}}"}
+                                      </span>
+                                      <input
+                                        type="text"
+                                        value={fVal}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
+                                            if (idx !== sIdx) return s;
+                                            return {
+                                              ...s,
+                                              custom_fields: {
+                                                ...(s.custom_fields || {}),
+                                                [fKey]: val
+                                              }
+                                            };
+                                          });
+                                          handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                        }}
+                                        className="w-full text-xs text-foreground bg-transparent focus:outline-none focus:underline"
+                                      />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
+                                          if (idx !== sIdx) return s;
+                                          const newFields = { ...(s.custom_fields || {}) };
+                                          delete newFields[fKey];
+                                          return { ...s, custom_fields: newFields };
+                                        });
+                                        handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                      }}
+                                      className="p-1 text-foreground/30 hover:text-rose-400 transition-colors cursor-pointer shrink-0"
+                                      title="Rimuovi campo"
+                                    >
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Add Field to Subcase */}
+                              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                                <input
+                                  type="text"
+                                  placeholder="Nuova chiave (es. event_date, poster_image, locazione)"
+                                  value={activeSubcaseIndex === sIdx ? newSubcaseFieldKey : ""}
+                                  onChange={(e) => {
+                                    setActiveSubcaseIndex(sIdx);
+                                    setNewSubcaseFieldKey(e.target.value.trim().replace(/[^a-zA-Z0-9_-]/g, ""));
+                                  }}
+                                  className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Valore del campo per questo subcase"
+                                  value={activeSubcaseIndex === sIdx ? newSubcaseFieldValue : ""}
+                                  onChange={(e) => {
+                                    setActiveSubcaseIndex(sIdx);
+                                    setNewSubcaseFieldValue(e.target.value);
+                                  }}
+                                  className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <button
+                                  type="button"
+                                  disabled={activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()}
+                                  onClick={() => {
+                                    if (activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()) return;
+                                    const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
+                                      if (idx !== sIdx) return s;
+                                      return {
+                                        ...s,
+                                        custom_fields: {
+                                          ...(s.custom_fields || {}),
+                                          [newSubcaseFieldKey]: newSubcaseFieldValue
+                                        }
+                                      };
+                                    });
+                                    handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                    setNewSubcaseFieldKey("");
+                                    setNewSubcaseFieldValue("");
+                                  }}
+                                  className="px-3 py-1.5 rounded-xl bg-primary/20 text-primary font-bold text-xs hover:bg-primary/30 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
+                                >
+                                  + Aggiungi Campo
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SECTION: SENDER PROFILE */}
+              {activeTabSection === "sender" && (
+                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                    <div>
+                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                        <Mail size={18} className="text-primary" />
+                        Profilo Mittente Personalizzato & Dinamico
+                      </h4>
+                      <p className="text-xs text-foreground/60 mt-0.5">
+                        Definisci chi appare come mittente e l'indirizzo di risposta per questo template. Puoi usare testo fisso o tag dinamici <code className="text-primary font-mono">{"{{...}}"}</code> estratti dal form, dai webhook o dai custom fields!
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* From Name */}
+                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                      <label className="text-xs font-bold text-foreground block">
+                        Nome Mittente (From Name):
+                      </label>
+                      <input
+                        type="text"
+                        value={activeTemplate.sender_profile?.from_name ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleUpdateTemplate((t) => ({
+                            ...t,
+                            sender_profile: {
+                              ...(t.sender_profile || {}),
+                              from_name: val
+                            }
+                          }));
+                        }}
+                        placeholder={`Default: ${settings.from_name || "Gli Attomatti"} (o es. {{event_title}})`}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <p className="text-[11px] text-foreground/50">
+                        Es. <code className="text-primary font-mono">Gli Attomatti Cineforum</code> o dinamico <code className="text-primary font-mono">{"{{organizzatore}}"}</code>
+                      </p>
+                    </div>
+
+                    {/* From Email */}
+                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                      <label className="text-xs font-bold text-foreground block">
+                        Email Mittente (From Email):
+                      </label>
+                      <input
+                        type="text"
+                        value={activeTemplate.sender_profile?.from_email ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleUpdateTemplate((t) => ({
+                            ...t,
+                            sender_profile: {
+                              ...(t.sender_profile || {}),
+                              from_email: val
+                            }
+                          }));
+                        }}
+                        placeholder={`Default: ${settings.from_email || "no-reply@mail.gliattomatti.ch"}`}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <p className="text-[11px] text-foreground/50">
+                        Deve appartenere al dominio verificato su Resend (es. <code className="text-primary font-mono">mail.gliattomatti.ch</code>)
+                      </p>
+                    </div>
+
+                    {/* Reply-To */}
+                    <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                      <label className="text-xs font-bold text-foreground block">
+                        Indirizzo Reply-To (Rispondi a):
+                      </label>
+                      <input
+                        type="text"
+                        value={activeTemplate.sender_profile?.reply_to ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleUpdateTemplate((t) => ({
+                            ...t,
+                            sender_profile: {
+                              ...(t.sender_profile || {}),
+                              reply_to: val
+                            }
+                          }));
+                        }}
+                        placeholder={`Default: ${settings.reply_to || "compagniateatralegliattomatti@gmail.com"}`}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                      />
+                      <p className="text-[11px] text-foreground/50">
+                        Dove riceverai le risposte dei destinatari. Supporta anche tag dinamici come <code className="text-primary font-mono">{"{{headers['x-reply-to']}}"}</code>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Resolved preview badge */}
+                  <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs font-bold text-foreground block">Intestazione Mittente Risolta:</span>
+                      <span className="text-xs font-mono text-primary mt-0.5 block">
+                        {resolvedTechnicalFields.from}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[11px] text-foreground/50 block">Reply-To attivo:</span>
+                      <span className="text-xs font-mono text-foreground/80 mt-0.5 block">
+                        {resolvedTechnicalFields.replyTo}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* SECTION: CUSTOM FIELDS & JSON ANALYZER */}
               {activeTabSection === "fields" && (
                 <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
@@ -2205,8 +2634,67 @@ export function EmailTab() {
                     <code className="block p-2.5 rounded-xl bg-muted text-primary text-xs font-mono border border-foreground/5 select-all">
                       #email:{activeTemplate.id}
                     </code>
+                    {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
+                      <div className="pt-2 space-y-1.5">
+                        <span className="text-xs font-bold text-foreground/80 block">
+                          Oppure per un Subcase / Variante specifica:
+                        </span>
+                        {activeTemplate.subcases.map((sub) => (
+                          <div key={sub.id} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-muted border border-foreground/5 font-mono text-xs">
+                            <span className="text-accent">#email:{activeTemplate.id}:{sub.id}</span>
+                            <span className="text-[11px] text-foreground/40 font-sans">{sub.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <p className="text-[11px] text-foreground/50">
-                      Al click si aprirà automaticamente il popup con Google reCAPTCHA per raccogliere l'email e inviare questo template!
+                      Al click si aprirà automaticamente il popup protetto per raccogliere l'email e inviare questo template (con i dati del subcase selezionato)!
+                    </p>
+                  </div>
+
+                  {/* Method 1b: Subcases in Query Param or Body (No Headers Needed!) */}
+                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                    <span className="text-xs font-bold text-accent uppercase tracking-wider block">
+                      Varianti e Subcases da Webhook / API (Senza Header!)
+                    </span>
+                    <p className="text-xs text-foreground/70">
+                      Puoi specificare il Subcase direttamente nell'URL del Webhook (es. Tally, Zapier, Make) senza bisogno di configurare header HTTP aggiuntivi:
+                    </p>
+                    <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-2">
+                      <div>
+                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione A (Query param &subcase):</span>
+                        <code className="text-primary font-bold">/api/email/send?template={activeTemplate.id}&subcase=cineforum-1&secret=TUO_SEGRETO</code>
+                      </div>
+                      <div>
+                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione B (Sintassi con due punti):</span>
+                        <code className="text-accent font-bold">/api/email/send?template={activeTemplate.id}:cineforum-1&secret=TUO_SEGRETO</code>
+                      </div>
+                      <div>
+                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione C (Nel Body JSON):</span>
+                        <code className="text-emerald-400 font-bold">{`{ "subcase": "cineforum-1" }`}</code>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-foreground/50">
+                      Tutti i campi personalizzati definiti nel subcase (es. data, orario, luogo, film) vengono automaticamente applicati all'email!
+                    </p>
+                  </div>
+
+                  {/* Method 1c: Custom Webhook Headers (Alternative) */}
+                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                    <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider block">
+                      Alternativa: Personalizzazione tramite Custom Header HTTP (Tally / Zapier / Make)
+                    </span>
+                    <p className="text-xs text-foreground/70">
+                      Se preferisci passare parametri non presenti nel modulo tramite header HTTP:
+                    </p>
+                    <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-1">
+                      <div><span className="text-primary font-bold">x-subcase</span>: cineforum-1</div>
+                      <div><span className="text-primary font-bold">x-event-date</span>: 14 Novembre 2026</div>
+                      <div><span className="text-primary font-bold">x-event-title</span>: Le vacanze di Monsieur Hulot</div>
+                      <div><span className="text-primary font-bold">x-reply-to</span>: cineforum@gliattomatti.ch</div>
+                    </div>
+                    <p className="text-[11px] text-foreground/50">
+                      Gli header con prefisso <code className="text-primary font-mono">x-event-*</code> o <code className="text-primary font-mono">x-var-*</code> diventano automaticamente variabili utilizzabili nell'email.
                     </p>
                   </div>
 
@@ -2347,6 +2835,23 @@ export function EmailTab() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-foreground/70">
                     <Eye size={15} /> Anteprima Live
+                    {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
+                      <div className="flex items-center gap-1.5 ml-2 normal-case font-normal">
+                        <span className="text-[11px] text-foreground/50">Subcase:</span>
+                        <select
+                          value={selectedSubcaseId || ""}
+                          onChange={(e) => setSelectedSubcaseId(e.target.value || null)}
+                          className="px-2 py-1 rounded-lg bg-foreground/10 border border-foreground/10 text-foreground text-xs font-semibold focus:outline-none focus:border-primary cursor-pointer"
+                        >
+                          <option value="">Nessuno (Default)</option>
+                          {activeTemplate.subcases.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name || sub.id} ({sub.id})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-1.5">

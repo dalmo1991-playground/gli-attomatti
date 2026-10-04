@@ -4,7 +4,9 @@ import {
   renderEmailHtml,
   renderEmailText,
   resolveEmailTheme,
-  EmailTemplateConfig
+  replaceVariables,
+  EmailTemplateConfig,
+  EmailSubcaseConfig
 } from "@/lib/email/template";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
@@ -23,11 +25,29 @@ export async function POST(req: NextRequest) {
 
     // 1. Query Parameters
     const templateQuery = url.searchParams.get("template") || url.searchParams.get("use_case");
+    const subcaseQuery =
+      url.searchParams.get("subcase") ||
+      url.searchParams.get("subcase_id") ||
+      url.searchParams.get("subcaseId");
     const secretQuery = url.searchParams.get("secret");
     const themeQuery = url.searchParams.get("theme");
     const isDryRun = url.searchParams.get("test") === "true";
     const toPathQuery = url.searchParams.get("to_path") || url.searchParams.get("email_path");
     const namePathQuery = url.searchParams.get("name_path");
+
+    // Extract incoming HTTP headers for webhook customization (e.g. x-event-date, x-subcase)
+    const headersObj: Record<string, string> = {};
+    const headerVars: Record<string, string> = {};
+    for (const [key, value] of req.headers.entries()) {
+      const lowerKey = key.toLowerCase();
+      headersObj[lowerKey] = value;
+      // Expose headers with x-var- or custom headers directly as variables
+      if (lowerKey.startsWith("x-var-")) {
+        headerVars[lowerKey.replace("x-var-", "")] = value;
+      } else if (lowerKey.startsWith("x-event-")) {
+        headerVars[lowerKey.replace("x-", "")] = value;
+      }
+    }
 
     // 2. Parse Body Payload
     let body: any = {};
@@ -82,18 +102,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Load Content & Find Matching Template
+    // 4. Load Content & Find Matching Template & Subcase
     const content = await getContent();
     const emailsConfig = content?.emails || {};
     const emailSettings = emailsConfig.settings || {};
     const templates: EmailTemplateConfig[] = Array.isArray(emailsConfig.templates) ? emailsConfig.templates : [];
 
-    const requestedTemplateId = templateQuery || body.templateId || body.useCase;
+    let rawTemplateParam =
+      templateQuery ||
+      body.template ||
+      body.templateId ||
+      body.use_case ||
+      body.useCase ||
+      "";
+    let requestedSubcaseId =
+      subcaseQuery ||
+      body.subcase ||
+      body.subcaseId ||
+      body.subcase_id ||
+      req.headers.get("x-subcase")?.trim();
+
+    // Strip optional #email: or email: prefix if caller passed the full tag
+    if (typeof rawTemplateParam === "string") {
+      rawTemplateParam = rawTemplateParam.replace(/^#?email:/i, "").trim();
+
+      // Syntax supported: templateId:subcaseId
+      if (rawTemplateParam.includes(":")) {
+        const parts = rawTemplateParam.split(":");
+        rawTemplateParam = parts[0]?.trim();
+        if (!requestedSubcaseId) {
+          requestedSubcaseId = parts[1]?.trim();
+        }
+      }
+    }
 
     let selectedTemplate: EmailTemplateConfig | undefined;
-    if (requestedTemplateId) {
+    if (rawTemplateParam) {
       selectedTemplate = templates.find(
-        (t) => t.id === requestedTemplateId || t.name?.toLowerCase() === requestedTemplateId.toLowerCase()
+        (t) => t.id === rawTemplateParam || t.name?.toLowerCase() === rawTemplateParam.toLowerCase()
       );
     }
 
@@ -101,7 +147,7 @@ export async function POST(req: NextRequest) {
     if (!selectedTemplate) {
       if (Array.isArray(body.blocks) && body.blocks.length > 0) {
         selectedTemplate = {
-          id: requestedTemplateId || "custom-adhoc",
+          id: rawTemplateParam || "custom-adhoc",
           name: "Email Ad-Hoc",
           subject: body.subject || "Notifica da Gli Attomatti",
           blocks: body.blocks,
@@ -128,7 +174,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 5. Resolve Recipient Email & Name via JSONPath
+    // 4c. Resolve Subcase (if specified)
+    let activeSubcase: EmailSubcaseConfig | undefined;
+    if (requestedSubcaseId && Array.isArray(selectedTemplate.subcases)) {
+      activeSubcase = selectedTemplate.subcases.find(
+        (s) =>
+          s.id?.toLowerCase() === requestedSubcaseId.toLowerCase() ||
+          s.name?.toLowerCase() === requestedSubcaseId.toLowerCase()
+      );
+    }
+
+    // 5. Resolve Recipient Email & Name strictly (no fuzzy guessing)
     const emailJsonPath = toPathQuery || selectedTemplate?.field_mapping?.recipient_email_path;
     const nameJsonPath = namePathQuery || selectedTemplate?.field_mapping?.recipient_name_path;
 
@@ -146,31 +202,37 @@ export async function POST(req: NextRequest) {
 
     const recipientName = resolveRecipientName(body, nameJsonPath);
 
-    // 6. Build Variables Record (Flattened JSON + Mapped Fields)
+    // 6. Build Variables Record (Flattened JSON + Webhook Headers + Mapped Fields + Subcase)
+    const payloadContext = {
+      ...body,
+      headers: headersObj,
+      header: headersObj
+    };
+
     const flattenedPayload = flattenJsonToDotNotation(body);
     const customMappedVars: Record<string, string> = {};
 
     if (selectedTemplate?.field_mapping?.variables_mapping) {
       for (const [varName, pathStr] of Object.entries(selectedTemplate.field_mapping.variables_mapping)) {
-        const val = getValueByJsonPath(body, pathStr);
+        const val = getValueByJsonPath(payloadContext, pathStr);
         if (val !== undefined && val !== null) {
           customMappedVars[varName] = String(val);
         }
       }
     }
 
+    // Strict variables: only variables actually present in payload, headers, or subcase custom fields
     const variables: Record<string, string> = {
-      ...flattenedPayload, // Allows direct referencing of any incoming field (e.g. {{customer.city}} or {{pippo}})
-      name: recipientName || "Gentile spettatore",
-      nome: recipientName || "Gentile spettatore",
-      email: recipientEmail,
-      event_title: body.event_title || body.eventTitle || "Evento Teatrale",
-      titolo: body.event_title || body.eventTitle || "Evento Teatrale",
-      event_date: body.event_date || body.eventDate || "",
-      data: body.event_date || body.eventDate || "",
-      event_location: body.event_location || body.eventLocation || "Zurigo",
-      event_url: body.event_url || body.eventUrl || "https://gliattomatti.ch",
+      ...headerVars,
+      ...flattenedPayload,
+      ...(recipientName ? { name: recipientName, nome: recipientName } : {}),
+      ...(recipientEmail ? { email: recipientEmail } : {}),
+      ...(body.event_title || body.eventTitle ? { event_title: body.event_title || body.eventTitle, titolo: body.event_title || body.eventTitle } : {}),
+      ...(body.event_date || body.eventDate ? { event_date: body.event_date || body.eventDate, data: body.event_date || body.eventDate } : {}),
+      ...(body.event_location || body.eventLocation ? { event_location: body.event_location || body.eventLocation } : {}),
+      ...(body.event_url || body.eventUrl ? { event_url: body.event_url || body.eventUrl } : {}),
       ...customMappedVars,
+      ...(activeSubcase?.custom_fields || {}),
       ...(body.variables || {})
     };
 
@@ -182,7 +244,7 @@ export async function POST(req: NextRequest) {
     const emailHtml = renderEmailHtml({
       template: selectedTemplate,
       variables,
-      rawJsonObj: body,
+      rawJsonObj: payloadContext,
       themeColors,
       settings: emailSettings
     });
@@ -190,17 +252,12 @@ export async function POST(req: NextRequest) {
     const emailText = renderEmailText({
       template: selectedTemplate,
       variables,
-      rawJsonObj: body,
+      rawJsonObj: payloadContext,
       settings: emailSettings
     });
 
-    const subject = body.subject || selectedTemplate.subject || "Notifica da Gli Attomatti";
-    const resolvedSubject = subject.replace(/\{\{\s*([a-zA-Z0-9_.[\]$-]+)\s*\}\}/g, (_: string, rawKey: string) => {
-      const k = rawKey.trim();
-      if (variables[k] !== undefined) return variables[k];
-      const normalizedKey = k.replace(/\[['"]?([^'"\]]+)['"]?\]/g, ".$1");
-      return variables[normalizedKey] !== undefined ? variables[normalizedKey] : "";
-    });
+    const subjectTemplate = body.subject || selectedTemplate.subject || "Notifica da Gli Attomatti";
+    const resolvedSubject = replaceVariables(subjectTemplate, variables);
 
     // If dry run, return rendered preview without sending
     if (isDryRun) {
@@ -209,20 +266,49 @@ export async function POST(req: NextRequest) {
         dryRun: true,
         recipient: recipientEmail,
         subject: resolvedSubject,
+        subcase: activeSubcase?.id,
         htmlPreview: emailHtml
       });
     }
 
-    // 8. Dispatch Email via Resend
+    // 8. Resolve Sender Profile (Subcase -> Template -> Global Settings)
+    const senderProfile = activeSubcase?.sender_profile || selectedTemplate.sender_profile || {};
+
+    let fromName =
+      body.from_name ||
+      req.headers.get("x-sender-name")?.trim() ||
+      senderProfile.from_name ||
+      emailSettings.from_name ||
+      "Gli Attomatti";
+    fromName = replaceVariables(fromName, variables);
+
+    const fromEmail =
+      body.from_email ||
+      req.headers.get("x-from-email")?.trim() ||
+      senderProfile.from_email ||
+      emailSettings.from_email;
+
+    let replyTo =
+      body.reply_to ||
+      body.replyTo ||
+      req.headers.get("x-reply-to")?.trim() ||
+      senderProfile.reply_to ||
+      emailSettings.reply_to ||
+      undefined;
+    if (replyTo) {
+      replyTo = replaceVariables(replyTo, variables);
+    }
+
+    const fromHeader = fromEmail ? `${fromName} <${fromEmail}>` : undefined;
+
+    // 9. Dispatch Email via Resend
     const sendResult = await sendTransactionalEmail({
       to: recipientEmail,
       subject: resolvedSubject,
       html: emailHtml,
       text: emailText,
-      from: body.from || (emailSettings.from_email
-        ? `${emailSettings.from_name || "Gli Attomatti"} <${emailSettings.from_email}>`
-        : undefined),
-      replyTo: body.replyTo || emailSettings.reply_to || undefined
+      from: fromHeader,
+      replyTo
     });
 
     if (!sendResult.success) {

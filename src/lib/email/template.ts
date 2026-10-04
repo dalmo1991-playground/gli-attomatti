@@ -19,6 +19,19 @@ export interface EmailFieldMapping {
   sample_payload_json?: string; // Raw sample JSON payload pasted by the user
 }
 
+export interface EmailSenderProfile {
+  from_name?: string;
+  from_email?: string;
+  reply_to?: string;
+}
+
+export interface EmailSubcaseConfig {
+  id: string; // e.g. "cineforum-1"
+  name: string; // e.g. "Serata 1 - Monsieur Hulot"
+  custom_fields?: Record<string, string>; // e.g. { "event_title": "...", "event_date": "..." }
+  sender_profile?: EmailSenderProfile;
+}
+
 export interface EmailTemplateConfig {
   id?: string;
   name?: string;
@@ -29,6 +42,8 @@ export interface EmailTemplateConfig {
   customColors?: Partial<LandingThemeColors>;
   blocks?: EmailBlock[];
   field_mapping?: EmailFieldMapping;
+  subcases?: EmailSubcaseConfig[];
+  sender_profile?: EmailSenderProfile;
 
   // Legacy fields preserved for backward compatibility
   badge?: string;
