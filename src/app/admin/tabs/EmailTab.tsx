@@ -479,8 +479,8 @@ export function EmailTab() {
           type: "info_box",
           title: "Dettagli Evento",
           items: [
-            { label: "Data", value: "{{event_date}}" },
-            { label: "Luogo", value: "Zurigo" }
+            { label: "Data", value: "" },
+            { label: "Luogo", value: "" }
           ]
         };
         break;
@@ -1895,10 +1895,7 @@ export function EmailTab() {
                             {
                               id,
                               name,
-                              custom_fields: {
-                                event_title: name,
-                                event_date: "Data da definire"
-                              }
+                              custom_fields: {}
                             }
                           ];
                           handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));

@@ -135,21 +135,29 @@ export function replaceVars(
     const key = rawKey.trim();
 
     // 1. Direct variable map lookup
-    if (vars[key] !== undefined) return String(vars[key]);
+    if (vars[key] !== undefined) {
+      const v = vars[key];
+      return v === null || v === undefined ? "" : String(v);
+    }
 
     // 2. Direct JSONPath resolution against raw JSON payload if available
     if (rawJsonObj && typeof rawJsonObj === "object") {
       const val = getValueByJsonPath(rawJsonObj, key);
-      if (val !== undefined && val !== null && typeof val !== "object") {
-        return String(val);
+      if (val !== undefined) {
+        if (val === null) return "";
+        if (typeof val !== "object") return String(val);
       }
     }
 
     // 3. Try normalized bracket syntax in vars (e.g. data['name'] -> data.name)
     const normalizedKey = key.replace(/\[['"]?([^'"\]]+)['"]?\]/g, ".$1");
-    if (vars[normalizedKey] !== undefined) return String(vars[normalizedKey]);
+    if (vars[normalizedKey] !== undefined) {
+      const v = vars[normalizedKey];
+      return v === null || v === undefined ? "" : String(v);
+    }
 
-    return match;
+    // 4. If variable/field was not provided or is empty, it must remain empty (no raw {{...}} and no fake prefill)
+    return "";
   });
 }
 
@@ -429,8 +437,15 @@ export function renderEmailBlocksHtml({
         }
 
         case "info_box": {
-          const items = Array.isArray(block.items) ? block.items : [];
-          if (items.length === 0) return "";
+          const rawItems = Array.isArray(block.items) ? block.items : [];
+          const evaluatedItems = rawItems
+            .map((item) => ({
+              label: r(item.label),
+              value: r(item.value)
+            }))
+            .filter((item) => item.value && item.value.trim());
+
+          if (evaluatedItems.length === 0) return "";
           const title = r(block.title);
 
           return `
@@ -448,17 +463,13 @@ export function renderEmailBlocksHtml({
                   ` : ""}
                   <tr>
                     <td style="padding: 14px 18px;">
-                      ${items
-                        .map((item, idx) => {
-                          const lbl = r(item.label);
-                          const val = r(item.value);
-                          return `
-                            <div style="font-size: 13px; margin-bottom: ${idx < items.length - 1 ? "10px" : "0"};">
-                              <span style="display: inline-block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: ${accentColor}; font-size: 11px;">${escapeHtml(lbl)}:</span>
-                              <div style="font-size: 15px; font-weight: 600; color: ${textColor}; margin-top: 2px;">${escapeHtml(val)}</div>
-                            </div>
-                          `;
-                        })
+                      ${evaluatedItems
+                        .map((item, idx) => `
+                          <div style="font-size: 13px; margin-bottom: ${idx < evaluatedItems.length - 1 ? "10px" : "0"};">
+                            <span style="display: inline-block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: ${accentColor}; font-size: 11px;">${escapeHtml(item.label)}:</span>
+                            <div style="font-size: 15px; font-weight: 600; color: ${textColor}; margin-top: 2px;">${escapeHtml(item.value)}</div>
+                          </div>
+                        `)
                         .join("")}
                     </td>
                   </tr>
@@ -704,11 +715,17 @@ export function renderEmailBlocksText({
           break;
         }
         case "info_box": {
-          if (block.title) out += `--- ${r(block.title)} ---\n`;
-          block.items.forEach((item) => {
-            out += `${r(item.label)}: ${r(item.value)}\n`;
-          });
-          out += `\n`;
+          const filledItems = (block.items || [])
+            .map((item) => ({ label: r(item.label), value: r(item.value) }))
+            .filter((item) => item.value && item.value.trim());
+
+          if (filledItems.length > 0) {
+            if (block.title) out += `--- ${r(block.title)} ---\n`;
+            filledItems.forEach((item) => {
+              out += `${item.label}: ${item.value}\n`;
+            });
+            out += `\n`;
+          }
           break;
         }
         case "two_column": {

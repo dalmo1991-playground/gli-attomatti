@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getContent } from "@/lib/data";
 import { renderEmailHtml, resolveEmailTheme, EmailTemplateConfig } from "@/lib/email/template";
+import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
 
 export const dynamic = "force-dynamic";
 
@@ -46,23 +47,24 @@ export async function GET(req: NextRequest) {
     const chosenTheme = themeQuery || selectedTemplate.theme || "default";
     const themeColors = resolveEmailTheme(chosenTheme, content?.landings || [], selectedTemplate.customColors);
 
+    let rawJsonObj: any = undefined;
+    if (selectedTemplate.field_mapping?.sample_payload_json) {
+      try {
+        rawJsonObj = JSON.parse(selectedTemplate.field_mapping.sample_payload_json);
+      } catch {}
+    }
+
+    const flattenedSample = rawJsonObj ? flattenJsonToDotNotation(rawJsonObj) : {};
+
     const variables: Record<string, string> = {
-      name: "Mario Rossi",
-      nome: "Mario Rossi",
-      email: "mario.rossi@example.com",
-      event_title: "Le vacanze di Monsieur Hulot",
-      titolo: "Le vacanze di Monsieur Hulot",
-      event_date: "14 Novembre 2026",
-      data: "14 Novembre 2026",
-      event_location: "Kulturhaus Helferei, Zurigo",
-      event_url: "https://gliattomatti.ch/Registrazioni/14-11-26",
-      form_name: "Prenotazione Cineforum",
+      ...flattenedSample,
       ...(activeSubcase?.custom_fields || {})
     };
 
     const html = renderEmailHtml({
       template: selectedTemplate,
       variables,
+      rawJsonObj,
       themeColors,
       settings
     });

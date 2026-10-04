@@ -114,7 +114,14 @@ export function flattenJsonToDotNotation(
   prefix: string = "",
   result: Record<string, string> = {}
 ): Record<string, string> {
-  if (obj === null || obj === undefined) return result;
+  if (obj === undefined) return result;
+
+  if (obj === null) {
+    if (prefix) {
+      result[prefix] = "";
+    }
+    return result;
+  }
 
   if (typeof obj !== "object") {
     if (prefix) {
@@ -132,17 +139,18 @@ export function flattenJsonToDotNotation(
         flattenJsonToDotNotation(item, dotKey, result);
         flattenJsonToDotNotation(item, bracketKey, result);
 
-        // Standard JSONPath filter query if item has label and value
-        if (item.label !== undefined && item.value !== undefined) {
+        // Standard JSONPath filter query if item has label
+        if (item.label !== undefined) {
           const lbl = String(item.label).trim();
-          const val = String(item.value !== null && item.value !== undefined ? item.value : "");
+          const val = item.value !== null && item.value !== undefined ? String(item.value) : "";
           result[`${prefix}[?(@.label=='${lbl}')].value`] = val;
           result[`${prefix}[label=${lbl}].value`] = val;
           result[`${prefix}[label='${lbl}'].value`] = val;
         }
-      } else if (item !== undefined && item !== null) {
-        result[dotKey] = String(item);
-        result[bracketKey] = String(item);
+      } else if (item !== undefined) {
+        const val = item !== null ? String(item) : "";
+        result[dotKey] = val;
+        result[bracketKey] = val;
       }
     });
     return result;

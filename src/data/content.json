@@ -1958,8 +1958,8 @@
         "badge": "Cineforum",
         "heading": "La tua prenotazione è confermata!",
         "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
-        "event_date": "{{event_date}}",
-        "event_location": "Zurigo",
+        "event_date": "",
+        "event_location": "",
         "cta_label": "Tutte le date del Cineforum",
         "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
         "field_mapping": {
