@@ -1009,8 +1009,8 @@
             {
               "date": "Tempi Moderni - 03 ottobre 2026, ore 18:00",
               "location": "Balberstrasse 47, Zurich (Wollishofen)",
-              "ticket_label": "",
-              "ticket_href": "",
+              "ticket_label": "test",
+              "ticket_href": "#email:cineforum-confirmation:cineforum-1",
               "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
             }
           ],
