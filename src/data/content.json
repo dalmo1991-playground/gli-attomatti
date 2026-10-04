@@ -1457,7 +1457,7 @@
           "title": "Unisciti a Noi",
           "text": "Prenota ora prima dell'esaurimento posti.",
           "cta_label": "Info & Biglietti",
-          "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
+          "cta_href": "#email:cineforum-confirmation"
         },
         {
           "id": "b-1790937925423",
@@ -1985,21 +1985,6 @@
             "align": "left"
           },
           {
-            "id": "block-info",
-            "type": "info_box",
-            "title": "Riepilogo Evento",
-            "items": [
-              {
-                "label": "Data & Ora",
-                "value": "{{event_date}}"
-              },
-              {
-                "label": "Luogo",
-                "value": "Zurigo"
-              }
-            ]
-          },
-          {
             "id": "block-button",
             "type": "button",
             "label": "Tutte le date del Cineforum",
@@ -2012,6 +1997,13 @@
             "type": "divider",
             "style": "gradient",
             "spacing": "md"
+          },
+          {
+            "id": "block-1791118336869",
+            "type": "image",
+            "image_url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+            "alt": "Locandina Evento",
+            "align": "center"
           },
           {
             "id": "block-social",
