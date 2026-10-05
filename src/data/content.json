@@ -2129,75 +2129,123 @@
   },
   "locations": [
     {
-      "id": "loc-missione-cattolica",
-      "slug": "missione-cattolica",
-      "title": "Missione Cattolica di Lingua Italiana",
-      "venue_name": "Teatro della Missione Cattolica",
-      "address": "Feldstrasse 109, 8004 Zürich",
-      "google_maps_url": "https://maps.app.goo.gl/K6s36z19Wq2tJ8X26",
+      "id": "loc-1791226340633",
+      "slug": "sala-wollishofen",
+      "title": "Wollishofen",
+      "venue_name": "ABZ-Gemeinschaftsraum",
+      "address": "Balberstrasse 47, 8038 Zürich",
+      "google_maps_url": "https://maps.app.goo.gl/pz3aigqZoPrjEaqE6",
       "active": true,
       "hero_image": "/images/1782553290530-TheaterCurtain.webp",
-      "description": "Indicazioni pratiche e fotografiche per raggiungere facilmente la sala teatro della Missione Cattolica partendo dalle fermate dei mezzi pubblici.",
+      "description": "",
       "public_transport": [
         {
           "type": "tram",
-          "types": ["tram"],
-          "stop": "Bäckeranlage",
-          "lines": "Tram 8",
-          "line_badges": [
-            { "number": "8", "bg_color": "#16a34a", "text_color": "#ffffff" }
+          "stop": "Wollishoferplatz",
+          "lines": "",
+          "walking_time": "5 min a piedi",
+          "types": [
+            "tram",
+            "bus"
           ],
-          "walking_time": "3 min a piedi"
+          "line_badges": [
+            {
+              "number": "7",
+              "bg_color": "#000000",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "184",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "185",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "N18",
+              "bg_color": "#000000",
+              "text_color": "#ffff00"
+            }
+          ]
         },
         {
-          "type": "bus",
-          "types": ["bus"],
-          "stop": "Helvetiaplatz",
-          "lines": "Bus 32",
-          "line_badges": [
-            { "number": "32", "bg_color": "#0284c7", "text_color": "#ffffff" }
+          "type": "tram",
+          "stop": "Butzenstrasse",
+          "lines": "",
+          "walking_time": "5 min a piedi",
+          "types": [
+            "tram",
+            "bus"
           ],
-          "walking_time": "5 min a piedi"
+          "line_badges": [
+            {
+              "number": "7",
+              "bg_color": "#000000",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "184",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "185",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "70",
+              "bg_color": "#fafafa",
+              "text_color": "#000000"
+            },
+            {
+              "number": "N18",
+              "bg_color": "#000000",
+              "text_color": "#ffff00"
+            }
+          ]
         },
         {
-          "type": "train",
-          "types": ["train"],
-          "stop": "Zürich Hardbrücke / Wiedikon",
-          "lines": "S-Bahn",
-          "line_badges": [
-            { "number": "S", "bg_color": "#1e3a8a", "text_color": "#ffffff" }
+          "type": "tram",
+          "stop": "Wollishofen",
+          "lines": "",
+          "walking_time": "20 min a piedi",
+          "types": [
+            "train"
           ],
-          "walking_time": "12-15 min a piedi"
+          "line_badges": [
+            {
+              "number": "S8",
+              "bg_color": "#581e83",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "S24",
+              "bg_color": "#193969",
+              "text_color": "#ffffff"
+            }
+          ]
         }
       ],
       "steps": [
         {
-          "id": "step-1",
-          "title": "Dalla fermata del Tram Bäckeranlage (Tram 8)",
-          "instruction": "Scendi alla fermata Bäckeranlage e incamminati lungo Feldstrasse in direzione ovest costeggiando il parco.",
-          "image": "/images/1782553781605-DSC_0682.webp",
-          "image_caption": "Feldstrasse vista dall'incrocio con il parco"
-        },
-        {
-          "id": "step-2",
-          "title": "Ingresso dell'Edificio della Missione",
-          "instruction": "Al civico 109 troverai il complesso della Missione Cattolica. Entra dal cancello principale pedonale.",
-          "image": "/images/1782553648895-DSD00540.webp",
-          "image_caption": "Portone d'ingresso e piazzale pedonale"
-        },
-        {
-          "id": "step-3",
-          "title": "Accesso alla Sala Teatro (Saal)",
-          "instruction": "Segui le indicazioni 'Teatro / Saal'. La sala si trova all'interno, scendendo la rampa di scale o prendendo l'ascensore interno.",
+          "id": "step-1791226340633-1",
+          "title": "Dalla fermata del tram all'edificio",
+          "instruction": "Scendi alla fermata e procedi verso...",
           "image": "/images/1782553290530-TheaterCurtain.webp",
-          "image_caption": "Foyer e ingresso sala spettacoli"
+          "image_caption": "Punto di riferimento visivo"
         }
       ],
-      "parking_info": "Posti auto in Zona Blu (Blaue Zone) disponibili lungo Feldstrasse e Stauffacherstrasse. Consigliamo l'uso dei mezzi pubblici data l'elevata affluenza.",
-      "accessibility_info": "La struttura è provvista di rampa d'accesso e ascensore per persone a mobilità ridotta o carrozzine.",
-      "notes": "In caso di pioggia o eventi serali, il portone pedonale rimane aperto fino a 15 minuti dopo l'inizio dello spettacolo.",
-      "back_link_label": "Torna al sito",
-      "back_link_href": "/"
+      "parking_info": "",
+      "accessibility_info": "",
+      "notes": "",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "badge": "",
+      "category_badge": ""
     }
   ]
 }
