@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { verifyDevPassword } from "@/app/actions/devGate";
 import { useRouter } from "next/navigation";
 import { ExternalLink, Lock, ArrowRight, AlertCircle, Theater, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -66,18 +67,20 @@ export function DevAccessGate({
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.trim().toLowerCase() === "attomatti") {
-      setError(false);
-      setIsSubmitting(true);
-      // Salva nei cookies per 1 anno (31536000 secondi)
-      document.cookie = "attomatti_dev_access=1; path=/; max-age=31536000; SameSite=Lax";
+    setIsSubmitting(true);
+    setError(false);
+    
+    const result = await verifyDevPassword(password);
+    
+    if (result.success) {
       setHasAccess(true);
       setIsSubmitting(false);
       router.refresh();
     } else {
       setError(true);
+      setIsSubmitting(false);
     }
   };
 

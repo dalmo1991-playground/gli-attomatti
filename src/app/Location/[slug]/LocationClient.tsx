@@ -218,12 +218,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     className="p-4 rounded-2xl bg-background/60 border border-foreground/5 space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 p-1.5 px-2 rounded-xl bg-secondary/10 text-secondary">
-                        {types.includes("tram") && <TramFront size={16} title={ui.transport_tram_title || "Tram"} className="text-emerald-400" />}
-                        {types.includes("bus") && <Bus size={16} title={ui.transport_bus_title || "Bus"} className="text-sky-400" />}
-                        {types.includes("train") && <Train size={16} title={ui.transport_train_title || "Treno / S-Bahn"} className="text-indigo-400" />}
+                      <div className="flex items-center gap-1.5 p-1.5 px-2 rounded-xl bg-secondary/10 text-secondary" title={ui.transport_tram_title || "Trasporto pubblico"}>
+                        {types.includes("tram") && <TramFront size={16} className="text-emerald-400" />}
+                        {types.includes("bus") && <Bus size={16} className="text-sky-400" />}
+                        {types.includes("train") && <Train size={16} className="text-indigo-400" />}
                         {types.includes("generic") && !types.includes("tram") && !types.includes("bus") && !types.includes("train") && (
-                          <Navigation size={16} title={ui.transport_other_title || "Altro"} className="text-amber-400" />
+                          <Navigation size={16} className="text-amber-400" />
                         )}
                       </div>
                       {t.walking_time && (
@@ -237,10 +237,10 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     {/* Line Badges (ZVV / Tram / Bus / S-Bahn style) */}
                     {t.line_badges && t.line_badges.length > 0 ? (
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <div className="flex items-center gap-1 text-foreground/40 shrink-0 mr-1">
-                          {types.includes("tram") && <TramFront size={13} title={ui.transport_tram_title || "Tram"} />}
-                          {types.includes("bus") && <Bus size={13} title={ui.transport_bus_title || "Bus"} />}
-                          {types.includes("train") && <Train size={13} title={ui.transport_train_title || "Treno / S-Bahn"} />}
+                        <div className="flex items-center gap-1 text-foreground/40 shrink-0 mr-1" title="Trasporto">
+                          {types.includes("tram") && <TramFront size={13} />}
+                          {types.includes("bus") && <Bus size={13} />}
+                          {types.includes("train") && <Train size={13} />}
                         </div>
                         {t.line_badges.map((b, bIdx) => (
                           <span

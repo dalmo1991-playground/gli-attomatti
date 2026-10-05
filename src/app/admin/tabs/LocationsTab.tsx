@@ -22,7 +22,7 @@ import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
 import { ImageUploadField } from "../components/ui/ImageUploadField";
 import { AccordionCard } from "../components/ui/AccordionCard";
-import { LocationItem, LocationStep, LocationPublicTransport } from "@/lib/locationTypes";
+import { LocationItem, LocationStep, LocationPublicTransport, TransportType } from "@/lib/locationTypes";
 
 export function LocationsTab() {
   const { content, updateContent } = useAdmin();
@@ -447,10 +447,10 @@ export function LocationsTab() {
                                   </label>
                                   <div className="flex flex-wrap gap-1.5">
                                     {[
-                                      { val: "tram", label: "Tram", icon: TramFront, color: "text-emerald-400" },
-                                      { val: "bus", label: "Bus", icon: Bus, color: "text-sky-400" },
-                                      { val: "train", label: "Treno", icon: Train, color: "text-indigo-400" },
-                                      { val: "generic", label: "Altro", icon: Navigation, color: "text-amber-400" }
+                                      { val: "tram" as TransportType, label: "Tram", icon: TramFront, color: "text-emerald-400" },
+                                      { val: "bus" as TransportType, label: "Bus", icon: Bus, color: "text-sky-400" },
+                                      { val: "train" as TransportType, label: "Treno", icon: Train, color: "text-indigo-400" },
+                                      { val: "generic" as TransportType, label: "Altro", icon: Navigation, color: "text-amber-400" }
                                     ].map(({ val, label, icon: Icon, color }) => {
                                       const currentTypes = (t.types && t.types.length > 0) ? t.types : [t.type || "tram"];
                                       const isSelected = currentTypes.includes(val);
