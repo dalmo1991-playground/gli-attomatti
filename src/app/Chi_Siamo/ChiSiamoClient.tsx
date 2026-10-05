@@ -1,95 +1,14 @@
 "use client";
 
-import { Section } from "@/components/ui/Section";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Users, MessageSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Section } from "@/components/ui/Section";
+import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
+import { CarouselBlock } from "@/components/ui/CarouselBlock";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
-import { RichText } from "@/components/ui/RichText";
-import Image from "next/image";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
-
-const MotionImage = motion.create(Image);
-
-function SectionPhotoCarousel({
-  images,
-  onImageClick,
-  fallbackAlt,
-  ariaPrefix
-}: {
-  images: Array<{ url: string; alt?: string; no_crop?: boolean }>;
-  onImageClick: (index: number) => void;
-  fallbackAlt?: string;
-  ariaPrefix?: string;
-}) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    if (images.length > 1) {
-      const timer = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-      }, 4000);
-      return () => clearInterval(timer);
-    }
-  }, [images.length]);
-
-  if (!images || images.length === 0) return null;
-
-  return (
-    <div className="relative aspect-video md:aspect-[16/10] overflow-hidden rounded-3xl shadow-2xl bg-muted/20">
-      {/* Ambient background glow matching home page */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
-      </div>
-
-      <AnimatePresence mode="popLayout">
-        <MotionImage
-          key={currentIndex}
-          src={images[currentIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-          alt={images[currentIndex]?.alt || fallbackAlt || "Foto"}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          fill
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          className={`cursor-pointer transition-transform duration-700 ${images[currentIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
-          onClick={() => onImageClick(currentIndex)}
-        />
-      </AnimatePresence>
-
-      {/* Carousel Indicators (Dots) if multiple images */}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-1 z-20">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentIndex(i);
-              }}
-              className="p-2 flex items-center justify-center"
-              aria-label={`${ariaPrefix || "Foto"} ${i + 1}`}
-            >
-              <span
-                className={cn(
-                  "rounded-full transition-all duration-300 block",
-                  i === currentIndex
-                    ? "bg-primary w-6 h-2 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]"
-                    : "bg-white/40 hover:bg-white/70 w-2 h-2"
-                )}
-              />
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function ChiSiamoClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -128,40 +47,29 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
 
       {/* Content Sections */}
       {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => (
-        <Section key={idx} className={cn("py-12 sm:py-16 md:py-24", idx % 2 !== 0 && "bg-muted/10")}>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-start">
-            <div className="md:col-span-4 md:sticky md:top-32">
-              <h2 className="text-3xl font-black uppercase tracking-tight mb-6">
-                {section.title}
-              </h2>
-              <div className="w-12 h-1 bg-primary" />
-            </div>
-
-            <div className="md:col-span-8">
-              <div className="prose prose-xl prose-invert max-w-none">
-                <RichText
-                  content={section.text}
-                  className="text-xl text-foreground/80 leading-relaxed mb-8 md:mb-12"
-                />
-
-                {section.images && section.images.length > 0 && (
-                  <SectionPhotoCarousel
-                    images={section.images}
-                    fallbackAlt={chi_siamo.fallback_photo_alt}
-                    ariaPrefix={chi_siamo.photo_aria_prefix}
-                    onImageClick={(imgIdx) =>
-                      setLightbox({
-                        isOpen: true,
-                        index: imgIdx,
-                        images: section.images
-                      })
-                    }
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        </Section>
+        <ArchiveTimelineSection
+          key={section.slug || idx}
+          title={section.title}
+          badge={section.year}
+          badgePrefix={chi_siamo.year_prefix || "Anno "}
+          text={section.text}
+          isAlternate={idx % 2 !== 0}
+        >
+          {section.images && section.images.length > 0 && (
+            <CarouselBlock
+              images={section.images}
+              fallbackAlt={chi_siamo.fallback_photo_alt}
+              ariaPrefix={chi_siamo.photo_aria_prefix}
+              onImageClick={(imgIdx) =>
+                setLightbox({
+                  isOpen: true,
+                  index: imgIdx,
+                  images: section.images
+                })
+              }
+            />
+          )}
+        </ArchiveTimelineSection>
       ))}
 
       {/* Navigation Links Section */}

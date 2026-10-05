@@ -13,6 +13,7 @@ import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
+import { CarouselBlock } from "@/components/ui/CarouselBlock";
 
 const MotionImage = motion.create(Image);
 
@@ -31,9 +32,6 @@ export default function HomeClient({ content: initialContent }: { content: any }
   const [currentShowIndex, setCurrentShowIndex] = useState(0);
   const [heroDirection, setHeroDirection] = useState(1);
 
-  // For Introduction Carousel
-  const [introIndex, setIntroIndex] = useState(0);
-
   // Lightbox State
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
     isOpen: false,
@@ -50,15 +48,6 @@ export default function HomeClient({ content: initialContent }: { content: any }
       return () => clearInterval(timer);
     }
   }, [showMode, activeShows.length]);
-
-  useEffect(() => {
-    if (introImages.length > 1) {
-      const timer = setInterval(() => {
-        setIntroIndex((prev) => (prev + 1) % introImages.length);
-      }, 4000);
-      return () => clearInterval(timer);
-    }
-  }, [introImages.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -190,8 +179,8 @@ export default function HomeClient({ content: initialContent }: { content: any }
                         activeShows[currentShowIndex].location_href?.trim() ? (
                           <Link
                             href={activeShows[currentShowIndex].location_href.trim()}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "_blank" : undefined}
+                            rel={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
                             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
                           >
                             <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
@@ -359,28 +348,14 @@ export default function HomeClient({ content: initialContent }: { content: any }
               <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="relative aspect-square md:aspect-auto md:h-[500px] overflow-hidden rounded-3xl shadow-2xl">
-            <div className="absolute inset-0 z-10 pointer-events-none">
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
-            </div>
-
+          <div className="w-full">
             {introImages && introImages.length > 0 && (
-              <AnimatePresence mode="popLayout">
-                <MotionImage
-                  key={introIndex}
-                  src={introImages[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={introImages[introIndex]?.alt || introduction.fallback_alt || "Introduzione"}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className={`cursor-pointer transition-transform duration-700 ${introImages[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
-                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introImages })}
-                />
-              </AnimatePresence>
+              <CarouselBlock
+                images={introImages}
+                fallbackAlt={introduction.fallback_alt || "Introduzione"}
+                aspectRatioClass="aspect-square md:aspect-auto md:h-[500px]"
+                onImageClick={(idx) => setLightbox({ isOpen: true, index: idx, images: introImages })}
+              />
             )}
           </div>
         </div>

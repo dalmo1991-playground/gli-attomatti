@@ -3,6 +3,7 @@ import { getRelativeLuminance, hexToRgb } from "@/lib/devTheme";
 import { getValueByJsonPath } from "./jsonPath";
 import {
   parseEventDate,
+  getZurichDateParts,
   generateGoogleCalendarUrl,
   generateOutlookCalendarUrl,
   generateOffice365CalendarUrl,
@@ -604,23 +605,26 @@ export function renderEmailBlocksHtml({
           const eventLocation = rawLoc || "Zurigo, Svizzera";
           const eventDesc = rawDesc || "";
 
-          // Formatted human date & time
+          // Formatted human date & time in Europe/Zurich timezone
           const monthShortNames = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
           const monthLongNames = [
             "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
             "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
           ];
           const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+
+          const sParts = getZurichDateParts(parsedStart);
+          const eParts = getZurichDateParts(parsedEnd);
           
-          const monthShort = monthShortNames[parsedStart.getMonth()] || "EVENTO";
-          const dayNum = String(parsedStart.getDate()).padStart(2, "0");
-          const dayName = dayNames[parsedStart.getDay()] || "";
-          const monthLong = monthLongNames[parsedStart.getMonth()] || "";
-          const year = parsedStart.getFullYear();
-          const startHours = String(parsedStart.getHours()).padStart(2, "0");
-          const startMins = String(parsedStart.getMinutes()).padStart(2, "0");
-          const endHours = String(parsedEnd.getHours()).padStart(2, "0");
-          const endMins = String(parsedEnd.getMinutes()).padStart(2, "0");
+          const monthShort = monthShortNames[sParts.month] || "EVENTO";
+          const dayNum = String(sParts.day).padStart(2, "0");
+          const dayName = dayNames[sParts.dayOfWeek] || "";
+          const monthLong = monthLongNames[sParts.month] || "";
+          const year = sParts.year;
+          const startHours = String(sParts.hour).padStart(2, "0");
+          const startMins = String(sParts.minute).padStart(2, "0");
+          const endHours = String(eParts.hour).padStart(2, "0");
+          const endMins = String(eParts.minute).padStart(2, "0");
 
           const formattedDateLine = `${dayName}, ${dayNum} ${monthLong} ${year}`;
           const formattedTimeLine = `${startHours}:${startMins} - ${endHours}:${endMins}`;
@@ -646,8 +650,8 @@ export function renderEmailBlocksHtml({
             title: eventTitle,
             description: eventDesc,
             location: eventLocation,
-            startDate: rawStart || parsedStart.toISOString(),
-            endDate: rawEnd || parsedEnd.toISOString(),
+            startDate: parsedStart,
+            endDate: parsedEnd,
             baseUrl
           });
 
@@ -1058,8 +1062,8 @@ export function renderEmailBlocksText({
             title: rawTitle,
             description: rawDesc,
             location: rawLoc,
-            startDate: rawStart || parsedStart.toISOString(),
-            endDate: rawEnd || parsedEnd.toISOString(),
+            startDate: parsedStart,
+            endDate: parsedEnd,
             baseUrl
           });
 

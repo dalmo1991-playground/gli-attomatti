@@ -37,12 +37,27 @@ export function LivePreviewProvider({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const isFramed = window.self !== window.top;
-    const isPreview =
-      window.location.search.includes("preview=1") ||
-      (typeof sessionStorage !== "undefined" &&
-        sessionStorage.getItem("attomatti_preview_mode") === "1");
+
+    let isFramed = false;
+    try {
+      isFramed = window.self !== window.top;
+    } catch {
+      isFramed = true;
+    }
+
+    const hasPreviewParam = window.location.search.includes("preview=1");
+    const isPreviewStored =
+      typeof sessionStorage !== "undefined" &&
+      sessionStorage.getItem("attomatti_preview_mode") === "1";
+    const isPreview = hasPreviewParam || isPreviewStored;
+
     if (!isFramed && !isPreview) return;
+
+    if (hasPreviewParam) {
+      try {
+        sessionStorage.setItem("attomatti_preview_mode", "1");
+      } catch {}
+    }
 
     // 1. Initial hydration from localStorage
     try {
@@ -98,16 +113,27 @@ export function LivePreviewProvider({
     const handleMessage = (e: MessageEvent) => {
       if (e.data?.type === "ATTOMATTI_PREVIEW_SYNC" && e.data.content) {
         setContent(e.data.content);
+      } else if (e.data?.type === "ATTOMATTI_PING") {
+        try {
+          window.parent?.postMessage({ type: "ATTOMATTI_PREVIEW_READY" }, "*");
+        } catch {}
       }
     };
     window.addEventListener("message", handleMessage);
 
-    // Announce to parent that preview is active and ready
-    try {
-      window.parent?.postMessage({ type: "ATTOMATTI_PREVIEW_READY" }, "*");
-    } catch {}
+    // Announce to parent that preview is active and ready (immediately and with short delays)
+    const sendReady = () => {
+      try {
+        window.parent?.postMessage({ type: "ATTOMATTI_PREVIEW_READY" }, "*");
+      } catch {}
+    };
+    sendReady();
+    const t1 = setTimeout(sendReady, 100);
+    const t2 = setTimeout(sendReady, 400);
 
     return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
       delete (window as any).__ATTOMATTI_UPDATE_PREVIEW;
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener("message", handleMessage);

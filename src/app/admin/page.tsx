@@ -19,6 +19,7 @@ import { SpettacoliTab } from "./tabs/SpettacoliTab";
 import { IniziativeTab } from "./tabs/IniziativeTab";
 import { TicketingTab } from "./tabs/TicketingTab";
 import { RegistrationsTab } from "./tabs/RegistrationsTab";
+import { LocationsTab } from "./tabs/LocationsTab";
 import { PressTab } from "./tabs/PressTab";
 import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
@@ -50,6 +51,10 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
       return "/Biglietti";
     case "registrations":
       return "/Registrazioni";
+    case "locations": {
+      const firstLoc = content?.locations?.[0]?.slug;
+      return firstLoc ? `/Location/${firstLoc}` : "/Location";
+    }
     case "contatti":
       return "/Contatti";
     case "landing": {
@@ -160,6 +165,7 @@ function AdminContent() {
                   {activeTab === "iniziative" && <IniziativeTab />}
                   {activeTab === "ticketing" && <TicketingTab />}
                   {activeTab === "registrations" && <RegistrationsTab />}
+                  {activeTab === "locations" && <LocationsTab />}
                   {activeTab === "landing" && (
                     <LandingTab
                       selectedSlug={activeLandingSlug}

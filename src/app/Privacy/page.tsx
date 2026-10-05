@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
-import { ArrowLeft, ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail } from "lucide-react";
+import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail } from "lucide-react";
 import PrivacyConsentButton from "./PrivacyConsentButton";
+import { LegalDocLayout } from "@/components/ui/LegalDocLayout";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
@@ -44,40 +45,14 @@ export default async function PrivacyPage() {
   const cookieRows = p?.cookie_opt_in?.rows || {};
 
   return (
-    <div className="min-h-screen py-16 px-6">
-      <div className="max-w-4xl mx-auto space-y-12">
-        {/* Back link */}
-        {p?.back_link && (
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} />
-            {p.back_link}
-          </Link>
-        )}
-
-        {/* Header */}
-        <div className="space-y-4">
-          {p?.badge && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
-              {p.badge}
-            </div>
-          )}
-          {p?.title && (
-            <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-foreground leading-[1.05]">
-              {p.title}
-            </h1>
-          )}
-          {p?.description && (
-            <p className="text-lg text-foreground/60 max-w-2xl font-medium">
-              <FormattedText text={p.description} />
-            </p>
-          )}
-        </div>
-
-        {/* Content Sections */}
-        <div className="space-y-6">
+    <LegalDocLayout
+      badge={p?.badge}
+      title={p?.title || "Informativa sulla Privacy"}
+      description={p?.description}
+      backHref="/"
+      backLabel={p?.back_link || "Torna alla home"}
+    >
+      <div className="space-y-6">
           {/* Titolare del trattamento */}
           {p?.data_controller && (
             <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
@@ -490,7 +465,6 @@ export default async function PrivacyPage() {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </LegalDocLayout>
   );
 }

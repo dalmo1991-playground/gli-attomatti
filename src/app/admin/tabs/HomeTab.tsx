@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Plus, Home as HomeIcon, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { Plus, Home as HomeIcon, Image as ImageIcon, ExternalLink, MapPin } from "lucide-react";
 import { InstagramIcon } from "@/components/home/InstagramFeed";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -251,11 +251,44 @@ export function HomeTab() {
                 />
               </div>
 
+              {/* Location Preset Selector from /Location */}
+              {(content?.locations || []).length > 0 && (
+                <div className="p-3 rounded-xl bg-accent/5 border border-accent/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-1.5 font-bold text-accent">
+                    <MapPin size={13} className="shrink-0" />
+                    <span>Collega a scheda Location:</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {(content.locations || []).map((loc: any) => {
+                      const isSelected = show.location_href === `/Location/${loc.slug}`;
+                      return (
+                        <button
+                          key={loc.id || loc.slug}
+                          type="button"
+                          onClick={() => {
+                            updateShowField(idx, "location", loc.venue_name || loc.title || loc.address);
+                            updateShowField(idx, "location_href", `/Location/${loc.slug}`);
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all border ${
+                            isSelected
+                              ? "bg-accent text-background border-accent shadow-sm"
+                              : "bg-background/80 hover:bg-background text-foreground/80 border-foreground/10 hover:border-accent/40"
+                          }`}
+                        >
+                          {loc.venue_name || loc.title}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <FormField
-                label="Link Google Maps (opzionale)"
+                label="Link Indicazioni (URL Google Maps o /Location/[slug])"
                 value={show.location_href || ""}
                 onChange={(v) => updateShowField(idx, "location_href", v)}
-                placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                placeholder="https://maps.app.goo.gl/... oppure /Location/missione-cattolica"
+                helpText="Puoi incollare un link Google Maps oppure selezionare una location preconfigurata qui sopra"
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-foreground/5">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import contentData from "@/data/content.json";
 import { PublishStatus, DiffEntry, RecoverableDraft } from "../types";
 
@@ -178,6 +178,20 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   const hasUnsavedChanges = diffList.length > 0;
 
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+
+  useEffect(() => {
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        broadcastChannelRef.current = new BroadcastChannel("attomatti_preview_sync");
+      }
+    } catch {}
+
+    return () => {
+      broadcastChannelRef.current?.close();
+    };
+  }, []);
+
   // Instantly broadcast content changes to all live preview consumers (tabs & iframes)
   useEffect(() => {
     if (isLoading || !content) return;
@@ -185,11 +199,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("attomatti_preview_live_data", JSON.stringify(content));
     } catch {}
     try {
-      if (typeof BroadcastChannel !== "undefined") {
-        const ch = new BroadcastChannel("attomatti_preview_sync");
-        ch.postMessage({ type: "ATTOMATTI_PREVIEW_SYNC", content });
-        ch.close();
-      }
+      broadcastChannelRef.current?.postMessage({ type: "ATTOMATTI_PREVIEW_SYNC", content });
     } catch {}
   }, [content, isLoading]);
 

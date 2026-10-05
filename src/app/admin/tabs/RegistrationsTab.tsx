@@ -211,7 +211,7 @@ export function RegistrationsTab() {
 
                       {page.active && page.slug && (
                         <a
-                          href={`/Registrazioni/${page.slug}`}
+                          href={`/Registrazioni/${page.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent text-accent-foreground font-bold text-xs shadow-md shadow-accent/20 shrink-0 self-start sm:self-auto hover:opacity-90 transition-opacity"

@@ -12,7 +12,12 @@ export function PreviewBanner({ content }: { content?: any }) {
     if (typeof window === "undefined") return;
 
     // NEVER show inside an iframe
-    const isFramed = window.self !== window.top;
+    let isFramed = false;
+    try {
+      isFramed = window.self !== window.top;
+    } catch {
+      isFramed = true;
+    }
     if (isFramed) return;
 
     // Check if ?preview=1 is in URL or was stored for this tab session

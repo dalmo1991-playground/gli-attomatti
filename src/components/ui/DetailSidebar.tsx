@@ -55,17 +55,31 @@ export function DetailSidebar({
                 <div className="font-bold text-lg mb-1 text-accent">{d.date}</div>
                 {d.location && (
                   d.location_href?.trim() ? (
-                    <Link
-                      href={d.location_href.trim()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-start text-foreground/70 text-sm mb-4 hover:text-accent transition-colors group"
-                    >
-                      <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0 group-hover:text-accent transition-colors" />
-                      <span className="underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
-                        {d.location}
-                      </span>
-                    </Link>
+                    <div className="space-y-1 mb-4">
+                      <Link
+                        href={d.location_href.trim()}
+                        target={d.location_href.trim().startsWith("http") ? "_blank" : undefined}
+                        rel={d.location_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="inline-flex items-start text-foreground/70 text-sm hover:text-accent transition-colors group"
+                      >
+                        <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0 group-hover:text-accent transition-colors" />
+                        <span className="underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+                          {d.location}
+                        </span>
+                      </Link>
+
+                      {/* Special badge if it links to a photographic guide (/Location/...) */}
+                      {d.location_href.trim().startsWith("/Location") && (
+                        <div>
+                          <Link
+                            href={d.location_href.trim()}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent text-[11px] font-bold border border-accent/20 transition-colors"
+                          >
+                            <span>📷 Guida fotografica &amp; come raggiungerci</span>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="flex items-start text-foreground/60 text-sm mb-4">
                       <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0" />

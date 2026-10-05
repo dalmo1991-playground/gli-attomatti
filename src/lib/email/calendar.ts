@@ -31,60 +31,161 @@ const ITALIAN_MONTHS: Record<string, number> = {
 };
 
 /**
+ * Timezone identifier for Zurich, Switzerland.
+ */
+export const ZURICH_TIMEZONE = "Europe/Zurich";
+
+/**
+ * Creates a Date object representing the given date & time in Europe/Zurich timezone.
+ * Accurately accounts for CET (UTC+1, winter) and CEST (UTC+2, summer daylight saving time).
+ */
+export function createZurichDate(
+  year: number,
+  monthIndex: number, // 0 to 11 (matching JS Date conventions)
+  day: number,
+  hour: number = 18,
+  minute: number = 0,
+  second: number = 0
+): Date {
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: ZURICH_TIMEZONE,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false
+  });
+  const nominalUtc = Date.UTC(year, monthIndex, day, hour, minute, second);
+
+  let guessUtc = nominalUtc;
+  for (let i = 0; i < 2; i++) {
+    const parts = dtf.formatToParts(new Date(guessUtc));
+    const p: Record<string, number> = {};
+    for (const part of parts) {
+      if (part.type !== "literal") p[part.type] = parseInt(part.value, 10);
+    }
+    if (p.hour === 24) p.hour = 0;
+    const currentZurichMs = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+    const diff = nominalUtc - currentZurichMs;
+    guessUtc += diff;
+    if (diff === 0) break;
+  }
+  return new Date(guessUtc);
+}
+
+/**
+ * Returns the calendar and time components of a Date in Europe/Zurich timezone.
+ * month is 0-indexed (0 = Jan, 11 = Dec), dayOfWeek is 0 = Sunday .. 6 = Saturday.
+ */
+export function getZurichDateParts(date: Date) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: ZURICH_TIMEZONE,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false
+  });
+  const parts = formatter.formatToParts(date);
+  const p: Record<string, string> = {};
+  for (const part of parts) {
+    if (part.type !== "literal") p[part.type] = part.value;
+  }
+  const year = parseInt(p.year, 10);
+  const month = parseInt(p.month, 10) - 1;
+  const day = parseInt(p.day, 10);
+  let hour = parseInt(p.hour, 10);
+  if (hour === 24) hour = 0;
+  const minute = parseInt(p.minute, 10);
+  const second = parseInt(p.second, 10);
+  const weekdayMap: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6
+  };
+  const dayOfWeek = weekdayMap[p.weekday] ?? 0;
+  return { year, month, day, hour, minute, second, dayOfWeek };
+}
+
+/**
  * Robust date parser supporting ISO strings, standard timestamps,
  * and Italian date formats (e.g. "14 novembre 2026, ore 18:00").
+ * All dates without an explicit non-zero timezone offset are parsed as Europe/Zurich local time.
  */
 export function parseEventDate(input: string = ""): Date | null {
   if (!input || !input.trim()) return null;
   const clean = input.trim();
 
-  // 1. Direct standard Date parse (ISO-8601, RFC2822, YYYY-MM-DD, etc.)
-  const directDate = new Date(clean);
-  if (!isNaN(directDate.getTime())) {
-    return directDate;
+  // 1. Exact ISO string with milliseconds (e.g. from Date.prototype.toISOString())
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/i.test(clean)) {
+    const d = new Date(clean);
+    if (!isNaN(d.getTime())) return d;
   }
 
-  // 2. Try normalized "YYYY-MM-DD HH:mm"
-  const normalizedYmd = clean.replace(/(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/, "$1-$2-$3T$4:$5:00");
-  const ymdDate = new Date(normalizedYmd);
-  if (!isNaN(ymdDate.getTime())) {
-    return ymdDate;
+  // 2. Compact UTC calendar string (YYYYMMDDTHHmmssZ)
+  const compactMatch = clean.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/i);
+  if (compactMatch) {
+    const [, y, m, d, h, min, s] = compactMatch;
+    return new Date(Date.UTC(+y, +m - 1, +d, +h, +min, +s));
   }
 
-  // 3. Try Italian textual date: "15 gennaio 2025", "Sabato 15 gennaio 2025, ore 20:30", "15 gen 2025 alle 20.30"
-  const itRegex = /(?:[a-zA-ZÀ-ÿ]+[,\s]+)?(\d{1,2})\s+([a-zA-ZÀ-ÿ]+)(?:\s+(\d{4}))?(?:[,\s]+(?:(?:alle\s+ore|alle|ore|h)\s*)?(\d{1,2})(?:[:.](\d{2}))?)?/i;
+  // 3. Explicit non-UTC timezone offset (e.g. +01:00, +02:00, -05:00)
+  if (/^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}(?::\d{2})?(?:[+-](?!00:?00)\d{2}:?\d{2})$/i.test(clean)) {
+    const d = new Date(clean);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // 4. ISO or standard format: YYYY-MM-DD or YYYY-MM-DDTHH:mm(:ss)(Z) or YYYY-MM-DD HH:mm(:ss)
+  // All times supplied by user are in Europe/Zurich timezone.
+  const isoMatch = clean.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?Z?)?$/i);
+  if (isoMatch) {
+    const year = parseInt(isoMatch[1], 10);
+    const monthIndex = parseInt(isoMatch[2], 10) - 1;
+    const day = parseInt(isoMatch[3], 10);
+    const hour = isoMatch[4] !== undefined ? parseInt(isoMatch[4], 10) : 18;
+    const min = isoMatch[5] !== undefined ? parseInt(isoMatch[5], 10) : 0;
+    const sec = isoMatch[6] !== undefined ? parseInt(isoMatch[6], 10) : 0;
+    return createZurichDate(year, monthIndex, day, hour, min, sec);
+  }
+
+  // 5. Italian textual date: "15 gennaio 2025", "Sabato 15 gennaio 2025, ore 20:30", "14 nov 2026 alle 18.00"
+  const itRegex = /(?:^|[\s—\-])(\d{1,2})\s+([a-zA-ZÀ-ÿ]+)(?:\s+(\d{4}))?(?:[,\s]+(?:(?:alle\s+ore|alle|ore|h)\s*)?(\d{1,2})(?:[:.](\d{2}))?)?/i;
   const itMatch = clean.match(itRegex);
   if (itMatch) {
     const day = parseInt(itMatch[1], 10);
     const monthKey = itMatch[2].toLowerCase();
-    const year = itMatch[3] ? parseInt(itMatch[3], 10) : new Date().getFullYear();
-    const hour = itMatch[4] ? parseInt(itMatch[4], 10) : 18;
-    const min = itMatch[5] ? parseInt(itMatch[5], 10) : 0;
-
     if (ITALIAN_MONTHS[monthKey] !== undefined) {
-      const month = ITALIAN_MONTHS[monthKey];
-      const parsed = new Date(year, month, day, hour, min, 0);
-      if (!isNaN(parsed.getTime())) {
-        return parsed;
-      }
+      const monthIndex = ITALIAN_MONTHS[monthKey];
+      const year = itMatch[3] ? parseInt(itMatch[3], 10) : new Date().getFullYear();
+      const hour = itMatch[4] !== undefined ? parseInt(itMatch[4], 10) : 18;
+      const min = itMatch[5] !== undefined ? parseInt(itMatch[5], 10) : 0;
+      return createZurichDate(year, monthIndex, day, hour, min, 0);
     }
   }
 
-  // 4. Try DD/MM/YYYY or DD-MM-YYYY (e.g. "15/01/2025", "15/01/2025 alle 21:00")
-  const dmyMatch = clean.match(/(?:[a-zA-ZÀ-ÿ]+[,\s]+)?(\d{1,2})[/-](\d{1,2})[/-](\d{4})(?:[,\s]+(?:(?:alle\s+ore|alle|ore|h)\s*)?(\d{1,2})(?:[:.](\d{2}))?)?/i);
+  // 6. DD/MM/YYYY or DD.MM.YYYY or DD-MM-YYYY (e.g. "15/01/2025", "14.11.2026 alle ore 18:00")
+  const dmyMatch = clean.match(/(?:^|[\s—\-])(\d{1,2})[./-](\d{1,2})[./-](\d{4})(?:[,\s]+(?:(?:alle\s+ore|alle|ore|h)\s*)?(\d{1,2})(?:[:.](\d{2}))?)?/i);
   if (dmyMatch) {
     const day = parseInt(dmyMatch[1], 10);
-    const month = parseInt(dmyMatch[2], 10) - 1;
+    const monthIndex = parseInt(dmyMatch[2], 10) - 1;
     const year = parseInt(dmyMatch[3], 10);
-    const hour = dmyMatch[4] ? parseInt(dmyMatch[4], 10) : 18;
-    const min = dmyMatch[5] ? parseInt(dmyMatch[5], 10) : 0;
-    const parsed = new Date(year, month, day, hour, min, 0);
-    if (!isNaN(parsed.getTime())) {
-      return parsed;
-    }
+    const hour = dmyMatch[4] !== undefined ? parseInt(dmyMatch[4], 10) : 18;
+    const min = dmyMatch[5] !== undefined ? parseInt(dmyMatch[5], 10) : 0;
+    return createZurichDate(year, monthIndex, day, hour, min, 0);
   }
 
-  return null;
+  // 7. Fallback direct Date parse
+  const fallback = new Date(clean);
+  return isNaN(fallback.getTime()) ? null : fallback;
 }
 
 /**
@@ -135,7 +236,8 @@ export function generateGoogleCalendarUrl(event: CalendarEventDetails): string {
     text: event.title || "Evento Teatrale Gli Attomatti",
     dates: `${start}/${end}`,
     details: event.description || "",
-    location: event.location || "Zurigo, Svizzera"
+    location: event.location || "Zurigo, Svizzera",
+    ctz: ZURICH_TIMEZONE
   });
 
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -237,6 +339,7 @@ export function generateIcsCalendarContent(event: CalendarEventDetails): string 
     "PRODID:-//Gli Attomatti//Email Appointment Generator//IT",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
+    `X-WR-TIMEZONE:${ZURICH_TIMEZONE}`,
     "BEGIN:VEVENT",
     `UID:${uid}`,
     `DTSTAMP:${now}`,
@@ -273,15 +376,25 @@ export function generateIcsDownloadUrl({
   title: string;
   description?: string;
   location?: string;
-  startDate: string;
-  endDate?: string;
+  startDate: string | Date;
+  endDate?: string | Date;
   baseUrl?: string;
 }): string {
   const cleanBase = baseUrl.replace(/\/+$/, "");
   const params = new URLSearchParams();
   if (title) params.set("title", title);
-  if (startDate) params.set("start", startDate);
-  if (endDate) params.set("end", endDate);
+  if (startDate) {
+    params.set(
+      "start",
+      startDate instanceof Date ? startDate.toISOString() : startDate
+    );
+  }
+  if (endDate) {
+    params.set(
+      "end",
+      endDate instanceof Date ? endDate.toISOString() : endDate
+    );
+  }
   if (location) params.set("location", location);
   if (description) params.set("description", description);
 

@@ -22,7 +22,10 @@ import {
   Hash,
   Copy,
   Check,
-  Link2
+  Link2,
+  Clock,
+  Images,
+  AlignLeft
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -90,6 +93,9 @@ const BLOCK_TYPES = [
   { type: "tally", label: "Modulo Tally (Registrazione)", icon: ClipboardList, desc: "Embed ufficiale Tally.so per iscrizioni, corsi o registrazioni" },
   { type: "synopsis", label: "Trama & Sinossi", icon: BookOpen, desc: "Descrizione narrativa, citazione e foto" },
   { type: "gallery", label: "Galleria Fotografica", icon: ImageIcon, desc: "Scatti di scena con lightbox" },
+  { type: "carousel", label: "Carosello Fotografico", icon: Images, desc: "Slider automatico di foto con transizione fluida" },
+  { type: "timeline_section", label: "Sezione Cronologia / Storia", icon: Clock, desc: "Layout a 2 colonne sticky con anno e testo narrativo" },
+  { type: "rich_text", label: "Testo Libero / Articolo", icon: AlignLeft, desc: "Paragrafi di testo formattato e titoli liberi" },
   { type: "reviews", label: "Recensioni & Critica", icon: MessageSquare, desc: "Social proof e stelle di gradimento" },
   { type: "faq", label: "Domande Frequenti (FAQ)", icon: HelpCircle, desc: "Fisarmonica con risposte alle domande" },
   { type: "closing_cta", label: "Banner CTA Finale", icon: Megaphone, desc: "Pulsante di chiusura ad alta conversione" }
@@ -254,6 +260,30 @@ export function LandingTab({
         ...newBlock,
         title: "Momenti di Scena",
         images: []
+      };
+    } else if (type === "carousel") {
+      newBlock = {
+        ...newBlock,
+        title: "I Nostri Momenti",
+        aspect_ratio: "aspect-video md:aspect-[16/10]",
+        images: []
+      };
+    } else if (type === "timeline_section") {
+      newBlock = {
+        ...newBlock,
+        badge: "2026",
+        badge_prefix: "Anno ",
+        title: "Il Nostro Percorso",
+        text: "Descrizione narrativa del progetto...",
+        cta_label: "Scopri di più",
+        cta_href: "",
+        images: []
+      };
+    } else if (type === "rich_text") {
+      newBlock = {
+        ...newBlock,
+        title: "Approfondimento",
+        content: "Testo formattato..."
       };
     } else if (type === "reviews") {
       newBlock = {
@@ -1141,6 +1171,100 @@ export function LandingTab({
                                       label="Foto Galleria"
                                       images={block.images || []}
                                       onChange={(newImgs) => updateBlock(actualIdx, bIdx, "images", newImgs)}
+                                    />
+                                  </div>
+                                )}
+
+                                {block.type === "carousel" && (
+                                  <div className="space-y-4">
+                                    <FormField
+                                      label="Titolo Carosello (Opzionale)"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. I Nostri Momenti"
+                                    />
+                                    <GalleryField
+                                      label="Foto del Carosello"
+                                      images={block.images || []}
+                                      onChange={(newImgs) => updateBlock(actualIdx, bIdx, "images", newImgs)}
+                                    />
+                                  </div>
+                                )}
+
+                                {block.type === "timeline_section" && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Badge Anno / Edizione"
+                                        value={block.badge || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "badge", v)}
+                                        placeholder="es. 2026"
+                                      />
+                                      <FormField
+                                        label="Prefisso Badge"
+                                        value={block.badge_prefix || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "badge_prefix", v)}
+                                        placeholder="es. Anno "
+                                      />
+                                    </div>
+                                    <FormField
+                                      label="Titolo Sezione"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. Il Nostro Percorso"
+                                    />
+                                    <FormField
+                                      label="Testo Narrativo"
+                                      value={block.text || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "text", v)}
+                                      type="textarea"
+                                      rows={4}
+                                      placeholder="Descrizione approfondita..."
+                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Etichetta Bottone CTA"
+                                        value={block.cta_label || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
+                                        placeholder="es. Scopri di più"
+                                      />
+                                      <div>
+                                        <FormField
+                                          label="Destinazione Link CTA"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                          placeholder="es. /Spettacoli/titolo o #biglietti"
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
+                                    </div>
+                                    <GalleryField
+                                      label="Foto del Carosello Integrato (Opzionale)"
+                                      images={block.images || []}
+                                      onChange={(newImgs) => updateBlock(actualIdx, bIdx, "images", newImgs)}
+                                    />
+                                  </div>
+                                )}
+
+                                {block.type === "rich_text" && (
+                                  <div className="space-y-4">
+                                    <FormField
+                                      label="Titolo Blocco (Opzionale)"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. Approfondimento"
+                                    />
+                                    <FormField
+                                      label="Contenuto (Supporta Markdown)"
+                                      value={block.content || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "content", v)}
+                                      type="textarea"
+                                      rows={6}
+                                      placeholder="Scrivi qui il testo formattato..."
                                     />
                                   </div>
                                 )}

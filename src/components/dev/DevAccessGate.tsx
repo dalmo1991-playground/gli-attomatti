@@ -39,6 +39,23 @@ export function DevAccessGate({
         return;
       }
 
+      // Automatically bypass for live preview iframes and preview mode
+      let isFramed = false;
+      try {
+        isFramed = window.self !== window.top;
+      } catch {
+        isFramed = true;
+      }
+      const isPreview =
+        window.location.search.includes("preview=1") ||
+        (typeof sessionStorage !== "undefined" &&
+          sessionStorage.getItem("attomatti_preview_mode") === "1");
+
+      if (isFramed || isPreview) {
+        setHasAccess(true);
+        return;
+      }
+
       // Check cookie directly on client
       const match = document.cookie
         .split("; ")

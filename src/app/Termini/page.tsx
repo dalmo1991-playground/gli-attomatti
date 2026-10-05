@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft, FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera } from "lucide-react";
+import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera } from "lucide-react";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
+import { LegalDocLayout, LegalDocCard } from "@/components/ui/LegalDocLayout";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
@@ -33,123 +33,83 @@ export default async function TerminiPage() {
   const sections = t?.sections || [];
 
   return (
-    <div className="min-h-screen py-16 px-6">
-      <div className="max-w-4xl mx-auto space-y-12">
-        {/* Back link */}
-        {t?.back_link && (
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
+    <LegalDocLayout
+      badge={t?.badge}
+      title={t?.title || "Termini e Condizioni"}
+      description={t?.description}
+      backHref="/"
+      backLabel={t?.back_link || "Torna alla home"}
+    >
+      {sections.map((section: any) => {
+        const iconConfig = sectionIcons[section.id];
+        const Icon = iconConfig?.icon;
+
+        return (
+          <LegalDocCard
+            key={section.id || section.title}
+            title={section.title}
+            icon={Icon}
+            iconColorClass={iconConfig?.color}
           >
-            <ArrowLeft size={16} />
-            {t.back_link}
-          </Link>
-        )}
+            <div className="space-y-3 text-foreground/80 leading-relaxed font-medium">
+              {section.intro && <p><FormattedText text={section.intro} /></p>}
+              {section.text && <p><FormattedText text={section.text} /></p>}
 
-        {/* Header */}
-        <div className="space-y-4">
-          {t?.badge && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
-              {t.badge}
-            </div>
-          )}
-          {t?.title && (
-            <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-foreground leading-[1.05]">
-              {t.title}
-            </h1>
-          )}
-          {t?.description && (
-            <p className="text-lg text-foreground/60 max-w-2xl font-medium">
-              <FormattedText text={t.description} />
-            </p>
-          )}
-        </div>
+              {section.items && (
+                <ul className="list-disc pl-5 space-y-2 text-sm">
+                  {section.items.map((item: any, idx: number) => (
+                    <li key={idx}>
+                      {item.label && <strong>{item.label} </strong>}
+                      <FormattedText text={item.text} />
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-        {/* Sections */}
-        <div className="space-y-6">
-          {sections.map((section: any) => {
-            const iconConfig = sectionIcons[section.id];
-            const Icon = iconConfig?.icon;
+              {section.paragraphs &&
+                section.paragraphs.map((para: string, idx: number) => (
+                  <p key={idx}><FormattedText text={para} /></p>
+                ))}
 
-            return (
-              <div
-                key={section.id || section.title}
-                className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass"
-              >
-                <div className="flex items-center gap-3">
-                  {Icon && (
+              {section.cards && (
+                <div className="space-y-4 pt-2">
+                  {section.cards.map((card: any, idx: number) => (
                     <div
-                      className={`w-10 h-10 rounded-xl ${iconConfig.color} flex items-center justify-center shrink-0`}
+                      key={idx}
+                      className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 space-y-2"
                     >
-                      <Icon size={20} />
+                      <div className="flex items-center gap-2 font-bold text-foreground text-sm">
+                        {idx === 1 && (
+                          <ClipboardList size={16} className="text-primary" />
+                        )}
+                        {card.title}
+                      </div>
+                      <p className="text-xs text-foreground/70 leading-relaxed">
+                        <FormattedText text={card.text} />
+                      </p>
                     </div>
-                  )}
-                  <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                    {section.title}
-                  </h2>
+                  ))}
                 </div>
+              )}
 
-                <div className="space-y-3 text-foreground/80 leading-relaxed font-medium">
-                  {section.intro && <p><FormattedText text={section.intro} /></p>}
-                  {section.text && <p><FormattedText text={section.text} /></p>}
-
-                  {section.items && (
-                    <ul className="list-disc pl-5 space-y-2 text-sm">
-                      {section.items.map((item: any, idx: number) => (
-                        <li key={idx}>
-                          {item.label && <strong>{item.label} </strong>}
-                          <FormattedText text={item.text} />
-                        </li>
-                      ))}
-                    </ul>
+              {section.notice_box && (
+                <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-foreground/90 space-y-2">
+                  {section.notice_box.title && (
+                    <p className="font-bold text-amber-300 text-sm">
+                      {section.notice_box.title}
+                    </p>
                   )}
-
-                  {section.paragraphs &&
-                    section.paragraphs.map((para: string, idx: number) => (
-                      <p key={idx}><FormattedText text={para} /></p>
-                    ))}
-
-                  {section.cards && (
-                    <div className="space-y-4 pt-2">
-                      {section.cards.map((card: any, idx: number) => (
-                        <div
-                          key={idx}
-                          className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 space-y-2"
-                        >
-                          <div className="flex items-center gap-2 font-bold text-foreground text-sm">
-                            {idx === 1 && (
-                              <ClipboardList size={16} className="text-primary" />
-                            )}
-                            {card.title}
-                          </div>
-                          <p className="text-xs text-foreground/70 leading-relaxed">
-                            <FormattedText text={card.text} />
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {section.notice_box && (
-                    <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-foreground/90 space-y-2">
-                      {section.notice_box.title && (
-                        <p className="font-bold text-amber-300 text-sm">
-                          {section.notice_box.title}
-                        </p>
-                      )}
-                      {section.notice_box.paragraphs?.map((p: string, idx: number) => (
-                        <p key={idx} className="text-sm">
-                          <FormattedText text={p} />
-                        </p>
-                      ))}
-                    </div>
-                  )}
+                  {section.notice_box.paragraphs?.map((p: string, idx: number) => (
+                    <p key={idx} className="text-sm">
+                      <FormattedText text={p} />
+                    </p>
+                  ))}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+              )}
+            </div>
+          </LegalDocCard>
+        );
+      })}
+    </LegalDocLayout>
   );
 }

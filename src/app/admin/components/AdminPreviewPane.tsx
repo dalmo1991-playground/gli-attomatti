@@ -29,6 +29,11 @@ export function AdminPreviewPane({
   const [activeUrl, setActiveUrl] = useState(currentRoute);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
+  const contentRef = useRef(content);
+
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
 
   // Initialize BroadcastChannel
   useEffect(() => {
@@ -49,14 +54,15 @@ export function AdminPreviewPane({
   }, [currentRoute]);
 
   // Push content updates through all 4 channels whenever draft content updates
-  const syncContentToIframe = (dataToSync: any) => {
-    if (!dataToSync) return;
+  const syncContentToIframe = (dataToSync?: any) => {
+    const data = dataToSync || contentRef.current;
+    if (!data) return;
 
     // 1. Direct synchronous same-origin function execution
     try {
       const iframeWin = iframeRef.current?.contentWindow as any;
       if (iframeWin && typeof iframeWin.__ATTOMATTI_UPDATE_PREVIEW === "function") {
-        iframeWin.__ATTOMATTI_UPDATE_PREVIEW(dataToSync);
+        iframeWin.__ATTOMATTI_UPDATE_PREVIEW(data);
       }
     } catch (e) {
       // Ignored if cross-origin
@@ -66,19 +72,19 @@ export function AdminPreviewPane({
     try {
       channelRef.current?.postMessage({
         type: "ATTOMATTI_PREVIEW_SYNC",
-        content: dataToSync
+        content: data
       });
     } catch {}
 
     // 3. localStorage for cross-frame storage events
     try {
-      localStorage.setItem("attomatti_preview_live_data", JSON.stringify(dataToSync));
+      localStorage.setItem("attomatti_preview_live_data", JSON.stringify(data));
     } catch {}
 
     // 4. postMessage
     try {
       iframeRef.current?.contentWindow?.postMessage(
-        { type: "ATTOMATTI_PREVIEW_SYNC", content: dataToSync },
+        { type: "ATTOMATTI_PREVIEW_SYNC", content: data },
         "*"
       );
     } catch {}
@@ -92,19 +98,26 @@ export function AdminPreviewPane({
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (e.data?.type === "ATTOMATTI_PREVIEW_READY") {
-        syncContentToIframe(content);
+        syncContentToIframe(contentRef.current);
       }
     };
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [content]);
+  }, []);
 
   const handleIframeLoad = () => {
-    // Iframe DOM loaded, immediately push current state
-    setTimeout(() => {
-      syncContentToIframe(content);
-    }, 50);
+    // Iframe DOM loaded: push content progressively across React hydration window
+    syncContentToIframe(contentRef.current);
+    const delays = [50, 150, 400, 800, 1500];
+    delays.forEach((delay) => {
+      setTimeout(() => {
+        syncContentToIframe(contentRef.current);
+      }, delay);
+    });
+    try {
+      iframeRef.current?.contentWindow?.postMessage({ type: "ATTOMATTI_PING" }, "*");
+    } catch {}
   };
 
   const handleReload = () => {
@@ -113,42 +126,143 @@ export function AdminPreviewPane({
 
   const previewSrc = `${activeUrl}${activeUrl.includes("?") ? "&" : "?"}preview=1`;
 
+  // Render contextual subpage selector depending on active section
+  const renderRouteSelector = () => {
+    if (activeUrl.startsWith("/landing") && (content?.landings || []).length > 0) {
+      return (
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <select
+            value={activeUrl}
+            onChange={(e) => {
+              const nextUrl = e.target.value;
+              setActiveUrl(nextUrl);
+              onNavigateRoute?.(nextUrl);
+            }}
+            className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
+            title="Seleziona la landing page"
+          >
+            {content.landings.map((l: any, i: number) => {
+              const targetUrl = `/landing/${l.slug || ""}`;
+              return (
+                <option key={l.slug || l.id || i} value={targetUrl} className="bg-background text-foreground">
+                  {l.title ? `${l.title} (${l.slug || "senza slug"})` : l.slug || `Landing ${i + 1}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      );
+    }
+
+    if (activeUrl.startsWith("/Location") && (content?.locations || []).length > 0) {
+      return (
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <select
+            value={activeUrl}
+            onChange={(e) => {
+              const nextUrl = e.target.value;
+              setActiveUrl(nextUrl);
+              onNavigateRoute?.(nextUrl);
+            }}
+            className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
+            title="Seleziona la location"
+          >
+            <option value="/Location" className="bg-background text-foreground">
+              Tutte le Location (Hub)
+            </option>
+            {content.locations.map((loc: any, i: number) => {
+              const targetUrl = `/Location/${loc.slug || ""}`;
+              return (
+                <option key={loc.slug || loc.id || i} value={targetUrl} className="bg-background text-foreground">
+                  {loc.venue_name || loc.title || `Location ${i + 1}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      );
+    }
+
+    if (activeUrl.startsWith("/Spettacoli") && (content?.pages?.spettacoli?.archive_sections || []).length > 0) {
+      return (
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <select
+            value={activeUrl}
+            onChange={(e) => {
+              const nextUrl = e.target.value;
+              setActiveUrl(nextUrl);
+              onNavigateRoute?.(nextUrl);
+            }}
+            className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
+            title="Seleziona pagina spettacoli"
+          >
+            <option value="/Spettacoli" className="bg-background text-foreground">
+              Archivio Spettacoli
+            </option>
+            {content.pages.spettacoli.archive_sections.map((show: any, i: number) => {
+              if (!show.slug) return null;
+              const targetUrl = `/Spettacoli/${show.slug}`;
+              return (
+                <option key={show.slug || i} value={targetUrl} className="bg-background text-foreground">
+                  {show.title || `Spettacolo ${i + 1}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      );
+    }
+
+    if (activeUrl.startsWith("/Iniziative") && (content?.pages?.iniziative?.archive_sections || []).length > 0) {
+      return (
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <select
+            value={activeUrl}
+            onChange={(e) => {
+              const nextUrl = e.target.value;
+              setActiveUrl(nextUrl);
+              onNavigateRoute?.(nextUrl);
+            }}
+            className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
+            title="Seleziona iniziativa"
+          >
+            <option value="/Iniziative" className="bg-background text-foreground">
+              Elenco Iniziative
+            </option>
+            {content.pages.iniziative.archive_sections.map((iniz: any, i: number) => {
+              if (!iniz.slug) return null;
+              const targetUrl = `/Iniziative/${iniz.slug}`;
+              return (
+                <option key={iniz.slug || i} value={targetUrl} className="bg-background text-foreground">
+                  {iniz.title || `Iniziativa ${i + 1}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+        <span className="font-mono text-foreground/80 font-bold truncate">
+          {activeUrl}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <aside className="flex flex-col h-[calc(100vh-4.5rem)] sticky top-[4rem] bg-muted/20 border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl transition-all">
       {/* Top Controls Toolbar */}
       <div className="px-4 py-2.5 bg-background/95 backdrop-blur-md border-b border-foreground/10 flex items-center justify-between gap-3 text-xs">
         {/* Left: Route Selector / Indicator */}
-        {activeUrl.startsWith("/landing") && (content?.landings || []).length > 0 ? (
-          <div className="flex items-center gap-1.5 min-w-0">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <select
-              value={activeUrl}
-              onChange={(e) => {
-                const nextUrl = e.target.value;
-                setActiveUrl(nextUrl);
-                onNavigateRoute?.(nextUrl);
-              }}
-              className="bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-lg px-2 py-1 text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer max-w-[200px] truncate"
-              title="Seleziona la landing page da visualizzare"
-            >
-              {content.landings.map((l: any, i: number) => {
-                const targetUrl = `/landing/${l.slug || ""}`;
-                return (
-                  <option key={l.slug || l.id || i} value={targetUrl} className="bg-background text-foreground">
-                    {l.title ? `${l.title} (${l.slug || "senza slug"})` : l.slug || `Landing ${i + 1}`}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span className="font-mono text-foreground/80 font-bold truncate">
-              {activeUrl}
-            </span>
-          </div>
-        )}
+        {renderRouteSelector()}
 
         {/* Center: Device Viewport Switcher */}
         <div className="flex items-center bg-foreground/5 p-1 rounded-xl border border-foreground/5 shrink-0">
@@ -221,7 +335,7 @@ export function AdminPreviewPane({
               <div className="w-16 h-1 rounded-full bg-foreground/20" />
             </div>
             <iframe
-              key={key}
+              key={`${activeUrl}-${key}`}
               ref={iframeRef}
               src={previewSrc}
               onLoad={handleIframeLoad}
@@ -232,7 +346,7 @@ export function AdminPreviewPane({
         ) : (
           <div className="w-full h-full rounded-xl overflow-hidden border border-foreground/10 bg-background shadow-lg">
             <iframe
-              key={key}
+              key={`${activeUrl}-${key}`}
               ref={iframeRef}
               src={previewSrc}
               onLoad={handleIframeLoad}

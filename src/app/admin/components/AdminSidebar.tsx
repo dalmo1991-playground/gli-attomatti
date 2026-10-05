@@ -17,6 +17,7 @@ import {
   Sliders,
   Ticket,
   ClipboardList,
+  MapPin,
   PanelLeftClose,
   PanelLeftOpen,
   Send
@@ -53,6 +54,7 @@ const navSections = [
       { id: "iniziative", label: "Iniziative & Corsi", icon: Compass },
       { id: "ticketing", label: "Biglietti & Casse", icon: Ticket },
       { id: "registrations", label: "Registrazioni & Moduli", icon: ClipboardList },
+      { id: "locations", label: "Teatri & Location", icon: MapPin },
       { id: "landing", label: "Landing Pages", icon: Rocket },
       { id: "parlano_di_noi", label: "Dicono di Noi", icon: Newspaper },
       { id: "contatti", label: "Contatti & Social", icon: Mail }

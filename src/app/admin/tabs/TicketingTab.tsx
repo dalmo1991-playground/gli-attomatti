@@ -212,7 +212,7 @@ export function TicketingTab() {
 
                       {page.active && page.slug && (
                         <a
-                          href={`/Biglietti/${page.slug}`}
+                          href={`/Biglietti/${page.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20 shrink-0 self-start sm:self-auto"

@@ -16,6 +16,12 @@ export function getDefaultBlockAnchor(type: string): string {
       return "trama";
     case "gallery":
       return "galleria";
+    case "carousel":
+      return "carosello";
+    case "timeline_section":
+      return "storia";
+    case "rich_text":
+      return "testo";
     case "reviews":
       return "recensioni";
     case "faq":

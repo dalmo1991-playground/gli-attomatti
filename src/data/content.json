@@ -1372,6 +1372,33 @@
         ],
         "privacy_url": "https://policies.google.com/privacy"
       }
+    },
+    "locations": {
+      "meta_title": "Teatri & Location — Gli Attomatti",
+      "meta_description": "Indicazioni pratiche e guide fotografiche per raggiungere i teatri e le sale dei nostri spettacoli a Zurigo.",
+      "hub_title": "Teatri & Location",
+      "hub_description": "Indicazioni pratiche e fotografiche per raggiungere i teatri, le sale prove e le location degli eventi teatrali a Zurigo.",
+      "hub_badge_default": "Location Teatrale",
+      "hub_steps_suffix": "passaggi fotografici",
+      "hub_view_directions_label": "Vedi Indicazioni",
+      "hub_empty_title": "Nessuna location configurata",
+      "hub_empty_description": "Non sono al momento presenti guide fotografiche attive.",
+      "default_badge": "Indicazioni Teatro & Location",
+      "google_maps_button_label": "Apri in Google Maps",
+      "public_transport_heading": "Mezzi Pubblici nelle Vicinanze",
+      "lines_prefix": "Linee:",
+      "steps_heading": "Come Arrivare Passo-Passo",
+      "step_single_label": "Passaggio",
+      "step_plural_label": "Passaggi",
+      "click_to_enlarge_label": "Clicca per ingrandire",
+      "parking_heading": "Parcheggi & Auto",
+      "accessibility_heading": "Accessibilità & Disabilità",
+      "notes_heading": "Informazioni Aggiuntive",
+      "back_link_default_label": "Torna al sito",
+      "bottom_back_button_label": "Torna alla pagina principale",
+      "not_found_title": "Location in fase di allestimento",
+      "not_found_description": "Le indicazioni per questa location non sono ancora disponibili o sono in fase di aggiornamento nella bozza.",
+      "not_found_button_label": "Tutte le Location"
     }
   },
   "landings": [
@@ -2099,5 +2126,78 @@
         ]
       }
     ]
-  }
+  },
+  "locations": [
+    {
+      "id": "loc-missione-cattolica",
+      "slug": "missione-cattolica",
+      "title": "Missione Cattolica di Lingua Italiana",
+      "venue_name": "Teatro della Missione Cattolica",
+      "address": "Feldstrasse 109, 8004 Zürich",
+      "google_maps_url": "https://maps.app.goo.gl/K6s36z19Wq2tJ8X26",
+      "active": true,
+      "hero_image": "/images/1782553290530-TheaterCurtain.webp",
+      "description": "Indicazioni pratiche e fotografiche per raggiungere facilmente la sala teatro della Missione Cattolica partendo dalle fermate dei mezzi pubblici.",
+      "public_transport": [
+        {
+          "type": "tram",
+          "types": ["tram"],
+          "stop": "Bäckeranlage",
+          "lines": "Tram 8",
+          "line_badges": [
+            { "number": "8", "bg_color": "#16a34a", "text_color": "#ffffff" }
+          ],
+          "walking_time": "3 min a piedi"
+        },
+        {
+          "type": "bus",
+          "types": ["bus"],
+          "stop": "Helvetiaplatz",
+          "lines": "Bus 32",
+          "line_badges": [
+            { "number": "32", "bg_color": "#0284c7", "text_color": "#ffffff" }
+          ],
+          "walking_time": "5 min a piedi"
+        },
+        {
+          "type": "train",
+          "types": ["train"],
+          "stop": "Zürich Hardbrücke / Wiedikon",
+          "lines": "S-Bahn",
+          "line_badges": [
+            { "number": "S", "bg_color": "#1e3a8a", "text_color": "#ffffff" }
+          ],
+          "walking_time": "12-15 min a piedi"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Dalla fermata del Tram Bäckeranlage (Tram 8)",
+          "instruction": "Scendi alla fermata Bäckeranlage e incamminati lungo Feldstrasse in direzione ovest costeggiando il parco.",
+          "image": "/images/1782553781605-DSC_0682.webp",
+          "image_caption": "Feldstrasse vista dall'incrocio con il parco"
+        },
+        {
+          "id": "step-2",
+          "title": "Ingresso dell'Edificio della Missione",
+          "instruction": "Al civico 109 troverai il complesso della Missione Cattolica. Entra dal cancello principale pedonale.",
+          "image": "/images/1782553648895-DSD00540.webp",
+          "image_caption": "Portone d'ingresso e piazzale pedonale"
+        },
+        {
+          "id": "step-3",
+          "title": "Accesso alla Sala Teatro (Saal)",
+          "instruction": "Segui le indicazioni 'Teatro / Saal'. La sala si trova all'interno, scendendo la rampa di scale o prendendo l'ascensore interno.",
+          "image": "/images/1782553290530-TheaterCurtain.webp",
+          "image_caption": "Foyer e ingresso sala spettacoli"
+        }
+      ],
+      "parking_info": "Posti auto in Zona Blu (Blaue Zone) disponibili lungo Feldstrasse e Stauffacherstrasse. Consigliamo l'uso dei mezzi pubblici data l'elevata affluenza.",
+      "accessibility_info": "La struttura è provvista di rampa d'accesso e ascensore per persone a mobilità ridotta o carrozzine.",
+      "notes": "In caso di pioggia o eventi serali, il portone pedonale rimane aperto fino a 15 minuti dopo l'inizio dello spettacolo.",
+      "back_link_label": "Torna al sito",
+      "back_link_href": "/"
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, Ticket, ExternalLink, Info, CheckCircle2 } from "lucide-react";
+import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, Ticket, ExternalLink, Info, CheckCircle2, MapPin } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -234,7 +234,7 @@ export function SpettacoliTab() {
                       <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70">
                         <span className="font-bold text-foreground/40 uppercase tracking-wider text-[10px]">Percorso scheda:</span>
                         <a
-                          href={`/Spettacoli/${show.slug}`}
+                          href={`/Spettacoli/${show.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground font-semibold transition-colors"
@@ -387,11 +387,44 @@ export function SpettacoliTab() {
                                 />
                               </div>
 
+                              {/* Location Preset Selector from /Location */}
+                              {(content?.locations || []).length > 0 && (
+                                <div className="p-3 rounded-xl bg-accent/5 border border-accent/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                  <div className="flex items-center gap-1.5 font-bold text-accent">
+                                    <MapPin size={13} className="shrink-0" />
+                                    <span>Collega a scheda Location:</span>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    {(content.locations || []).map((loc: any) => {
+                                      const isSelected = d.location_href === `/Location/${loc.slug}`;
+                                      return (
+                                        <button
+                                          key={loc.id || loc.slug}
+                                          type="button"
+                                          onClick={() => {
+                                            updateShowDate(actualIdx, dIdx, "location", loc.venue_name || loc.title || loc.address);
+                                            updateShowDate(actualIdx, dIdx, "location_href", `/Location/${loc.slug}`);
+                                          }}
+                                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all border ${
+                                            isSelected
+                                              ? "bg-accent text-background border-accent shadow-sm"
+                                              : "bg-background/80 hover:bg-background text-foreground/80 border-foreground/10 hover:border-accent/40"
+                                          }`}
+                                        >
+                                          {loc.venue_name || loc.title}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
                               <FormField
-                                label="Link Google Maps (opzionale)"
+                                label="Link Indicazioni (URL Google Maps o /Location/[slug])"
                                 value={d.location_href || ""}
                                 onChange={(v) => updateShowDate(actualIdx, dIdx, "location_href", v)}
-                                placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                                placeholder="https://maps.app.goo.gl/... oppure /Location/missione-cattolica"
+                                helpText="Puoi incollare un link Google Maps oppure selezionare una location preconfigurata qui sopra"
                               />
 
                               {/* State Presets */}
