@@ -170,8 +170,8 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
             {images.length > 1 && (
               <div className="mt-4 flex items-center gap-2">
                 {isCurrentVideo && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-950/40 border border-red-500/20 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    <Play size={10} className="fill-red-400" /> Video
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/15 border border-primary/30 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    <Play size={10} className="fill-primary" /> Video
                   </span>
                 )}
                 <div className="text-white/60 font-mono tracking-widest text-xs sm:text-sm bg-black/40 px-3 py-1 rounded-full border border-white/10">

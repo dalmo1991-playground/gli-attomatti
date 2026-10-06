@@ -508,11 +508,11 @@ export function PageBlockRenderer({
                           />
                           {isYouTubeUrl(block.image) && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
-                              <div className="w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
-                                <Play size={24} className="fill-white ml-0.5" />
+                              <div className="w-14 h-14 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-2xl shadow-primary/30 backdrop-blur-sm group-hover:scale-110 transition-transform">
+                                <Play size={24} className="fill-primary-foreground ml-0.5" />
                               </div>
                               <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[11px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
-                                <Play size={10} className="fill-white" /> Guarda Video
+                                <Play size={10} className="fill-primary text-primary" /> Guarda Video
                               </div>
                             </div>
                           )}
@@ -583,11 +583,11 @@ export function PageBlockRenderer({
                           />
                           {isVideo ? (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
-                              <div className="w-12 h-12 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
-                                <Play size={20} className="fill-white ml-0.5" />
+                              <div className="w-12 h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-2xl shadow-primary/30 backdrop-blur-sm group-hover:scale-110 transition-transform">
+                                <Play size={20} className="fill-primary-foreground ml-0.5" />
                               </div>
                               <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
-                                <Play size={9} className="fill-white" /> Video
+                                <Play size={9} className="fill-primary text-primary" /> Video
                               </div>
                             </div>
                           ) : (

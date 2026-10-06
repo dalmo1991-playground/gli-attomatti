@@ -143,8 +143,8 @@ export function ImageUploadField({
                 style={{ objectPosition: getImageObjectPositionStyle(align) }}
               />
               {isYouTubeUrl(value) && (
-                <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow">
-                  <Play size={10} className="fill-white" /> YouTube
+                <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow">
+                  <Play size={10} className="fill-primary-foreground" /> YouTube
                 </div>
               )}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

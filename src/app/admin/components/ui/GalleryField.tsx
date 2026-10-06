@@ -240,8 +240,8 @@ export function GalleryField({
                       </div>
                     )}
                     {isVideo && (
-                      <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded bg-red-600/90 text-white text-[9px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow">
-                        <Play size={8} className="fill-white" /> Video
+                      <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow">
+                        <Play size={8} className="fill-primary-foreground" /> Video
                       </div>
                     )}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
