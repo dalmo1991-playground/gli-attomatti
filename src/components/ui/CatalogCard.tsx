@@ -4,9 +4,10 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 export interface CatalogCardItem {
   id: string;
@@ -32,7 +33,10 @@ export interface CatalogCardProps {
 
 export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
   const CategoryIcon = item.categoryIcon;
-  const safeImage = item.image?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+  const isVideo = isYouTubeUrl(item.image);
+  const safeImage = isVideo
+    ? getYouTubeThumbnailUrl(item.image)
+    : item.image?.trim() || "/images/1782553290530-TheaterCurtain.webp";
 
   return (
     <motion.div
@@ -54,6 +58,14 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent pointer-events-none" />
+
+        {/* Video Badge */}
+        {isVideo && (
+          <div className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-white border border-white/20 shadow-md pointer-events-none">
+            <Play size={10} className="fill-white" />
+            <span>Video</span>
+          </div>
+        )}
 
         {item.category && (
           <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-background/80 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-accent border border-accent/20 shadow-sm pointer-events-none">

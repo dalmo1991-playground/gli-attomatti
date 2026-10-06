@@ -72,6 +72,12 @@ export function ContactTab() {
             placeholder="info@attomatti.ch"
             type="email"
           />
+          <FormField
+            label="Etichetta Email (badge sopra l'indirizzo)"
+            value={c.email_label || ""}
+            onChange={(v) => updateContent("pages.contatti.email_label", v)}
+            placeholder="Email"
+          />
         </div>
       </AdminSection>
 

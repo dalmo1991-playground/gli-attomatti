@@ -26,6 +26,7 @@ interface DetailSidebarProps {
   detailsTitle?: string;
   details?: DetailInfoItem[];
   emptyDatesMessage?: string;
+  photoGuideBadgeLabel?: string;
   onTicketClick?: (href: string) => void;
   className?: string;
 }
@@ -36,6 +37,7 @@ export function DetailSidebar({
   detailsTitle = "Dettagli",
   details = [],
   emptyDatesMessage = "Nessuna data programmata al momento.",
+  photoGuideBadgeLabel = "📷 Guida fotografica & come raggiungerci",
   onTicketClick,
   className
 }: DetailSidebarProps) {
@@ -75,7 +77,7 @@ export function DetailSidebar({
                             href={d.location_href.trim()}
                             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent text-[11px] font-bold border border-accent/20 transition-colors"
                           >
-                            <span>📷 Guida fotografica &amp; come raggiungerci</span>
+                            <span>{photoGuideBadgeLabel}</span>
                           </Link>
                         </div>
                       )}

@@ -87,6 +87,7 @@ export function AdminNavbar({
               width={32}
               height={32}
               className="h-8 w-auto group-hover:scale-105 transition-transform"
+              unoptimized
             />
             <span className="font-black text-lg uppercase tracking-tight text-foreground hidden sm:inline">
               Gli Attomatti <span className="text-primary text-xs font-bold tracking-widest ml-1 px-2 py-0.5 rounded-full bg-primary/10">CMS</span>

@@ -11,12 +11,7 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function ParlanoDiNoiClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
-  const parlano_di_noi = content?.pages?.parlano_di_noi || {
-    title: "Dicono di Noi",
-    description: "Gli attomatti nella stampa",
-    press: [],
-    press_contact: {}
-  };
+  const parlano_di_noi = content?.pages?.parlano_di_noi || {};
   const press: any[] = Array.isArray(parlano_di_noi.press) ? parlano_di_noi.press : [];
   const press_contact = parlano_di_noi.press_contact || {};
 
@@ -24,9 +19,9 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
     <div>
       {/* Header */}
       <PageHeader
-        title={parlano_di_noi.title || "Dicono di Noi"}
-        description={parlano_di_noi.description || "Gli attomatti nella stampa"}
-        backLink={{ href: parlano_di_noi.back_href || "/Chi_Siamo", label: parlano_di_noi.back_label || "Torna a Chi Siamo" }}
+        title={parlano_di_noi.title || ""}
+        description={parlano_di_noi.description || ""}
+        backLink={{ href: parlano_di_noi.back_href || "/Chi_Siamo", label: parlano_di_noi.back_label || "" }}
         compact
       />
 
@@ -51,7 +46,7 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
                         {item.source_href && <ExternalLink size={14} className="ml-2 opacity-40 group-hover:opacity-100 transition-opacity" />}
                       </div>
                       <p className="text-accent text-xs sm:text-sm font-bold uppercase tracking-widest mt-0.5">
-                        {parlano_di_noi.year_prefix || "Anno "}{item.date}
+                        {parlano_di_noi.year_prefix}{item.date}
                       </p>
                     </div>
                   </div>

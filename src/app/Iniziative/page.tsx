@@ -6,14 +6,13 @@ import IniziativeClient from "./IniziativeClient";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const page = content?.pages?.iniziative;
+  const site = content?.site;
 
   return createPageMetadata({
-    title: page?.title ? `${page.title} — Corsi & Laboratori` : "Iniziative, Corsi & Progetti Teatrali",
-    description:
-      page?.description ||
-      "Scopri i corsi di teatro, i laboratori e le rassegne culturali della compagnia teatrale Gli Attomatti a Zurigo.",
+    title: page?.meta_title || page?.title || site?.name || "",
+    description: page?.meta_description || page?.description || site?.description || "",
     path: "/Iniziative",
-    keywords: ["corsi teatro zurigo", "laboratori teatrali zurigo", "iniziative teatrali", "workshop teatro svizzera"]
+    keywords: Array.isArray(page?.keywords) ? page.keywords : []
   });
 }
 

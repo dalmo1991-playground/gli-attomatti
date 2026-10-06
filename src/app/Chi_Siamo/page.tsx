@@ -6,14 +6,13 @@ import ChiSiamoClient from "./ChiSiamoClient";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const page = content?.pages?.chi_siamo;
+  const site = content?.site;
 
   return createPageMetadata({
-    title: page?.title ? `${page.title} — La Compagnia Teatrale` : "Chi Siamo — La Compagnia Teatrale a Zurigo",
-    description:
-      page?.description ||
-      "La storia, la missione e la passione di Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
+    title: page?.meta_title || page?.title || site?.name || "",
+    description: page?.meta_description || page?.description || site?.description || "",
     path: "/Chi_Siamo",
-    keywords: ["chi siamo teatro zurigo", "compagnia teatrale italiana zurigo", "teatro amatoriale zurigo"]
+    keywords: Array.isArray(page?.keywords) ? page.keywords : []
   });
 }
 

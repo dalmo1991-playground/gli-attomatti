@@ -13,16 +13,7 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function AttoriClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
-  const attori = content?.pages?.attori || {
-    title: "Le Persone",
-    list: [],
-    join_us: {
-      title: "Vuoi unirti a noi?",
-      text: "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
-      cta_label: "Contattaci",
-      cta_href: "/Contatti"
-    }
-  };
+  const attori = content?.pages?.attori || {};
   const list: any[] = Array.isArray(attori.list) ? attori.list : [];
   const join_us = attori.join_us || {};
 
@@ -32,7 +23,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
   const galleryImages = useMemo(() => {
     return list.map((person: any) => ({
       url: person?.image?.trim() || "/images/1782553290530-TheaterCurtain.webp",
-      alt: person?.name || attori.fallback_actor_alt || "Attore"
+      alt: person?.name || attori.fallback_actor_alt || ""
     }));
   }, [list, attori.fallback_actor_alt]);
 
@@ -40,9 +31,9 @@ export default function AttoriClient({ content: initialContent }: { content: any
     <div>
       {/* Header */}
       <PageHeader
-        title={attori.title || "Le Persone"}
-        description={attori.description || "Le persone che rendono possibile la magia del teatro Attomatti."}
-        backLink={{ href: attori.back_href || "/Chi_Siamo", label: attori.back_label || "Torna a Chi Siamo" }}
+        title={attori.title || ""}
+        description={attori.description}
+        backLink={{ href: attori.back_href || "/Chi_Siamo", label: attori.back_label || "" }}
         compact
       />
 
@@ -71,7 +62,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
                   >
                     <Image 
                       src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                      alt={person.name || "Attore"} 
+                      alt={person.name || attori.fallback_actor_alt || ""} 
                       fill
                       sizes="(max-width: 640px) 192px, 256px"
                       className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
@@ -99,7 +90,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
           </div>
         ) : (
           <div className="text-center py-12 text-foreground/40 font-medium">
-            {attori.empty_message || "Nessun membro attualmente inserito."}
+            {attori.empty_message}
           </div>
         )}
       </Section>
@@ -167,7 +158,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
               {/* Close Button */}
               <button
                 onClick={() => setSelectedActor(null)}
-                aria-label={attori.modal_close_aria || "Chiudi scheda attore"}
+                aria-label={attori.modal_close_aria}
                 className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2.5 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground transition-all active:scale-95 cursor-pointer z-30"
               >
                 <X size={20} className="sm:w-6 sm:h-6" />
@@ -205,9 +196,11 @@ export default function AttoriClient({ content: initialContent }: { content: any
                     )}
                     {selectedActor.shows && selectedActor.shows.length > 0 && (
                       <div className="border-t border-foreground/5 pt-5 sm:pt-6 mt-5 sm:mt-6 space-y-3 sm:space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-foreground/45">
-                          {attori.shows_heading || "Spettacoli e Ruoli"}
-                        </h4>
+                        {attori.shows_heading && (
+                          <h4 className="text-xs font-black uppercase tracking-widest text-foreground/45">
+                            {attori.shows_heading}
+                          </h4>
+                        )}
                         <div className="flex flex-wrap gap-2.5 sm:gap-3 justify-center md:justify-start">
                           {selectedActor.shows.map((show: any, sIdx: number) => {
                             const badgeContent = (

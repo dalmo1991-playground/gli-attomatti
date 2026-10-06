@@ -14,6 +14,7 @@ interface LocationsHubClientProps {
 
 export default function LocationsHubClient({ content: initialContent }: LocationsHubClientProps) {
   const content = useLiveContent(initialContent);
+  const ui = content?.pages?.locations || {};
   const locations: LocationItem[] = (content?.locations || []).filter(
     (l: LocationItem) => l.active !== false
   );
@@ -21,8 +22,8 @@ export default function LocationsHubClient({ content: initialContent }: Location
   return (
     <div className="min-h-screen">
       <PageHeader
-        title="Teatri & Location"
-        description="Indicazioni pratiche e fotografiche per raggiungere i teatri, le sale prove e le location degli eventi teatrali a Zurigo."
+        title={ui.hub_title || ""}
+        description={ui.hub_description}
       />
 
       <Section className="py-20 lg:py-24">
@@ -37,7 +38,7 @@ export default function LocationsHubClient({ content: initialContent }: Location
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-wider">
                       <MapPin size={12} />
-                      <span>{loc.category_badge || loc.badge || "Location Teatrale"}</span>
+                      <span>{loc.category_badge || loc.badge || ui.hub_badge_default || ""}</span>
                     </div>
                     {loc.top_badge && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-accent/10 text-accent text-[11px] font-bold">
@@ -81,14 +82,14 @@ export default function LocationsHubClient({ content: initialContent }: Location
 
                 <div className="pt-4 border-t border-foreground/5 flex items-center justify-between">
                   <span className="text-xs font-bold text-accent">
-                    {loc.steps?.length || 0} passaggi fotografici
+                    {loc.steps?.length || 0} {ui.hub_steps_suffix}
                   </span>
 
                   <Link
                     href={`/Location/${loc.slug}`}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
                   >
-                    <span>Vedi Indicazioni</span>
+                    <span>{ui.hub_view_directions_label}</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -99,10 +100,10 @@ export default function LocationsHubClient({ content: initialContent }: Location
           <div className="max-w-md mx-auto text-center py-16 px-6 bg-muted/20 border border-foreground/5 rounded-3xl">
             <MapPin size={32} className="mx-auto text-primary mb-4" />
             <h2 className="text-xl font-black uppercase tracking-tight mb-2">
-              Nessuna location configurata
+              {ui.hub_empty_title}
             </h2>
             <p className="text-foreground/60 text-sm">
-              Non sono al momento presenti guide fotografiche attive.
+              {ui.hub_empty_description}
             </p>
           </div>
         )}

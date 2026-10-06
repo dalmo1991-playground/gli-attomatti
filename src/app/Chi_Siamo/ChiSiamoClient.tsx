@@ -12,12 +12,7 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function ChiSiamoClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
-  const chi_siamo = content?.pages?.chi_siamo || {
-    title: "Chi Siamo",
-    description: "La compagnia teatrale Gli Attomatti di Zurigo.",
-    content_sections: [],
-    navigation_links: []
-  };
+  const chi_siamo = content?.pages?.chi_siamo || {};
 
   const sections: any[] = Array.isArray(chi_siamo.content_sections) ? chi_siamo.content_sections : [];
   const navLinks: any[] = Array.isArray(chi_siamo.navigation_links) ? chi_siamo.navigation_links : [];
@@ -41,8 +36,8 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
     <div>
       {/* Hero Section */}
       <PageHeader
-        title={chi_siamo.title || "Chi Siamo"}
-        description={chi_siamo.description || "La compagnia teatrale Gli Attomatti di Zurigo."}
+        title={chi_siamo.title || ""}
+        description={chi_siamo.description}
       />
 
       {/* Content Sections */}
@@ -51,7 +46,7 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
           key={section.slug || idx}
           title={section.title}
           badge={section.year}
-          badgePrefix={chi_siamo.year_prefix || "Anno "}
+          badgePrefix={chi_siamo.year_prefix}
           text={section.text}
           isAlternate={idx % 2 !== 0}
         >

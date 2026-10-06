@@ -89,7 +89,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
               >
                 <Image
                   src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={activeShows[currentShowIndex].title || home.fallback_show_alt || "Spettacolo"}
+                  alt={activeShows[currentShowIndex].title || home.fallback_show_alt || ""}
                   fill
                   sizes="100vw"
                   className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
@@ -109,7 +109,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/1782553290530-TheaterCurtain.webp"
-              alt={home.curtain_alt || "Sipario teatrale — Compagnia Gli Attomatti Zurigo"}
+              alt={home.curtain_alt || ""}
               fill
               sizes="100vw"
               className="object-cover opacity-30 scale-105"
@@ -250,6 +250,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   width={192}
                   height={192}
                   className="h-28 sm:h-36 md:h-44 w-auto mb-6 md:mb-8 animate-float"
+                  unoptimized
                 />
 
                 <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
@@ -309,7 +310,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   setCurrentShowIndex(idx);
                 }}
                 className="p-2 sm:p-2.5 flex items-center justify-center cursor-pointer"
-                aria-label={`${home.slide_aria_prefix || "Slide"} ${idx + 1}`}
+                aria-label={`${home.slide_aria_prefix || ""} ${idx + 1}`.trim()}
               >
                 <span
                   className={cn(
@@ -341,10 +342,10 @@ export default function HomeClient({ content: initialContent }: { content: any }
               <FormattedText text={introduction.text} />
             </div>
             <Link
-              href="/Chi_Siamo"
+              href={introduction.story_button_href || "/Chi_Siamo"}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
             >
-              <span>{introduction.story_button_label || "Scopri la nostra storia"}</span>
+              <span>{introduction.story_button_label || ""}</span>
               <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -352,7 +353,8 @@ export default function HomeClient({ content: initialContent }: { content: any }
             {introImages && introImages.length > 0 && (
               <CarouselBlock
                 images={introImages}
-                fallbackAlt={introduction.fallback_alt || "Introduzione"}
+                fallbackAlt={introduction.fallback_alt}
+                uiContent={content?.ui?.carousel}
                 aspectRatioClass="aspect-square md:aspect-auto md:h-[500px]"
                 onImageClick={(idx) => setLightbox({ isOpen: true, index: idx, images: introImages })}
               />

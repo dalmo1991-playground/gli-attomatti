@@ -59,6 +59,7 @@ export function Footer({ content }: { content: any }) {
                 width={48}
                 height={48}
                 className="h-12 w-auto group-hover:scale-110 transition-transform duration-500"
+                unoptimized
               />
               <span className="text-2xl font-black tracking-tighter uppercase text-primary">
                 {site.name || "Gli Attomatti"}

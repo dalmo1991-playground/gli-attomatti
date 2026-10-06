@@ -6,12 +6,11 @@ import SpettacoliClient from "./SpettacoliClient";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const page = content?.pages?.spettacoli;
+  const site = content?.site;
 
   return createPageMetadata({
-    title: page?.title ? `${page.title} — Archivio & Produzioni` : "Spettacoli Teatrali & Archivio",
-    description:
-      page?.description ||
-      "Scopri gli spettacoli teatrali, le commedie e le produzioni in scena della compagnia teatrale Gli Attomatti a Zurigo.",
+    title: page?.meta_title || page?.title || site?.name || "",
+    description: page?.meta_description || page?.description || site?.description || "",
     path: "/Spettacoli"
   });
 }

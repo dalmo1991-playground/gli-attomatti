@@ -7,11 +7,7 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
 export default function SpettacoliClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
-  const spettacoli = content?.pages?.spettacoli || {
-    title: "I Nostri Spettacoli",
-    description: "Tutte le produzioni teatrali della compagnia.",
-    archive_sections: []
-  };
+  const spettacoli = content?.pages?.spettacoli || {};
 
   const archive: any[] = Array.isArray(spettacoli.archive_sections) ? spettacoli.archive_sections : [];
   const visibleArchive = archive.filter((s) => s.visible !== false);
@@ -20,8 +16,8 @@ export default function SpettacoliClient({ content: initialContent }: { content:
     <div>
       {/* Hero Section */}
       <PageHeader
-        title={spettacoli.title || "I Nostri Spettacoli"}
-        description={spettacoli.description || "Tutte le produzioni teatrali della compagnia."}
+        title={spettacoli.title || ""}
+        description={spettacoli.description}
       />
 
       {/* Archive Sections */}
@@ -31,9 +27,9 @@ export default function SpettacoliClient({ content: initialContent }: { content:
             key={section.slug || idx}
             title={section.title}
             badge={section.year}
-            badgePrefix={spettacoli.year_prefix || "Anno "}
+            badgePrefix={spettacoli.year_prefix}
             href={section.slug ? `/Spettacoli/${section.slug}` : undefined}
-            ctaLabel={section.discover_cta || spettacoli.discover_cta || "Scopri lo spettacolo"}
+            ctaLabel={section.discover_cta || spettacoli.discover_cta}
             text={section.short_description || section.text || ""}
             isAlternate={idx % 2 !== 0}
           />
@@ -41,7 +37,7 @@ export default function SpettacoliClient({ content: initialContent }: { content:
       ) : (
         <Section className="py-24 text-center">
           <div className="max-w-md mx-auto text-foreground/40 font-medium">
-            {spettacoli.empty_message || "Nessuno spettacolo in archivio al momento."}
+            {spettacoli.empty_message}
           </div>
         </Section>
       )}

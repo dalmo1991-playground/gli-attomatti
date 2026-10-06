@@ -2,12 +2,13 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2, FolderOpen, Crop, Maximize } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, Upload, Eye, Image as ImageIcon, Loader2, FolderOpen, Crop, Maximize, Play, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
 import { compressImageClient } from "@/lib/clientImageCompress";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 export interface GalleryImage {
   url: string;
@@ -188,6 +189,14 @@ export function GalleryField({
           </button>
           <button
             type="button"
+            onClick={() => addImage("https://www.youtube.com/watch?v=", "Video YouTube")}
+            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            title="Aggiungi video da YouTube alla galleria"
+          >
+            <Video size={13} /> + Video YouTube
+          </button>
+          <button
+            type="button"
             onClick={() => addImage()}
             className="px-3 py-1.5 bg-muted/30 hover:bg-muted/50 text-foreground/70 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
@@ -199,66 +208,77 @@ export function GalleryField({
       {images.length === 0 ? (
         <div className="p-8 border border-dashed border-foreground/10 rounded-2xl text-center">
           <ImageIcon className="w-8 h-8 text-foreground/20 mx-auto mb-2" />
-          <p className="text-xs text-foreground/40">Nessuna immagine presente nella galleria.</p>
+          <p className="text-xs text-foreground/40">Nessuna immagine o video presente nella galleria.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {images.map((img, idx) => (
-            <div
-              key={idx}
-              className="p-3.5 bg-muted/20 border border-foreground/5 rounded-2xl flex flex-col gap-3 group hover:border-foreground/15 transition-all"
-            >
-              <div className="flex gap-3 items-start">
-                {/* Thumbnail */}
-                <div
-                  onClick={() => setLightboxIndex(idx)}
-                  className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted/40 shrink-0 cursor-pointer border border-foreground/10 group/thumb"
-                >
-                  {img.url ? (
-                    <Image
-                      src={img.url}
-                      alt={img.alt || "Anteprima"}
-                      fill
-                      className="object-cover group-hover/thumb:scale-105 transition-transform"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-foreground/20">
-                      <ImageIcon size={20} />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
-                    <Eye size={16} className="text-white" />
-                  </div>
-                </div>
+          {images.map((img, idx) => {
+            const isVideo = isYouTubeUrl(img.url);
+            const thumbSrc = isVideo ? getYouTubeThumbnailUrl(img.url) : img.url;
 
-                {/* Form fields */}
-                <div className="flex-1 min-w-0 space-y-2">
-                  <div>
-                    <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider block">
-                      URL Immagine
-                    </span>
-                    <div className="flex gap-1.5">
-                      <input
-                        type="text"
-                        value={img.url}
-                        onChange={(e) => updateImage(idx, "url", e.target.value)}
-                        placeholder="/images/..."
-                        className="flex-1 min-w-0 px-2.5 py-1.5 bg-background/50 border border-foreground/10 rounded-lg text-xs font-mono text-foreground focus:border-primary focus:outline-none"
+            return (
+              <div
+                key={idx}
+                className="p-3.5 bg-muted/20 border border-foreground/5 rounded-2xl flex flex-col gap-3 group hover:border-foreground/15 transition-all"
+              >
+                <div className="flex gap-3 items-start">
+                  {/* Thumbnail */}
+                  <div
+                    onClick={() => setLightboxIndex(idx)}
+                    className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted/40 shrink-0 cursor-pointer border border-foreground/10 group/thumb"
+                  >
+                    {thumbSrc ? (
+                      <Image
+                        src={thumbSrc}
+                        alt={img.alt || "Anteprima"}
+                        fill
+                        className="object-cover group-hover/thumb:scale-105 transition-transform"
                       />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTargetReplaceIdx(idx);
-                          setIsLibraryOpen(true);
-                        }}
-                        title="Scegli dalla galleria del sito"
-                        className="px-2 py-1 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 shrink-0"
-                      >
-                        <FolderOpen size={12} />
-                        <span className="hidden sm:inline">Libreria</span>
-                      </button>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-foreground/20">
+                        <ImageIcon size={20} />
+                      </div>
+                    )}
+                    {isVideo && (
+                      <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded bg-red-600/90 text-white text-[9px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow">
+                        <Play size={8} className="fill-white" /> Video
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
+                      {isVideo ? <Play size={16} className="fill-white" /> : <Eye size={16} className="text-white" />}
                     </div>
                   </div>
+
+                  {/* Form fields */}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div>
+                      <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider block">
+                        {isVideo ? "Link Video YouTube" : "URL Immagine o Video"}
+                      </span>
+                      <div className="flex gap-1.5">
+                        <input
+                          type="text"
+                          value={img.url}
+                          onChange={(e) => updateImage(idx, "url", e.target.value)}
+                          placeholder="/images/... o link YouTube"
+                          className="flex-1 min-w-0 px-2.5 py-1.5 bg-background/50 border border-foreground/10 rounded-lg text-xs font-mono text-foreground focus:border-primary focus:outline-none"
+                        />
+                        {!isVideo && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTargetReplaceIdx(idx);
+                              setIsLibraryOpen(true);
+                            }}
+                            title="Scegli dalla galleria del sito"
+                            className="px-2 py-1 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 shrink-0"
+                          >
+                            <FolderOpen size={12} />
+                            <span className="hidden sm:inline">Libreria</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   <div>
                     <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-wider block">
                       Testo Alt (Accessibilità & SEO)

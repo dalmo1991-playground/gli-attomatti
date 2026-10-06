@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 const MotionImage = motion.create(Image);
 
@@ -14,11 +15,19 @@ export interface CarouselImageItem {
   no_crop?: boolean;
 }
 
+export interface CarouselUiContent {
+  fallback_alt?: string;
+  aria_prefix?: string;
+  prev_aria_label?: string;
+  next_aria_label?: string;
+}
+
 export interface CarouselBlockProps {
   images: CarouselImageItem[];
   onImageClick?: (index: number) => void;
   fallbackAlt?: string;
   ariaPrefix?: string;
+  uiContent?: CarouselUiContent;
   autoplayIntervalMs?: number;
   showArrows?: boolean;
   aspectRatioClass?: string;
@@ -28,8 +37,9 @@ export interface CarouselBlockProps {
 export function CarouselBlock({
   images = [],
   onImageClick,
-  fallbackAlt = "Foto evento",
-  ariaPrefix = "Foto",
+  fallbackAlt,
+  ariaPrefix,
+  uiContent,
   autoplayIntervalMs = 4000,
   showArrows = false,
   aspectRatioClass = "aspect-video md:aspect-[16/10]",
@@ -37,6 +47,9 @@ export function CarouselBlock({
 }: CarouselBlockProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  const resolvedFallbackAlt = fallbackAlt || uiContent?.fallback_alt || "";
+  const resolvedAriaPrefix = ariaPrefix || uiContent?.aria_prefix || "";
 
   const validImages = images.filter((img) => img && typeof img.url === "string" && img.url.trim().length > 0);
   const count = validImages.length;
@@ -62,8 +75,11 @@ export function CarouselBlock({
   if (count === 0) return null;
 
   const currentImage = validImages[currentIndex];
-  const safeSrc = currentImage?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
-  const safeAlt = currentImage?.alt || `${fallbackAlt} ${currentIndex + 1}`;
+  const isVideo = isYouTubeUrl(currentImage?.url);
+  const safeSrc = isVideo
+    ? getYouTubeThumbnailUrl(currentImage?.url)
+    : currentImage?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+  const safeAlt = currentImage?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${currentIndex + 1}` : "");
 
   return (
     <div
@@ -102,6 +118,24 @@ export function CarouselBlock({
         />
       </AnimatePresence>
 
+      {/* Video Indicator Overlay */}
+      {isVideo && (
+        <div
+          onClick={() => onImageClick?.(currentIndex)}
+          className={cn(
+            "absolute inset-0 z-15 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors",
+            onImageClick && "cursor-pointer"
+          )}
+        >
+          <div className="w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
+            <Play size={24} className="fill-white ml-0.5" />
+          </div>
+          <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[11px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
+            <Play size={10} className="fill-white" /> Video YouTube
+          </div>
+        </div>
+      )}
+
       {/* Optional Left / Right Arrow Controls */}
       {showArrows && count > 1 && (
         <>
@@ -111,7 +145,7 @@ export function CarouselBlock({
               e.stopPropagation();
               prevSlide();
             }}
-            aria-label="Foto precedente"
+            aria-label={uiContent?.prev_aria_label}
             className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/60 hover:bg-background/90 text-foreground backdrop-blur-md border border-foreground/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95 shadow-lg"
           >
             <ChevronLeft size={20} />
@@ -122,7 +156,7 @@ export function CarouselBlock({
               e.stopPropagation();
               nextSlide();
             }}
-            aria-label="Prossima foto"
+            aria-label={uiContent?.next_aria_label}
             className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-background/60 hover:bg-background/90 text-foreground backdrop-blur-md border border-foreground/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95 shadow-lg"
           >
             <ChevronRight size={20} />
@@ -142,7 +176,7 @@ export function CarouselBlock({
                 setCurrentIndex(i);
               }}
               className="p-1 flex items-center justify-center"
-              aria-label={`${ariaPrefix} ${i + 1}`}
+              aria-label={`${resolvedAriaPrefix || ""} ${i + 1}`.trim()}
             >
               <span
                 className={cn(

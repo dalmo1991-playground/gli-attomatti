@@ -14,17 +14,23 @@ export async function generateMetadata({
   const locations: LocationItem[] = content?.locations || [];
   const location = locations.find((l) => l.slug === slug);
 
+  const ui = content?.pages?.locations || {};
+
   if (!location || location.active === false) {
     return {
-      title: "Come Raggiungerci — Location & Indicazioni",
+      title: ui.detail_meta_fallback_title || "",
       robots: { index: false, follow: false },
     };
   }
 
-  const title = `${location.venue_name || location.title} — Come Raggiungerci`;
+  const titleSuffix = ui.detail_meta_title_suffix || "";
+  const title = `${location.venue_name || location.title} ${titleSuffix}`.trim();
+  const descTemplate = ui.detail_meta_description_template || "";
   const description =
     location.description ||
-    `Guida fotografica e indicazioni per raggiungere ${location.title} (${location.address}) con mezzi pubblici e a piedi.`;
+    descTemplate
+      .replace("{title}", location.title || "")
+      .replace("{address}", location.address || "");
 
   return {
     title,

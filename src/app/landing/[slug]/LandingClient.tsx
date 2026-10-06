@@ -156,6 +156,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
               height={40}
               className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
               priority
+              unoptimized={resolvedLogo.endsWith(".svg")}
             />
             <div className="flex flex-col">
               <span className="font-black text-sm tracking-wider uppercase text-foreground">
@@ -206,7 +207,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
                 type="button"
                 onClick={() => setMobileNavOpen(!mobileNavOpen)}
                 className="p-2 md:hidden rounded-xl bg-muted/40 text-foreground hover:bg-muted transition-colors border border-foreground/5"
-                aria-label="Menu navigazione ancore"
+                aria-label={landingDefaults.menu_aria_label || "Menu navigazione ancore"}
               >
                 {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
               </button>

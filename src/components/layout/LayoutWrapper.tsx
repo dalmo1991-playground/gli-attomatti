@@ -6,11 +6,16 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookieBanner } from "@/components/analytics/CookieBanner";
 import { TrackingScripts } from "@/components/analytics/TrackingScripts";
-import { DevThemeCustomizer } from "@/components/dev/DevThemeCustomizer";
+import dynamic from "next/dynamic";
 import { DevAccessGate } from "@/components/dev/DevAccessGate";
 import { LivePreviewProvider, useLiveContent } from "@/components/dev/LivePreviewContext";
 import { PreviewBanner } from "@/components/dev/PreviewBanner";
 import { EmailActionModal } from "@/components/ui/EmailActionModal";
+
+const DynamicDevThemeCustomizer = dynamic(
+  () => import("@/components/dev/DevThemeCustomizer").then((m) => m.DevThemeCustomizer),
+  { ssr: false }
+);
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -23,10 +28,12 @@ function LayoutInner({
   children,
   content,
   isLanding,
+  isDev,
 }: {
   children: React.ReactNode;
   content: any;
   isLanding: boolean;
+  isDev?: boolean;
 }) {
   const liveContent = useLiveContent(content);
   const [consent, setConsent] = useState<{ analytics: boolean; marketing: boolean }>({
@@ -63,7 +70,7 @@ function LayoutInner({
 
       <EmailActionModal />
 
-      <DevThemeCustomizer />
+      {isDev && <DynamicDevThemeCustomizer />}
     </>
   );
 }
@@ -84,7 +91,7 @@ export function LayoutWrapper({
         <main className="min-h-screen">{children}</main>
       ) : (
         <LivePreviewProvider initialContent={content}>
-          <LayoutInner content={content} isLanding={isLanding}>
+          <LayoutInner content={content} isLanding={isLanding} isDev={isDev}>
             {children}
           </LayoutInner>
         </LivePreviewProvider>

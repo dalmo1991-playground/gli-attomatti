@@ -87,7 +87,7 @@ export default function RegistrationClient({ page: initialPage }: RegistrationCl
           },
           {
             icon: Lock,
-            text: "Protezione e trattamento confidenziale dei dati secondo la nLPD"
+            text: regUi.data_privacy_notice || "Protezione e trattamento confidenziale dei dati secondo la nLPD"
           }
         ]}
       />

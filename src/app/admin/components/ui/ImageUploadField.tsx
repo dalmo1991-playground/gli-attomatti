@@ -2,13 +2,14 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Upload, X, Eye, Image as ImageIcon, Loader2, FolderOpen } from "lucide-react";
+import { Upload, X, Eye, Image as ImageIcon, Loader2, FolderOpen, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
 import { compressImageClient } from "@/lib/clientImageCompress";
 import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 interface ImageUploadFieldProps {
   label?: string;
@@ -133,21 +134,26 @@ export function ImageUploadField({
           {value ? (
             <>
               <Image
-                src={value}
+                src={isYouTubeUrl(value) ? getYouTubeThumbnailUrl(value) : value}
                 alt="Preview"
                 fill
                 sizes="250px"
                 className={cn("object-cover group-hover:scale-105 transition-transform duration-500", getImagePositionClass(align))}
                 style={{ objectPosition: getImageObjectPositionStyle(align) }}
               />
+              {isYouTubeUrl(value) && (
+                <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow">
+                  <Play size={10} className="fill-white" /> YouTube
+                </div>
+              )}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsLightboxOpen(true)}
-                  title="Ingrandisci"
+                  title={isYouTubeUrl(value) ? "Guarda video" : "Ingrandisci"}
                   className="p-2 bg-white/20 hover:bg-white/40 rounded-full text-white transition-colors"
                 >
-                  <Eye size={16} />
+                  {isYouTubeUrl(value) ? <Play size={16} className="fill-white" /> : <Eye size={16} />}
                 </button>
                 <button
                   type="button"
@@ -248,7 +254,7 @@ export function ImageUploadField({
                 type="text"
                 value={value || ""}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="/images/... o incolla URL"
+                placeholder="/images/... o link YouTube (es. youtube.com/watch?v=...)"
                 className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono text-xs text-foreground placeholder:text-foreground/20"
               />
             </div>
@@ -259,7 +265,7 @@ export function ImageUploadField({
                 type="text"
                 value={value || ""}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="/images/... o incolla URL"
+                placeholder="/images/... o link YouTube (es. youtube.com/watch?v=...)"
                 className="flex-1 min-w-[140px] px-3 py-2 rounded-xl bg-background border border-foreground/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-mono text-xs text-foreground placeholder:text-foreground/20"
               />
               <button
@@ -295,7 +301,7 @@ export function ImageUploadField({
           )}
 
           <p className="text-[10px] text-foreground/40 font-medium leading-snug">
-            {helpText || "Scegli una foto dalla Galleria per riutilizzarla, oppure trascina/carica un nuovo file."}
+            {helpText || "Incolla il link di un video YouTube oppure carica/seleziona una foto dalla galleria del sito."}
           </p>
 
           {/* Focal Point / Mobile Crop Alignment Selector */}

@@ -26,6 +26,7 @@ export interface DetailViewLayoutProps {
   detailsTitle?: string;
   details?: DetailInfoItem[];
   emptyDatesMessage?: string;
+  photoGuideBadgeLabel?: string;
   onTicketClick?: (href: string) => void;
   lightboxUi?: any;
   children?: React.ReactNode;
@@ -45,6 +46,7 @@ export function DetailViewLayout({
   detailsTitle = "Informazioni",
   details = [],
   emptyDatesMessage = "Nessuna data programmata al momento.",
+  photoGuideBadgeLabel,
   onTicketClick,
   lightboxUi,
   children
@@ -119,6 +121,7 @@ export function DetailViewLayout({
               detailsTitle={detailsTitle}
               details={details}
               emptyDatesMessage={emptyDatesMessage}
+              photoGuideBadgeLabel={photoGuideBadgeLabel}
               onTicketClick={onTicketClick}
             />
           </div>

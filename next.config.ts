@@ -10,8 +10,42 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_IS_DEV_SITE: String(isDev),
   },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/**',
+      },
+    ],
+  },
   async headers() {
     return [
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:file(.+\\.(?:svg|png|jpg|jpeg|webp|ico|woff2))',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
       {
         source: '/(.*)',
         headers: [
@@ -37,7 +71,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-src 'self' https://eventfrog.ch https://www.instagram.com https://tally.so https://www.google.com; frame-ancestors 'self';",
+            value: "frame-src 'self' https://eventfrog.ch https://www.instagram.com https://tally.so https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self';",
           },
         ],
       },

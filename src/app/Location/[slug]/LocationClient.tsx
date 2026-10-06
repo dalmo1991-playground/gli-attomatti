@@ -63,17 +63,17 @@ export default function LocationClient({ location: initialLocation, slug, conten
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
         <MapPin size={48} className="text-primary/40 mb-4 animate-pulse" />
         <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-foreground mb-3">
-          {ui.not_found_title || "Location in fase di allestimento"}
+          {ui.not_found_title || ""}
         </h1>
         <p className="text-foreground/60 max-w-md mx-auto text-sm mb-6 leading-relaxed">
-          {ui.not_found_description || "Le indicazioni per questa location non sono ancora disponibili o sono in fase di aggiornamento nella bozza."}
+          {ui.not_found_description || ""}
         </p>
         <Link
           href="/Location"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
         >
           <ArrowLeft size={14} />
-          <span>{ui.not_found_button_label || "Tutte le Location"}</span>
+          <span>{ui.not_found_button_label || ""}</span>
         </Link>
       </div>
     );
@@ -87,7 +87,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
     .filter((s) => s.image && s.image.trim().length > 0)
     .map((s) => ({
       url: s.image?.trim(),
-      alt: s.title || s.image_caption || ui.image_alt_fallback || "Foto passaggio"
+      alt: s.title || s.image_caption || ui.image_alt_fallback || ""
     }));
 
   const openLightboxForStep = (stepImgUrl?: string) => {
@@ -124,7 +124,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
             className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
           >
             <ArrowLeft size={16} />
-            <span>{location.back_link_label || ui.back_to_site_fallback || "Torna al sito"}</span>
+            <span>{location.back_link_label || ui.back_link_default_label || ""}</span>
           </Link>
 
           {location.top_badge && location.top_badge.trim().length > 0 && (
@@ -144,7 +144,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
             {location.badge !== "" && (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary border border-primary/20 text-xs font-black uppercase tracking-wider">
                 <MapPin size={14} />
-                <span>{location.badge || ui.hero_badge_fallback || "Indicazioni Teatro & Location"}</span>
+                <span>{location.badge || ui.default_badge || ""}</span>
               </div>
             )}
 
@@ -174,7 +174,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                   className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20 shrink-0 self-start sm:self-auto"
                 >
                   <Navigation size={14} />
-                  <span>{ui.open_in_maps_label || "Apri in Google Maps"}</span>
+                  <span>{ui.google_maps_button_label || ""}</span>
                   <ExternalLink size={12} className="opacity-70" />
                 </Link>
               )}
@@ -206,7 +206,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
           <div className="p-6 sm:p-8 rounded-[2rem] bg-muted/20 border border-foreground/5 space-y-4">
             <h2 className="text-lg font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
               <Bus size={20} className="text-secondary" />
-              <span>{ui.public_transport_title || "Mezzi Pubblici nelle Vicinanze"}</span>
+              <span>{ui.public_transport_heading || ""}</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
@@ -218,7 +218,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     className="p-4 rounded-2xl bg-background/60 border border-foreground/5 space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 p-1.5 px-2 rounded-xl bg-secondary/10 text-secondary" title={ui.transport_tram_title || "Trasporto pubblico"}>
+                      <div className="flex items-center gap-1.5 p-1.5 px-2 rounded-xl bg-secondary/10 text-secondary" title={ui.transport_tram_title || ""}>
                         {types.includes("tram") && <TramFront size={16} className="text-emerald-400" />}
                         {types.includes("bus") && <Bus size={16} className="text-sky-400" />}
                         {types.includes("train") && <Train size={16} className="text-indigo-400" />}
@@ -237,7 +237,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     {/* Line Badges (ZVV / Tram / Bus / S-Bahn style) */}
                     {t.line_badges && t.line_badges.length > 0 ? (
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <div className="flex items-center gap-1 text-foreground/40 shrink-0 mr-1" title="Trasporto">
+                        <div className="flex items-center gap-1 text-foreground/40 shrink-0 mr-1" title={ui.transport_tram_title || ""}>
                           {types.includes("tram") && <TramFront size={13} />}
                           {types.includes("bus") && <Bus size={13} />}
                           {types.includes("train") && <Train size={13} />}
@@ -258,7 +258,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     ) : (
                       t.lines && (
                         <div className="text-xs text-foreground/50 font-medium">
-                          {ui.lines_label || "Linee:"} {t.lines}
+                          {ui.lines_prefix || ""} {t.lines}
                         </div>
                       )
                     )}
@@ -275,10 +275,10 @@ export default function LocationClient({ location: initialLocation, slug, conten
             <div className="flex items-center justify-between">
               <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
                 <Footprints size={22} className="text-accent" />
-                <span>{ui.steps_title || "Come Arrivare Passo-Passo"}</span>
+                <span>{ui.steps_heading || ""}</span>
               </h2>
               <span className="text-xs text-foreground/40 font-bold uppercase tracking-wider">
-                {steps.length} {steps.length === 1 ? (ui.step_singular || "Passaggio") : (ui.step_plural || "Passaggi")}
+                {steps.length} {steps.length === 1 ? (ui.step_single_label || "") : (ui.step_plural_label || "")}
               </span>
             </div>
 
@@ -313,20 +313,20 @@ export default function LocationClient({ location: initialLocation, slug, conten
                         >
                           <Image
                             src={step.image}
-                            alt={step.title || ui.image_alt_fallback || "Passaggio percorso"}
+                            alt={step.title || ui.image_alt_fallback || ""}
                             fill
                             sizes="(max-width: 896px) 100vw, 896px"
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                             <span className="text-xs text-white font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md">
-                              {ui.click_to_enlarge || "🔍 Clicca per ingrandire"}
+                              {ui.click_to_enlarge_label || ""}
                             </span>
                           </div>
                         </div>
                         {step.image_caption && (
                           <p className="text-xs text-foreground/50 italic mt-2 px-1">
-                            {ui.photo_prefix || "📷"} {step.image_caption}
+                            {ui.photo_prefix || ""} {step.image_caption}
                           </p>
                         )}
                       </div>
@@ -345,7 +345,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
               <div className="p-6 rounded-[2rem] bg-muted/15 border border-foreground/10 space-y-2">
                 <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
                   <Car size={16} className="text-accent" />
-                  <span>{ui.parking_title || "Parcheggi & Auto"}</span>
+                  <span>{ui.parking_heading || ""}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium">
                   <FormattedText text={location.parking_info} />
@@ -357,7 +357,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
               <div className="p-6 rounded-[2rem] bg-muted/15 border border-foreground/10 space-y-2">
                 <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
                   <Accessibility size={16} className="text-secondary" />
-                  <span>{ui.accessibility_title || "Accessibilità & Disabilità"}</span>
+                  <span>{ui.accessibility_heading || ""}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium">
                   <FormattedText text={location.accessibility_info} />
@@ -369,7 +369,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
               <div className="md:col-span-2 p-6 rounded-[2rem] bg-foreground/5 border border-foreground/5 space-y-2">
                 <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-foreground/60">
                   <Info size={14} className="text-primary" />
-                  <span>{ui.additional_info_title || "Informazioni Aggiuntive"}</span>
+                  <span>{ui.notes_heading || ""}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-medium">
                   <FormattedText text={location.notes} />
@@ -386,7 +386,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-black text-xs uppercase tracking-wider transition-all"
           >
             <ArrowLeft size={16} />
-            <span>{location.back_link_label || ui.back_to_site_fallback || "Torna alla pagina principale"}</span>
+            <span>{location.back_link_label || ui.bottom_back_button_label || ""}</span>
           </Link>
         </div>
       </div>

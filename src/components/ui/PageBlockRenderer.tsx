@@ -12,7 +12,8 @@ import {
   Star,
   ExternalLink,
   Maximize2,
-  ClipboardList
+  ClipboardList,
+  Play
 } from "lucide-react";
 import { cn, stripHtml } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
@@ -25,6 +26,7 @@ import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageA
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { PageBlock } from "@/lib/pageBlocks";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 export interface PageBlockRendererProps {
   blocks: PageBlock[];
@@ -76,6 +78,11 @@ export function PageBlockRenderer({
           /* ================= 1. HERO BLOCK ================= */
           case "hero": {
             const anchor = getBlockAnchor(block, "hero");
+            const isHeroVideo = isYouTubeUrl(block.hero_image);
+            const heroDisplaySrc = isHeroVideo
+              ? getYouTubeThumbnailUrl(block.hero_image, "max")
+              : block.hero_image?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+
             return (
               <section
                 key={block.id || bIdx}
@@ -85,7 +92,7 @@ export function PageBlockRenderer({
                 {/* Background image & gradient overlay */}
                 <div className="absolute inset-0 z-0">
                   <Image
-                    src={block.hero_image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                    src={heroDisplaySrc}
                     alt={block.title || defaults.hero_image_alt || "Hero"}
                     fill
                     sizes="100vw"
@@ -395,7 +402,7 @@ export function PageBlockRenderer({
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
                   backHref="/"
-                  backLabel="Torna al sito"
+                  backLabel={defaults.back_to_site || "Torna al sito"}
                   legalHref="/Termini"
                   legalLabel={defaults.eventfrog_terms_link || "Termini di Biglietteria"}
                   iframeTitle={block.title || "Biglietti Eventfrog"}
@@ -436,7 +443,7 @@ export function PageBlockRenderer({
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
                   backHref="/"
-                  backLabel="Torna al sito"
+                  backLabel={defaults.back_to_site || "Torna al sito"}
                   legalHref="/Privacy"
                   legalLabel={defaults.tally_privacy_link || "Informativa Privacy"}
                   iframeTitle={block.title || "Modulo Tally"}
@@ -482,14 +489,38 @@ export function PageBlockRenderer({
 
                     {block.image && (
                       <div className="md:col-span-5">
-                        <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 group hover:border-foreground/20 transition-colors">
+                        <div
+                          onClick={() => {
+                            if (isYouTubeUrl(block.image) && onImageClick) {
+                              onImageClick(0, [{ url: block.image, alt: block.title }]);
+                            }
+                          }}
+                          className={cn(
+                            "relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 group hover:border-foreground/20 transition-colors",
+                            isYouTubeUrl(block.image) && "cursor-pointer"
+                          )}
+                        >
                           <Image
-                            src={block.image}
+                            src={
+                              isYouTubeUrl(block.image)
+                                ? getYouTubeThumbnailUrl(block.image, "hq")
+                                : block.image
+                            }
                             alt={block.title || defaults.synopsis_image_alt || "Foto spettacolo"}
                             fill
                             sizes="(max-width: 768px) 100vw, 40vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-700"
                           />
+                          {isYouTubeUrl(block.image) && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
+                              <div className="w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
+                                <Play size={24} className="fill-white ml-0.5" />
+                              </div>
+                              <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[11px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
+                                <Play size={10} className="fill-white" /> Guarda Video
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -519,6 +550,10 @@ export function PageBlockRenderer({
 
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
                     {galleryImages.map((img: any, gIdx: number) => {
+                      const isVideo = isYouTubeUrl(img.url);
+                      const displaySrc = isVideo
+                        ? getYouTubeThumbnailUrl(img.url)
+                        : img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
                       const total = galleryImages.length;
                       const layoutClasses =
                         total === 1
@@ -547,15 +582,26 @@ export function PageBlockRenderer({
                           )}
                         >
                           <Image
-                            src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
+                            src={displaySrc}
                             alt={img.alt || defaults.gallery_image_alt || "Scena"}
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className={`transition-transform duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
                           />
-                          <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
-                            <Maximize2 size={14} />
-                          </div>
+                          {isVideo ? (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
+                              <div className="w-12 h-12 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
+                                <Play size={20} className="fill-white ml-0.5" />
+                              </div>
+                              <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
+                                <Play size={9} className="fill-white" /> Video
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
+                              <Maximize2 size={14} />
+                            </div>
+                          )}
                         </div>
                       );
                     })}

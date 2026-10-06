@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
-import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail } from "lucide-react";
+import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail, Video } from "lucide-react";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 import { LegalDocLayout } from "@/components/ui/LegalDocLayout";
+import { isYouTubeUrl } from "@/lib/youtube";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
@@ -39,6 +40,12 @@ export default async function PrivacyPage() {
   const isResendActive = Boolean(
     content?.emails?.templates?.some((t: any) => t.enabled !== false) ||
     content?.emails?.settings?.from_email
+  );
+  const isYouTubeActive = Boolean(
+    p?.youtube ||
+    content?.shows?.some((s: any) => isYouTubeUrl(s.hero_image) || isYouTubeUrl(s.image) || s.images?.some((img: any) => isYouTubeUrl(img.url))) ||
+    content?.initiatives?.some((i: any) => isYouTubeUrl(i.hero_image) || isYouTubeUrl(i.image) || i.images?.some((img: any) => isYouTubeUrl(img.url))) ||
+    content?.landing_pages?.some((lp: any) => lp.blocks?.some((b: any) => isYouTubeUrl(b.hero_image) || isYouTubeUrl(b.image) || b.images?.some((img: any) => isYouTubeUrl(img.url))))
   );
   const isAnyTrackerActive = isGaActive || isMetaActive;
 
@@ -207,6 +214,18 @@ export default async function PrivacyPage() {
                             </td>
                           </tr>
                         )}
+                        {isYouTubeActive && cookieRows.youtube && (
+                          <tr>
+                            <td className="py-2.5 pr-4 font-mono font-bold text-foreground">
+                              {cookieRows.youtube.name}
+                            </td>
+                            <td className="py-2.5 pr-4">{cookieRows.youtube.provider}</td>
+                            <td className="py-2.5 pr-4">{cookieRows.youtube.duration}</td>
+                            <td className="py-2.5 text-foreground/70">
+                              {cookieRows.youtube.purpose}
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -264,6 +283,37 @@ export default async function PrivacyPage() {
                       className="text-primary hover:underline inline-flex items-center gap-0.5"
                     >
                       {p.meta_pixel.privacy_url.replace("https://", "")} <ExternalLink size={12} />
+                    </Link>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* YouTube Video Embed (Parametrico) */}
+          {isYouTubeActive && p?.youtube && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center shrink-0">
+                  <Video size={20} />
+                </div>
+                <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                  {p.youtube.title}
+                </h2>
+              </div>
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.youtube.paragraphs?.map((para: string, idx: number) => (
+                  <p key={idx}>{para}</p>
+                ))}
+                {p.youtube.privacy_url && (
+                  <p>
+                    <Link
+                      href={p.youtube.privacy_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      {p.youtube.privacy_url.replace("https://", "")} <ExternalLink size={12} />
                     </Link>
                   </p>
                 )}

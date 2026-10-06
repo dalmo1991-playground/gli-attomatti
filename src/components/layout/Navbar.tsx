@@ -81,16 +81,17 @@ export function Navbar({ content }: { content: any }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close mobile menu on Escape key
+  // Close mobile menu or desktop dropdown on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
+      if (e.key === "Escape") {
+        if (isOpen) setIsOpen(false);
+        if (hoveredLink) setHoveredLink(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, hoveredLink]);
 
   return (
     <>
@@ -138,6 +139,7 @@ export function Navbar({ content }: { content: any }) {
             height={40}
             className="h-10 w-auto group-hover:scale-110 transition-transform duration-300"
             priority
+            unoptimized
           />
 
           <span className="text-xl font-black tracking-tighter uppercase text-primary">
@@ -158,9 +160,17 @@ export function Navbar({ content }: { content: any }) {
                 className="relative py-2"
                 onMouseEnter={() => setHoveredLink(link.label)}
                 onMouseLeave={() => setHoveredLink(null)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                    setHoveredLink(null);
+                  }
+                }}
               >
                 <Link
                   href={safeHref}
+                  onClick={() => setHoveredLink(null)}
+                  aria-haspopup={hasSublinks ? "true" : undefined}
+                  aria-expanded={hasSublinks ? hoveredLink === link.label : undefined}
                   className={cn(
                     "text-sm font-bold transition-colors hover:text-primary flex items-center gap-1 uppercase tracking-wider",
                     isActive ? "text-primary" : "text-foreground/80"
@@ -196,6 +206,7 @@ export function Navbar({ content }: { content: any }) {
                           <Link
                             key={sub.href || sIdx}
                             href={subHref}
+                            onClick={() => setHoveredLink(null)}
                             className={cn(
                               "block px-5 py-3 text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary",
                               isSubActive ? "text-primary bg-primary/5" : "text-foreground/70"

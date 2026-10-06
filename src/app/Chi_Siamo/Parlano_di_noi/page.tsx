@@ -7,23 +7,22 @@ import ParlanoDiNoiClient from "./ParlanoDiNoiClient";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const page = content?.pages?.parlano_di_noi;
+  const site = content?.site;
 
   return createPageMetadata({
-    title: page?.title ? `${page.title} — Rassegna Stampa & Recensioni` : "Dicono di Noi — Recensioni & Rassegna Stampa",
-    description:
-      page?.description ||
-      "Articoli, recensioni, opinioni del pubblico e rassegna stampa sugli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
+    title: page?.meta_title || page?.title || site?.name || "",
+    description: page?.meta_description || page?.description || site?.description || "",
     path: "/Chi_Siamo/Parlano_di_noi",
-    keywords: ["recensioni teatro zurigo", "rassegna stampa teatro", "parlano di noi attomatti"]
+    keywords: Array.isArray(page?.keywords) ? page.keywords : []
   });
 }
 
 export default async function ParlanoDiNoiPage() {
   const content = await getContent();
   const breadcrumbJsonLd = getBreadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Chi Siamo", path: "/Chi_Siamo" },
-    { name: "Dicono di Noi", path: "/Chi_Siamo/Parlano_di_noi" }
+    { name: content?.site?.name || "", path: "/" },
+    { name: content?.pages?.chi_siamo?.title || "", path: "/Chi_Siamo" },
+    { name: content?.pages?.parlano_di_noi?.title || "", path: "/Chi_Siamo/Parlano_di_noi" }
   ]);
 
   return (

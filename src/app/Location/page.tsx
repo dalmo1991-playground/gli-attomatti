@@ -6,14 +6,20 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Teatri & Location — Gli Attomatti",
-  description: "Indicazioni pratiche e guide fotografiche per raggiungere i teatri e le sale dei nostri spettacoli a Zurigo.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getContent();
+  const page = content?.pages?.locations;
+  const site = content?.site;
+
+  return {
+    title: page?.meta_title || page?.hub_title || site?.name || "",
+    description: page?.meta_description || page?.hub_description || site?.description || "",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 import LocationsHubClient from "./LocationsHubClient";
 

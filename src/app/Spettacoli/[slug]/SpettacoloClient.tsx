@@ -52,6 +52,7 @@ export default function SpettacoloDettaglioClient({
       detailsTitle={spettacoli.detail_info_title || "Info Spettacolo"}
       details={show.details}
       emptyDatesMessage={spettacoli.detail_empty_dates_message || "Nessuna data futura programmata per questo spettacolo."}
+      photoGuideBadgeLabel={content?.pages?.locations?.photo_guide_badge_label}
       onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
       lightboxUi={content?.ui?.lightbox}
     />

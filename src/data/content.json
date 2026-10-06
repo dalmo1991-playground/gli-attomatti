@@ -91,6 +91,8 @@
   ],
   "pages": {
     "home": {
+      "meta_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
+      "meta_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Scopri i nostri spettacoli, le commedie in scena a Zurigo e acquista i biglietti.",
       "hero": {
         "title": "",
         "subtitle": "Compagnia teatrale amatoriale di lingua italiana a Zurigo.",
@@ -136,6 +138,7 @@
       "introduction": {
         "title": "Gli Attomatti",
         "story_button_label": "Scopri la nostra storia",
+        "story_button_href": "/Chi_Siamo",
         "fallback_alt": "Introduzione",
         "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e la voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione",
         "images": [
@@ -224,8 +227,16 @@
       "discover_story_cta": "Scopri la nostra storia"
     },
     "chi_siamo": {
+      "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
+      "meta_description": "La storia, la missione e la passione di Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
+      "keywords": [
+        "chi siamo teatro zurigo",
+        "compagnia teatrale italiana zurigo",
+        "teatro amatoriale zurigo"
+      ],
       "title": "Chi Siamo",
       "description": "Portiamo la passione del teatro italiano nel cuore di Zurigo.",
+      "year_prefix": "Anno ",
       "fallback_photo_alt": "Foto",
       "photo_aria_prefix": "Foto",
       "content_sections": [
@@ -291,6 +302,14 @@
       "carousel_photo_aria": "Foto"
     },
     "attori": {
+      "meta_title": "Gli Attori & Il Cast — Gli Attomatti",
+      "meta_description": "Scopri gli attori, i registi e il cast della compagnia teatrale Gli Attomatti a Zurigo: le persone che danno vita agli spettacoli.",
+      "keywords": [
+        "attori teatro zurigo",
+        "cast teatrale",
+        "registi teatro zurigo",
+        "recitazione italiana zurigo"
+      ],
       "title": "Persone",
       "description": "Le persone che rendono possibile la magia del teatro Attomatti.",
       "back_label": "Torna a Chi Siamo",
@@ -618,11 +637,18 @@
       "default_actor_alt": "Attore"
     },
     "parlano_di_noi": {
+      "meta_title": "Dicono di Noi — Recensioni & Rassegna Stampa",
+      "meta_description": "Articoli, recensioni, opinioni del pubblico e rassegna stampa sugli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
+      "keywords": [
+        "recensioni teatro zurigo",
+        "rassegna stampa teatro",
+        "parlano di noi attomatti"
+      ],
       "title": "Dicono di Noi",
       "description": "Gli attomatti nella stampa",
       "back_label": "Torna a Chi Siamo",
       "back_href": "/Chi_Siamo",
-      "year_prefix": "Anno",
+      "year_prefix": "Anno ",
       "press": [
         {
           "source": "RSI",
@@ -649,9 +675,11 @@
       "back_link_label": "Torna a Chi Siamo"
     },
     "spettacoli": {
+      "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",
+      "meta_description": "Scopri gli spettacoli teatrali, le commedie e le produzioni in scena della compagnia teatrale Gli Attomatti a Zurigo.",
       "title": "I Nostri fantastici show",
       "description": "Un viaggio attraverso le nostre produzioni passate e presenti.",
-      "year_prefix": "Anno",
+      "year_prefix": "Anno ",
       "discover_cta": "Scopri lo spettacolo",
       "empty_message": "Nessuno spettacolo in archivio al momento.",
       "not_found_title": "Spettacolo non trovato",
@@ -902,9 +930,17 @@
       }
     },
     "iniziative": {
+      "meta_title": "Iniziative, Corsi & Progetti Teatrali — Gli Attomatti",
+      "meta_description": "Scopri i corsi di teatro, i laboratori e le rassegne culturali della compagnia teatrale Gli Attomatti a Zurigo.",
+      "keywords": [
+        "corsi teatro zurigo",
+        "laboratori teatrali zurigo",
+        "iniziative teatrali",
+        "workshop teatro svizzera"
+      ],
       "title": "Le Nostre Iniziative",
       "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
-      "year_prefix": "Anno",
+      "year_prefix": "Anno ",
       "discover_cta": "Scopri l'iniziativa",
       "empty_title": "Nuove iniziative in arrivo",
       "empty_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
@@ -1283,8 +1319,23 @@
             "provider": "Meta Platforms Ireland Ltd.",
             "duration": "90 giorni",
             "purpose": "Marketing (previo consenso): misurazione dell'efficacia delle campagne Instagram/Facebook."
+          },
+          "youtube": {
+            "name": "youtube-nocookie.com (iframe)",
+            "provider": "Google Ireland Limited / YouTube (USA/UE)",
+            "duration": "Sessione / Persistente all'avvio del video",
+            "purpose": "Multimediale essenziale: riproduzione dei video e trailer teatrali incorporati con modalità di privacy avanzata (nessun cookie di profilazione salvato prima della riproduzione attiva)."
           }
         }
+      },
+      "youtube": {
+        "title": "Video e Trailer Teatrali Incorporati (YouTube)",
+        "paragraphs": [
+          "Nelle schede degli spettacoli, nelle gallerie multimediali e nelle landing page possono essere incorporati trailer e video informativi ospitati sulla piattaforma YouTube, gestita da Google Ireland Limited (Gordon House, Barrow Street, Dublino 4, Irlanda).",
+          "Al fine di tutelare al massimo la riservatezza dei visitatori, tutti i video YouTube sul nostro sito sono incorporati utilizzando la modalità di privacy avanzata ufficiale (dominio youtube-nocookie.com). In questo modo, YouTube non memorizza cookie o informazioni sul comportamento degli utenti prima che il visitatore decida attivamente di avviare la riproduzione del filmato.",
+          "Solo quando l'utente clicca su \"Play\", viene stabilita una connessione diretta con i server di Google per avviare lo streaming del flusso video, il che può comportare la trasmissione dell'indirizzo IP del dispositivo a Google. Per maggiori dettagli sulla gestione dei dati da parte di Google e YouTube, consultare le Norme sulla privacy di Google: policies.google.com/privacy."
+        ],
+        "privacy_url": "https://policies.google.com/privacy"
       },
       "google_analytics": {
         "title": "Google Analytics 4 (Google LLC)",
@@ -1386,11 +1437,14 @@
       "default_badge": "Indicazioni Teatro & Location",
       "google_maps_button_label": "Apri in Google Maps",
       "public_transport_heading": "Mezzi Pubblici nelle Vicinanze",
+      "transport_tram_title": "Trasporto pubblico",
       "lines_prefix": "Linee:",
       "steps_heading": "Come Arrivare Passo-Passo",
       "step_single_label": "Passaggio",
       "step_plural_label": "Passaggi",
-      "click_to_enlarge_label": "Clicca per ingrandire",
+      "click_to_enlarge_label": "🔍 Clicca per ingrandire",
+      "photo_prefix": "📷",
+      "image_alt_fallback": "Foto passaggio",
       "parking_heading": "Parcheggi & Auto",
       "accessibility_heading": "Accessibilità & Disabilità",
       "notes_heading": "Informazioni Aggiuntive",
@@ -1398,7 +1452,11 @@
       "bottom_back_button_label": "Torna alla pagina principale",
       "not_found_title": "Location in fase di allestimento",
       "not_found_description": "Le indicazioni per questa location non sono ancora disponibili o sono in fase di aggiornamento nella bozza.",
-      "not_found_button_label": "Tutte le Location"
+      "not_found_button_label": "Tutte le Location",
+      "detail_meta_title_suffix": "— Come Raggiungerci",
+      "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
+      "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
+      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
     }
   },
   "landings": [
@@ -1732,6 +1790,7 @@
       "not_configured_title": "Prevendita non ancora configurata",
       "not_configured_description": "La prevendita per questa pagina non è al momento collegata a un evento attivo.",
       "secure_transaction_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
+      "ssl_encryption_notice": "Crittografia SSL a 256-bit conforme agli standard di sicurezza bancari",
       "rules_refunds_link": "Regolamento e Rimborsi",
       "privacy_link": "Informativa Privacy"
     }
@@ -1755,6 +1814,7 @@
       "not_configured_title": "Modulo non ancora configurato",
       "not_configured_description": "Il modulo di registrazione per questa pagina non è al momento collegato a un form Tally attivo.",
       "secure_form_notice": "Modulo sicuro e conforme nLPD / GDPR (Tally BV, server UE)",
+      "data_privacy_notice": "Protezione e trattamento confidenziale dei dati secondo la nLPD",
       "terms_link": "Termini & Regolamento",
       "contact_link": "Hai domande? Contattaci"
     }
@@ -1930,6 +1990,8 @@
     "landing_defaults": {
       "preview_loading": "Caricamento anteprima...",
       "back_to_home": "Torna alla Home",
+      "back_to_site": "Torna al sito",
+      "menu_aria_label": "Menu navigazione ancore",
       "header_subtitle": "Teatro a Zurigo",
       "hero_alt": "Hero",
       "event_details_title": "Data e Informazioni",
@@ -1963,6 +2025,12 @@
       "closing_cta_title": "Non Perdere lo Spettacolo",
       "footer_home_link": "Visita il sito ufficiale Gli Attomatti",
       "footer_copyright": "Tutti i diritti riservati. Zurigo, Svizzera."
+    },
+    "carousel": {
+      "fallback_alt": "Foto",
+      "aria_prefix": "Foto",
+      "prev_aria_label": "Foto precedente",
+      "next_aria_label": "Foto successiva"
     }
   },
   "emails": {

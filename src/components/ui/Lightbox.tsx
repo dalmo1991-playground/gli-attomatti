@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { isYouTubeUrl, getYouTubeEmbedUrl } from "@/lib/youtube";
 
 export interface LightboxImage {
   url?: string;
@@ -86,6 +87,10 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
 
   if (!mounted) return null;
 
+  const currentItem = images[currentIndex];
+  const currentMediaUrl = currentItem?.url || currentItem?.src || "";
+  const isCurrentVideo = isYouTubeUrl(currentMediaUrl);
+
   return createPortal(
     <AnimatePresence>
       {isOpen && images.length > 0 && (
@@ -131,21 +136,47 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
             onClick={(e) => e.stopPropagation()}
           >
             <AnimatePresence mode="wait">
-              <motion.img
-                key={currentIndex}
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.04 }}
-                transition={{ duration: 0.2 }}
-                src={images[currentIndex]?.url || images[currentIndex]?.src || ""}
-                alt={images[currentIndex]?.alt || `${ui.default_alt || "Foto"} ${currentIndex + 1}`}
-                className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
-              />
+              {isCurrentVideo ? (
+                <motion.div
+                  key={`video-${currentIndex}`}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.04 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black"
+                >
+                  <iframe
+                    src={getYouTubeEmbedUrl(currentMediaUrl, { autoplay: true })}
+                    title={currentItem?.alt || "Video YouTube"}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                </motion.div>
+              ) : (
+                <motion.img
+                  key={`img-${currentIndex}`}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.04 }}
+                  transition={{ duration: 0.2 }}
+                  src={currentMediaUrl}
+                  alt={currentItem?.alt || `${ui.default_alt || "Foto"} ${currentIndex + 1}`}
+                  className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
+                />
+              )}
             </AnimatePresence>
             
             {images.length > 1 && (
-              <div className="mt-4 text-white/60 font-mono tracking-widest text-xs sm:text-sm bg-black/40 px-3 py-1 rounded-full border border-white/10">
-                {currentIndex + 1} / {images.length}
+              <div className="mt-4 flex items-center gap-2">
+                {isCurrentVideo && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-950/40 border border-red-500/20 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    <Play size={10} className="fill-red-400" /> Video
+                  </span>
+                )}
+                <div className="text-white/60 font-mono tracking-widest text-xs sm:text-sm bg-black/40 px-3 py-1 rounded-full border border-white/10">
+                  {currentIndex + 1} / {images.length}
+                </div>
               </div>
             )}
           </div>

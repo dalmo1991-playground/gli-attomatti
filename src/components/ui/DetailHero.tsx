@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getPageHeroTitleSizeClass } from "@/lib/typography";
 import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 interface DetailHeroProps {
   title: string;
@@ -30,6 +31,10 @@ export function DetailHero({
   className
 }: DetailHeroProps) {
   const hasImage = Boolean(heroImage?.trim());
+  const isVideo = isYouTubeUrl(heroImage);
+  const displayHeroSrc = isVideo
+    ? getYouTubeThumbnailUrl(heroImage, "max")
+    : heroImage?.trim() || "";
 
   return (
     <Section
@@ -41,7 +46,7 @@ export function DetailHero({
       {hasImage ? (
         <div className="absolute inset-0 z-0">
           <Image
-            src={heroImage!.trim()}
+            src={displayHeroSrc}
             alt={title || "Hero"}
             fill
             priority

@@ -86,7 +86,7 @@ export default function CheckoutClient({ page: initialPage }: CheckoutClientProp
         },
         {
           icon: Lock,
-          text: "Crittografia SSL a 256-bit conforme agli standard di sicurezza bancari"
+          text: checkoutUi.ssl_encryption_notice || "Crittografia SSL a 256-bit conforme agli standard di sicurezza bancari"
         }
       ]}
     />

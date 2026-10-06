@@ -3,6 +3,7 @@
 import React, { useEffect, Suspense } from "react";
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
+import type {} from "@/lib/tracking";
 
 interface TrackingScriptsProps {
   integrations?: {
@@ -109,7 +110,7 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
   // Synchronize active event milestones to window for client helpers
   useEffect(() => {
     if (typeof window !== "undefined") {
-      (window as any).__ATTOMATTI_TRACKING_EVENTS__ = integrations?.events || {
+      window.__ATTOMATTI_TRACKING_EVENTS__ = integrations?.events || {
         view_content: true,
         initiate_checkout: true,
         contact: true,
@@ -120,10 +121,9 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
   // Update Google Consent Mode v2 when consent state changes
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const w = window as any;
-    if (typeof w.gtag !== "function") return;
+    if (typeof window.gtag !== "function") return;
 
-    w.gtag("consent", "update", {
+    window.gtag("consent", "update", {
       analytics_storage: hasAnalyticsConsent ? "granted" : "denied",
       ad_storage: hasMarketingConsent ? "granted" : "denied",
       ad_user_data: hasMarketingConsent ? "granted" : "denied",

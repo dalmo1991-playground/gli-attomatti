@@ -3,8 +3,9 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
 
 export interface BentoGalleryImage {
   url?: string;
@@ -33,6 +34,11 @@ export function BentoGallery({
     <div className={cn("mt-12 sm:mt-16", className)}>
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
         {images.map((img, idx) => {
+          const isVideo = isYouTubeUrl(img.url);
+          const displaySrc = isVideo
+            ? getYouTubeThumbnailUrl(img.url)
+            : img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+
           // Determine column span and height dynamically for editorial rhythm
           let layoutClasses = "";
           if (total === 1) {
@@ -77,17 +83,29 @@ export function BentoGallery({
               )}
             >
               <Image 
-                src={img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
+                src={displaySrc} 
                 alt={img.alt || title} 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={`transition-all duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
               />
 
-              {/* Glassmorphic expand icon badge with golden accent */}
-              <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/70 backdrop-blur-md border border-accent/40 flex items-center justify-center text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
-                <Maximize2 size={14} />
-              </div>
+              {/* Video Play Overlay if it's a YouTube video */}
+              {isVideo ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/40 transition-colors">
+                  <div className="w-14 h-14 rounded-full bg-red-600/90 hover:bg-red-600 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
+                    <Play size={24} className="fill-white ml-0.5" />
+                  </div>
+                  <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[11px] font-bold text-white flex items-center gap-1.5 uppercase tracking-wider border border-white/10">
+                    <Play size={10} className="fill-white" /> Guarda Video
+                  </div>
+                </div>
+              ) : (
+                /* Glassmorphic expand icon badge with golden accent for standard images */
+                <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/70 backdrop-blur-md border border-accent/40 flex items-center justify-center text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100 shadow-lg pointer-events-none">
+                  <Maximize2 size={14} />
+                </div>
+              )}
             </motion.div>
           );
         })}
