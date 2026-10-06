@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Calendar, MapPin, ArrowRight, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { getSafeImageProps } from "@/lib/youtube";
 
 export interface CatalogCardItem {
   id: string;
@@ -33,10 +33,7 @@ export interface CatalogCardProps {
 
 export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
   const CategoryIcon = item.categoryIcon;
-  const isVideo = isYouTubeUrl(item.image);
-  const safeImage = isVideo
-    ? getYouTubeThumbnailUrl(item.image)
-    : item.image?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+  const { src: safeImage, unoptimized: isCardUnoptimized, isVideo } = getSafeImageProps(item.image);
 
   return (
     <motion.div
@@ -54,6 +51,7 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
           src={safeImage}
           alt={item.title || "Locandina"}
           fill
+          unoptimized={isCardUnoptimized}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover group-hover:scale-105 transition-transform duration-700"
         />

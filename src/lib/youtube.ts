@@ -39,8 +39,9 @@ export function getYouTubeVideoId(urlOrId?: string | null): string | null {
 }
 
 /**
- * Restituisce l'URL della thumbnail ufficiale di YouTube ad alta risoluzione.
- * In fallback a hqdefault.jpg se non specificato.
+ * Restituisce l'URL della thumbnail ufficiale di YouTube.
+ * Utilizza il dominio canonico diretto i.ytimg.com (che evita redirect 302 di img.youtube.com).
+ * Di default restituisce hqdefault.jpg (480x360), garantita al 100% per qualsiasi video su YouTube.
  */
 export function getYouTubeThumbnailUrl(
   urlOrId?: string | null,
@@ -48,9 +49,10 @@ export function getYouTubeThumbnailUrl(
 ): string {
   const id = getYouTubeVideoId(urlOrId);
   if (!id) return "/images/1782553290530-TheaterCurtain.webp";
-  // hqdefault è sempre disponibile per tutti i video YouTube
-  const filename = quality === "max" ? "maxresdefault.jpg" : "hqdefault.jpg";
-  return `https://img.youtube.com/vi/${id}/${filename}`;
+  // hqdefault è sempre disponibile per tutti i video YouTube.
+  // maxresdefault è presente solo per video HD con thumbnail personalizzata, altrimenti dà 404.
+  const filename = quality === "max" ? "hqdefault.jpg" : "hqdefault.jpg";
+  return `https://i.ytimg.com/vi/${id}/${filename}`;
 }
 
 /**
@@ -91,4 +93,35 @@ export function getMediaDisplayUrl(url?: string | null, fallback?: string): stri
     return getYouTubeThumbnailUrl(url);
   }
   return url.trim();
+}
+
+/**
+ * Restituisce le proprietà sicure per il componente <Image> di Next.js:
+ * Se l'URL fornito è un link o ID video YouTube, restituisce l'URL della thumbnail
+ * e imposta unoptimized: true. In questo modo il browser carica direttamente dal CDN Google
+ * senza passare dall'endpoint /_next/image di Vercel, eliminando errori INVALID_IMAGE_OPTIMIZE_REQUEST
+ * e azzerando il consumo di quote serverless.
+ */
+export function getSafeImageProps(
+  url?: string | null,
+  fallback = "/images/1782553290530-TheaterCurtain.webp"
+): {
+  src: string;
+  unoptimized: boolean;
+  isVideo: boolean;
+} {
+  const trimmed = url?.trim() || "";
+  const isVideo = isYouTubeUrl(trimmed);
+  if (isVideo) {
+    return {
+      src: getYouTubeThumbnailUrl(trimmed, "hq"),
+      unoptimized: true,
+      isVideo: true,
+    };
+  }
+  return {
+    src: trimmed || fallback,
+    unoptimized: trimmed.endsWith(".svg"),
+    isVideo: false,
+  };
 }

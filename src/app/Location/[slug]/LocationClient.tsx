@@ -23,6 +23,7 @@ import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { Section } from "@/components/ui/Section";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { getSafeImageProps } from "@/lib/youtube";
 
 interface LocationClientProps {
   location?: LocationItem | null;
@@ -311,13 +312,19 @@ export default function LocationClient({ location: initialLocation, slug, conten
                           onClick={() => openLightboxForStep(step.image)}
                           className="relative aspect-video sm:aspect-[21/9] rounded-2xl overflow-hidden border border-foreground/10 bg-background/50 cursor-pointer group shadow-inner"
                         >
-                          <Image
-                            src={step.image}
-                            alt={step.title || ui.image_alt_fallback || ""}
-                            fill
-                            sizes="(max-width: 896px) 100vw, 896px"
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
+                          {(() => {
+                            const { src: stepSrc, unoptimized: isStepUnoptimized } = getSafeImageProps(step.image);
+                            return (
+                              <Image
+                                src={stepSrc}
+                                alt={step.title || ui.image_alt_fallback || ""}
+                                fill
+                                unoptimized={isStepUnoptimized}
+                                sizes="(max-width: 896px) 100vw, 896px"
+                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            );
+                          })()}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                             <span className="text-xs text-white font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md">
                               {ui.click_to_enlarge_label || ""}

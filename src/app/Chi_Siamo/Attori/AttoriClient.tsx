@@ -10,6 +10,7 @@ import { Lightbox } from "@/components/ui/Lightbox";
 import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { getSafeImageProps } from "@/lib/youtube";
 
 export default function AttoriClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -60,13 +61,19 @@ export default function AttoriClient({ content: initialContent }: { content: any
                   <div 
                     className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-4 sm:ring-8 ring-background group-hover:ring-amber-500/30 transition-all duration-700 pointer-events-none"
                   >
-                    <Image 
-                      src={person.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"} 
-                      alt={person.name || attori.fallback_actor_alt || ""} 
-                      fill
-                      sizes="(max-width: 640px) 192px, 256px"
-                      className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
-                    />
+                    {(() => {
+                      const { src: actorSrc, unoptimized: isActorUnoptimized } = getSafeImageProps(person.image);
+                      return (
+                        <Image 
+                          src={actorSrc} 
+                          alt={person.name || attori.fallback_actor_alt || ""} 
+                          fill
+                          unoptimized={isActorUnoptimized}
+                          sizes="(max-width: 640px) 192px, 256px"
+                          className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
+                        />
+                      );
+                    })()}
                   </div>
                 </div>
                 
@@ -169,13 +176,19 @@ export default function AttoriClient({ content: initialContent }: { content: any
                 {/* Profile Pic Column */}
                 <div className="md:col-span-5 flex justify-center md:sticky md:top-0">
                   <div className="relative w-32 h-32 sm:w-44 sm:h-44 md:w-72 md:h-72 rounded-full overflow-hidden shadow-xl ring-4 sm:ring-8 ring-muted border border-foreground/5 shrink-0">
-                    <Image
-                      src={selectedActor.image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                      alt={selectedActor.name}
-                      fill
-                      sizes="(max-width: 640px) 140px, (max-width: 768px) 180px, 320px"
-                      className="object-cover"
-                    />
+                    {(() => {
+                      const { src: modalSrc, unoptimized: isModalUnoptimized } = getSafeImageProps(selectedActor.image);
+                      return (
+                        <Image
+                          src={modalSrc}
+                          alt={selectedActor.name}
+                          fill
+                          unoptimized={isModalUnoptimized}
+                          sizes="(max-width: 640px) 140px, (max-width: 768px) 180px, 320px"
+                          className="object-cover"
+                        />
+                      );
+                    })()}
                   </div>
                 </div>
 

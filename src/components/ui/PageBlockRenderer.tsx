@@ -26,7 +26,7 @@ import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageA
 import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { PageBlock } from "@/lib/pageBlocks";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { isYouTubeUrl, getYouTubeThumbnailUrl, getSafeImageProps } from "@/lib/youtube";
 
 export interface PageBlockRendererProps {
   blocks: PageBlock[];
@@ -78,10 +78,7 @@ export function PageBlockRenderer({
           /* ================= 1. HERO BLOCK ================= */
           case "hero": {
             const anchor = getBlockAnchor(block, "hero");
-            const isHeroVideo = isYouTubeUrl(block.hero_image);
-            const heroDisplaySrc = isHeroVideo
-              ? getYouTubeThumbnailUrl(block.hero_image, "max")
-              : block.hero_image?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+            const { src: heroDisplaySrc, unoptimized: isHeroUnoptimized } = getSafeImageProps(block.hero_image);
 
             return (
               <section
@@ -95,6 +92,7 @@ export function PageBlockRenderer({
                     src={heroDisplaySrc}
                     alt={block.title || defaults.hero_image_alt || "Hero"}
                     fill
+                    unoptimized={isHeroUnoptimized}
                     sizes="100vw"
                     className={cn(
                       "object-cover opacity-35 scale-105 transition-transform duration-1000",
@@ -501,13 +499,10 @@ export function PageBlockRenderer({
                           )}
                         >
                           <Image
-                            src={
-                              isYouTubeUrl(block.image)
-                                ? getYouTubeThumbnailUrl(block.image, "hq")
-                                : block.image
-                            }
+                            src={getSafeImageProps(block.image).src}
                             alt={block.title || defaults.synopsis_image_alt || "Foto spettacolo"}
                             fill
+                            unoptimized={getSafeImageProps(block.image).unoptimized}
                             sizes="(max-width: 768px) 100vw, 40vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-700"
                           />
@@ -550,10 +545,7 @@ export function PageBlockRenderer({
 
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
                     {galleryImages.map((img: any, gIdx: number) => {
-                      const isVideo = isYouTubeUrl(img.url);
-                      const displaySrc = isVideo
-                        ? getYouTubeThumbnailUrl(img.url)
-                        : img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+                      const { src: displaySrc, unoptimized: isGalleryUnoptimized, isVideo } = getSafeImageProps(img.url);
                       const total = galleryImages.length;
                       const layoutClasses =
                         total === 1
@@ -585,6 +577,7 @@ export function PageBlockRenderer({
                             src={displaySrc}
                             alt={img.alt || defaults.gallery_image_alt || "Scena"}
                             fill
+                            unoptimized={isGalleryUnoptimized}
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className={`transition-transform duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
                           />

@@ -14,6 +14,7 @@ import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
+import { getSafeImageProps } from "@/lib/youtube";
 
 const MotionImage = motion.create(Image);
 
@@ -87,15 +88,24 @@ export default function HomeClient({ content: initialContent }: { content: any }
                 }}
                 className="absolute inset-0"
               >
-                <Image
-                  src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={activeShows[currentShowIndex].title || home.fallback_show_alt || ""}
-                  fill
-                  sizes="100vw"
-                  className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
-                  style={{ objectPosition: getImageObjectPositionStyle(activeShows[currentShowIndex].image_align) }}
-                  priority
-                />
+                {(() => {
+                  const { src: showSrc, unoptimized: isShowUnoptimized } = getSafeImageProps(
+                    activeShows[currentShowIndex].image,
+                    "/images/1782553290530-TheaterCurtain.webp"
+                  );
+                  return (
+                    <Image
+                      src={showSrc}
+                      alt={activeShows[currentShowIndex].title || home.fallback_show_alt || ""}
+                      fill
+                      unoptimized={isShowUnoptimized}
+                      sizes="100vw"
+                      className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
+                      style={{ objectPosition: getImageObjectPositionStyle(activeShows[currentShowIndex].image_align) }}
+                      priority
+                    />
+                  );
+                })()}
 
               </motion.div>
             </AnimatePresence>

@@ -9,7 +9,7 @@ import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
 import { compressImageClient } from "@/lib/clientImageCompress";
 import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { isYouTubeUrl, getYouTubeThumbnailUrl, getSafeImageProps } from "@/lib/youtube";
 
 interface ImageUploadFieldProps {
   label?: string;
@@ -134,9 +134,10 @@ export function ImageUploadField({
           {value ? (
             <>
               <Image
-                src={isYouTubeUrl(value) ? getYouTubeThumbnailUrl(value) : value}
+                src={getSafeImageProps(value).src}
                 alt="Preview"
                 fill
+                unoptimized={getSafeImageProps(value).unoptimized}
                 sizes="250px"
                 className={cn("object-cover group-hover:scale-105 transition-transform duration-500", getImagePositionClass(align))}
                 style={{ objectPosition: getImageObjectPositionStyle(align) }}

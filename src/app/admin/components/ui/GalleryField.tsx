@@ -8,7 +8,7 @@ import { useAdmin } from "../../context/AdminContext";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { MediaLibraryModal } from "./MediaLibraryModal";
 import { compressImageClient } from "@/lib/clientImageCompress";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { isYouTubeUrl, getYouTubeThumbnailUrl, getSafeImageProps } from "@/lib/youtube";
 
 export interface GalleryImage {
   url: string;
@@ -213,8 +213,7 @@ export function GalleryField({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {images.map((img, idx) => {
-            const isVideo = isYouTubeUrl(img.url);
-            const thumbSrc = isVideo ? getYouTubeThumbnailUrl(img.url) : img.url;
+            const { src: thumbSrc, unoptimized: isThumbUnoptimized, isVideo } = getSafeImageProps(img.url);
 
             return (
               <div
@@ -232,6 +231,7 @@ export function GalleryField({
                         src={thumbSrc}
                         alt={img.alt || "Anteprima"}
                         fill
+                        unoptimized={isThumbUnoptimized}
                         className="object-cover group-hover/thumb:scale-105 transition-transform"
                       />
                     ) : (
@@ -346,7 +346,8 @@ export function GalleryField({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

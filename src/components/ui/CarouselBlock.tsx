@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { getSafeImageProps } from "@/lib/youtube";
 
 const MotionImage = motion.create(Image);
 
@@ -75,10 +75,7 @@ export function CarouselBlock({
   if (count === 0) return null;
 
   const currentImage = validImages[currentIndex];
-  const isVideo = isYouTubeUrl(currentImage?.url);
-  const safeSrc = isVideo
-    ? getYouTubeThumbnailUrl(currentImage?.url)
-    : currentImage?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+  const { src: safeSrc, unoptimized: isCarouselUnoptimized, isVideo } = getSafeImageProps(currentImage?.url);
   const safeAlt = currentImage?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${currentIndex + 1}` : "");
 
   return (
@@ -108,6 +105,7 @@ export function CarouselBlock({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           fill
+          unoptimized={isCarouselUnoptimized}
           sizes="(max-width: 1024px) 100vw, 60vw"
           className={cn(
             "transition-transform duration-700",

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Maximize2, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isYouTubeUrl, getYouTubeThumbnailUrl } from "@/lib/youtube";
+import { getSafeImageProps } from "@/lib/youtube";
 
 export interface BentoGalleryImage {
   url?: string;
@@ -34,10 +34,7 @@ export function BentoGallery({
     <div className={cn("mt-12 sm:mt-16", className)}>
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-stretch">
         {images.map((img, idx) => {
-          const isVideo = isYouTubeUrl(img.url);
-          const displaySrc = isVideo
-            ? getYouTubeThumbnailUrl(img.url)
-            : img.url?.trim() || "/images/1782553290530-TheaterCurtain.webp";
+          const { src: displaySrc, unoptimized: isImageUnoptimized, isVideo } = getSafeImageProps(img.url);
 
           // Determine column span and height dynamically for editorial rhythm
           let layoutClasses = "";
@@ -86,6 +83,7 @@ export function BentoGallery({
                 src={displaySrc} 
                 alt={img.alt || title} 
                 fill
+                unoptimized={isImageUnoptimized}
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={`transition-all duration-700 ${img.no_crop ? "object-contain" : "object-cover group-hover:scale-105"}`}
               />
