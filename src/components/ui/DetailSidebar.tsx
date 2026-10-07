@@ -69,18 +69,6 @@ export function DetailSidebar({
                           {d.location}
                         </span>
                       </Link>
-
-                      {/* Special badge if it links to a photographic guide (/Location/...) */}
-                      {d.location_href.trim().startsWith("/Location") && (
-                        <div>
-                          <Link
-                            href={d.location_href.trim()}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/10 hover:bg-accent/20 text-accent text-[11px] font-bold border border-accent/20 transition-colors"
-                          >
-                            <span>{photoGuideBadgeLabel}</span>
-                          </Link>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="flex items-start text-foreground/60 text-sm mb-4">

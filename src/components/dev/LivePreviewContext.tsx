@@ -14,15 +14,29 @@ export function LivePreviewProvider({
   const [content, setContent] = useState(() => {
     if (typeof window !== "undefined") {
       try {
-        const liveDataRaw = localStorage.getItem("attomatti_preview_live_data");
-        if (liveDataRaw) {
-          const parsed = JSON.parse(liveDataRaw);
-          if (parsed) return parsed;
+        let isFramed = false;
+        try {
+          isFramed = window.self !== window.top;
+        } catch {
+          isFramed = true;
         }
-        const stored = localStorage.getItem("attomatti_admin_draft");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed?.content) return parsed.content;
+        const hasPreviewParam = window.location.search.includes("preview=1");
+        const isPreviewStored =
+          typeof sessionStorage !== "undefined" &&
+          sessionStorage.getItem("attomatti_preview_mode") === "1";
+
+        // ONLY read preview live data if actively framed or in preview mode
+        if (isFramed || hasPreviewParam || isPreviewStored) {
+          const liveDataRaw = localStorage.getItem("attomatti_preview_live_data");
+          if (liveDataRaw) {
+            const parsed = JSON.parse(liveDataRaw);
+            if (parsed) return parsed;
+          }
+          const stored = localStorage.getItem("attomatti_admin_draft");
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed?.content) return parsed.content;
+          }
         }
       } catch {}
     }
@@ -30,7 +44,19 @@ export function LivePreviewProvider({
   });
 
   useEffect(() => {
-    if (!content) {
+    // Keep content synchronized whenever initialContent from server updates
+    let isFramed = false;
+    try {
+      isFramed = window.self !== window.top;
+    } catch {
+      isFramed = true;
+    }
+    const hasPreviewParam = typeof window !== "undefined" && window.location.search.includes("preview=1");
+    const isPreviewStored =
+      typeof sessionStorage !== "undefined" &&
+      sessionStorage.getItem("attomatti_preview_mode") === "1";
+
+    if (!isFramed && !hasPreviewParam && !isPreviewStored) {
       setContent(initialContent);
     }
   }, [initialContent]);
@@ -90,6 +116,11 @@ export function LivePreviewProvider({
         channel = new BroadcastChannel("attomatti_preview_sync");
         channel.onmessage = (e) => {
           if (e.data?.type === "ATTOMATTI_PREVIEW_SYNC" && e.data.content) {
+            setContent(e.data.content);
+          } else if (e.data?.type === "ATTOMATTI_PREVIEW_PUBLISHED" && e.data.content) {
+            try {
+              localStorage.removeItem("attomatti_preview_live_data");
+            } catch {}
             setContent(e.data.content);
           }
         };

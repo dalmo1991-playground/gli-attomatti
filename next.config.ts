@@ -26,8 +26,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    staleTimes: {
+      dynamic: 0,
+      static: 180,
+    },
+  },
   async headers() {
     return [
+      {
+        source: '/api/version',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+        ],
+      },
       {
         source: '/images/:path*',
         headers: [
@@ -38,11 +53,20 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/:file(.+\\.(?:svg|png|jpg|jpeg|webp|ico|woff2))',
+        source: '/:path*(.+\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm))',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
+        source: '/((?!api|_next|admin).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
           },
         ],
       },

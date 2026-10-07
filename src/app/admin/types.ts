@@ -1,9 +1,10 @@
 export interface PublishStatus {
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'deploying';
   msg: string;
   branch?: string;
   commitUrl?: string;
   shortSha?: string;
+  isDeploying?: boolean;
 }
 
 export interface DiffEntry {

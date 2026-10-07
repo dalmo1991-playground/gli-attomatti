@@ -11,6 +11,7 @@ export function Toast() {
   if (!publishStatus) return null;
 
   const isSuccess = publishStatus.type === "success";
+  const isDeploying = publishStatus.type === "deploying" || publishStatus.isDeploying;
 
   return (
     <AnimatePresence>
@@ -22,7 +23,9 @@ export function Toast() {
       >
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-2xl shrink-0 mt-0.5">
-            {isSuccess ? (
+            {isDeploying ? (
+              <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+            ) : isSuccess ? (
               <CheckCircle2 size={24} className="text-emerald-400" />
             ) : (
               <AlertCircle size={24} className="text-rose-400" />
@@ -31,7 +34,11 @@ export function Toast() {
 
           <div className="flex-1 min-w-0 pr-2">
             <h5 className="font-bold text-sm text-foreground">
-              {isSuccess ? "Pubblicazione Riuscita!" : "Attenzione"}
+              {isDeploying
+                ? "Distribuzione Vercel in Corso..."
+                : isSuccess
+                ? "Pubblicazione Riuscita!"
+                : "Attenzione"}
             </h5>
             <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
               {publishStatus.msg}
@@ -46,19 +53,31 @@ export function Toast() {
               </div>
             )}
 
-            {publishStatus.commitUrl && (
-              <div className="mt-2">
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              {isSuccess && (
+                <a
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
+                >
+                  <span>Apri Sito Aggiornato</span>
+                  <ExternalLink size={11} />
+                </a>
+              )}
+
+              {publishStatus.commitUrl && (
                 <a
                   href={publishStatus.commitUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
+                  className="inline-flex items-center gap-1 text-xs text-foreground/60 hover:text-primary transition-colors"
                 >
-                  Vedi commit su GitHub ({publishStatus.shortSha || "dettagli"})
-                  <ExternalLink size={12} />
+                  <span>Commit ({publishStatus.shortSha || "dettagli"})</span>
+                  <ExternalLink size={10} />
                 </a>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <button

@@ -6,6 +6,7 @@ import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 import { getContent } from "@/lib/data";
 import { SITE_URL, DEFAULT_SEO, getOrganizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getSiteVersion } from "@/lib/version";
 
 export const dynamic = 'force-dynamic';
 
@@ -164,6 +165,8 @@ export default async function RootLayout({
     process.env.VERCEL_GIT_COMMIT_REF === "dev" ||
     process.env.GITHUB_BRANCH === "dev";
 
+  const siteVersion = getSiteVersion();
+
   return (
     <html lang={content.site.language} suppressHydrationWarning>
       <head>
@@ -179,6 +182,7 @@ export default async function RootLayout({
           content={content}
           isDev={isDev}
           initialHasAccess={initialHasAccess}
+          serverVersion={siteVersion.version}
         >
           {children}
         </LayoutWrapper>
