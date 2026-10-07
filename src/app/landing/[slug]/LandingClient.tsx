@@ -254,7 +254,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
 
       {/* 3. Standalone Minimal Footer */}
       <footer className="border-t border-foreground/10 py-12 px-4 sm:px-6 bg-muted/20 text-center">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-4">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground/60 hover:text-foreground hover:underline transition-colors"
@@ -262,6 +262,19 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
             <span>{landingDefaults.footer_home_link || "Visita il sito ufficiale Gli Attomatti"}</span>
             <ChevronRight size={14} />
           </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-foreground/50">
+            <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
+              Informativa Privacy
+            </Link>
+            <span>•</span>
+            <Link href="/Termini" className="hover:text-foreground transition-colors underline">
+              Termini &amp; Condizioni
+            </Link>
+            <span>•</span>
+            <Link href="/Impressum" className="hover:text-foreground transition-colors underline">
+              Note Legali
+            </Link>
+          </div>
           <p className="text-xs text-foreground/40 font-medium">
             © {new Date().getFullYear()} {site?.name || "Gli Attomatti"}. {landingDefaults.footer_copyright || "Tutti i diritti riservati. Zurigo, Svizzera."}
           </p>

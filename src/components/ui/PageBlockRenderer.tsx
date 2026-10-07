@@ -13,7 +13,8 @@ import {
   ExternalLink,
   Maximize2,
   ClipboardList,
-  Play
+  Play,
+  ArrowRight
 } from "lucide-react";
 import { cn, stripHtml } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
@@ -23,7 +24,7 @@ import { CatalogCard, CatalogGrid } from "./CatalogCard";
 import { EmbeddedFrameView } from "./EmbeddedFrameView";
 import { getBlockAnchor } from "@/lib/landingAnchors";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
-import { getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
+import { getHeroTitleSizeClass, getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { trackInitiateCheckout } from "@/lib/tracking";
 import { PageBlock } from "@/lib/pageBlocks";
 import { isYouTubeUrl, getYouTubeThumbnailUrl, getSafeImageProps } from "@/lib/youtube";
@@ -84,7 +85,7 @@ export function PageBlockRenderer({
               <section
                 key={block.id || bIdx}
                 id={anchor}
-                className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden py-20 px-4 sm:px-6"
+                className="relative min-h-[calc(100dvh-5rem)] py-8 sm:py-10 md:py-12 flex items-center justify-center overflow-hidden"
               >
                 {/* Background image & gradient overlay */}
                 <div className="absolute inset-0 z-0">
@@ -95,67 +96,69 @@ export function PageBlockRenderer({
                     unoptimized={isHeroUnoptimized}
                     sizes="100vw"
                     className={cn(
-                      "object-cover opacity-35 scale-105 transition-transform duration-1000",
+                      "object-cover opacity-40",
                       getImagePositionClass(block.hero_image_align)
                     )}
                     style={{ objectPosition: getImageObjectPositionStyle(block.hero_image_align) }}
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-background via-background/40 to-background z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
                   <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none z-10" />
                   <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none z-10" />
                 </div>
 
-                <div className="relative z-20 text-center max-w-4xl mx-auto space-y-8 pt-8">
-                  {block.badge && (
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs sm:text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/10">
-                      <span>{stripHtml(block.badge)}</span>
-                    </div>
-                  )}
-
-                  <h1
-                    className={cn(
-                      getPageHeroTitleSizeClass(block.title),
-                      "font-black uppercase tracking-tight text-foreground text-balance drop-shadow-md"
+                <div className="relative z-20 text-center px-6 max-w-5xl w-full">
+                  <div className="w-full flex flex-col items-center max-w-4xl mx-auto">
+                    {/* Presenter / Intestazione - testuale, non in bolla, 1:1 con Home */}
+                    {block.badge && (
+                      <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-2 md:mb-3 opacity-90 drop-shadow-sm">
+                        <FormattedText text={block.badge} />
+                      </p>
                     )}
-                  >
-                    {stripHtml(block.title)}
-                  </h1>
 
-                  {block.tagline && (
-                    <p
+                    {/* Title - exactly matching HomeClient */}
+                    <h1
                       className={cn(
-                        getTaglineSizeClass(block.tagline),
-                        "text-foreground/80 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-xs"
+                        getHeroTitleSizeClass(block.title),
+                        "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
                       )}
                     >
-                      <FormattedText text={block.tagline} />
-                    </p>
-                  )}
+                      <FormattedText text={block.title} />
+                    </h1>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                    {block.primary_cta_label && (
-                      <Link
-                        href={block.primary_cta_href || "#"}
-                        onClick={(e) => handleAnchorClickInternal(e, block.primary_cta_href)}
-                        target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
-                        rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105 flex items-center justify-center gap-2"
-                      >
-                        <Ticket size={18} />
-                        <span>{block.primary_cta_label}</span>
-                      </Link>
+                    {/* Tagline / Subtitle - exactly matching HomeClient font, più in grande */}
+                    {block.tagline && (
+                      <p className="mt-3 md:mt-4 text-base sm:text-xl md:text-2xl font-medium text-primary tracking-normal italic max-w-3xl text-center drop-shadow-sm text-balance break-words whitespace-pre-line leading-relaxed">
+                        <FormattedText text={block.tagline} />
+                      </p>
                     )}
 
-                    {block.secondary_cta_label && (
-                      <Link
-                        href={block.secondary_cta_href || "#"}
-                        onClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
-                        className="w-full sm:w-auto px-8 py-4 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/15 font-bold text-sm uppercase tracking-wider transition-all hover:scale-105 flex items-center justify-center gap-2"
-                      >
-                        <span>{block.secondary_cta_label}</span>
-                        <ChevronDown size={16} className="text-foreground/60" />
-                      </Link>
+                    {/* Buttons / Actions Area - matching HomeClient 1:1 */}
+                    {(block.primary_cta_label || block.secondary_cta_label) && (
+                      <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
+                        {block.primary_cta_label && (
+                          <Link
+                            href={block.primary_cta_href || "#"}
+                            onClick={(e) => handleAnchorClickInternal(e, block.primary_cta_href)}
+                            target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
+                            rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
+                            className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                          >
+                            <span>{block.primary_cta_label}</span>
+                            <ArrowRight size={18} className="ml-2" />
+                          </Link>
+                        )}
+
+                        {block.secondary_cta_label && (
+                          <Link
+                            href={block.secondary_cta_href || "#"}
+                            onClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
+                            className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
+                          >
+                            <span>{block.secondary_cta_label}</span>
+                          </Link>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -399,10 +402,8 @@ export function PageBlockRenderer({
                   description={block.subtitle}
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
-                  backHref="/"
-                  backLabel={defaults.back_to_site || "Torna al sito"}
-                  legalHref="/Termini"
-                  legalLabel={defaults.eventfrog_terms_link || "Termini di Biglietteria"}
+                  showNavigation={false}
+                  className="min-h-0 py-12 sm:py-16"
                   iframeTitle={block.title || "Biglietti Eventfrog"}
                   fallbackButtonLabel={block.fallback_label || defaults.eventfrog_fallback_button || "Apri su Eventfrog"}
                   onDirectClick={() => trackInitiateCheckout(pageTitle, embedUrl)}
@@ -440,10 +441,8 @@ export function PageBlockRenderer({
                   description={block.subtitle}
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
-                  backHref="/"
-                  backLabel={defaults.back_to_site || "Torna al sito"}
-                  legalHref="/Privacy"
-                  legalLabel={defaults.tally_privacy_link || "Informativa Privacy"}
+                  showNavigation={false}
+                  className="min-h-0 py-12 sm:py-16"
                   iframeTitle={block.title || "Modulo Tally"}
                   fallbackButtonLabel={block.fallback_label || defaults.tally_fallback_button || "Apri su Tally"}
                   dataTallySrc={embedUrl}
@@ -621,26 +620,38 @@ export function PageBlockRenderer({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {reviews.map((rev: any, rIdx: number) => (
-                      <div
-                        key={rIdx}
-                        className="p-8 rounded-[2rem] bg-muted/15 border border-foreground/5 space-y-4 flex flex-col justify-between hover:border-foreground/15 transition-colors glass"
-                      >
-                        <div className="flex gap-1 text-accent mb-2">
-                          {[...Array(rev.rating || 5)].map((_, s) => (
-                            <Star key={s} size={16} fill="currentColor" />
-                          ))}
-                        </div>
+                    {reviews.map((rev: any, rIdx: number) => {
+                      const rating = typeof rev.rating === "number"
+                        ? rev.rating
+                        : (typeof rev.rating === "string" && rev.rating.trim() !== ""
+                          ? Number(rev.rating)
+                          : (rev.stars !== undefined ? Number(rev.stars) : 5));
+                      const showStars = !isNaN(rating) && rating > 0;
+                      const starCount = Math.min(5, Math.max(1, rating));
 
-                        <p className="italic font-serif text-lg text-foreground/85 leading-snug">
-                          &ldquo;<FormattedText text={rev.quote} />&rdquo;
-                        </p>
+                      return (
+                        <div
+                          key={rIdx}
+                          className="p-8 rounded-[2rem] bg-muted/15 border border-foreground/5 space-y-4 flex flex-col justify-between hover:border-foreground/15 transition-colors glass"
+                        >
+                          {showStars && (
+                            <div className="flex gap-1 text-accent mb-2">
+                              {[...Array(starCount)].map((_, s) => (
+                                <Star key={s} size={16} fill="currentColor" />
+                              ))}
+                            </div>
+                          )}
 
-                        <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
-                          {stripHtml(rev.author)}
+                          <p className="italic font-serif text-lg text-foreground/85 leading-snug">
+                            &ldquo;<FormattedText text={rev.quote} />&rdquo;
+                          </p>
+
+                          <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
+                            {stripHtml(rev.author)}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </section>

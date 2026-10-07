@@ -18,10 +18,11 @@ export interface EmbeddedFrameViewProps {
   description?: string;
   embedUrl: string;
   directUrl?: string;
-  backHref?: string;
+  backHref?: string | null;
   backLabel?: string;
-  legalHref?: string;
+  legalHref?: string | null;
   legalLabel?: string;
+  showNavigation?: boolean;
   iframeTitle?: string;
   minHeightClass?: string;
   frameContainerClassName?: string;
@@ -50,6 +51,7 @@ export function EmbeddedFrameView({
   backLabel = "Torna al sito",
   legalHref = "/Termini",
   legalLabel = "Termini & Condizioni",
+  showNavigation = true,
   iframeTitle = "Modulo interattivo",
   minHeightClass = "min-h-[680px] sm:min-h-[760px]",
   frameContainerClassName = "bg-white",
@@ -61,10 +63,7 @@ export function EmbeddedFrameView({
   notConfiguredDescription = "La pagina non è al momento collegata a un servizio attivo.",
   fallbackNotice = "Problemi di visualizzazione con il modulo integrato?",
   fallbackButtonLabel = "Apri in una nuova scheda",
-  trustBadges = [
-    { icon: ShieldCheck, text: "Connessione sicura e protetta con crittografia SSL" },
-    { icon: Lock, text: "Privacy garantita ai sensi della legge svizzera nLPD" }
-  ],
+  trustBadges,
   onDirectClick,
   className,
   children
@@ -76,24 +75,30 @@ export function EmbeddedFrameView({
     <div className={cn("min-h-screen py-8 sm:py-10 px-4 sm:px-6", className)}>
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         {/* Navigation Bar */}
-        <div className="flex items-center justify-between">
-          <Link
-            href={backHref || "/"}
-            className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>{backLabel}</span>
-          </Link>
+        {showNavigation && (backHref || legalHref) ? (
+          <div className="flex items-center justify-between">
+            {backHref ? (
+              <Link
+                href={backHref}
+                className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
+              >
+                <ArrowLeft size={16} />
+                <span>{backLabel}</span>
+              </Link>
+            ) : (
+              <div />
+            )}
 
-          {legalHref && (
-            <Link
-              href={legalHref}
-              className="text-xs text-foreground/40 hover:text-foreground font-medium underline transition-colors"
-            >
-              {legalLabel}
-            </Link>
-          )}
-        </div>
+            {legalHref ? (
+              <Link
+                href={legalHref}
+                className="text-xs text-foreground/40 hover:text-foreground font-medium underline transition-colors"
+              >
+                {legalLabel}
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
 
         {/* Page Summary Header Card */}
         <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-3 glass">

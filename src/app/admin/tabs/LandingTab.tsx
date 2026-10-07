@@ -1315,12 +1315,14 @@ export function LandingTab({
                                               }}
                                             />
                                             <FormField
-                                              label="Stelle (1-5)"
+                                              label="Stelle (0-5, 0 = nessuna)"
                                               type="number"
-                                              value={rev.rating || 5}
+                                              value={rev.rating !== undefined ? rev.rating : 5}
+                                              placeholder="0 per nascondere"
                                               onChange={(v) => {
                                                 const updated = [...block.items];
-                                                updated[rIdx] = { ...updated[rIdx], rating: Number(v) };
+                                                const num = v === "" ? 0 : Number(v);
+                                                updated[rIdx] = { ...updated[rIdx], rating: isNaN(num) ? 0 : num };
                                                 updateBlock(actualIdx, bIdx, "items", updated);
                                               }}
                                             />
