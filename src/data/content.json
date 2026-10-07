@@ -103,7 +103,7 @@
       },
       "upcoming_shows": [
         {
-          "active": true,
+          "active": false,
           "title": "Non Sottovalutare i 40",
           "presenter": "La Biennale Svizzera di Teatro Amatoriale presenta",
           "tagline": "40, un numero importante...",
@@ -123,7 +123,7 @@
           "tagline": "Nel passo lento della meraviglia",
           "date": "Mensilmente, dal 3 ottobre",
           "location": "Balberstrasse 47, Zurich (Wollishofen)",
-          "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A",
+          "location_href": "/Location/sala-wollishofen",
           "cta": "Info & Prenotazioni",
           "cta_href": "/Iniziative/cineforum",
           "secondary_cta": "Offerta Libera",
@@ -1022,38 +1022,38 @@
           "dates": [
             {
               "date": "Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Registrati",
               "ticket_href": "/Registrazioni/14-11-26",
-              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
+              "location_href": "/Location/sala-wollishofen"
             },
             {
               "date": "I vitelloni - 16 Gennaio 2027, ore 18:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Registrati",
               "ticket_href": "/Registrazioni/16-01-27",
-              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
+              "location_href": "/Location/sala-wollishofen"
             },
             {
               "date": "Pane e tulipani - 20 Febbraio 2027, ore 18:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Registrati",
               "ticket_href": "/Registrazioni/20-02-27",
-              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
+              "location_href": "/Location/sala-wollishofen"
             },
             {
               "date": "Una storia vera - 20 Marzo 2027, ore 18:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Registrati",
               "ticket_href": "/Registrazioni/20-03-27",
-              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
+              "location_href": "/Location/sala-wollishofen"
             },
             {
               "date": "Tempi Moderni - 03 ottobre 2026, ore 18:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "",
               "ticket_href": "",
-              "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A"
+              "location_href": "/Location/sala-wollishofen"
             }
           ],
           "details": [
@@ -1470,7 +1470,7 @@
       "id": "landing-1790870877640",
       "slug": "non-sottovalutare-i-40",
       "title": "Non Sottovalutare i 40",
-      "active": true,
+      "active": false,
       "theme_color": "primary",
       "header": {
         "logo_text": "Gli Attomatti",
@@ -1587,11 +1587,11 @@
         "cta_label": "Prenota",
         "cta_href": "#registrazione",
         "nav_links": [],
-        "subtitle": "CInema a zurigo",
+        "subtitle": "Cinema a zurigo",
         "logo_image": ""
       },
       "sticky_bar": {
-        "enabled": true,
+        "enabled": false,
         "text": "Cineforum",
         "cta_label": "Prenota",
         "cta_href": "#registrazione"
@@ -1603,9 +1603,9 @@
           "anchor": "hero",
           "badge": "UNITRE & Gli Attomatti presentano",
           "title": "Cineforum",
-          "tagline": "Nel passo lento della meraviglia: cinque appuntamenti cinematografici d'autore a Zurigo per rallentare il ritmo, riflettere sul tempo e ritrovare la magia della visione condivisa.",
+          "tagline": "Nel passo lento della meraviglia \nUn invito a rallentare e ad abitare il tempo del cinema",
           "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-          "primary_cta_label": "Riserva il tuo Posto",
+          "primary_cta_label": "Prenota",
           "primary_cta_href": "#registrazione",
           "secondary_cta_label": "Guarda il Programma",
           "secondary_cta_href": "#programma",
@@ -1615,16 +1615,16 @@
           "id": "b-cineforum-synopsis",
           "type": "synopsis",
           "anchor": "sinossi",
-          "title": "Il Tempo Ritrovato sul Grande Schermo",
-          "text": "\"Nel passo lento della meraviglia\" è un invito speciale a rallentare il ritmo frenetico della quotidianità per tornare ad abitare il tempo magico del cinema. Organizzata in collaborazione tra UNITRE Zurigo e la compagnia Gli Attomatti, la rassegna esplora il tema del tempo attraverso cinque sguardi unici della cinematografia mondiale.\n\nDall'umorismo poetico di Chaplin e Tati, alla malinconia sognatrice di Fellini, fino alla libertà ritrovata di Soldini e al viaggio toccante di David Lynch: ogni film è una finestra su ciò che conta davvero, arricchita da un momento di scambio e dibattito conviviale in sala.",
-          "quote": "Non abbiamo poco tempo, ma ne perdiamo molto. Il cinema d'autore è l'arte di fermare quell'attimo.",
-          "quote_author": "Domenico Scotti di Carlo"
+          "title": "Nel passo lento della meraviglia ",
+          "text": "Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.\n\nIl titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.\n\nEntrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.",
+          "quote": "Produciamo più velocemente e quindi abbiamo più tempo. Ma ne siamo proprio sicuri?",
+          "quote_author": "Rosaria Carpio, UNITRE"
         },
         {
           "id": "b-cineforum-programma",
           "type": "faq",
           "anchor": "programma",
-          "title": "I 5 Capolavori in Programmazione",
+          "title": "I 5 Film in Programmazione",
           "items": [
             {
               "question": "\"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 Novembre 2026, ore 18:00",
@@ -1652,13 +1652,13 @@
           "id": "b-cineforum-details",
           "type": "event_details",
           "anchor": "dettagli",
-          "title": "Informazioni",
-          "info_badge": "",
-          "date": "5 Sabati • Ore 18:00 – 20:00 (Ottobre 2026 – Marzo 2027)",
-          "location": "ABZ Saal, Balberstrasse 47, Zurigo (Wollishofen)",
-          "location_href": "https://maps.app.goo.gl/gbxptrmsbxe1VSp4A",
+          "title": "Prossimo appuntamento",
+          "info_badge": "Prenotazione obbligatoria",
+          "date": "Sabato 14 novembre, ore 18:00",
+          "location": "Balberstrasse 47, 8038 Zürich",
+          "location_href": "/Location/sala-wollishofen",
           "price": "Offerta Libera",
-          "cta_label": "Riserva il tuo Posto",
+          "cta_label": "Prenota",
           "cta_href": "#registrazione"
         },
         {
@@ -1676,44 +1676,21 @@
           ]
         },
         {
-          "id": "b-cineforum-reviews",
-          "type": "reviews",
-          "anchor": "recensioni",
-          "title": "L'Esperienza del Cineforum",
-          "items": [
-            {
-              "quote": "Il valore più grande di questa rassegna è la possibilità di ritrovare la comunità italiana a Zurigo attorno a opere che lasciano un segno profondo.",
-              "author": "UNITRE Zurigo",
-              "rating": 0
-            },
-            {
-              "quote": "Cinque pietre miliari della storia del cinema mondiale proposte non solo per essere guardate, ma per essere vissute e discusse insieme.",
-              "author": "Gli Attomatti",
-              "rating": 0
-            },
-            {
-              "quote": "Un format intimo, caloroso e accessibile a tutti con offerta libera nella splendida sala ABZ Saal di Wollishofen.",
-              "author": "Pubblico & Partecipanti",
-              "rating": 5
-            }
-          ]
-        },
-        {
           "id": "b-1791100510424",
           "type": "gallery",
-          "title": "",
+          "title": "Alcune immagini del primo appuntamento",
           "images": [
             {
               "url": "/images/1791099916565-cwdb-P00_7892.webp",
-              "alt": "cwdb P00 7892"
+              "alt": "Momento di discussione e confronto dopo il film"
             },
             {
               "url": "/images/1791099912910-ha2u-P00_7908.webp",
-              "alt": "ha2u P00 7908"
+              "alt": "Pubblico in sala durante la proiezione del primo appuntamento"
             },
             {
               "url": "/images/1791099914761-g1g0-P00_7889_01.webp",
-              "alt": "g1g0 P00 7889 01"
+              "alt": "Momento di discussione e confronto dopo il film"
             }
           ]
         },
@@ -1725,7 +1702,7 @@
           "items": [
             {
               "question": "Come funziona l'ingresso a offerta libera?",
-              "answer": "L'evento è aperto a tutti gli appassionati con ingresso a offerta libera per supportare l'organizzazione e la sala. Per gli iscritti a UNITRE Zurigo, la partecipazione a tutti e cinque gli incontri è già interamente compresa nella quota sociale annuale."
+              "answer": "L'evento è aperto a tutti gli appassionati con ingresso a offerta libera per supportare l'organizzazione e la sala. Per gli iscritti a UNITRE Zurigo, la partecipazione a tutti e cinque gli incontri è già interamente compresa nella quota sociale annuale. In ogni caso, è necessaria la prenotazione."
             },
             {
               "question": "Perché è richiesta la prenotazione?",
@@ -1741,7 +1718,7 @@
             },
             {
               "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
-              "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen ad una decina di minuti a piedi."
+              "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Indicazioni precise possono essere trovate [qui](/Location/sala-wollishofen)"
             }
           ]
         },
@@ -1749,18 +1726,18 @@
           "id": "b-1791027853708",
           "type": "tally",
           "title": "Registrati per il prossimo appuntamento",
-          "subtitle": "Attenzione: non siamo in grado al momento di inviare una email di conferma.",
+          "subtitle": "",
           "tally_url": "https://tally.so/r/Eky7ON",
           "fallback_label": "Apri il modulo",
-          "show_privacy_note": false,
+          "show_privacy_note": true,
           "anchor": "registrazione"
         },
         {
           "id": "b-1791027943995",
           "type": "closing_cta",
-          "title": "Vuoi registrarti alle altre serate?",
-          "text": "",
-          "cta_label": "Registrati",
+          "title": "Vuoi scoprire le altre serate?",
+          "text": "Unisciti a noi per i prossimi appuntamenti. Puoi già registrarti oggi!",
+          "cta_label": "Scopri di più",
           "cta_href": "/Iniziative/cineforum"
         }
       ],
@@ -2003,7 +1980,7 @@
       "event_details_title": "Data e Informazioni",
       "date_time_label": "Data & Ora",
       "location_label": "Luogo",
-      "google_maps_label": "Apri su Google Maps",
+      "google_maps_label": "Indicazioni",
       "ticket_label": "Biglietto",
       "synopsis_title": "La Trama",
       "synopsis_image_alt": "Foto spettacolo",
