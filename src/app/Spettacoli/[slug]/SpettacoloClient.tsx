@@ -47,7 +47,7 @@ export default function SpettacoloDettaglioClient({
       mainHeading={spettacoli.detail_main_heading || "Lo Spettacolo"}
       text={show.text}
       galleryImages={show.images}
-      datesTitle={spettacoli.detail_dates_title || "Date e Biglietti"}
+      datesTitle={show.dates_title || spettacoli.detail_dates_title || "Date e Biglietti"}
       dates={show.dates}
       detailsTitle={spettacoli.detail_info_title || "Info Spettacolo"}
       details={show.details}
@@ -55,6 +55,16 @@ export default function SpettacoloDettaglioClient({
       photoGuideBadgeLabel={content?.pages?.locations?.photo_guide_badge_label}
       onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
       lightboxUi={content?.ui?.lightbox}
+      mobileCtaLabel={
+        show.detail_cta_tickets_label ||
+        show.cta_tickets_label ||
+        spettacoli.detail_cta_tickets_label
+      }
+      mobileFloatingCtaLabel={
+        show.detail_floating_cta_label ||
+        show.floating_cta_label ||
+        spettacoli.detail_floating_cta_label
+      }
     />
   );
 }

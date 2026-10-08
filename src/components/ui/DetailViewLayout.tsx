@@ -5,6 +5,7 @@ import { Section } from "./Section";
 import { DetailHero } from "./DetailHero";
 import { BentoGallery } from "./BentoGallery";
 import { DetailSidebar, DetailDate, DetailInfoItem } from "./DetailSidebar";
+import { MobileTicketsBubble } from "./MobileTicketsBubble";
 import { Lightbox, LightboxImage } from "./Lightbox";
 import { RichText } from "./RichText";
 import { ImageAlign } from "@/lib/imageAlign";
@@ -30,6 +31,8 @@ export interface DetailViewLayoutProps {
   onTicketClick?: (href: string) => void;
   lightboxUi?: any;
   children?: React.ReactNode;
+  mobileCtaLabel?: string;
+  mobileFloatingCtaLabel?: string;
 }
 
 export function DetailViewLayout({
@@ -49,7 +52,9 @@ export function DetailViewLayout({
   photoGuideBadgeLabel,
   onTicketClick,
   lightboxUi,
-  children
+  children,
+  mobileCtaLabel,
+  mobileFloatingCtaLabel
 }: DetailViewLayoutProps) {
   const [lightbox, setLightbox] = useState<{
     isOpen: boolean;
@@ -65,6 +70,17 @@ export function DetailViewLayout({
     (img) => img && typeof img.url === "string" && img.url.trim().length > 0
   );
 
+  const hasDates = Boolean(dates && dates.length > 0);
+  const effectiveMobileCtaLabel = mobileCtaLabel || (hasDates ? datesTitle : undefined);
+  const effectiveFloatingLabel = mobileFloatingCtaLabel || effectiveMobileCtaLabel;
+
+  const handleScrollToTickets = () => {
+    const el = document.getElementById("biglietti");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header Section */}
@@ -74,6 +90,8 @@ export function DetailViewLayout({
         imageAlign={imageAlign}
         backLink={backLink}
         subtitle={subtitle}
+        mobileCtaLabel={hasDates ? effectiveMobileCtaLabel : undefined}
+        onMobileCtaClick={handleScrollToTickets}
       />
 
       {/* Description, Gallery & Sidebar */}
@@ -98,6 +116,19 @@ export function DetailViewLayout({
 
             {children}
 
+            {/* Mobile Sidebar: positioned after text/children and before photo gallery */}
+            <div id="biglietti" className="block lg:hidden pt-4 pb-2 scroll-mt-28">
+              <DetailSidebar
+                datesTitle={datesTitle}
+                dates={dates}
+                detailsTitle={detailsTitle}
+                details={details}
+                emptyDatesMessage={emptyDatesMessage}
+                photoGuideBadgeLabel={photoGuideBadgeLabel}
+                onTicketClick={onTicketClick}
+              />
+            </div>
+
             {validImages.length > 0 && (
               <BentoGallery
                 images={validImages}
@@ -113,8 +144,8 @@ export function DetailViewLayout({
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-5 xl:col-span-4">
+          {/* Desktop Sidebar: visible only on lg screens and up */}
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-4">
             <DetailSidebar
               datesTitle={datesTitle}
               dates={dates}
@@ -128,6 +159,14 @@ export function DetailViewLayout({
         </div>
       </Section>
 
+      {/* Mobile Floating Bubble while scrolling */}
+      {hasDates && effectiveFloatingLabel && (
+        <MobileTicketsBubble
+          targetId="biglietti"
+          label={effectiveFloatingLabel}
+        />
+      )}
+
       <Lightbox
         images={lightbox.images}
         initialIndex={lightbox.index}
@@ -138,3 +177,4 @@ export function DetailViewLayout({
     </div>
   );
 }
+

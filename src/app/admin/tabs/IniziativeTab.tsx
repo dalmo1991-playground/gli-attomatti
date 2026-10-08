@@ -163,6 +163,20 @@ export function IniziativeTab() {
             type="textarea"
             rows={2}
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <FormField
+              label="Etichetta CTA Mobile in Alto"
+              value={iniz.detail_cta_tickets_label || ""}
+              onChange={(v) => updateContent("pages.iniziative.detail_cta_tickets_label", v)}
+              placeholder="Date e Iscrizioni"
+            />
+            <FormField
+              label="Etichetta Bolla Flottante Mobile"
+              value={iniz.detail_floating_cta_label || ""}
+              onChange={(v) => updateContent("pages.iniziative.detail_floating_cta_label", v)}
+              placeholder="Iscrizioni & Date"
+            />
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -299,6 +313,23 @@ export function IniziativeTab() {
                       >
                         <Plus size={13} /> Aggiungi Data / Sessione
                       </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-background/40 border border-foreground/5 rounded-2xl">
+                      <FormField
+                        label="Personalizza CTA Mobile in Alto"
+                        value={item.detail_cta_tickets_label || ""}
+                        onChange={(v) => updateInitiative(actualIdx, "detail_cta_tickets_label", v)}
+                        placeholder={iniz.detail_cta_tickets_label || "Date e Iscrizioni"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
+                      <FormField
+                        label="Personalizza Bolla Flottante Mobile"
+                        value={item.detail_floating_cta_label || ""}
+                        onChange={(v) => updateInitiative(actualIdx, "detail_floating_cta_label", v)}
+                        placeholder={iniz.detail_floating_cta_label || "Iscrizioni & Date"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
                     </div>
 
                     {(item.dates || []).length === 0 ? (

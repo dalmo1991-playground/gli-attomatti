@@ -51,13 +51,25 @@ export default function IniziativaDettaglioClient({
       mainHeading={detail.initiative_heading || iniziative.detail_main_heading || "L'Iniziativa"}
       text={initiative.text}
       galleryImages={initiative.images}
-      datesTitle={detail.dates_title || iniziative.detail_dates_title || "Date e Iscrizioni"}
+      datesTitle={initiative.dates_title || detail.dates_title || iniziative.detail_dates_title || "Date e Iscrizioni"}
       dates={initiative.dates}
       detailsTitle={detail.details_title || iniziative.detail_info_title || "Info Iniziativa"}
       details={initiative.details}
       emptyDatesMessage={detail.empty_dates || iniziative.detail_empty_dates_message || "Nessun calendario al momento programmato."}
       photoGuideBadgeLabel={content?.pages?.locations?.photo_guide_badge_label}
       lightboxUi={content?.ui?.lightbox}
+      mobileCtaLabel={
+        initiative.detail_cta_tickets_label ||
+        initiative.cta_tickets_label ||
+        detail.cta_tickets_label ||
+        iniziative.detail_cta_tickets_label
+      }
+      mobileFloatingCtaLabel={
+        initiative.detail_floating_cta_label ||
+        initiative.floating_cta_label ||
+        detail.floating_cta_label ||
+        iniziative.detail_floating_cta_label
+      }
     />
   );
 }

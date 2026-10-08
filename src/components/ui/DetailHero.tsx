@@ -10,6 +10,8 @@ import { getPageHeroTitleSizeClass } from "@/lib/typography";
 import { getImagePositionClass, getImageObjectPositionStyle, ImageAlign } from "@/lib/imageAlign";
 import { getSafeImageProps } from "@/lib/youtube";
 
+import { Ticket, ArrowDown } from "lucide-react";
+
 interface DetailHeroProps {
   title: string;
   heroImage?: string;
@@ -20,6 +22,8 @@ interface DetailHeroProps {
   };
   subtitle?: string;
   className?: string;
+  mobileCtaLabel?: string;
+  onMobileCtaClick?: () => void;
 }
 
 export function DetailHero({
@@ -28,7 +32,9 @@ export function DetailHero({
   imageAlign = "center",
   backLink,
   subtitle,
-  className
+  className,
+  mobileCtaLabel,
+  onMobileCtaClick
 }: DetailHeroProps) {
   const hasImage = Boolean(heroImage?.trim());
   const { src: displayHeroSrc, unoptimized: isHeroUnoptimized } = getSafeImageProps(heroImage);
@@ -88,6 +94,20 @@ export function DetailHero({
           <p className="text-xl sm:text-2xl text-foreground/60 font-bold uppercase tracking-[0.3em]">
             {subtitle}
           </p>
+        )}
+
+        {mobileCtaLabel && onMobileCtaClick && (
+          <div className="mt-8 lg:hidden">
+            <button
+              type="button"
+              onClick={onMobileCtaClick}
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider shadow-lg shadow-primary/30 hover:bg-primary/90 active:scale-95 transition-all cursor-pointer"
+            >
+              <Ticket size={16} className="shrink-0 text-accent" />
+              <span>{mobileCtaLabel}</span>
+              <ArrowDown size={14} className="shrink-0 animate-bounce" />
+            </button>
+          </div>
         )}
       </div>
     </Section>

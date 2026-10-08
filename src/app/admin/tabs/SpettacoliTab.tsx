@@ -163,6 +163,20 @@ export function SpettacoliTab() {
             type="textarea"
             rows={2}
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <FormField
+              label="Etichetta CTA Mobile in Alto"
+              value={spet.detail_cta_tickets_label || ""}
+              onChange={(v) => updateContent("pages.spettacoli.detail_cta_tickets_label", v)}
+              placeholder="Date e Biglietti"
+            />
+            <FormField
+              label="Etichetta Bolla Flottante Mobile"
+              value={spet.detail_floating_cta_label || ""}
+              onChange={(v) => updateContent("pages.spettacoli.detail_floating_cta_label", v)}
+              placeholder="Biglietti & Date"
+            />
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -302,6 +316,23 @@ export function SpettacoliTab() {
                       >
                         <Plus size={13} /> Aggiungi Replica
                       </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-background/40 border border-foreground/5 rounded-2xl">
+                      <FormField
+                        label="Personalizza CTA Mobile in Alto"
+                        value={show.detail_cta_tickets_label || ""}
+                        onChange={(v) => updateShow(actualIdx, "detail_cta_tickets_label", v)}
+                        placeholder={spet.detail_cta_tickets_label || "Date e Biglietti"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
+                      <FormField
+                        label="Personalizza Bolla Flottante Mobile"
+                        value={show.detail_floating_cta_label || ""}
+                        onChange={(v) => updateShow(actualIdx, "detail_floating_cta_label", v)}
+                        placeholder={spet.detail_floating_cta_label || "Biglietti & Date"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
                     </div>
 
                     {/* How tickets work helper box */}
