@@ -70,10 +70,10 @@
                 {
                     "active": true,
                     "title": "Cineforum",
-                    "presenter": "Gli Attomatti ed UniTre Presentano",
+                    "presenter": "Gli Attomatti e UNITRE presentano",
                     "tagline": "Nel passo lento della meraviglia",
                     "date": "Mensilmente, dal 3 ottobre",
-                    "location": "Balberstrasse 47, Zurich (Wollishofen)",
+                    "location": "Balberstrasse 47, Zurigo (Wollishofen)",
                     "location_href": "/Location/sala-wollishofen",
                     "cta": "Info & Prenotazioni",
                     "cta_href": "/Iniziative/cineforum",
@@ -85,7 +85,7 @@
             ],
             "introduction": {
                 "title": "Gli Attomatti",
-                "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e la voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione.",
+                "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e hanno voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione.",
                 "story_button_label": null,
                 "story_button_href": null,
                 "fallback_alt": null,
@@ -156,7 +156,7 @@
             "title": "Chi Siamo",
             "description": "La compagnia teatrale Gli Attomatti di Zurigo.",
             "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
-            "meta_description": "La storia, la missione e la passione di Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
+            "meta_description": "La storia, la missione e la passione della compagnia Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
             "keywords": [
                 "chi siamo teatro zurigo",
                 "compagnia teatrale italiana zurigo",
@@ -215,7 +215,7 @@
         },
         "parlano_di_noi": {
             "title": "Dicono di Noi",
-            "description": "Gli attomatti nella stampa",
+            "description": "Gli Attomatti sulla stampa",
             "meta_title": "Dicono di Noi — Recensioni & Rassegna Stampa",
             "meta_description": "Articoli, recensioni, opinioni del pubblico e rassegna stampa sugli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
             "keywords": [
@@ -231,17 +231,17 @@
                 {
                     "source": "RSI",
                     "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
-                    "quote": "Servizio della RSI sul corso di teatro a guida Attomatti dedicato a Dario Fo, nel centenario della sua nascita\n",
+                    "quote": "Servizio della RSI sul corso di teatro condotto dagli Attomatti e dedicato a Dario Fo, nel centenario della sua nascita.",
                     "date": "2026",
                     "badge_label": "Servizi TV",
                     "visible": true
                 },
                 {
                     "source": "laRegione.ch",
-                    "quote": "Articolo sulla Federazione filodrammatiche della Svizzera italiana di cui gli Attomatti fanno parte dal 2026",
+                    "quote": "Articolo sulla Federazione Filodrammatiche della Svizzera italiana di cui gli Attomatti fanno parte dal 2026.",
                     "date": "2026",
                     "source_href": "https://www.laregione.ch/ticino7/ticino7/1935465/compagnie-teatro-amatoriale-ffsi-responsabile-camponovo-quinte",
-                    "badge_label": "Articolo di Giornale"
+                    "badge_label": "Articolo di giornale"
                 }
             ],
             "press_contact": {
@@ -327,7 +327,7 @@
                     "slug": "cineforum",
                     "year": "2026-27",
                     "short_description": "\"Nel passo lento della meraviglia\" è un invito a rallentare il passo e ad abitare il tempo del cinema. Cinque incontri, cinque sguardi sul tempo.",
-                    "text": "<p><b>Nel passo lento della meraviglia</b> - <i>Un invito a rallentare il passo e ad abitare il tempo del cinema</i></p><p>Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.</p><p>Il titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.</p><p>Il programma attraversa quasi un secolo di sguardi sul tempo: dalla catena di montaggio di <b>Tempi moderni </b>di Charlie Chaplin alla villeggiatura sospesa di<b> Le vacanze di Monsieur Hulot </b>di Jacques Tati, dall'inerzia giovanile de <b>I vitelloni</b> di Federico Fellini alla fuga inattesa di <b>Pane e tulipani</b> di Silvio Soldini, fino al lunghissimo viaggio in tosaerba di <b>Una storia vera</b> di David Lynch. Cinque storie diverse, accomunate da una domanda: che cosa accade quando ci concediamo di rallentare?</p><p>Entrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.</p><p>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria tramite il modulo di registrazione presente in questa pagina. Per gli iscritti UNITRE l'ingresso è compreso nella quota associativa.</p><p><b>Nota: i titoli in programma potrebbero cambiare</b>. Sarà nostra cura aggiornare prontamente questa pagina.</p>",
+                    "text": "<p><b>Nel passo lento della meraviglia</b> - <i>Un invito a rallentare il passo e ad abitare il tempo del cinema</i></p><p>Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.</p><p>Il titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.</p><p>Il programma attraversa quasi un secolo di sguardi sul tempo: dalla catena di montaggio di <b>Tempi moderni</b> di Charlie Chaplin alla villeggiatura sospesa di <b>Le vacanze di Monsieur Hulot</b> di Jacques Tati, dall'inerzia giovanile de <b>I vitelloni</b> di Federico Fellini alla fuga inattesa di <b>Pane e tulipani</b> di Silvio Soldini, fino al lunghissimo viaggio a bordo di un tosaerba di <b>Una storia vera</b> di David Lynch. Cinque storie diverse, accomunate da una domanda: che cosa accade quando ci concediamo di rallentare?</p><p>Entrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.</p><p>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria tramite il modulo di registrazione presente in questa pagina. Per gli iscritti UNITRE l'ingresso è compreso nella quota associativa.</p><p><b>Nota: i titoli in programma potrebbero cambiare</b>. Sarà nostra cura aggiornare prontamente questa pagina.</p>",
                     "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
                     "detail_cta_tickets_label": "Gli Appuntamenti",
                     "detail_floating_cta_label": "Gli Appuntamenti",
@@ -340,28 +340,28 @@
                             "location_href": "/Location/sala-wollishofen"
                         },
                         {
-                            "date": "I vitelloni - 16 Gennaio 2027, ore 18:00",
+                            "date": "I vitelloni - 16 gennaio 2027, ore 18:00",
                             "location": "Balberstrasse 47, 8038 Zürich",
                             "ticket_label": "Registrati",
                             "ticket_href": "/Registrazioni/16-01-27",
                             "location_href": "/Location/sala-wollishofen"
                         },
                         {
-                            "date": "Pane e tulipani - 20 Febbraio 2027, ore 18:00",
+                            "date": "Pane e tulipani - 20 febbraio 2027, ore 18:00",
                             "location": "Balberstrasse 47, 8038 Zürich",
                             "ticket_label": "Registrati",
                             "ticket_href": "/Registrazioni/20-02-27",
                             "location_href": "/Location/sala-wollishofen"
                         },
                         {
-                            "date": "Una storia vera - 20 Marzo 2027, ore 18:00",
+                            "date": "Una storia vera - 20 marzo 2027, ore 18:00",
                             "location": "Balberstrasse 47, 8038 Zürich",
                             "ticket_label": "Registrati",
                             "ticket_href": "/Registrazioni/20-03-27",
                             "location_href": "/Location/sala-wollishofen"
                         },
                         {
-                            "date": "Tempi Moderni - 03 ottobre 2026, ore 18:00",
+                            "date": "Tempi moderni - 3 ottobre 2026, ore 18:00",
                             "location": "Balberstrasse 47, 8038 Zürich",
                             "ticket_label": "",
                             "ticket_href": "",
@@ -374,7 +374,7 @@
                             "value": "+41 78 942 39 93"
                         },
                         {
-                            "label": "UniTre",
+                            "label": "UNITRE",
                             "value": "+41 76 639 09 52"
                         },
                         {
@@ -542,7 +542,7 @@
                     "notice_box": {
                         "title": "Preferisci non comparire? Basta dircelo!",
                         "paragraphs": [
-                            "Rispettiamo pienamente la riservatezza e le preferenze di ciascun spettatore e partecipante: se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all'ingresso o in qualsiasi momento durante la serata. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.",
+                            "Rispettiamo pienamente la riservatezza e le preferenze di ciascuno spettatore e partecipante: se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all'ingresso o in qualsiasi momento durante la serata. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.",
                             "Inoltre, se in seguito dovessi notare una tua immagine in una foto o in un video già pubblicato e desiderassi la rimozione o l'oscuramento, puoi richiederlo in qualsiasi momento scrivendoci a compagniateatralegliattomatti@gmail.com: provvederemo con la massima tempestività."
                         ]
                     }
@@ -647,7 +647,7 @@
                 "paragraphs": [
                     "Sul sito è integrato lo strumento di analisi web Google Analytics 4, gestito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
                     "In conformità alla Google Consent Mode v2, Google Analytics è configurato per rimanere completamente bloccato finché non viene prestato il consenso analitico. L'indirizzo IP del visitatore viene anonimizzato prima della registrazione.",
-                    "I dati raccolti possono essere elaborati su server situati negli Stati Uniti sulla base del Swiss-US Data Privacy Framework. Puoi revocare il consenso in qualsiasi momento tramite il nostro gestore delle preferenze."
+                    "I dati raccolti possono essere elaborati su server situati negli Stati Uniti sulla base dello Swiss-US Data Privacy Framework. Puoi revocare il consenso in qualsiasi momento tramite il nostro gestore delle preferenze."
                 ]
             },
             "meta_pixel": {
@@ -735,7 +735,7 @@
             "hub_title": "Teatri & Location",
             "hub_description": "Indicazioni pratiche e fotografiche per raggiungere i teatri, le sale prove e le location degli eventi teatrali a Zurigo.",
             "hub_badge_default": "Location Teatrale",
-            "hub_steps_suffix": "passaggi fotografici",
+            "hub_steps_suffix": "tappe fotografiche",
             "hub_view_directions_label": "Vedi Indicazioni",
             "hub_empty_title": "Nessuna location configurata",
             "hub_empty_description": "Non sono al momento presenti guide fotografiche attive.",
@@ -745,11 +745,11 @@
             "transport_tram_title": "Trasporto pubblico",
             "lines_prefix": "Linee:",
             "steps_heading": "Come Arrivare Passo-Passo",
-            "step_single_label": "Passaggio",
-            "step_plural_label": "Passaggi",
+            "step_single_label": "Tappa",
+            "step_plural_label": "Tappe",
             "click_to_enlarge_label": "🔍 Clicca per ingrandire",
             "photo_prefix": "📷",
-            "image_alt_fallback": "Foto passaggio",
+            "image_alt_fallback": "Foto tappa",
             "parking_heading": "Parcheggi & Auto",
             "accessibility_heading": "Accessibilità & Disabilità",
             "notes_heading": "Informazioni Aggiuntive",
@@ -776,7 +776,7 @@
                 "cta_label": "Prenota",
                 "cta_href": "#registrazione",
                 "nav_links": [],
-                "subtitle": "Cinema a zurigo",
+                "subtitle": "Cinema a Zurigo",
                 "logo_image": ""
             },
             "sticky_bar": {
@@ -804,7 +804,7 @@
                     "id": "b-cineforum-synopsis",
                     "type": "synopsis",
                     "anchor": "sinossi",
-                    "title": "Nel passo lento della meraviglia ",
+                    "title": "Nel passo lento della meraviglia",
                     "text": "Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.\n\nIl titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.\n\nEntrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.",
                     "quote": "Produciamo più velocemente e quindi abbiamo più tempo. Ma ne siamo proprio sicuri?",
                     "quote_author": "Rosaria Carpio, UNITRE"
@@ -816,23 +816,23 @@
                     "title": "I 5 Film in Programmazione",
                     "items": [
                         {
-                            "question": "\"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 Novembre 2026, ore 18:00",
+                            "question": "\"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 novembre 2026, ore 18:00",
                             "answer": "Un capolavoro assoluto di comicità visiva e raffinatezza. Il tempo della vacanza al mare si trasforma in una serie esilarante di piccoli equivoci e gesti surreali che rivelano le manie e la poesia dell'animo umano.\n<b>Nota: il titolo potrebbe subire variazioni</b>"
                         },
                         {
-                            "question": "\"I vitelloni\" di Federico Fellini — 16 Gennaio 2027, ore 18:00",
+                            "question": "\"I vitelloni\" di Federico Fellini — 16 gennaio 2027, ore 18:00",
                             "answer": "Il primo grande trionfo internazionale di Fellini. Il ritratto indimenticabile di cinque giovani sognatori nella provincia romagnola, sospesi tra l'ozio delle serate invernali, il desiderio di partire e la paura di crescere."
                         },
                         {
-                            "question": "\"Pane e tulipani\" di Silvio Soldini — 20 Febbraio 2027, ore 18:00",
+                            "question": "\"Pane e tulipani\" di Silvio Soldini — 20 febbraio 2027, ore 18:00",
                             "answer": "Una commedia luminosa e gentile vincitrice di 9 David di Donatello. Dimenticata in autogrill durante una gita di famiglia, la casalinga Rosalba decide di non tornare a casa e inventarsi una nuova vita meravigliosa a Venezia."
                         },
                         {
-                            "question": "\"Una storia vera\" (The Straight Story) di David Lynch — 20 Marzo 2027, ore 18:00",
+                            "question": "\"Una storia vera\" (The Straight Story) di David Lynch — 20 marzo 2027, ore 18:00",
                             "answer": "Il commovente viaggio reale dell'anziano Alvin Straight a bordo di un trattorino tosaerba attraverso gli orizzonti dell'Iowa e del Wisconsin per fare pace con il fratello malato. Una meditazione universale sul perdono e sulla lentezza del cammino."
                         },
                         {
-                            "question": "\"Tempi moderni\" di Charlie Chaplin — 3 Ottobre 2026, ore 18:00",
+                            "question": "\"Tempi moderni\" di Charlie Chaplin — 3 ottobre 2026, ore 18:00",
                             "answer": "La satira più celebre e profonda sull'alienazione dei ritmi frenetici moderni. Charlot alle prese con gli ingranaggi della fabbrica in un inno imperituro alla dignità, alla tenerezza e alla risata liberatoria. Apertura ufficiale della rassegna."
                         }
                     ]
@@ -899,7 +899,7 @@
                         },
                         {
                             "question": "Posso partecipare solo a singole date?",
-                            "answer": "Assolutamente sì. Puoi scegliere di seguire l'intero percorso o iscriverti ai singoli titoli che ti incuriosiscono di più. Per favore iscriviti ad ogni singola serata - il modulo di registrazione è già disponibile."
+                            "answer": "Assolutamente sì. Puoi scegliere di seguire l'intero percorso o iscriverti ai singoli titoli che ti incuriosiscono di più. Ti invitiamo a iscriverti a ogni singola serata: il modulo di registrazione è già disponibile."
                         },
                         {
                             "question": "In che lingua sono proiettati i film?",
@@ -907,11 +907,11 @@
                         },
                         {
                             "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
-                            "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Indicazioni precise possono essere trovate [qui](/Location/sala-wollishofen)"
+                            "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Le indicazioni dettagliate sono disponibili [qui](/Location/sala-wollishofen)."
                         },
                         {
                             "question": "Il programma potrebbe subire variazioni?",
-                            "answer": "Purtroppo si. La proiezione dei film è soggetta alla disponibilità dei diritti d'autore e ad altre questioni tecniche. Per questi motivi, i film in visione nelle date potrebbero variare. Sarà nostra cura aggiornare prontamente questa pagina ed avvisare chi si fosse iscritto prima del cambiamento."
+                            "answer": "Purtroppo sì. La proiezione dei film è soggetta alla disponibilità dei diritti d'autore e ad altre questioni tecniche. Per questi motivi, i film in visione nelle date potrebbero variare. Sarà nostra cura aggiornare prontamente questa pagina e avvisare chi si sia già iscritto prima del cambiamento."
                         }
                     ]
                 },
@@ -951,7 +951,7 @@
     "ticketing_hub": {
         "active": true,
         "title": "Biglietti",
-        "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento",
+        "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento.",
         "buy_ticket_cta": "Acquista Biglietto",
         "details_cta": "Dettagli",
         "empty_title": "Nessuna prevendita aperta",
@@ -975,7 +975,7 @@
     "registration_hub": {
         "active": true,
         "title": "Registrazioni",
-        "description": "Questa pagina raccoglie tutte le registrazioni attive al momento",
+        "description": "Questa pagina raccoglie tutte le registrazioni attive al momento.",
         "register_online_cta": "Iscriviti Online",
         "info_cta": "Info",
         "empty_title": "Nessuna iscrizione aperta",
@@ -1009,7 +1009,7 @@
         },
         {
             "id": "reg-1790954967375",
-            "title": " I vitelloni ",
+            "title": "I vitelloni",
             "slug": "16-01-27",
             "category": "Cineforum",
             "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
@@ -1137,7 +1137,7 @@
             "badge": "Ambiente di Sviluppo",
             "title": "Gli Attomatti",
             "description": "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:",
-            "live_site_cta": "Vai al sito vero (gliattomatti.ch)",
+            "live_site_cta": "Vai al sito ufficiale (gliattomatti.ch)",
             "divider_label": "Accesso Team & Anteprima",
             "form_prompt": "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:",
             "placeholder": "Inserisci password...",
@@ -1285,7 +1285,7 @@
                     {
                         "id": "block-header",
                         "type": "header",
-                        "brand_name": "GLI ATTOMATTI & Unitre",
+                        "brand_name": "GLI ATTOMATTI & UNITRE",
                         "tagline": "",
                         "align": "center"
                     },
@@ -1323,7 +1323,7 @@
                         "title": "Cineforum - {{event_title}}",
                         "start_date": "{{event_date}}",
                         "end_date": "",
-                        "location": "Balberstrasse 47, Zurich (Wollishofen)",
+                        "location": "Balberstrasse 47, Zurigo (Wollishofen)",
                         "description": "",
                         "align": "center"
                     },
