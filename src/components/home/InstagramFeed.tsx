@@ -67,16 +67,19 @@ function InstagramEmbedCard({
   post,
   index,
   globalConsent,
-  onGrantGlobalConsent
+  onGrantGlobalConsent,
+  cardUi
 }: {
   post: InstagramPost;
   index: number;
   globalConsent: boolean;
   onGrantGlobalConsent: () => void;
+  cardUi?: any;
 }) {
   const info = parseInstagramUrl(post.url);
   const [loaded, setLoaded] = useState(false);
   const [singleConsent, setSingleConsent] = useState(false);
+  const card = cardUi || {};
 
   if (!info) return null;
 
@@ -92,13 +95,13 @@ function InstagramEmbedCard({
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold uppercase tracking-wider text-foreground/70">
             <ShieldCheck size={12} className="text-emerald-400" />
-            <span>Protezione Privacy (2-Click)</span>
+            <span>{card.badge}</span>
           </div>
           <h3 className="text-lg font-bold text-foreground">
-            {post.title || "Post Instagram"}
+            {post.title || card.default_title}
           </h3>
           <p className="text-xs text-foreground/60 leading-relaxed max-w-[280px] mx-auto font-medium">
-            Per tutelare la tua privacy, i contenuti esterni di Meta sono bloccati. Cliccando accetti il caricamento dell'incorporamento da Instagram e la trasmissione del tuo indirizzo IP a Meta Platforms Ireland Ltd.
+            {card.privacy_explanation}
           </p>
         </div>
 
@@ -109,7 +112,7 @@ function InstagramEmbedCard({
             className="w-full py-3 px-4 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md active:scale-95"
           >
             <Eye size={15} />
-            <span>Carica questo post</span>
+            <span>{card.load_post_button}</span>
           </button>
 
           <button
@@ -117,12 +120,12 @@ function InstagramEmbedCard({
             onClick={onGrantGlobalConsent}
             className="w-full py-2.5 px-4 rounded-xl bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/80 font-bold text-[11px] tracking-wider transition-all"
           >
-            Mostra tutti i post
+            {card.show_all_button}
           </button>
 
           <div className="pt-2 flex justify-center items-center gap-3 text-[11px] text-foreground/40 font-medium">
             <Link href="/Privacy" className="hover:text-primary transition-colors underline">
-              Informativa Privacy
+              {card.privacy_link}
             </Link>
             <span>•</span>
             <Link
@@ -131,7 +134,7 @@ function InstagramEmbedCard({
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors inline-flex items-center gap-0.5"
             >
-              Apri su Instagram <ArrowUpRight size={11} />
+              {card.open_on_instagram} <ArrowUpRight size={11} />
             </Link>
           </div>
         </div>
@@ -147,7 +150,7 @@ function InstagramEmbedCard({
         <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-slate-400 bg-slate-100 z-0">
           <Loader2 className="w-7 h-7 animate-spin text-primary mb-2 opacity-60" />
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-            Caricamento post...
+            {card.loading_text}
           </span>
         </div>
       )}
@@ -161,7 +164,7 @@ function InstagramEmbedCard({
         scrolling="no"
         allow="encrypted-media"
         onLoad={() => setLoaded(true)}
-        title={post.title || `Post Instagram ${index + 1}`}
+        title={post.title || `${card.default_title || ""} ${index + 1}`.trim()}
         loading="lazy"
         referrerPolicy="strict-origin-when-cross-origin"
       />
@@ -171,13 +174,10 @@ function InstagramEmbedCard({
 
 export function InstagramFeed({ data }: InstagramFeedProps) {
   const enabled = data?.enabled !== false;
-  const title = data?.title || "Seguici su Instagram";
-  const subtitle =
-    data?.subtitle ||
-    "Dietro le quinte, prove e momenti di scena della nostra compagnia";
-  const handle = data?.handle || "@gliattomatti";
+  const title = data?.title || "";
+  const subtitle = data?.subtitle || "";
   const profileUrl = data?.profile_url || "https://www.instagram.com/gliattomatti/";
-  const ctaLabel = data?.cta_label || `Segui ${handle} su Instagram`;
+  const ctaLabel = data?.cta_label || "";
   const rawPosts = data?.posts || [];
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -254,7 +254,7 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4 shadow-sm"
             >
               <InstagramIcon size={14} className="animate-pulse" />
-              <span>Social & Backstage</span>
+              <span>{(data as any)?.badge}</span>
             </motion.div>
 
             <motion.h2
@@ -286,17 +286,17 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
                 onClick={handleGrantGlobalConsent}
                 className="px-4 py-2.5 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white text-xs font-bold transition-all shadow-md active:scale-95"
               >
-                Abilita tutti i post
+                {(data as any)?.enable_all_label}
               </button>
             )}
 
             {validPosts.length > 1 && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => handleScroll(-1)}
                   className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
-                  aria-label="Precedente"
+                  aria-label={(data as any)?.prev_aria}
                 >
                   <ChevronLeft size={22} />
                 </button>
@@ -304,7 +304,7 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
                   type="button"
                   onClick={() => handleScroll(1)}
                   className="w-12 h-12 rounded-full glass border border-foreground/15 text-foreground hover:bg-primary hover:border-primary hover:text-white flex items-center justify-center transition-all shadow-md active:scale-95"
-                  aria-label="Successivo"
+                  aria-label={(data as any)?.next_aria}
                 >
                   <ChevronRight size={22} />
                 </button>
@@ -327,6 +327,7 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
               index={index}
               globalConsent={globalConsent}
               onGrantGlobalConsent={handleGrantGlobalConsent}
+              cardUi={(data as any)?.card}
             />
           ))}
         </div>

@@ -139,7 +139,7 @@ export function AttoriTab() {
                   {/* Photo on left, Details on right */}
                   <div className="flex flex-col md:flex-row gap-6 items-start">
                     {/* Portrait Photo Column */}
-                    <div className="w-full md:w-44 shrink-0">
+                    <div className="w-full sm:w-48 md:w-52 shrink-0">
                       <ImageUploadField
                         label="Foto Ritratto"
                         value={p.image}
@@ -176,7 +176,7 @@ export function AttoriTab() {
                       />
 
                       <FormField
-                        type="textarea"
+                        type="richtext"
                         label="Biografia Estesa"
                         value={p.description || ""}
                         onChange={(v) => updatePerson(originalIdx, "description", v)}

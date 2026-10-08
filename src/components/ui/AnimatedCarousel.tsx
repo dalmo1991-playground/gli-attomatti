@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { getSafeImageProps } from "@/lib/youtube";
 
 interface ImageProps {
 
@@ -68,13 +69,21 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
           className="absolute inset-0"
         >
           <div className="w-full h-full relative">
-            <Image
-              src={images[currentIndex].url}
-              alt={images[currentIndex].alt}
-              fill
-              sizes="(max-width: 768px) 100vw, 80vw"
-              className="object-cover"
-            />
+            {(() => {
+              const { src: carouselSrc, unoptimized: isCarouselUnoptimized } = getSafeImageProps(
+                images[currentIndex]?.url
+              );
+              return (
+                <Image
+                  src={carouselSrc}
+                  alt={images[currentIndex]?.alt || ""}
+                  fill
+                  unoptimized={isCarouselUnoptimized}
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  className="object-cover"
+                />
+              );
+            })()}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-8">
               <p className="text-white text-lg font-medium drop-shadow-md">

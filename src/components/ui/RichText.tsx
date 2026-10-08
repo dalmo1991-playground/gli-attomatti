@@ -3,6 +3,8 @@
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
 
+import { FormattedText } from "./FormattedText";
+
 interface RichTextProps {
   content?: string;
   className?: string;
@@ -23,11 +25,16 @@ function isHtml(str: string): boolean {
 function sanitizeHtml(dirtyHtml: string): string {
   if (!dirtyHtml) return "";
   let clean = dirtyHtml
+    .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
+    .replace(/<\/?(?:source-footnote|sources-carousel-inline|citation-tag)[^>]*>/gi, "")
+    .replace(/\s*data-path-to-node="[^"]*"/gi, "")
+    .replace(/\s*_ng(?:host|content)[^=]*="[^"]*"/gi, "")
+    .replace(/\s*ng-[^=]*="[^"]*"/gi, "")
     .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "")
     .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
 
@@ -43,11 +50,16 @@ export function RichText({
     return null;
   }
 
-  const hasHtml = useMemo(() => isHtml(content), [content]);
+  // Pre-process markdown links [text](url) -> <a href="url">text</a>
+  const processedContent = useMemo(() => {
+    return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  }, [content]);
+
+  const hasHtml = useMemo(() => isHtml(processedContent), [processedContent]);
 
   // If HTML is present, render with safe markup and refined typography
   if (hasHtml) {
-    const cleanHtml = sanitizeHtml(content);
+    const cleanHtml = sanitizeHtml(processedContent);
     return (
       <Component
         className={cn(
@@ -66,10 +78,10 @@ export function RichText({
     );
   }
 
-  // Fallback for legacy plain text: preserve natural paragraph breaks and line breaks
+  // Fallback for plain text: support markdown links, raw URLs, bold, and line breaks
   return (
     <Component className={cn("whitespace-pre-line leading-relaxed", className)}>
-      {content}
+      <FormattedText text={content} />
     </Component>
   );
 }

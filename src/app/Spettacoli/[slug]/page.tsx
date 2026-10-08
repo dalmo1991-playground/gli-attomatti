@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getContent } from "@/lib/data";
 import { createPageMetadata, getTheaterEventJsonLd, getBreadcrumbJsonLd } from "@/lib/seo";
+import { getMediaDisplayUrl } from "@/lib/youtube";
 import { JsonLd } from "@/components/seo/JsonLd";
 import SpettacoloDettaglioClient from "./SpettacoloClient";
 
@@ -28,7 +29,7 @@ export async function generateMetadata({
     title: `${show.title} — Spettacolo Teatrale a Zurigo`,
     description: cleanDescription || `Spettacolo teatrale "${show.title}" (Stagione ${show.year}) della compagnia Gli Attomatti a Zurigo.`,
     path: `/Spettacoli/${slug}`,
-    image: show.hero_image?.trim() || show.images?.[0]?.url,
+    image: getMediaDisplayUrl(show.hero_image?.trim() || show.images?.[0]?.url),
     keywords: [show.title.toLowerCase(), `spettacolo ${show.title.toLowerCase()}`, "teatro zurigo", "commedia"]
   });
 }

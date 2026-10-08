@@ -1,17 +1,26 @@
 import Link from "next/link";
-import { Sparkles, Home, Theater } from "lucide-react";
+import { Home, Theater } from "lucide-react";
 import type { Metadata } from "next";
+import { getContent } from "@/lib/data";
+import { FormattedText } from "@/components/ui/FormattedText";
 
-export const metadata: Metadata = {
-  title: "Pagina non trovata",
-  description: "La pagina cercata non è stata trovata o è stata spostata.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getContent();
+  const ui = content?.ui?.not_found || {};
+  return {
+    title: ui.meta_title || "Pagina non trovata",
+    description: ui.meta_description || "La pagina cercata non è stata trovata o è stata spostata.",
+    robots: {
+      index: false,
+      follow: true,
+    },
+  };
+}
 
-export default function NotFound() {
+export default async function NotFound() {
+  const content = await getContent();
+  const ui = content?.ui?.not_found || {};
+
   return (
     <div className="relative min-h-[75vh] flex items-center justify-center px-4 py-20 overflow-hidden">
       {/* Background ambient lighting */}
@@ -20,19 +29,19 @@ export default function NotFound() {
 
       <div className="relative z-10 max-w-xl mx-auto text-center space-y-8">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary border border-primary/20 backdrop-blur-md">
-          <Sparkles size={14} />
-          <span>Errore 404 • Fuori Scena</span>
+          <Theater size={14} />
+          <span>{ui.badge || "Errore 404 • Fuori Scena"}</span>
         </div>
 
         <div className="space-y-4">
           <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tighter bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            404
+            {ui.code || "404"}
           </h1>
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-            Questa scena è ancora dietro le quinte
+            {ui.heading || "Questa scena è ancora dietro le quinte"}
           </h2>
           <p className="text-foreground/70 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
-            Sembra che il copione abbia preso un’altra direzione o che la pagina cercata sia stata spostata nel foyer.
+            <FormattedText text={ui.message || "Sembra che il copione abbia preso un’altra direzione o che la pagina cercata sia stata spostata nel foyer."} />
           </p>
         </div>
 
@@ -42,14 +51,14 @@ export default function NotFound() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0"
           >
             <Home size={18} />
-            <span>Torna alla Home</span>
+            <span>{ui.home_button || "Torna alla Home"}</span>
           </Link>
           <Link
             href="/Spettacoli"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold glass hover:bg-white/10 text-foreground transition-all border border-foreground/10 hover:-translate-y-0.5"
           >
             <Theater size={18} />
-            <span>I Nostri Spettacoli</span>
+            <span>{ui.shows_button || "I Nostri Spettacoli"}</span>
           </Link>
         </div>
       </div>

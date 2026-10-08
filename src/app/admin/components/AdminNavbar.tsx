@@ -10,7 +10,9 @@ import {
   Layers,
   Menu,
   Check,
-  Loader2
+  Loader2,
+  Eye,
+  PanelLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../context/AdminContext";
@@ -19,9 +21,19 @@ import { DiffModal } from "./DiffModal";
 interface AdminNavbarProps {
   onToggleSidebar: () => void;
   isSidebarOpen: boolean;
+  isSidebarCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+  isPreviewOpen?: boolean;
+  onTogglePreview?: () => void;
 }
 
-export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
+export function AdminNavbar({
+  onToggleSidebar,
+  isSidebarCollapsed = false,
+  onToggleCollapse,
+  isPreviewOpen,
+  onTogglePreview
+}: AdminNavbarProps) {
   const {
     adminSecret,
     setAdminSecret,
@@ -44,17 +56,28 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
     setIsSecretOpen(false);
   };
 
+  const handleSidebarClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      onToggleSidebar();
+    } else if (onToggleCollapse) {
+      onToggleCollapse();
+    } else {
+      onToggleSidebar();
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-xl border-b border-foreground/5 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-        {/* Left: Mobile Toggle & Brand */}
+        {/* Left: Mobile Toggle / Desktop Collapse & Brand */}
         <div className="flex items-center gap-3">
           <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-muted rounded-xl text-foreground/70 hover:text-foreground transition-colors md:hidden"
-            title="Menu"
+            onClick={handleSidebarClick}
+            className="p-2 hover:bg-muted rounded-xl text-foreground/70 hover:text-foreground transition-colors"
+            title={isSidebarCollapsed ? "Espandi barra laterale" : "Comprimi barra laterale"}
+            aria-label="Attiva/disattiva barra laterale"
           >
-            <Menu size={20} />
+            <PanelLeft size={20} className={cn("transition-transform duration-200", isSidebarCollapsed && "text-primary rotate-180")} />
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -64,6 +87,7 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
               width={32}
               height={32}
               className="h-8 w-auto group-hover:scale-105 transition-transform"
+              unoptimized
             />
             <span className="font-black text-lg uppercase tracking-tight text-foreground hidden sm:inline">
               Gli Attomatti <span className="text-primary text-xs font-bold tracking-widest ml-1 px-2 py-0.5 rounded-full bg-primary/10">CMS</span>
@@ -78,8 +102,26 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
           <span className={`font-bold ${activeBranch === 'main' ? 'text-emerald-400' : 'text-amber-400'}`}>{activeBranch}</span>
         </div>
 
-        {/* Right: Actions (Diff, Secret, Publish, View Site) */}
+        {/* Right: Actions (Diff, Secret, Publish, View Site, Anteprima) */}
         <div className="flex items-center gap-2.5">
+          {/* Anteprima Toggle Button */}
+          {onTogglePreview && (
+            <button
+              type="button"
+              onClick={onTogglePreview}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border",
+                isPreviewOpen
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted/40 text-foreground/70 hover:text-foreground border-foreground/10 hover:border-foreground/20"
+              )}
+              title={isPreviewOpen ? "Nascondi Anteprima Affiancata" : "Mostra Anteprima Affiancata"}
+            >
+              <Eye size={13} className={cn(isPreviewOpen ? "text-primary-foreground" : "text-primary")} />
+              <span>Anteprima</span>
+            </button>
+          )}
+
           {/* View Website Link */}
           <Link
             href="/"
@@ -124,15 +166,32 @@ export function AdminNavbar({ onToggleSidebar }: AdminNavbarProps) {
                 <input
                   type="password"
                   value={tempSecret}
-                  onChange={(e) => setTempSecret(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempSecret(val);
+                    if (val.trim()) {
+                      setAdminSecret(val.trim());
+                    }
+                  }}
+                  onBlur={() => {
+                    if (tempSecret.trim()) {
+                      handleSaveSecret();
+                    }
+                  }}
                   placeholder="Inserisci password..."
                   className="w-full p-3 rounded-xl bg-muted/40 border border-foreground/10 focus:border-primary text-xs font-mono outline-none text-foreground"
                   autoFocus
                   onKeyDown={(e) => e.key === "Enter" && handleSaveSecret()}
                 />
                 <div className="flex justify-between items-center pt-1">
-                  <span className="text-[10px] text-foreground/40">
-                    Salvata nella sessione locale
+                  <span className="text-[10px]">
+                    {adminSecret ? (
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <Check size={11} /> Password attiva
+                      </span>
+                    ) : (
+                      <span className="text-foreground/40">Salvata nella sessione locale</span>
+                    )}
                   </span>
                   <button
                     onClick={handleSaveSecret}

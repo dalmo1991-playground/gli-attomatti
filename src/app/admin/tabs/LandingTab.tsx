@@ -10,7 +10,7 @@ import {
   ArrowUp,
   ArrowDown,
   Layers,
-  Sparkles,
+  Layout,
   Calendar,
   BookOpen,
   Image as ImageIcon,
@@ -18,7 +18,14 @@ import {
   HelpCircle,
   Megaphone,
   Ticket,
-  ClipboardList
+  ClipboardList,
+  Hash,
+  Copy,
+  Check,
+  Link2,
+  Clock,
+  Images,
+  AlignLeft
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -28,26 +35,98 @@ import { ImageUploadField } from "../components/ui/ImageUploadField";
 import { GalleryField } from "../components/ui/GalleryField";
 import { LandingThemeEditor } from "../components/ui/LandingThemeEditor";
 import { DEFAULT_THEME_PRESET } from "@/lib/landingThemes";
+import {
+  getBlockAnchor,
+  getDefaultBlockAnchor,
+  sanitizeAnchor,
+  getAllLandingAnchors
+} from "@/lib/landingAnchors";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+/**
+ * Quick-pick pill buttons to easily fill an anchor into a link field
+ */
+function AnchorQuickPick({
+  anchors,
+  currentHref,
+  onSelect
+}: {
+  anchors: { anchor: string; label: string }[];
+  currentHref?: string;
+  onSelect: (href: string) => void;
+}) {
+  if (!anchors || anchors.length === 0) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+      <span className="text-[10px] uppercase font-bold text-foreground/40 flex items-center gap-1">
+        <Hash size={10} /> Ancore pagina:
+      </span>
+      {anchors.map((a) => {
+        const href = `#${a.anchor}`;
+        const isSelected = currentHref === href;
+        return (
+          <button
+            key={a.anchor}
+            type="button"
+            onClick={() => onSelect(href)}
+            className={cn(
+              "px-2 py-0.5 rounded-md text-[11px] font-mono font-medium transition-colors border",
+              isSelected
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-muted/50 hover:bg-primary/10 hover:text-primary text-foreground/70 border-foreground/5"
+            )}
+            title={`Usa ${href} (${a.label})`}
+          >
+            #{a.anchor}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const BLOCK_TYPES = [
-  { type: "hero", label: "Hero Header", icon: Sparkles, desc: "Titolo d'impatto, sfondo e CTA principale" },
+  { type: "hero", label: "Hero Header", icon: Layout, desc: "Titolo d'impatto, sfondo e CTA principale" },
   { type: "event_details", label: "Data, Orario & Luogo", icon: Calendar, desc: "Card con dettagli data, mappa e prezzo" },
   { type: "eventfrog", label: "Cassa Biglietti Eventfrog", icon: Ticket, desc: "Embed ufficiale di Eventfrog per acquistare i biglietti direttamente sulla landing" },
   { type: "tally", label: "Modulo Tally (Registrazione)", icon: ClipboardList, desc: "Embed ufficiale Tally.so per iscrizioni, corsi o registrazioni" },
   { type: "synopsis", label: "Trama & Sinossi", icon: BookOpen, desc: "Descrizione narrativa, citazione e foto" },
   { type: "gallery", label: "Galleria Fotografica", icon: ImageIcon, desc: "Scatti di scena con lightbox" },
+  { type: "carousel", label: "Carosello Fotografico", icon: Images, desc: "Slider automatico di foto con transizione fluida" },
+  { type: "timeline_section", label: "Sezione Cronologia / Storia", icon: Clock, desc: "Layout a 2 colonne sticky con anno e testo narrativo" },
+  { type: "rich_text", label: "Testo Libero / Articolo", icon: AlignLeft, desc: "Paragrafi di testo formattato e titoli liberi" },
   { type: "reviews", label: "Recensioni & Critica", icon: MessageSquare, desc: "Social proof e stelle di gradimento" },
   { type: "faq", label: "Domande Frequenti (FAQ)", icon: HelpCircle, desc: "Fisarmonica con risposte alle domande" },
   { type: "closing_cta", label: "Banner CTA Finale", icon: Megaphone, desc: "Pulsante di chiusura ad alta conversione" }
 ];
 
-export function LandingTab() {
+export interface LandingTabProps {
+  selectedSlug?: string;
+  onSelectSlug?: (slug: string) => void;
+  onRequestPreview?: (slug: string) => void;
+}
+
+export function LandingTab({
+  selectedSlug,
+  onSelectSlug,
+  onRequestPreview
+}: LandingTabProps = {}) {
   const { content, updateContent } = useAdmin();
   const landings = content?.landings || [];
   const [search, setSearch] = useState("");
   const [activeLandingIdx, setActiveLandingIdx] = useState<number | null>(0);
+  const [copiedAnchor, setCopiedAnchor] = useState<string | null>(null);
+
+  // Sync active landing index when selectedSlug changes externally
+  React.useEffect(() => {
+    if (selectedSlug && landings.length > 0) {
+      const idx = landings.findIndex((l: any) => l.slug === selectedSlug);
+      if (idx !== -1 && idx !== activeLandingIdx) {
+        setActiveLandingIdx(idx);
+      }
+    }
+  }, [selectedSlug, landings]);
 
   const addLanding = () => {
     const newId = `landing-${Date.now()}`;
@@ -102,6 +181,7 @@ export function LandingTab() {
 
     updateContent("landings", [...landings, newLanding]);
     setActiveLandingIdx(landings.length);
+    onSelectSlug?.(newLanding.slug);
   };
 
   const removeLanding = (idx: number) => {
@@ -180,6 +260,30 @@ export function LandingTab() {
         ...newBlock,
         title: "Momenti di Scena",
         images: []
+      };
+    } else if (type === "carousel") {
+      newBlock = {
+        ...newBlock,
+        title: "I Nostri Momenti",
+        aspect_ratio: "aspect-video md:aspect-[16/10]",
+        images: []
+      };
+    } else if (type === "timeline_section") {
+      newBlock = {
+        ...newBlock,
+        badge: "2026",
+        badge_prefix: "Anno ",
+        title: "Il Nostro Percorso",
+        text: "Descrizione narrativa del progetto...",
+        cta_label: "Scopri di più",
+        cta_href: "",
+        images: []
+      };
+    } else if (type === "rich_text") {
+      newBlock = {
+        ...newBlock,
+        title: "Approfondimento",
+        content: "Testo formattato..."
       };
     } else if (type === "reviews") {
       newBlock = {
@@ -283,39 +387,63 @@ export function LandingTab() {
               const actualIdx = landings.indexOf(landing);
               const heroBlock = landing.blocks?.find((b: any) => b.type === "hero");
               const thumbnail = heroBlock?.hero_image || "";
+              const availableAnchors = getAllLandingAnchors(landing);
 
               return (
-                <AccordionCard
+                <div
                   key={actualIdx}
-                  title={landing.title || "Senza Titolo"}
-                  subtitle={`/landing/${landing.slug || ""}`}
-                  thumbnail={thumbnail}
-                  badge={landing.active ? "Attiva" : "Bozza"}
-                  badgeColor={landing.active ? "primary" : "muted"}
-                  index={actualIdx}
-                  total={landings.length}
-                  onDelete={() => removeLanding(actualIdx)}
-                  defaultOpen={activeLandingIdx === actualIdx}
+                  onClick={() => {
+                    if (landing.slug) onSelectSlug?.(landing.slug);
+                  }}
                 >
-                  <div className="space-y-8 pt-2">
-                    {/* General Settings */}
-                    <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-foreground/70">
-                          Impostazioni Generali
-                        </h4>
-                        {landing.slug && (
-                          <Link
-                            href={`/landing/${landing.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
-                          >
-                            <span>Anteprima Live</span>
-                            <ExternalLink size={12} />
-                          </Link>
-                        )}
-                      </div>
+                  <AccordionCard
+                    title={landing.title || "Senza Titolo"}
+                    subtitle={`/landing/${landing.slug || ""}`}
+                    thumbnail={thumbnail}
+                    badge={landing.active ? "Attiva" : "Bozza"}
+                    badgeColor={landing.active ? "primary" : "muted"}
+                    index={actualIdx}
+                    total={landings.length}
+                    onDelete={() => removeLanding(actualIdx)}
+                    defaultOpen={activeLandingIdx === actualIdx}
+                  >
+                    <div className="space-y-8 pt-2">
+                      {/* General Settings */}
+                      <div className="p-6 bg-muted/10 rounded-3xl border border-foreground/5 space-y-4">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-foreground/70">
+                            Impostazioni Generali
+                          </h4>
+                          {landing.slug && (
+                            <div className="flex items-center gap-3">
+                              {onRequestPreview && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onSelectSlug?.(landing.slug);
+                                    onRequestPreview(landing.slug);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 text-xs text-foreground/70 hover:text-primary font-bold transition-colors cursor-pointer"
+                                  title="Apri nel pannello anteprima affiancato"
+                                >
+                                  <Layers size={13} />
+                                  <span>Anteprima Affiancata</span>
+                                </button>
+                              )}
+                              <Link
+                                href={`/landing/${landing.slug}?preview=1`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline"
+                                title="Apri l'anteprima in tempo reale in una nuova scheda"
+                              >
+                                <span>Nuova Scheda</span>
+                                <ExternalLink size={12} />
+                              </Link>
+                            </div>
+                          )}
+                        </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="md:col-span-2">
@@ -345,19 +473,160 @@ export function LandingTab() {
                         required
                       />
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div className="pt-2 border-t border-foreground/5 space-y-4">
+                        <h5 className="text-xs font-black uppercase tracking-wider text-foreground/80">
+                          Barra Superiore (Header & Logo)
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            label="Testo Logo in Testata"
+                            value={landing.header?.logo_text || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.logo_text", v)}
+                            placeholder="es. Gli Attomatti o Gli Attomatti & UNITRE"
+                            helpText="Testo principale mostrato in alto a sinistra (se vuoto, usa 'Gli Attomatti')."
+                          />
+                          <FormField
+                            label="Sottotitolo Testata"
+                            value={landing.header?.subtitle || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.subtitle", v)}
+                            placeholder="es. Teatro a Zurigo"
+                            helpText="Dicitura secondaria sotto il titolo (se vuoto, usa 'Teatro a Zurigo')."
+                          />
+                        </div>
+
+                        <ImageUploadField
+                          label="Icona / Logo Personalizzato (Opzionale)"
+                          value={landing.header?.logo_image || ""}
+                          onChange={(url) => updateLanding(actualIdx, "header.logo_image", url)}
+                          helpText="Se non specificato, viene usato il logo ufficiale Gli Attomatti, che adatta in automatico la scritta sottostante (nera/scura su sfondi chiari, bianca su sfondi scuri)."
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-foreground/5">
                         <FormField
                           label="Testo Pulsante CTA in Testata"
                           value={landing.header?.cta_label || ""}
                           onChange={(v) => updateLanding(actualIdx, "header.cta_label", v)}
                           placeholder="es. Acquista Biglietti"
                         />
-                        <FormField
-                          label="Link Pulsante CTA in Testata"
-                          value={landing.header?.cta_href || ""}
-                          onChange={(v) => updateLanding(actualIdx, "header.cta_href", v)}
-                          placeholder="https://eventfrog.ch/..."
-                        />
+                        <div>
+                          <FormField
+                            label="Link Pulsante CTA in Testata"
+                            value={landing.header?.cta_href || ""}
+                            onChange={(v) => updateLanding(actualIdx, "header.cta_href", v)}
+                            placeholder="https://eventfrog.ch/... o #biglietti"
+                          />
+                          <AnchorQuickPick
+                            anchors={availableAnchors}
+                            currentHref={landing.header?.cta_href}
+                            onSelect={(href) => updateLanding(actualIdx, "header.cta_href", href)}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Header Nav Links (Anchor Menu) */}
+                      <div className="pt-2 border-t border-foreground/5 space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div>
+                            <h5 className="text-xs font-black uppercase tracking-wider text-foreground/80 flex items-center gap-1.5">
+                              <Link2 size={13} className="text-primary" /> Voci di Menu Testata (Opzionale)
+                            </h5>
+                            <p className="text-[11px] text-foreground/40 mt-0.5">
+                              Crea un menu con ancore (#sezione) visibile nella barra superiore.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {availableAnchors.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const generated = availableAnchors
+                                    .filter((a) => a.type !== "hero" && a.type !== "closing_cta")
+                                    .map((a) => ({ label: a.label, href: `#${a.anchor}` }));
+                                  updateLanding(actualIdx, "header.nav_links", generated);
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-secondary/10 hover:bg-secondary/20 text-secondary text-[11px] font-bold border border-secondary/20 transition-all flex items-center gap-1"
+                                title="Genera automaticamente le voci di menu dai blocchi della pagina"
+                              >
+                                <Layers size={12} />
+                                <span>Genera dai Blocchi</span>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const current = landing.header?.nav_links || [];
+                                updateLanding(actualIdx, "header.nav_links", [
+                                  ...current,
+                                  { label: "Nuova Voce", href: availableAnchors[0] ? `#${availableAnchors[0].anchor}` : "#" }
+                                ]);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-bold border border-primary/20 transition-all flex items-center gap-1"
+                            >
+                              <Plus size={12} />
+                              <span>Aggiungi Voce</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {(!landing.header?.nav_links || landing.header.nav_links.length === 0) ? (
+                          <p className="text-xs text-foreground/30 italic py-1">
+                            Nessuna voce di menu configurata (la testata mostrerà logo e CTA). Clicca su &quot;Genera dai Blocchi&quot; per creare un menu ad ancore con 1 click.
+                          </p>
+                        ) : (
+                          <div className="space-y-2 pt-1">
+                            {landing.header.nav_links.map((link: any, lIdx: number) => (
+                              <div key={lIdx} className="flex items-center gap-2 bg-background/50 p-2.5 rounded-xl border border-foreground/5">
+                                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <input
+                                    type="text"
+                                    value={link.label || ""}
+                                    onChange={(e) => {
+                                      const next = [...(landing.header?.nav_links || [])];
+                                      next[lIdx] = { ...next[lIdx], label: e.target.value };
+                                      updateLanding(actualIdx, "header.nav_links", next);
+                                    }}
+                                    placeholder="Etichetta (es. Dettagli)"
+                                    className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-semibold focus:border-primary outline-none"
+                                  />
+                                  <div>
+                                    <input
+                                      type="text"
+                                      value={link.href || ""}
+                                      onChange={(e) => {
+                                        const next = [...(landing.header?.nav_links || [])];
+                                        next[lIdx] = { ...next[lIdx], href: e.target.value };
+                                        updateLanding(actualIdx, "header.nav_links", next);
+                                      }}
+                                      placeholder="#ancora o https://"
+                                      className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-mono font-medium focus:border-primary outline-none"
+                                    />
+                                    <AnchorQuickPick
+                                      anchors={availableAnchors}
+                                      currentHref={link.href}
+                                      onSelect={(href) => {
+                                        const next = [...(landing.header?.nav_links || [])];
+                                        next[lIdx] = { ...next[lIdx], href };
+                                        updateLanding(actualIdx, "header.nav_links", next);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = (landing.header?.nav_links || []).filter((_: any, i: number) => i !== lIdx);
+                                    updateLanding(actualIdx, "header.nav_links", next);
+                                  }}
+                                  className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors shrink-0"
+                                  title="Rimuovi voce"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -409,7 +678,12 @@ export function LandingTab() {
                               label="Link Tasto"
                               value={landing.sticky_bar?.cta_href || ""}
                               onChange={(v) => updateLanding(actualIdx, "sticky_bar.cta_href", v)}
-                              placeholder="https://..."
+                              placeholder="https://... o #biglietti"
+                            />
+                            <AnchorQuickPick
+                              anchors={availableAnchors}
+                              currentHref={landing.sticky_bar?.cta_href}
+                              onSelect={(href) => updateLanding(actualIdx, "sticky_bar.cta_href", href)}
                             />
                           </div>
                         </div>
@@ -458,6 +732,8 @@ export function LandingTab() {
                               icon: Layers
                             };
                             const BlockIcon = btConfig.icon;
+                            const activeAnchor = getBlockAnchor(block);
+                            const defaultAnchor = getDefaultBlockAnchor(block.type);
 
                             return (
                               <div
@@ -471,6 +747,9 @@ export function LandingTab() {
                                     </div>
                                     <span className="text-xs font-black uppercase tracking-wider text-foreground">
                                       {bIdx + 1}. {btConfig.label}
+                                    </span>
+                                    <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
+                                      #{activeAnchor}
                                     </span>
                                   </div>
 
@@ -504,6 +783,60 @@ export function LandingTab() {
                                   </div>
                                 </div>
 
+                                {/* Custom Anchor Configuration Bar */}
+                                <div className="p-3.5 rounded-xl bg-muted/20 border border-foreground/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                    <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                                      <Hash size={14} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <label className="text-[10px] font-black uppercase tracking-wider text-foreground/60">
+                                          Ancora di Sezione (Anchor ID)
+                                        </label>
+                                        <span className="text-[11px] text-foreground/50 font-mono">
+                                          Link: <strong className="text-primary font-bold">#{activeAnchor}</strong>
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 mt-1">
+                                        <span className="text-xs font-mono font-bold text-foreground/40 pl-1">#</span>
+                                        <input
+                                          type="text"
+                                          value={block.anchor ?? ""}
+                                          onChange={(e) => updateBlock(actualIdx, bIdx, "anchor", sanitizeAnchor(e.target.value))}
+                                          placeholder={defaultAnchor}
+                                          className="w-full bg-background px-3 py-1.5 rounded-lg border border-foreground/10 text-xs font-mono font-semibold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-foreground/30 text-foreground"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(`#${activeAnchor}`);
+                                        setCopiedAnchor(activeAnchor);
+                                        setTimeout(() => setCopiedAnchor(null), 2000);
+                                      }}
+                                      className="px-3 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/80 hover:text-foreground text-xs font-bold transition-all flex items-center gap-1.5 border border-foreground/10 active:scale-95"
+                                      title="Copia link ancora negli appunti"
+                                    >
+                                      {copiedAnchor === activeAnchor ? (
+                                        <>
+                                          <Check size={13} className="text-emerald-400" />
+                                          <span className="text-emerald-400 font-bold">Copiato!</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Copy size={13} />
+                                          <span>Copia #{activeAnchor}</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+
                                 {/* Dynamic Block Editors */}
                                 {block.type === "hero" && (
                                   <div className="space-y-4">
@@ -532,34 +865,53 @@ export function LandingTab() {
                                       label="Immagine di Sfondo Hero"
                                       value={block.hero_image || ""}
                                       onChange={(url) => updateBlock(actualIdx, bIdx, "hero_image", url)}
+                                      align={block.hero_image_align || block.image_align || "center"}
+                                      onAlignChange={(align) => updateBlock(actualIdx, bIdx, "hero_image_align", align)}
+                                      helpText="Imposta l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo durante il ritaglio su mobile."
                                     />
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <FormField
-                                        label="Etichetta CTA Primaria"
-                                        value={block.primary_cta_label || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_label", v)}
-                                        placeholder="es. Acquista Biglietti"
-                                      />
-                                      <FormField
-                                        label="Link CTA Primaria"
-                                        value={block.primary_cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_href", v)}
-                                        placeholder="https://..."
-                                      />
-                                    </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <FormField
-                                        label="Etichetta CTA Secondaria"
-                                        value={block.secondary_cta_label || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_label", v)}
-                                        placeholder="es. Dettagli Evento"
-                                      />
-                                      <FormField
-                                        label="Link CTA Secondaria"
-                                        value={block.secondary_cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_href", v)}
-                                        placeholder="#dettagli"
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Etichetta CTA Primaria"
+                                          value={block.primary_cta_label || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_label", v)}
+                                          placeholder="es. Acquista Biglietti"
+                                        />
+                                        <div className="mt-2">
+                                          <FormField
+                                            label="Link CTA Primaria"
+                                            value={block.primary_cta_href || ""}
+                                            onChange={(v) => updateBlock(actualIdx, bIdx, "primary_cta_href", v)}
+                                            placeholder="https://... o #biglietti"
+                                          />
+                                          <AnchorQuickPick
+                                            anchors={availableAnchors}
+                                            currentHref={block.primary_cta_href}
+                                            onSelect={(href) => updateBlock(actualIdx, bIdx, "primary_cta_href", href)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <FormField
+                                          label="Etichetta CTA Secondaria"
+                                          value={block.secondary_cta_label || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_label", v)}
+                                          placeholder="es. Dettagli Evento"
+                                        />
+                                        <div className="mt-2">
+                                          <FormField
+                                            label="Link CTA Secondaria"
+                                            value={block.secondary_cta_href || ""}
+                                            onChange={(v) => updateBlock(actualIdx, bIdx, "secondary_cta_href", v)}
+                                            placeholder="#dettagli"
+                                          />
+                                          <AnchorQuickPick
+                                            anchors={availableAnchors}
+                                            currentHref={block.secondary_cta_href}
+                                            onSelect={(href) => updateBlock(actualIdx, bIdx, "secondary_cta_href", href)}
+                                          />
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -613,11 +965,18 @@ export function LandingTab() {
                                         value={block.cta_label || ""}
                                         onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
                                       />
-                                      <FormField
-                                        label="Link Prenota"
-                                        value={block.cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Link Prenota"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -642,7 +1001,7 @@ export function LandingTab() {
                                     <FormField
                                       label="URL Evento Eventfrog (Link Prevendita Ufficiale)"
                                       value={block.eventfrog_url || ""}
-                                      onChange={(v) => updateBlock(actualIdx, bIdx, "eventfrog_url", v.trim())}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "eventfrog_url", v)}
                                       placeholder="https://eventfrog.ch/it/p/teatro-arte-cultura/teatro/..."
                                       helpText="Incolla l'indirizzo del tuo evento Eventfrog. Verrà incorporato a tutta larghezza in un elegante riquadro di acquisto sicuro."
                                     />
@@ -712,7 +1071,7 @@ export function LandingTab() {
                                     <FormField
                                       label="URL Modulo Tally.so (Link del Form)"
                                       value={block.tally_url || ""}
-                                      onChange={(v) => updateBlock(actualIdx, bIdx, "tally_url", v.trim())}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "tally_url", v)}
                                       placeholder="https://tally.so/r/LZaPOz"
                                       helpText="Incolla l'indirizzo del tuo form Tally. Verrà incorporato a tutta larghezza in un riquadro fluido."
                                     />
@@ -816,6 +1175,100 @@ export function LandingTab() {
                                   </div>
                                 )}
 
+                                {block.type === "carousel" && (
+                                  <div className="space-y-4">
+                                    <FormField
+                                      label="Titolo Carosello (Opzionale)"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. I Nostri Momenti"
+                                    />
+                                    <GalleryField
+                                      label="Foto del Carosello"
+                                      images={block.images || []}
+                                      onChange={(newImgs) => updateBlock(actualIdx, bIdx, "images", newImgs)}
+                                    />
+                                  </div>
+                                )}
+
+                                {block.type === "timeline_section" && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Badge Anno / Edizione"
+                                        value={block.badge || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "badge", v)}
+                                        placeholder="es. 2026"
+                                      />
+                                      <FormField
+                                        label="Prefisso Badge"
+                                        value={block.badge_prefix || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "badge_prefix", v)}
+                                        placeholder="es. Anno "
+                                      />
+                                    </div>
+                                    <FormField
+                                      label="Titolo Sezione"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. Il Nostro Percorso"
+                                    />
+                                    <FormField
+                                      label="Testo Narrativo"
+                                      value={block.text || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "text", v)}
+                                      type="textarea"
+                                      rows={4}
+                                      placeholder="Descrizione approfondita..."
+                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Etichetta Bottone CTA"
+                                        value={block.cta_label || ""}
+                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
+                                        placeholder="es. Scopri di più"
+                                      />
+                                      <div>
+                                        <FormField
+                                          label="Destinazione Link CTA"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                          placeholder="es. /Spettacoli/titolo o #biglietti"
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
+                                    </div>
+                                    <GalleryField
+                                      label="Foto del Carosello Integrato (Opzionale)"
+                                      images={block.images || []}
+                                      onChange={(newImgs) => updateBlock(actualIdx, bIdx, "images", newImgs)}
+                                    />
+                                  </div>
+                                )}
+
+                                {block.type === "rich_text" && (
+                                  <div className="space-y-4">
+                                    <FormField
+                                      label="Titolo Blocco (Opzionale)"
+                                      value={block.title || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "title", v)}
+                                      placeholder="es. Approfondimento"
+                                    />
+                                    <FormField
+                                      label="Contenuto (Supporta Markdown)"
+                                      value={block.content || ""}
+                                      onChange={(v) => updateBlock(actualIdx, bIdx, "content", v)}
+                                      type="textarea"
+                                      rows={6}
+                                      placeholder="Scrivi qui il testo formattato..."
+                                    />
+                                  </div>
+                                )}
+
                                 {block.type === "reviews" && (
                                   <div className="space-y-4">
                                     <FormField
@@ -862,12 +1315,14 @@ export function LandingTab() {
                                               }}
                                             />
                                             <FormField
-                                              label="Stelle (1-5)"
+                                              label="Stelle (0-5, 0 = nessuna)"
                                               type="number"
-                                              value={rev.rating || 5}
+                                              value={rev.rating !== undefined ? rev.rating : 5}
+                                              placeholder="0 per nascondere"
                                               onChange={(v) => {
                                                 const updated = [...block.items];
-                                                updated[rIdx] = { ...updated[rIdx], rating: Number(v) };
+                                                const num = v === "" ? 0 : Number(v);
+                                                updated[rIdx] = { ...updated[rIdx], rating: isNaN(num) ? 0 : num };
                                                 updateBlock(actualIdx, bIdx, "items", updated);
                                               }}
                                             />
@@ -975,11 +1430,18 @@ export function LandingTab() {
                                         value={block.cta_label || ""}
                                         onChange={(v) => updateBlock(actualIdx, bIdx, "cta_label", v)}
                                       />
-                                      <FormField
-                                        label="Link Pulsante"
-                                        value={block.cta_href || ""}
-                                        onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
-                                      />
+                                      <div>
+                                        <FormField
+                                          label="Link Pulsante"
+                                          value={block.cta_href || ""}
+                                          onChange={(v) => updateBlock(actualIdx, bIdx, "cta_href", v)}
+                                        />
+                                        <AnchorQuickPick
+                                          anchors={availableAnchors}
+                                          currentHref={block.cta_href}
+                                          onSelect={(href) => updateBlock(actualIdx, bIdx, "cta_href", href)}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -991,8 +1453,9 @@ export function LandingTab() {
                     </div>
                   </div>
                 </AccordionCard>
-              );
-            })}
+              </div>
+            );
+          })}
           </div>
         )}
       </AdminSection>

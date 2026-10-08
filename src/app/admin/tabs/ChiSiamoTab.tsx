@@ -152,7 +152,7 @@ export function ChiSiamoTab() {
                   onChange={(v) => updateSectionField(idx, "title", v)}
                 />
                 <FormField
-                  type="textarea"
+                  type="richtext"
                   label="Corpo del Testo"
                   value={sec.text}
                   onChange={(v) => updateSectionField(idx, "text", v)}

@@ -5,6 +5,7 @@ import { Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { trackContact } from "@/lib/tracking";
+import { FormattedText } from "@/components/ui/FormattedText";
 
 
 export function Footer({ content }: { content: any }) {
@@ -12,6 +13,7 @@ export function Footer({ content }: { content: any }) {
   const socials: any[] = Array.isArray(contatti.socials) ? contatti.socials : [];
   const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
   const site = content?.site || { name: "Gli Attomatti", description: "" };
+  const uiFooter = content?.ui?.footer || {};
 
   const getSafeHref = (href?: string) => {
     if (!href) return "/";
@@ -57,6 +59,7 @@ export function Footer({ content }: { content: any }) {
                 width={48}
                 height={48}
                 className="h-12 w-auto group-hover:scale-110 transition-transform duration-500"
+                unoptimized
               />
               <span className="text-2xl font-black tracking-tighter uppercase text-primary">
                 {site.name || "Gli Attomatti"}
@@ -65,7 +68,7 @@ export function Footer({ content }: { content: any }) {
 
             {site.description && (
               <p className="text-xl text-foreground/60 leading-relaxed max-w-sm font-medium">
-                {site.description}
+                <FormattedText text={site.description} />
               </p>
             )}
             {socials.length > 0 && (
@@ -89,7 +92,9 @@ export function Footer({ content }: { content: any }) {
 
           {/* Navigation Columns */}
           <div className="lg:col-span-3 space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Sito</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">
+              {uiFooter.nav_title || "Sito"}
+            </h4>
             <ul className="space-y-4">
               {navigation.map((link: any, idx: number) => {
                 const safeHref = getSafeHref(link.href);
@@ -111,7 +116,9 @@ export function Footer({ content }: { content: any }) {
           {/* Contact CTA Column */}
           <div className="lg:col-span-4 space-y-8">
             <div className="p-8 border-2 border-primary/10 rounded-[2.5rem] space-y-6 bg-primary/5">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Contattaci</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
+                {uiFooter.contact_title || "Contattaci"}
+              </h4>
               {contatti.email && (
                 <Link
                   href={`mailto:${contatti.email}`}
@@ -125,7 +132,7 @@ export function Footer({ content }: { content: any }) {
                 href="/Contatti"
                 className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-primary group"
               >
-                Scrivici ora
+                {uiFooter.contact_cta_label || "Scrivici ora"}
                 <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </Link>
             </div>
@@ -135,17 +142,17 @@ export function Footer({ content }: { content: any }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-foreground/40 font-medium">
-            © {new Date().getFullYear()} {site.name || "Gli Attomatti"}. Tutti i diritti riservati.
+            © {new Date().getFullYear()} {site.name || "Gli Attomatti"}. <FormattedText text={uiFooter.copyright_notice || "Tutti i diritti riservati."} />
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
             <Link href="/Termini" className="hover:text-primary transition-colors">
-              Termini
+              {uiFooter.legal_links?.terms || "Termini"}
             </Link>
             <Link href="/Impressum" className="hover:text-primary transition-colors">
-              Impressum
+              {uiFooter.legal_links?.impressum || "Impressum"}
             </Link>
             <Link href="/Privacy" className="hover:text-primary transition-colors">
-              Privacy
+              {uiFooter.legal_links?.privacy || "Privacy"}
             </Link>
           </div>
         </div>

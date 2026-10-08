@@ -1,5 +1,5 @@
 import { getContent } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import CheckoutClient from "./CheckoutClient";
 import type { Metadata } from "next";
 
@@ -46,9 +46,9 @@ export default async function BigliettiPage({
   const pages: any[] = content?.ticketing_pages || [];
   const page = pages.find((p) => p.slug === slug);
 
-  // If the page does not exist, is deactivated, or has no Eventfrog URL, 404
+  // If the page does not exist, is deactivated, or has no Eventfrog URL, redirect to main hub
   if (!page || page.active === false || !page.eventfrog_url?.trim()) {
-    notFound();
+    redirect("/Biglietti");
   }
 
   return (

@@ -1,30 +1,24 @@
 import type { Metadata } from "next";
 
+import localContent from "@/data/content.json";
+
 export const SITE_URL = process.env.SITE_URL || "https://gliattomatti.ch";
 
+const siteSeo = (localContent as any)?.site?.seo || {};
+const siteName = (localContent as any)?.site?.name || "Gli Attomatti";
+
 export const DEFAULT_SEO = {
-  siteName: "Gli Attomatti",
-  titleTemplate: "%s | Gli Attomatti",
-  defaultTitle: "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
+  siteName: siteName,
+  titleTemplate: siteSeo.title_template || `%s | ${siteName}`,
+  defaultTitle: siteSeo.default_title || `${siteName} — Compagnia Teatrale Italiana a Zurigo`,
   defaultDescription:
+    siteSeo.default_description ||
+    (localContent as any)?.site?.description ||
     "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
-  defaultImage: "/images/1782553290530-TheaterCurtain.webp",
-  locale: "it_CH",
-  keywords: [
-    "compagnia teatrale zurigo",
-    "teatro italiano zurigo",
-    "spettacoli zurigo",
-    "teatro amatoriale svizzera",
-    "gli attomatti",
-    "commedia teatrale zurigo",
-    "cultura italiana zurigo",
-    "eventi italiani zurigo",
-    "biglietti teatro zurigo"
-  ],
-  socials: [
-    "https://www.instagram.com/gliattomatti/",
-    "https://www.facebook.com/p/Gli-Attomatti-61572328015344/"
-  ]
+  defaultImage: siteSeo.default_image || "/images/1782553290530-TheaterCurtain.webp",
+  locale: siteSeo.locale || "it_CH",
+  keywords: Array.isArray(siteSeo.keywords) ? siteSeo.keywords : [],
+  socials: Array.isArray(siteSeo.socials) ? siteSeo.socials : []
 };
 
 interface CreateMetadataOptions {
@@ -112,12 +106,13 @@ export function getOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@type": ["TheaterGroup", "PerformingGroup"],
     "@id": `${SITE_URL}/#organization`,
-    name: "Gli Attomatti",
-    alternateName: "Compagnia Teatrale Gli Attomatti",
+    name: siteName,
+    alternateName: siteSeo.organization_alternate_name || "Compagnia Teatrale Gli Attomatti",
     url: SITE_URL,
     logo: `${SITE_URL}/logo_attomatti.svg`,
     image: `${SITE_URL}${DEFAULT_SEO.defaultImage}`,
     description:
+      siteSeo.organization_description ||
       "Compagnia teatrale amatoriale di lingua italiana fondata a Zurigo, Svizzera. Produzione di commedie, spettacoli dal vivo e iniziative culturali.",
     address: {
       "@type": "PostalAddress",
@@ -145,7 +140,7 @@ export function getTheaterEventJsonLd(show: any, slug: string) {
     .map((d: any) => ({
       "@type": "Offer",
       url: d.ticket_href.trim(),
-      name: d.ticket_label || "Biglietto Spettacolo",
+      name: d.ticket_label || siteSeo.default_ticket_offer_name || "Biglietto Spettacolo",
       availability: "https://schema.org/InStock",
       priceCurrency: "CHF",
       validFrom: new Date().toISOString().split("T")[0]
@@ -162,17 +157,17 @@ export function getTheaterEventJsonLd(show: any, slug: string) {
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     performer: {
       "@type": "TheaterGroup",
-      name: "Gli Attomatti",
+      name: siteName,
       url: SITE_URL
     },
     organizer: {
       "@type": "TheaterGroup",
-      name: "Gli Attomatti",
+      name: siteName,
       url: SITE_URL
     },
     location: {
       "@type": "Place",
-      name: (show.dates && show.dates[0]?.location) || "Zurigo, Svizzera",
+      name: (show.dates && show.dates[0]?.location) || siteSeo.default_location_name || "Zurigo, Svizzera",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Zurich",

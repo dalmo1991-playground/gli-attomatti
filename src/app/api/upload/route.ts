@@ -8,6 +8,17 @@ export async function POST(request: Request) {
   const secret = request.headers.get('x-admin-secret')?.trim();
   const configuredSecret = process.env.ADMIN_SECRET?.trim();
 
+  const { constantTimeCompare, getClientIp, checkRateLimit } = await import('@/lib/security');
+  const clientIp = getClientIp(request);
+
+  const rateCheck = checkRateLimit(`upload-action:${clientIp}`, 40, 60_000);
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Troppe richieste di upload in poco tempo. Attendi un momento prima di riprovare.' },
+      { status: 429 }
+    );
+  }
+
   // If ADMIN_SECRET is not configured on the server
   if (!configuredSecret) {
     console.error('ADMIN_SECRET environment variable is missing on server.');
@@ -20,8 +31,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // Basic security check
-  if (secret !== configuredSecret) {
+  // Timing-safe security check
+  if (!constantTimeCompare(secret, configuredSecret)) {
     return NextResponse.json(
       { error: 'Password non autorizzata. Verifica la chiave inserita.' },
       { status: 401 }

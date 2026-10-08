@@ -26,6 +26,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    ...(content?.ticketing_hub?.active !== false
+      ? [
+          {
+            url: `${BASE_URL}/Biglietti`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.9,
+          },
+        ]
+      : []),
+    ...(content?.registration_hub?.active !== false
+      ? [
+          {
+            url: `${BASE_URL}/Registrazioni`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.8,
+          },
+        ]
+      : []),
     {
       url: `${BASE_URL}/Chi_Siamo`,
       lastModified: new Date(),
@@ -109,7 +129,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const ticketingPages: { slug: string; active?: boolean }[] =
     content?.ticketing_pages ?? [];
   const ticketingRoutes: MetadataRoute.Sitemap = ticketingPages
-    .filter((page) => page.active !== false && page.slug)
+    .filter((page) => page.active === true && page.slug)
     .map((page) => ({
       url: `${BASE_URL}/Biglietti/${page.slug}`,
       lastModified: new Date(),
@@ -121,7 +141,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const registrationPages: { slug: string; active?: boolean }[] =
     content?.registration_pages ?? [];
   const registrationRoutes: MetadataRoute.Sitemap = registrationPages
-    .filter((page) => page.active !== false && page.slug)
+    .filter((page) => page.active === true && page.slug)
     .map((page) => ({
       url: `${BASE_URL}/Registrazioni/${page.slug}`,
       lastModified: new Date(),

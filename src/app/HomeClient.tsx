@@ -6,15 +6,20 @@ import { ArrowRight, Calendar, MapPin, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { FormattedText } from "@/components/ui/FormattedText";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
+import { CarouselBlock } from "@/components/ui/CarouselBlock";
+import { getSafeImageProps } from "@/lib/youtube";
 
 const MotionImage = motion.create(Image);
 
-
-export default function HomeClient({ content }: { content: any }) {
+export default function HomeClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
   const home = content?.pages?.home || {};
   const hero = home.hero || {};
   const upcoming_shows = Array.isArray(home.upcoming_shows) ? home.upcoming_shows : [];
@@ -27,9 +32,6 @@ export default function HomeClient({ content }: { content: any }) {
 
   const [currentShowIndex, setCurrentShowIndex] = useState(0);
   const [heroDirection, setHeroDirection] = useState(1);
-
-  // For Introduction Carousel
-  const [introIndex, setIntroIndex] = useState(0);
 
   // Lightbox State
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; index: number; images: LightboxImage[] }>({
@@ -47,15 +49,6 @@ export default function HomeClient({ content }: { content: any }) {
       return () => clearInterval(timer);
     }
   }, [showMode, activeShows.length]);
-
-  useEffect(() => {
-    if (introImages.length > 1) {
-      const timer = setInterval(() => {
-        setIntroIndex((prev) => (prev + 1) % introImages.length);
-      }, 4000);
-      return () => clearInterval(timer);
-    }
-  }, [introImages.length]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -95,14 +88,24 @@ export default function HomeClient({ content }: { content: any }) {
                 }}
                 className="absolute inset-0"
               >
-                <Image
-                  src={activeShows[currentShowIndex].image?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={activeShows[currentShowIndex].title || "Spettacolo"}
-                  fill
-                  sizes="100vw"
-                  className="object-cover opacity-40"
-                  priority
-                />
+                {(() => {
+                  const { src: showSrc, unoptimized: isShowUnoptimized } = getSafeImageProps(
+                    activeShows[currentShowIndex].image,
+                    "/images/1782553290530-TheaterCurtain.webp"
+                  );
+                  return (
+                    <Image
+                      src={showSrc}
+                      alt={activeShows[currentShowIndex].title || home.fallback_show_alt || ""}
+                      fill
+                      unoptimized={isShowUnoptimized}
+                      sizes="100vw"
+                      className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
+                      style={{ objectPosition: getImageObjectPositionStyle(activeShows[currentShowIndex].image_align) }}
+                      priority
+                    />
+                  );
+                })()}
 
               </motion.div>
             </AnimatePresence>
@@ -116,7 +119,7 @@ export default function HomeClient({ content }: { content: any }) {
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/1782553290530-TheaterCurtain.webp"
-              alt="Sipario teatrale — Compagnia Gli Attomatti Zurigo"
+              alt={home.curtain_alt || ""}
               fill
               sizes="100vw"
               className="object-cover opacity-30 scale-105"
@@ -151,7 +154,7 @@ export default function HomeClient({ content }: { content: any }) {
                   {/* Presenter */}
                   {activeShows[currentShowIndex].presenter && (
                     <p className="text-primary font-bold tracking-[0.25em] uppercase text-xs md:text-sm mb-2 md:mb-3 opacity-90 drop-shadow-sm">
-                      {activeShows[currentShowIndex].presenter}
+                      <FormattedText text={activeShows[currentShowIndex].presenter} />
                     </p>
                   )}
 
@@ -160,7 +163,7 @@ export default function HomeClient({ content }: { content: any }) {
                     getHeroTitleSizeClass(activeShows[currentShowIndex].title),
                     "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
                   )}>
-                    {activeShows[currentShowIndex].title}
+                    <FormattedText text={activeShows[currentShowIndex].title} />
                   </h1>
 
                   {/* Tagline */}
@@ -169,7 +172,7 @@ export default function HomeClient({ content }: { content: any }) {
                       getTaglineSizeClass(activeShows[currentShowIndex].tagline),
                       "mt-3 md:mt-4 font-medium text-primary tracking-normal italic max-w-2xl text-center drop-shadow-sm text-balance break-words"
                     )}>
-                      {activeShows[currentShowIndex].tagline}
+                      <FormattedText text={activeShows[currentShowIndex].tagline} />
                     </p>
                   )}
 
@@ -186,8 +189,8 @@ export default function HomeClient({ content }: { content: any }) {
                         activeShows[currentShowIndex].location_href?.trim() ? (
                           <Link
                             href={activeShows[currentShowIndex].location_href.trim()}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "_blank" : undefined}
+                            rel={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
                             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
                           >
                             <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
@@ -257,10 +260,11 @@ export default function HomeClient({ content }: { content: any }) {
                   width={192}
                   height={192}
                   className="h-28 sm:h-36 md:h-44 w-auto mb-6 md:mb-8 animate-float"
+                  unoptimized
                 />
 
                 <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-                  {hero.subtitle}
+                  <FormattedText text={hero.subtitle} />
                 </p>
                 <div className={cn(
                   "flex gap-4 sm:gap-6 justify-center items-center w-full",
@@ -307,7 +311,7 @@ export default function HomeClient({ content }: { content: any }) {
 
         {/* Carousel Indicators (Dots) */}
         {showMode && activeShows.length > 1 && (
-          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-1 z-30">
             {activeShows.map((_: any, idx: number) => (
               <button
                 key={idx}
@@ -315,12 +319,18 @@ export default function HomeClient({ content }: { content: any }) {
                   setHeroDirection(idx > currentShowIndex ? 1 : -1);
                   setCurrentShowIndex(idx);
                 }}
-                className={cn(
-                  "w-2.5 h-2.5 rounded-full transition-all duration-300",
-                  idx === currentShowIndex ? "bg-primary w-8 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" : "bg-primary/20 hover:bg-primary/40"
-                )}
-                aria-label={`Slide ${idx + 1}`}
-              />
+                className="p-2 sm:p-2.5 flex items-center justify-center cursor-pointer"
+                aria-label={`${home.slide_aria_prefix || ""} ${idx + 1}`.trim()}
+              >
+                <span
+                  className={cn(
+                    "h-2.5 rounded-full transition-all duration-300 block",
+                    idx === currentShowIndex
+                      ? "bg-primary w-8 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+                      : "bg-primary/20 hover:bg-primary/40 w-2.5"
+                  )}
+                />
+              </button>
             ))}
           </div>
         )}
@@ -335,41 +345,29 @@ export default function HomeClient({ content }: { content: any }) {
       <Section className="bg-muted/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-4xl font-bold mb-6">{introduction.title}</h2>
-            <p className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
-              {introduction.text}
-            </p>
+            <h2 className="text-4xl font-bold mb-6">
+              <FormattedText text={introduction.title} />
+            </h2>
+            <div className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
+              <FormattedText text={introduction.text} />
+            </div>
             <Link
-              href="/Chi_Siamo"
-              className="text-primary font-bold inline-flex items-center group"
-              style={{display: 'none'}}
+              href={introduction.story_button_href || "/Chi_Siamo"}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
             >
-              La nostra storia
-              <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              <span>{introduction.story_button_label || ""}</span>
+              <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="relative aspect-square md:aspect-auto md:h-[500px] overflow-hidden rounded-3xl shadow-2xl">
-            <div className="absolute inset-0 z-10 pointer-events-none">
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/10 rounded-full blur-3xl" />
-            </div>
-
+          <div className="w-full">
             {introImages && introImages.length > 0 && (
-              <AnimatePresence mode="popLayout">
-                <MotionImage
-                  key={introIndex}
-                  src={introImages[introIndex]?.url?.trim() || "/images/1782553290530-TheaterCurtain.webp"}
-                  alt={introImages[introIndex]?.alt || "Introduzione"}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className={`cursor-pointer transition-transform duration-700 ${introImages[introIndex]?.no_crop ? "object-contain" : "object-cover hover:scale-105"}`}
-                  onClick={() => setLightbox({ isOpen: true, index: introIndex, images: introImages })}
-                />
-              </AnimatePresence>
+              <CarouselBlock
+                images={introImages}
+                fallbackAlt={introduction.fallback_alt}
+                uiContent={content?.ui?.carousel}
+                aspectRatioClass="aspect-square md:aspect-auto md:h-[500px]"
+                onImageClick={(idx) => setLightbox({ isOpen: true, index: idx, images: introImages })}
+              />
             )}
           </div>
         </div>
@@ -387,6 +385,7 @@ export default function HomeClient({ content }: { content: any }) {
         images={lightbox.images}
         initialIndex={lightbox.index}
         isOpen={lightbox.isOpen}
+        uiContent={content?.ui?.lightbox}
         onClose={() => setLightbox({ ...lightbox, isOpen: false })}
       />
     </div>

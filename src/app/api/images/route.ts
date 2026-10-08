@@ -88,9 +88,11 @@ export async function GET(request: Request) {
   const secret = request.headers.get('x-admin-secret')?.trim();
   const configuredSecret = process.env.ADMIN_SECRET?.trim();
 
+  const { constantTimeCompare } = await import('@/lib/security');
+
   // Enforce ADMIN_SECRET if configured; in production require it
   if (configuredSecret) {
-    if (secret !== configuredSecret) {
+    if (!constantTimeCompare(secret, configuredSecret)) {
       return NextResponse.json(
         { error: 'Password non autorizzata.' },
         { status: 401 }
@@ -171,6 +173,8 @@ export async function DELETE(request: Request) {
   const secret = request.headers.get('x-admin-secret')?.trim();
   const configuredSecret = process.env.ADMIN_SECRET?.trim();
 
+  const { constantTimeCompare } = await import('@/lib/security');
+
   // If ADMIN_SECRET is not configured on the server
   if (!configuredSecret) {
     return NextResponse.json(
@@ -179,8 +183,8 @@ export async function DELETE(request: Request) {
     );
   }
 
-  // Security check
-  if (secret !== configuredSecret) {
+  // Security check with constant-time comparison
+  if (!constantTimeCompare(secret, configuredSecret)) {
     return NextResponse.json(
       { error: 'Password non autorizzata.' },
       { status: 401 }
@@ -202,12 +206,19 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Sanitize and resolve repo paths and local paths
+    // Sanitize and resolve repo paths and local paths strictly within public/images
+    const allowedBaseDir = path.resolve(process.cwd(), 'public/images');
     const filesToDelete = urls.map((url) => {
       const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
-      const subPath = cleanUrl.replace(/^images\//, '').replace(/\.\./g, '');
-      const repoPath = `public/images/${subPath}`;
-      const localPath = path.join(process.cwd(), repoPath);
+      const subPath = cleanUrl.replace(/^images\//, '');
+      const localPath = path.resolve(allowedBaseDir, subPath);
+
+      if (!localPath.startsWith(allowedBaseDir)) {
+        throw new Error(`Percorso non consentito: ${url}`);
+      }
+
+      const relPath = path.relative(allowedBaseDir, localPath).replace(/\\/g, '/');
+      const repoPath = `public/images/${relPath}`;
       return { url, repoPath, localPath };
     });
 

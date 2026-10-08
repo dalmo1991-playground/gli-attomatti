@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { FormattedText } from "./FormattedText";
+
 export interface DetailDate {
   date: string;
   location?: string;
@@ -24,6 +26,7 @@ interface DetailSidebarProps {
   detailsTitle?: string;
   details?: DetailInfoItem[];
   emptyDatesMessage?: string;
+  photoGuideBadgeLabel?: string;
   onTicketClick?: (href: string) => void;
   className?: string;
 }
@@ -34,11 +37,12 @@ export function DetailSidebar({
   detailsTitle = "Dettagli",
   details = [],
   emptyDatesMessage = "Nessuna data programmata al momento.",
+  photoGuideBadgeLabel = "📷 Guida fotografica & come raggiungerci",
   onTicketClick,
   className
 }: DetailSidebarProps) {
   return (
-    <div className={cn("sticky top-32 space-y-6 sm:space-y-8", className)}>
+    <div className={cn("lg:sticky lg:top-32 space-y-6 sm:space-y-8", className)}>
       {/* Dates & Tickets Card */}
       <div className="p-6 sm:p-8 bg-muted/20 rounded-[2.5rem] border border-foreground/5 shadow-sm">
         <h3 className="text-xl font-black uppercase tracking-tight mb-6 sm:mb-8 flex items-center">
@@ -53,17 +57,19 @@ export function DetailSidebar({
                 <div className="font-bold text-lg mb-1 text-accent">{d.date}</div>
                 {d.location && (
                   d.location_href?.trim() ? (
-                    <Link
-                      href={d.location_href.trim()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-start text-foreground/70 text-sm mb-4 hover:text-accent transition-colors group"
-                    >
-                      <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0 group-hover:text-accent transition-colors" />
-                      <span className="underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
-                        {d.location}
-                      </span>
-                    </Link>
+                    <div className="space-y-1 mb-4">
+                      <Link
+                        href={d.location_href.trim()}
+                        target={d.location_href.trim().startsWith("http") ? "_blank" : undefined}
+                        rel={d.location_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="inline-flex items-start text-foreground/70 text-sm hover:text-accent transition-colors group"
+                      >
+                        <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0 group-hover:text-accent transition-colors" />
+                        <span className="underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+                          {d.location}
+                        </span>
+                      </Link>
+                    </div>
                   ) : (
                     <div className="flex items-start text-foreground/60 text-sm mb-4">
                       <MapPin size={16} className="mr-2 mt-0.5 text-accent/70 shrink-0" />
@@ -113,7 +119,7 @@ export function DetailSidebar({
                   {detail.label}
                 </span>
                 <span className="font-black text-primary text-right leading-snug break-words">
-                  {detail.value}
+                  <FormattedText text={detail.value} />
                 </span>
               </div>
             ))}

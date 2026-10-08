@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, Ticket, ExternalLink, Info, CheckCircle2 } from "lucide-react";
+import { Plus, Theater, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, Ticket, ExternalLink, Info, CheckCircle2, MapPin } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -88,6 +88,16 @@ export function SpettacoliTab() {
     updateContent("pages.spettacoli.archive_sections", next);
   };
 
+  const moveShowDate = (sIdx: number, dIdx: number, dir: -1 | 1) => {
+    const dates = [...(archive[sIdx]?.dates || [])];
+    const targetIdx = dIdx + dir;
+    if (targetIdx < 0 || targetIdx >= dates.length) return;
+    [dates[dIdx], dates[targetIdx]] = [dates[targetIdx], dates[dIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], dates };
+    updateContent("pages.spettacoli.archive_sections", next);
+  };
+
   // Details sub-list helpers
   const addShowDetail = (sIdx: number) => {
     const next = [...archive];
@@ -105,6 +115,16 @@ export function SpettacoliTab() {
   const updateShowDetail = (sIdx: number, detIdx: number, field: string, value: string) => {
     const next = [...archive];
     next[sIdx].details[detIdx] = { ...next[sIdx].details[detIdx], [field]: value };
+    updateContent("pages.spettacoli.archive_sections", next);
+  };
+
+  const moveShowDetail = (sIdx: number, detIdx: number, dir: -1 | 1) => {
+    const details = [...(archive[sIdx]?.details || [])];
+    const targetIdx = detIdx + dir;
+    if (targetIdx < 0 || targetIdx >= details.length) return;
+    [details[detIdx], details[targetIdx]] = [details[targetIdx], details[detIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], details };
     updateContent("pages.spettacoli.archive_sections", next);
   };
 
@@ -143,6 +163,20 @@ export function SpettacoliTab() {
             type="textarea"
             rows={2}
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <FormField
+              label="Etichetta CTA Mobile in Alto"
+              value={spet.detail_cta_tickets_label || ""}
+              onChange={(v) => updateContent("pages.spettacoli.detail_cta_tickets_label", v)}
+              placeholder="Date e Biglietti"
+            />
+            <FormField
+              label="Etichetta Bolla Flottante Mobile"
+              value={spet.detail_floating_cta_label || ""}
+              onChange={(v) => updateContent("pages.spettacoli.detail_floating_cta_label", v)}
+              placeholder="Biglietti & Date"
+            />
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -214,7 +248,7 @@ export function SpettacoliTab() {
                       <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70">
                         <span className="font-bold text-foreground/40 uppercase tracking-wider text-[10px]">Percorso scheda:</span>
                         <a
-                          href={`/Spettacoli/${show.slug}`}
+                          href={`/Spettacoli/${show.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground font-semibold transition-colors"
@@ -238,7 +272,7 @@ export function SpettacoliTab() {
                     label="Testo Descrittivo Completo (sinossi e trama)"
                     value={show.text || ""}
                     onChange={(v) => updateShow(actualIdx, "text", v)}
-                    type="textarea"
+                    type="richtext"
                     rows={5}
                   />
 
@@ -248,7 +282,9 @@ export function SpettacoliTab() {
                       label="Immagine Hero / Copertina di Testata (Opzionale)"
                       value={show.hero_image || ""}
                       onChange={(url) => updateShow(actualIdx, "hero_image", url)}
-                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata con un elegante filtro scuro e gradiente per garantire la leggibilità del titolo."
+                      align={show.hero_image_align || show.image_align || "center"}
+                      onAlignChange={(align) => updateShow(actualIdx, "hero_image_align", align)}
+                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata. Seleziona l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo su mobile."
                     />
                   </div>
 
@@ -280,6 +316,23 @@ export function SpettacoliTab() {
                       >
                         <Plus size={13} /> Aggiungi Replica
                       </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-background/40 border border-foreground/5 rounded-2xl">
+                      <FormField
+                        label="Personalizza CTA Mobile in Alto"
+                        value={show.detail_cta_tickets_label || ""}
+                        onChange={(v) => updateShow(actualIdx, "detail_cta_tickets_label", v)}
+                        placeholder={spet.detail_cta_tickets_label || "Date e Biglietti"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
+                      <FormField
+                        label="Personalizza Bolla Flottante Mobile"
+                        value={show.detail_floating_cta_label || ""}
+                        onChange={(v) => updateShow(actualIdx, "detail_floating_cta_label", v)}
+                        placeholder={spet.detail_floating_cta_label || "Biglietti & Date"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
                     </div>
 
                     {/* How tickets work helper box */}
@@ -317,6 +370,39 @@ export function SpettacoliTab() {
                               key={dIdx}
                               className="p-4 bg-background/50 border border-foreground/5 rounded-2xl space-y-3"
                             >
+                              <div className="flex items-center justify-between pb-2 border-b border-foreground/5">
+                                <span className="text-xs font-black uppercase text-foreground/60 tracking-wider">
+                                  Data #{dIdx + 1}
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => moveShowDate(actualIdx, dIdx, -1)}
+                                    disabled={dIdx === 0}
+                                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                    title="Sposta data in alto"
+                                  >
+                                    <ArrowUp size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => moveShowDate(actualIdx, dIdx, 1)}
+                                    disabled={dIdx === (show.dates || []).length - 1}
+                                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                    title="Sposta data in basso"
+                                  >
+                                    <ArrowDown size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeShowDate(actualIdx, dIdx)}
+                                    className="p-1 ml-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-all"
+                                    title="Rimuovi Data"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <FormField
                                   label="Data e Ora"
@@ -332,11 +418,44 @@ export function SpettacoliTab() {
                                 />
                               </div>
 
+                              {/* Location Preset Selector from /Location */}
+                              {(content?.locations || []).length > 0 && (
+                                <div className="p-3 rounded-xl bg-accent/5 border border-accent/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                  <div className="flex items-center gap-1.5 font-bold text-accent">
+                                    <MapPin size={13} className="shrink-0" />
+                                    <span>Collega a scheda Location:</span>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    {(content.locations || []).map((loc: any) => {
+                                      const isSelected = d.location_href === `/Location/${loc.slug}`;
+                                      return (
+                                        <button
+                                          key={loc.id || loc.slug}
+                                          type="button"
+                                          onClick={() => {
+                                            updateShowDate(actualIdx, dIdx, "location", loc.venue_name || loc.title || loc.address);
+                                            updateShowDate(actualIdx, dIdx, "location_href", `/Location/${loc.slug}`);
+                                          }}
+                                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all border ${
+                                            isSelected
+                                              ? "bg-accent text-background border-accent shadow-sm"
+                                              : "bg-background/80 hover:bg-background text-foreground/80 border-foreground/10 hover:border-accent/40"
+                                          }`}
+                                        >
+                                          {loc.venue_name || loc.title}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
                               <FormField
-                                label="Link Google Maps (opzionale)"
+                                label="Link Indicazioni (URL Google Maps o /Location/[slug])"
                                 value={d.location_href || ""}
                                 onChange={(v) => updateShowDate(actualIdx, dIdx, "location_href", v)}
-                                placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                                placeholder="https://maps.app.goo.gl/... oppure /Location/missione-cattolica"
+                                helpText="Puoi incollare un link Google Maps oppure selezionare una location preconfigurata qui sopra"
                               />
 
                               {/* State Presets */}
@@ -490,14 +609,34 @@ export function SpettacoliTab() {
                                 className="w-full px-2.5 py-1.5 bg-muted/30 border border-foreground/10 rounded-lg text-xs text-foreground focus:border-primary focus:outline-none"
                               />
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => removeShowDetail(actualIdx, detIdx)}
-                              className="text-rose-400 hover:text-rose-300 p-1 transition-colors"
-                              title="Rimuovi"
-                            >
-                              <Trash2 size={13} />
-                            </button>
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => moveShowDetail(actualIdx, detIdx, -1)}
+                                disabled={detIdx === 0}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta prima"
+                              >
+                                <ArrowUp size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveShowDetail(actualIdx, detIdx, 1)}
+                                disabled={detIdx === (show.details || []).length - 1}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta dopo"
+                              >
+                                <ArrowDown size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeShowDetail(actualIdx, detIdx)}
+                                className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-1 rounded-md transition-all ml-0.5"
+                                title="Rimuovi"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

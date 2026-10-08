@@ -6,7 +6,6 @@ import {
   Check,
   Copy,
   RotateCcw,
-  Sparkles,
   Layers,
   Eye,
   Star,
@@ -316,7 +315,7 @@ export function LandingThemeEditor({ landing, onChange }: LandingThemeEditorProp
       {/* 1. Theme Presets Carousel / Grid */}
       <div className="space-y-2.5">
         <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5">
-          <Sparkles size={13} className="text-primary" />
+          <Palette size={13} className="text-primary" />
           <span>Preset Grafici Disponibili (6 Temi)</span>
         </label>
 

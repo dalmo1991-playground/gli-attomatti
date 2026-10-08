@@ -1,89 +1,53 @@
 "use client";
 
-import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { RichText } from "@/components/ui/RichText";
-import { motion } from "framer-motion";
-import { Calendar, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { getCardTitleSizeClass } from "@/lib/typography";
+import { Section } from "@/components/ui/Section";
+import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
+import { Calendar } from "lucide-react";
+import { useLiveContent } from "@/components/dev/LivePreviewContext";
 
-export default function IniziativeClient({ content }: { content: any }) {
-  const iniziative = content?.pages?.iniziative || {
-    title: "Le Nostre Iniziative",
-    description: "Corsi, laboratori ed eventi teatrali.",
-    archive_sections: []
-  };
+export default function IniziativeClient({ content: initialContent }: { content: any }) {
+  const content = useLiveContent(initialContent);
+  const iniziative = content?.pages?.iniziative || {};
 
-  const sections = iniziative.archive_sections || [];
+  const sections: any[] = Array.isArray(iniziative.archive_sections) ? iniziative.archive_sections : [];
+  const visibleSections = sections.filter((s) => s.visible !== false);
 
   return (
     <div>
       {/* Hero Section */}
       <PageHeader
-        title={iniziative.title}
+        title={iniziative.title || ""}
         description={iniziative.description}
       />
 
       {/* Initiatives Archive Sections */}
-      {sections.length > 0 ? (
-        sections.map((section: any, idx: number) => (
-          <Section key={section.slug || idx} className={cn("py-24", idx % 2 !== 0 && "bg-muted/10")}>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
-              <div className="md:col-span-4 sticky top-32">
-                <div className="inline-flex items-center px-4 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-                  <Calendar size={14} className="mr-2" />
-                  Anno {section.year}
-                </div>
-                {section.slug ? (
-                  <Link href={`/Iniziative/${section.slug}`} className="block group">
-                    <h2 className={cn(
-                      getCardTitleSizeClass(section.title),
-                      "font-black uppercase tracking-tight mb-6 leading-tight group-hover:text-primary transition-colors text-balance break-words [overflow-wrap:anywhere]"
-                    )}>
-                      {section.title}
-                    </h2>
-                  </Link>
-                ) : (
-                  <h2 className={cn(
-                    getCardTitleSizeClass(section.title),
-                    "font-black uppercase tracking-tight mb-6 leading-tight text-balance break-words [overflow-wrap:anywhere]"
-                  )}>
-                    {section.title}
-                  </h2>
-                )}
-                <div className="w-12 h-1 bg-primary mb-8" />
-                
-                {section.slug && (
-                  <Link 
-                    href={`/Iniziative/${section.slug}`}
-                    className="inline-flex items-center text-primary font-bold hover:gap-2 transition-all group"
-                  >
-                    Scopri l'iniziativa
-                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                )}
-              </div>
-              
-              <div className="md:col-span-8">
-                <div className="prose prose-xl prose-invert max-w-none">
-                  <RichText
-                    content={section.short_description || section.text}
-                    className="text-xl text-foreground/80 leading-relaxed mb-8"
-                  />
-                </div>
-              </div>
-            </div>
-          </Section>
+      {visibleSections.length > 0 ? (
+        visibleSections.map((section: any, idx: number) => (
+          <ArchiveTimelineSection
+            key={section.slug || idx}
+            title={section.title}
+            badge={section.year}
+            badgePrefix={iniziative.year_prefix}
+            href={section.slug ? `/Iniziative/${section.slug}` : undefined}
+            ctaLabel={section.discover_cta || iniziative.discover_cta}
+            text={section.short_description || section.text || ""}
+            isAlternate={idx % 2 !== 0}
+          />
         ))
       ) : (
         <Section className="py-24 text-center">
           <Calendar className="mx-auto text-primary/40 mb-4" size={48} />
-          <h3 className="text-2xl font-bold mb-2">Nuove iniziative in arrivo</h3>
-          <p className="text-foreground/60 max-w-md mx-auto">
-            Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!
-          </p>
+          {iniziative.empty_title && (
+            <h3 className="text-2xl font-bold mb-2">
+              {iniziative.empty_title}
+            </h3>
+          )}
+          {iniziative.empty_description && (
+            <p className="text-foreground/60 max-w-md mx-auto">
+              {iniziative.empty_description}
+            </p>
+          )}
         </Section>
       )}
     </div>

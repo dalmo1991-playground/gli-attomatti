@@ -7,22 +7,22 @@ import AttoriClient from "./AttoriClient";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const page = content?.pages?.attori;
+  const site = content?.site;
 
   return createPageMetadata({
-    title: page?.title ? `${page.title} — Attori & Registi` : "Gli Attori & Il Cast — Gli Attomatti",
-    description:
-      "Scopri gli attori, i registi e il cast della compagnia teatrale Gli Attomatti a Zurigo: le persone che danno vita agli spettacoli.",
+    title: page?.meta_title || page?.title || site?.name || "",
+    description: page?.meta_description || page?.description || site?.description || "",
     path: "/Chi_Siamo/Attori",
-    keywords: ["attori teatro zurigo", "cast teatrale", "registi teatro zurigo", "recitazione italiana zurigo"]
+    keywords: Array.isArray(page?.keywords) ? page.keywords : []
   });
 }
 
 export default async function AttoriPage() {
   const content = await getContent();
   const breadcrumbJsonLd = getBreadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Chi Siamo", path: "/Chi_Siamo" },
-    { name: "Le Persone", path: "/Chi_Siamo/Attori" }
+    { name: content?.site?.name || "", path: "/" },
+    { name: content?.pages?.chi_siamo?.title || "", path: "/Chi_Siamo" },
+    { name: content?.pages?.attori?.title || "", path: "/Chi_Siamo/Attori" }
   ]);
 
   return (

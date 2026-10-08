@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import contentData from "@/data/content.json";
 import { PublishStatus, DiffEntry, RecoverableDraft } from "../types";
 
@@ -93,7 +93,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     try {
       if (secret) {
         sessionStorage.setItem("attomatti_admin_secret", secret);
-        localStorage.setItem("attomatti_admin_secret", secret);
+        // Clean up from persistent localStorage to prevent long-term credential leakage
+        localStorage.removeItem("attomatti_admin_secret");
       } else {
         sessionStorage.removeItem("attomatti_admin_secret");
         localStorage.removeItem("attomatti_admin_secret");
@@ -176,6 +177,31 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, [initialContent, content]);
 
   const hasUnsavedChanges = diffList.length > 0;
+
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+
+  useEffect(() => {
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        broadcastChannelRef.current = new BroadcastChannel("attomatti_preview_sync");
+      }
+    } catch {}
+
+    return () => {
+      broadcastChannelRef.current?.close();
+    };
+  }, []);
+
+  // Instantly broadcast content changes to all live preview consumers (tabs & iframes)
+  useEffect(() => {
+    if (isLoading || !content) return;
+    try {
+      localStorage.setItem("attomatti_preview_live_data", JSON.stringify(content));
+    } catch {}
+    try {
+      broadcastChannelRef.current?.postMessage({ type: "ATTOMATTI_PREVIEW_SYNC", content });
+    } catch {}
+  }, [content, isLoading]);
 
   // Auto-save to localStorage whenever changes occur (debounced 1.5s)
   useEffect(() => {
@@ -289,22 +315,81 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         if (data.branch) {
           setActiveBranch(data.branch);
         }
-        // Successfully published: clear the local draft
+        // Successfully published: clear the local draft and stale preview cache
         try {
           localStorage.removeItem("attomatti_admin_draft");
+          localStorage.removeItem("attomatti_preview_live_data");
+          sessionStorage.removeItem("attomatti_preview_live_data");
           setLastDraftSavedAt(null);
           setRecoverableDraft(null);
+
+          // Broadcast to any open site tabs on this device to reset preview and refresh content
+          if (typeof BroadcastChannel !== "undefined") {
+            const channel = new BroadcastChannel("attomatti_preview_sync");
+            channel.postMessage({ type: "ATTOMATTI_PREVIEW_PUBLISHED", content });
+            channel.close();
+          }
         } catch (e) {
           console.warn("Clear draft on publish error:", e);
         }
 
-        setPublishStatus({
-          type: "success",
-          msg: "Sito e CMS aggiornati con successo su GitHub!",
-          branch: data.branch,
-          commitUrl: data.commitUrl,
-          shortSha: data.shortSha
-        });
+        const isLocalDev = data.shortSha === "locale" || data.branch === "locale (sviluppo)";
+
+        if (isLocalDev) {
+          setPublishStatus({
+            type: "success",
+            msg: "Contenuto salvato localmente e aggiornato in tempo reale!",
+            branch: data.branch,
+            commitUrl: data.commitUrl,
+            shortSha: data.shortSha,
+            isDeploying: false
+          });
+        } else {
+          // Commit pushed to GitHub: Vercel deployment is building
+          setPublishStatus({
+            type: "deploying",
+            msg: `Commit registrato (${data.shortSha || "nuovo"})! Vercel sta avviando la compilazione... Attendere la verifica online.`,
+            branch: data.branch,
+            commitUrl: data.commitUrl,
+            shortSha: data.shortSha,
+            isDeploying: true
+          });
+
+          // Poll /api/version to detect when the new commit is actually live on Vercel
+          let attempts = 0;
+          const maxAttempts = 35; // 35 * 3s = ~105s max
+          const targetSha = data.shortSha;
+
+          const pollTimer = setInterval(async () => {
+            attempts++;
+            try {
+              const vRes = await fetch("/api/version", { cache: "no-store" });
+              if (vRes.ok) {
+                const vData = await vRes.json();
+                const currentSha = vData?.commitSha;
+                const isMatched = targetSha && currentSha && (targetSha.startsWith(currentSha) || currentSha.startsWith(targetSha));
+
+                if (isMatched || attempts >= maxAttempts) {
+                  clearInterval(pollTimer);
+                  setPublishStatus({
+                    type: "success",
+                    msg: isMatched
+                      ? `🎉 Nuova versione online e verificata su ${data.branch || "Vercel"}!`
+                      : `Modifiche pubblicate su GitHub. La nuova versione sarà attiva tra pochi istanti.`,
+                    branch: data.branch,
+                    commitUrl: data.commitUrl,
+                    shortSha: data.shortSha,
+                    isDeploying: false
+                  });
+                }
+              }
+            } catch {
+              if (attempts >= maxAttempts) {
+                clearInterval(pollTimer);
+              }
+            }
+          }, 3000);
+        }
       } else {
         const err = await res.json();
         const detail = err.error || "Pubblicazione fallita";

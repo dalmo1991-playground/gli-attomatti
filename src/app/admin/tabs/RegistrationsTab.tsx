@@ -96,6 +96,52 @@ export function RegistrationsTab() {
             </ul>
           </div>
 
+          {/* Hub Configuration Card */}
+          <div className="p-5 rounded-2xl bg-muted/20 border border-foreground/10 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-foreground/5">
+              <div>
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <ClipboardList size={16} className="text-accent" />
+                  <span>Pagina Hub Pubblica (/Registrazioni)</span>
+                </h3>
+                <p className="text-xs text-foreground/60 mt-0.5">
+                  Visualizza l&apos;elenco di tutte le iscrizioni a corsi e laboratori su un&apos;unica pagina pubblica. Gli slug disattivati o inesistenti rimandano automaticamente qui.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground/50">
+                  {content.registration_hub?.active !== false ? "Attiva" : "Disattivata"}
+                </span>
+                <FormField
+                  label=""
+                  type="switch"
+                  value={content.registration_hub?.active !== false}
+                  onChange={(val) => updateContent("registration_hub.active", val)}
+                  className="w-auto"
+                />
+              </div>
+            </div>
+
+            {content.registration_hub?.active !== false && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <FormField
+                  label="Titolo Pagina Hub"
+                  value={content.registration_hub?.title || ""}
+                  placeholder="Iscrizioni & Corsi"
+                  onChange={(val) => updateContent("registration_hub.title", val)}
+                  helpText="Titolo visibile nell'intestazione di /Registrazioni"
+                />
+                <FormField
+                  label="Descrizione Introduttiva"
+                  value={content.registration_hub?.description || ""}
+                  placeholder="Iscriviti ai laboratori teatrali, workshop..."
+                  onChange={(val) => updateContent("registration_hub.description", val)}
+                  helpText="Breve testo illustrativo mostrato sotto al titolo"
+                />
+              </div>
+            )}
+          </div>
+
           {/* Action Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
             <div className="relative flex-1 max-w-xs">
@@ -165,7 +211,7 @@ export function RegistrationsTab() {
 
                       {page.active && page.slug && (
                         <a
-                          href={`/Registrazioni/${page.slug}`}
+                          href={`/Registrazioni/${page.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent text-accent-foreground font-bold text-xs shadow-md shadow-accent/20 shrink-0 self-start sm:self-auto hover:opacity-90 transition-opacity"
@@ -212,7 +258,7 @@ export function RegistrationsTab() {
                       <FormField
                         label="URL Modulo Tally.so"
                         value={page.tally_url || ""}
-                        onChange={(v) => updatePage(idx, "tally_url", v.trim())}
+                        onChange={(v) => updatePage(idx, "tally_url", v)}
                         placeholder="https://tally.so/r/LZaPOz"
                         helpText="Incolla l'URL pubblico o di condivisione del form Tally. Verrà incorporato fluidamente nella pagina."
                         required

@@ -8,6 +8,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getPageHeroTitleSizeClass } from "@/lib/typography";
 
+import { FormattedText } from "./FormattedText";
+
 interface PageHeaderProps {
   title: string;
   description?: string | React.ReactNode;
@@ -50,7 +52,7 @@ export function PageHeader({
             "font-black mb-8 uppercase tracking-tighter text-balance break-words [overflow-wrap:anywhere]"
           )}
         >
-          {title}
+          <FormattedText text={title} />
         </motion.h1>
 
         <motion.div

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Compass, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Compass, Search, Calendar, Tag, Trash2, ArrowUp, ArrowDown, MapPin, ExternalLink } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -88,6 +88,16 @@ export function IniziativeTab() {
     updateContent("pages.iniziative.archive_sections", next);
   };
 
+  const moveDate = (sIdx: number, dIdx: number, dir: -1 | 1) => {
+    const dates = [...(archive[sIdx]?.dates || [])];
+    const targetIdx = dIdx + dir;
+    if (targetIdx < 0 || targetIdx >= dates.length) return;
+    [dates[dIdx], dates[targetIdx]] = [dates[targetIdx], dates[dIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], dates };
+    updateContent("pages.iniziative.archive_sections", next);
+  };
+
   // Details helpers
   const addDetail = (sIdx: number) => {
     const next = [...archive];
@@ -105,6 +115,16 @@ export function IniziativeTab() {
   const updateDetail = (sIdx: number, detIdx: number, field: string, value: string) => {
     const next = [...archive];
     next[sIdx].details[detIdx] = { ...next[sIdx].details[detIdx], [field]: value };
+    updateContent("pages.iniziative.archive_sections", next);
+  };
+
+  const moveDetail = (sIdx: number, detIdx: number, dir: -1 | 1) => {
+    const details = [...(archive[sIdx]?.details || [])];
+    const targetIdx = detIdx + dir;
+    if (targetIdx < 0 || targetIdx >= details.length) return;
+    [details[detIdx], details[targetIdx]] = [details[targetIdx], details[detIdx]];
+    const next = [...archive];
+    next[sIdx] = { ...next[sIdx], details };
     updateContent("pages.iniziative.archive_sections", next);
   };
 
@@ -143,6 +163,20 @@ export function IniziativeTab() {
             type="textarea"
             rows={2}
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <FormField
+              label="Etichetta CTA Mobile in Alto"
+              value={iniz.detail_cta_tickets_label || ""}
+              onChange={(v) => updateContent("pages.iniziative.detail_cta_tickets_label", v)}
+              placeholder="Date e Iscrizioni"
+            />
+            <FormField
+              label="Etichetta Bolla Flottante Mobile"
+              value={iniz.detail_floating_cta_label || ""}
+              onChange={(v) => updateContent("pages.iniziative.detail_floating_cta_label", v)}
+              placeholder="Iscrizioni & Date"
+            />
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -208,6 +242,20 @@ export function IniziativeTab() {
                     onChange={(v) => updateInitiative(actualIdx, "slug", v)}
                     helpText="Verrà visualizzato come /Iniziative/{slug}"
                   />
+                  {item.slug && (
+                    <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-foreground/5 border border-foreground/5 text-xs text-foreground/70">
+                      <span className="font-bold text-foreground/40 uppercase tracking-wider text-[10px]">Percorso scheda:</span>
+                      <a
+                        href={`/Iniziative/${item.slug}?preview=1`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground font-semibold transition-colors"
+                      >
+                        <span>/Iniziative/{item.slug}</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    </div>
+                  )}
 
                   <FormField
                     label="Breve Descrizione (anteprima card nell'elenco)"
@@ -221,7 +269,7 @@ export function IniziativeTab() {
                     label="Testo Descrittivo Completo"
                     value={item.text || ""}
                     onChange={(v) => updateInitiative(actualIdx, "text", v)}
-                    type="textarea"
+                    type="richtext"
                     rows={5}
                   />
 
@@ -231,7 +279,9 @@ export function IniziativeTab() {
                       label="Immagine Hero / Copertina di Testata (Opzionale)"
                       value={item.hero_image || ""}
                       onChange={(url) => updateInitiative(actualIdx, "hero_image", url)}
-                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata con un elegante filtro scuro e gradiente per garantire la leggibilità del titolo."
+                      align={item.hero_image_align || item.image_align || "center"}
+                      onAlignChange={(align) => updateInitiative(actualIdx, "hero_image_align", align)}
+                      helpText="Se inserita, viene visualizzata a tutto schermo come sfondo della testata. Seleziona l'ancoraggio (Sinistra, Centro, Destra) per preservare l'elemento distintivo su mobile."
                     />
                   </div>
 
@@ -265,6 +315,23 @@ export function IniziativeTab() {
                       </button>
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-background/40 border border-foreground/5 rounded-2xl">
+                      <FormField
+                        label="Personalizza CTA Mobile in Alto"
+                        value={item.detail_cta_tickets_label || ""}
+                        onChange={(v) => updateInitiative(actualIdx, "detail_cta_tickets_label", v)}
+                        placeholder={iniz.detail_cta_tickets_label || "Date e Iscrizioni"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
+                      <FormField
+                        label="Personalizza Bolla Flottante Mobile"
+                        value={item.detail_floating_cta_label || ""}
+                        onChange={(v) => updateInitiative(actualIdx, "detail_floating_cta_label", v)}
+                        placeholder={iniz.detail_floating_cta_label || "Iscrizioni & Date"}
+                        helpText="Lascia vuoto per usare il valore globale"
+                      />
+                    </div>
+
                     {(item.dates || []).length === 0 ? (
                       <p className="text-xs text-foreground/30 italic py-2">
                         Nessuna data attualmente inserita.
@@ -276,6 +343,39 @@ export function IniziativeTab() {
                             key={dIdx}
                             className="p-4 bg-background/50 border border-foreground/5 rounded-2xl space-y-3"
                           >
+                            <div className="flex items-center justify-between pb-2 border-b border-foreground/5">
+                              <span className="text-xs font-black uppercase text-foreground/60 tracking-wider">
+                                Data #{dIdx + 1}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => moveDate(actualIdx, dIdx, -1)}
+                                  disabled={dIdx === 0}
+                                  className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                  title="Sposta data in alto"
+                                >
+                                  <ArrowUp size={14} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => moveDate(actualIdx, dIdx, 1)}
+                                  disabled={dIdx === (item.dates || []).length - 1}
+                                  className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/50 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                  title="Sposta data in basso"
+                                >
+                                  <ArrowDown size={14} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeDate(actualIdx, dIdx)}
+                                  className="p-1 ml-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-all"
+                                  title="Rimuovi Data"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <FormField
                                 label="Data o Frequenza"
@@ -290,11 +390,45 @@ export function IniziativeTab() {
                                 placeholder="Zurigo Centro"
                               />
                             </div>
+
+                            {/* Location Preset Selector from /Location */}
+                            {(content?.locations || []).length > 0 && (
+                              <div className="p-3 rounded-xl bg-accent/5 border border-accent/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                <div className="flex items-center gap-1.5 font-bold text-accent">
+                                  <MapPin size={13} className="shrink-0" />
+                                  <span>Collega a scheda Location:</span>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  {(content.locations || []).map((loc: any) => {
+                                    const isSelected = d.location_href === `/Location/${loc.slug}`;
+                                    return (
+                                      <button
+                                        key={loc.id || loc.slug}
+                                        type="button"
+                                        onClick={() => {
+                                          updateDate(actualIdx, dIdx, "location", loc.venue_name || loc.title || loc.address);
+                                          updateDate(actualIdx, dIdx, "location_href", `/Location/${loc.slug}`);
+                                        }}
+                                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all border ${
+                                          isSelected
+                                            ? "bg-accent text-background border-accent shadow-sm"
+                                            : "bg-background/80 hover:bg-background text-foreground/80 border-foreground/10 hover:border-accent/40"
+                                        }`}
+                                      >
+                                        {loc.venue_name || loc.title}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
                             <FormField
-                              label="Link Google Maps (opzionale)"
+                              label="Link Indicazioni (URL Google Maps o /Location/[slug])"
                               value={d.location_href || ""}
                               onChange={(v) => updateDate(actualIdx, dIdx, "location_href", v)}
-                              placeholder="https://maps.app.goo.gl/... oppure https://maps.google.com/..."
+                              placeholder="https://maps.app.goo.gl/... oppure /Location/missione-cattolica"
+                              helpText="Puoi incollare un link Google Maps oppure selezionare una location preconfigurata qui sopra"
                             />
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <FormField
@@ -378,14 +512,34 @@ export function IniziativeTab() {
                                 className="w-full px-2.5 py-1.5 bg-muted/30 border border-foreground/10 rounded-lg text-xs text-foreground focus:border-primary focus:outline-none"
                               />
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => removeDetail(actualIdx, detIdx)}
-                              className="text-rose-400 hover:text-rose-300 p-1 transition-colors"
-                              title="Rimuovi"
-                            >
-                              <Trash2 size={13} />
-                            </button>
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => moveDetail(actualIdx, detIdx, -1)}
+                                disabled={detIdx === 0}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta prima"
+                              >
+                                <ArrowUp size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveDetail(actualIdx, detIdx, 1)}
+                                disabled={detIdx === (item.details || []).length - 1}
+                                className="p-1 rounded-md hover:bg-foreground/10 text-foreground/40 hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all"
+                                title="Sposta dopo"
+                              >
+                                <ArrowDown size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeDetail(actualIdx, detIdx)}
+                                className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 p-1 rounded-md transition-all ml-0.5"
+                                title="Rimuovi"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

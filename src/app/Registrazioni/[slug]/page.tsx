@@ -1,5 +1,5 @@
 import { getContent } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import RegistrationClient, { RegistrationPageData } from "./RegistrationClient";
 import type { Metadata } from "next";
 
@@ -46,9 +46,9 @@ export default async function RegistrazioniPage({
   const pages: RegistrationPageData[] = content?.registration_pages || [];
   const page = pages.find((p) => p.slug === slug);
 
-  // If the page does not exist, is deactivated, or has no Tally URL, return 404
+  // If the page does not exist, is deactivated, or has no Tally URL, redirect to main hub
   if (!page || page.active === false || !page.tally_url?.trim()) {
-    notFound();
+    redirect("/Registrazioni");
   }
 
   return (

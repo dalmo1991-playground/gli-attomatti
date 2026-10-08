@@ -97,6 +97,52 @@ export function TicketingTab() {
             </ul>
           </div>
 
+          {/* Hub Configuration Card */}
+          <div className="p-5 rounded-2xl bg-muted/20 border border-foreground/10 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-foreground/5">
+              <div>
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Ticket size={16} className="text-primary" />
+                  <span>Pagina Hub Pubblica (/Biglietti)</span>
+                </h3>
+                <p className="text-xs text-foreground/60 mt-0.5">
+                  Visualizza l&apos;elenco di tutte le prevendite e casse attive su un&apos;unica pagina pubblica. Gli slug disattivati o inesistenti rimandano automaticamente qui.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground/50">
+                  {content.ticketing_hub?.active !== false ? "Attiva" : "Disattivata"}
+                </span>
+                <FormField
+                  label=""
+                  type="switch"
+                  value={content.ticketing_hub?.active !== false}
+                  onChange={(val) => updateContent("ticketing_hub.active", val)}
+                  className="w-auto"
+                />
+              </div>
+            </div>
+
+            {content.ticketing_hub?.active !== false && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <FormField
+                  label="Titolo Pagina Hub"
+                  value={content.ticketing_hub?.title || ""}
+                  placeholder="Biglietteria & Prevendite"
+                  onChange={(val) => updateContent("ticketing_hub.title", val)}
+                  helpText="Titolo visibile nell'intestazione di /Biglietti"
+                />
+                <FormField
+                  label="Descrizione Introduttiva"
+                  value={content.ticketing_hub?.description || ""}
+                  placeholder="Acquista i biglietti ufficiali per le produzioni teatrali..."
+                  onChange={(val) => updateContent("ticketing_hub.description", val)}
+                  helpText="Breve testo illustrativo mostrato sotto al titolo"
+                />
+              </div>
+            )}
+          </div>
+
           {/* Action Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
             <div className="relative flex-1 max-w-xs">
@@ -166,7 +212,7 @@ export function TicketingTab() {
 
                       {page.active && page.slug && (
                         <a
-                          href={`/Biglietti/${page.slug}`}
+                          href={`/Biglietti/${page.slug}?preview=1`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20 shrink-0 self-start sm:self-auto"
@@ -213,7 +259,7 @@ export function TicketingTab() {
                       <FormField
                         label="URL Evento o Prevendita Eventfrog"
                         value={page.eventfrog_url || ""}
-                        onChange={(v) => updatePage(idx, "eventfrog_url", v.trim())}
+                        onChange={(v) => updatePage(idx, "eventfrog_url", v)}
                         placeholder="https://eventfrog.ch/it/p/teatro-arte-cultura/teatro/..."
                         helpText="Incolla l'URL pubblico di Eventfrog dell'evento. Verrà incorporato nell'iframe della pagina."
                         required
