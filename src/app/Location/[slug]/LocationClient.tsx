@@ -24,6 +24,8 @@ import { FormattedText } from "@/components/ui/FormattedText";
 import { Section } from "@/components/ui/Section";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getSafeImageProps } from "@/lib/youtube";
+import { defaultText } from "@/lib/utils";
+import { trackViewContent } from "@/lib/tracking";
 
 interface LocationClientProps {
   location?: LocationItem | null;
@@ -49,6 +51,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
     return initialLocation || null;
   }, [liveContent, initialLocation, slug]);
 
+  React.useEffect(() => {
+    if (location?.name) {
+      trackViewContent(location.name, "Location", { slug: location.slug });
+    }
+  }, [location?.name, location?.slug]);
+
   const [lightbox, setLightbox] = useState<{
     isOpen: boolean;
     index: number;
@@ -60,22 +68,32 @@ export default function LocationClient({ location: initialLocation, slug, conten
   });
 
   if (!location) {
+    const notFoundTitle = defaultText(ui.not_found_title, "Location non trovata");
+    const notFoundDesc = defaultText(ui.not_found_description);
+    const notFoundBtn = defaultText(ui.not_found_button_label, "Torna all'elenco");
+
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
         <MapPin size={48} className="text-primary/40 mb-4 animate-pulse" />
-        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-foreground mb-3">
-          {ui.not_found_title || ""}
-        </h1>
-        <p className="text-foreground/60 max-w-md mx-auto text-sm mb-6 leading-relaxed">
-          {ui.not_found_description || ""}
-        </p>
-        <Link
-          href="/Location"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
-        >
-          <ArrowLeft size={14} />
-          <span>{ui.not_found_button_label || ""}</span>
-        </Link>
+        {notFoundTitle && (
+          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-foreground mb-3">
+            {notFoundTitle}
+          </h1>
+        )}
+        {notFoundDesc && (
+          <p className="text-foreground/60 max-w-md mx-auto text-sm mb-6 leading-relaxed">
+            {notFoundDesc}
+          </p>
+        )}
+        {notFoundBtn && (
+          <Link
+            href="/Location"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
+          >
+            <ArrowLeft size={14} />
+            <span>{notFoundBtn}</span>
+          </Link>
+        )}
       </div>
     );
   }
@@ -115,22 +133,40 @@ export default function LocationClient({ location: initialLocation, slug, conten
     }
   };
 
+  const backLinkLabel = defaultText(location.back_link_label, ui.back_link_default_label, "Torna indietro");
+  const topBadge = defaultText(location.top_badge);
+  const badge = defaultText(location.badge, ui.default_badge);
+  const venueName = defaultText(location.venue_name, location.title);
+  const mapsButtonLabel = defaultText(ui.google_maps_button_label, "Apri in Google Maps");
+  const publicTransportHeading = defaultText(ui.public_transport_heading, "Mezzi pubblici");
+  const stepsHeading = defaultText(ui.steps_heading, "Guida fotografica");
+  const stepSingle = defaultText(ui.step_single_label, "passo");
+  const stepPlural = defaultText(ui.step_plural_label, "passi");
+  const clickToEnlarge = defaultText(ui.click_to_enlarge_label, "Ingrandisci");
+  const photoPrefix = defaultText(ui.photo_prefix, "Foto:");
+  const parkingHeading = defaultText(ui.parking_heading, "Parcheggio");
+  const accessibilityHeading = defaultText(ui.accessibility_heading, "Accessibilità");
+  const notesHeading = defaultText(ui.notes_heading, "Note pratiche");
+  const bottomBackLabel = defaultText(location.back_link_label, ui.bottom_back_button_label, "Torna indietro");
+
   return (
     <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto space-y-8 sm:space-y-10">
         {/* Top Back Navigation */}
         <div className="flex items-center justify-between">
-          <Link
-            href={location.back_link_href || "/"}
-            className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>{location.back_link_label || ui.back_link_default_label || ""}</span>
-          </Link>
+          {backLinkLabel && (
+            <Link
+              href={location.back_link_href || "/"}
+              className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
+            >
+              <ArrowLeft size={16} />
+              <span>{backLinkLabel}</span>
+            </Link>
+          )}
 
-          {location.top_badge && location.top_badge.trim().length > 0 && (
+          {topBadge && (
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20">
-              {location.top_badge}
+              {topBadge}
             </span>
           )}
         </div>
@@ -142,32 +178,36 @@ export default function LocationClient({ location: initialLocation, slug, conten
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
           <div className="relative z-10 space-y-6">
-            {location.badge !== "" && (
+            {badge && (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary border border-primary/20 text-xs font-black uppercase tracking-wider">
                 <MapPin size={14} />
-                <span>{location.badge || ui.default_badge || ""}</span>
+                <span>{badge}</span>
               </div>
             )}
 
-            <div>
-              <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground text-balance break-words">
-                {location.venue_name || location.title}
-              </h1>
-              {location.venue_name && location.title !== location.venue_name && (
-                <p className="text-base sm:text-lg text-primary font-bold mt-1">
-                  {location.title}
-                </p>
-              )}
-            </div>
+            {venueName && (
+              <div>
+                <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground text-balance break-words">
+                  {venueName}
+                </h1>
+                {location.venue_name && location.title !== location.venue_name && (
+                  <p className="text-base sm:text-lg text-primary font-bold mt-1">
+                    {location.title}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Address & Quick Links */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-foreground/10">
-              <div className="flex items-start gap-2.5 text-foreground/80 font-medium text-sm sm:text-base">
-                <Compass className="text-accent shrink-0 mt-0.5" size={18} />
-                <span>{location.address}</span>
-              </div>
+              {location.address && (
+                <div className="flex items-start gap-2.5 text-foreground/80 font-medium text-sm sm:text-base">
+                  <Compass className="text-accent shrink-0 mt-0.5" size={18} />
+                  <span>{location.address}</span>
+                </div>
+              )}
 
-              {location.google_maps_url && (
+              {location.google_maps_url && mapsButtonLabel && (
                 <Link
                   href={location.google_maps_url}
                   target="_blank"
@@ -175,7 +215,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                   className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20 shrink-0 self-start sm:self-auto"
                 >
                   <Navigation size={14} />
-                  <span>{ui.google_maps_button_label || ""}</span>
+                  <span>{mapsButtonLabel}</span>
                   <ExternalLink size={12} className="opacity-70" />
                 </Link>
               )}
@@ -205,10 +245,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
         {/* Public Transport Stops */}
         {transports.length > 0 && (
           <div className="p-6 sm:p-8 rounded-[2rem] bg-muted/20 border border-foreground/5 space-y-4">
-            <h2 className="text-lg font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
-              <Bus size={20} className="text-secondary" />
-              <span>{ui.public_transport_heading || ""}</span>
-            </h2>
+            {publicTransportHeading && (
+              <h2 className="text-lg font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
+                <Bus size={20} className="text-secondary" />
+                <span>{publicTransportHeading}</span>
+              </h2>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
               {transports.map((t, idx) => {
@@ -259,7 +301,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
                     ) : (
                       t.lines && (
                         <div className="text-xs text-foreground/50 font-medium">
-                          {ui.lines_prefix || ""} {t.lines}
+                          {ui.lines_prefix ? `${ui.lines_prefix} ` : ""}{t.lines}
                         </div>
                       )
                     )}
@@ -274,13 +316,17 @@ export default function LocationClient({ location: initialLocation, slug, conten
         {steps.length > 0 && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
-                <Footprints size={22} className="text-accent" />
-                <span>{ui.steps_heading || ""}</span>
-              </h2>
-              <span className="text-xs text-foreground/40 font-bold uppercase tracking-wider">
-                {steps.length} {steps.length === 1 ? (ui.step_single_label || "") : (ui.step_plural_label || "")}
-              </span>
+              {stepsHeading && (
+                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground flex items-center gap-2.5">
+                  <Footprints size={22} className="text-accent" />
+                  <span>{stepsHeading}</span>
+                </h2>
+              )}
+              {(stepSingle || stepPlural) && (
+                <span className="text-xs text-foreground/40 font-bold uppercase tracking-wider">
+                  {steps.length} {steps.length === 1 ? (stepSingle || "") : (stepPlural || "")}
+                </span>
+              )}
             </div>
 
             <div className="space-y-6">
@@ -296,12 +342,16 @@ export default function LocationClient({ location: initialLocation, slug, conten
                         {idx + 1}
                       </div>
                       <div className="space-y-1 flex-1">
-                        <h3 className="text-lg sm:text-xl font-black tracking-tight text-foreground">
-                          {step.title}
-                        </h3>
-                        <p className="text-sm sm:text-base text-foreground/80 leading-relaxed font-medium">
-                          <FormattedText text={step.instruction} />
-                        </p>
+                        {step.title && (
+                          <h3 className="text-lg sm:text-xl font-black tracking-tight text-foreground">
+                            {step.title}
+                          </h3>
+                        )}
+                        {step.instruction && (
+                          <p className="text-sm sm:text-base text-foreground/80 leading-relaxed font-medium">
+                            <FormattedText text={step.instruction} />
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -325,15 +375,17 @@ export default function LocationClient({ location: initialLocation, slug, conten
                               />
                             );
                           })()}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                            <span className="text-xs text-white font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md">
-                              {ui.click_to_enlarge_label || ""}
-                            </span>
-                          </div>
+                          {clickToEnlarge && (
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                              <span className="text-xs text-white font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md">
+                                {clickToEnlarge}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         {step.image_caption && (
                           <p className="text-xs text-foreground/50 italic mt-2 px-1">
-                            {ui.photo_prefix || ""} {step.image_caption}
+                            {photoPrefix ? `${photoPrefix} ` : ""}{step.image_caption}
                           </p>
                         )}
                       </div>
@@ -350,10 +402,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {location.parking_info && (
               <div className="p-6 rounded-[2rem] bg-muted/15 border border-foreground/10 space-y-2">
-                <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
-                  <Car size={16} className="text-accent" />
-                  <span>{ui.parking_heading || ""}</span>
-                </div>
+                {parkingHeading && (
+                  <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
+                    <Car size={16} className="text-accent" />
+                    <span>{parkingHeading}</span>
+                  </div>
+                )}
                 <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium">
                   <FormattedText text={location.parking_info} />
                 </p>
@@ -362,10 +416,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
 
             {location.accessibility_info && (
               <div className="p-6 rounded-[2rem] bg-muted/15 border border-foreground/10 space-y-2">
-                <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
-                  <Accessibility size={16} className="text-secondary" />
-                  <span>{ui.accessibility_heading || ""}</span>
-                </div>
+                {accessibilityHeading && (
+                  <div className="flex items-center gap-2 font-black text-sm uppercase tracking-wider text-foreground">
+                    <Accessibility size={16} className="text-secondary" />
+                    <span>{accessibilityHeading}</span>
+                  </div>
+                )}
                 <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium">
                   <FormattedText text={location.accessibility_info} />
                 </p>
@@ -374,10 +430,12 @@ export default function LocationClient({ location: initialLocation, slug, conten
 
             {location.notes && (
               <div className="md:col-span-2 p-6 rounded-[2rem] bg-foreground/5 border border-foreground/5 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-foreground/60">
-                  <Info size={14} className="text-primary" />
-                  <span>{ui.notes_heading || ""}</span>
-                </div>
+                {notesHeading && (
+                  <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-foreground/60">
+                    <Info size={14} className="text-primary" />
+                    <span>{notesHeading}</span>
+                  </div>
+                )}
                 <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-medium">
                   <FormattedText text={location.notes} />
                 </p>
@@ -387,15 +445,17 @@ export default function LocationClient({ location: initialLocation, slug, conten
         )}
 
         {/* Bottom CTA to return */}
-        <div className="text-center pt-6 pb-12">
-          <Link
-            href={location.back_link_href || "/"}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-black text-xs uppercase tracking-wider transition-all"
-          >
-            <ArrowLeft size={16} />
-            <span>{location.back_link_label || ui.bottom_back_button_label || ""}</span>
-          </Link>
-        </div>
+        {bottomBackLabel && (
+          <div className="text-center pt-6 pb-12">
+            <Link
+              href={location.back_link_href || "/"}
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-black text-xs uppercase tracking-wider transition-all"
+            >
+              <ArrowLeft size={16} />
+              <span>{bottomBackLabel}</span>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Lightbox for step photos */}

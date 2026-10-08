@@ -11,28 +11,28 @@ import { RichText } from "./RichText";
 import { ImageAlign } from "@/lib/imageAlign";
 
 export interface DetailViewLayoutProps {
-  title: string;
-  subtitle?: string;
+  title?: string | null;
+  subtitle?: string | null;
   heroImage?: string;
   imageAlign?: ImageAlign;
-  backLink: {
+  backLink?: {
     href: string;
-    label: string;
-  };
-  mainHeading?: string;
-  text?: string;
+    label?: string | null;
+  } | null;
+  mainHeading?: string | null;
+  text?: string | null;
   galleryImages?: Array<{ url: string; alt?: string; caption?: string }>;
-  datesTitle?: string;
+  datesTitle?: string | null;
   dates?: DetailDate[];
-  detailsTitle?: string;
+  detailsTitle?: string | null;
   details?: DetailInfoItem[];
-  emptyDatesMessage?: string;
-  photoGuideBadgeLabel?: string;
+  emptyDatesMessage?: string | null;
+  photoGuideBadgeLabel?: string | null;
   onTicketClick?: (href: string) => void;
   lightboxUi?: any;
   children?: React.ReactNode;
-  mobileCtaLabel?: string;
-  mobileFloatingCtaLabel?: string;
+  mobileCtaLabel?: string | null;
+  mobileFloatingCtaLabel?: string | null;
 }
 
 export function DetailViewLayout({
@@ -71,8 +71,8 @@ export function DetailViewLayout({
   );
 
   const hasDates = Boolean(dates && dates.length > 0);
-  const effectiveMobileCtaLabel = mobileCtaLabel || (hasDates ? datesTitle : undefined);
-  const effectiveFloatingLabel = mobileFloatingCtaLabel || effectiveMobileCtaLabel;
+  const effectiveMobileCtaLabel = mobileCtaLabel !== undefined ? mobileCtaLabel : (hasDates ? datesTitle : undefined);
+  const effectiveFloatingLabel = mobileFloatingCtaLabel !== undefined ? mobileFloatingCtaLabel : effectiveMobileCtaLabel;
 
   const handleScrollToTickets = () => {
     const el = document.getElementById("biglietti");

@@ -16,7 +16,7 @@ import {
   Play,
   ArrowRight
 } from "lucide-react";
-import { cn, stripHtml } from "@/lib/utils";
+import { cn, stripHtml, defaultText } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
 import { CarouselBlock } from "./CarouselBlock";
 import { ArchiveTimelineSection } from "./ArchiveTimelineSection";
@@ -25,7 +25,7 @@ import { EmbeddedFrameView } from "./EmbeddedFrameView";
 import { getBlockAnchor } from "@/lib/landingAnchors";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 import { getHeroTitleSizeClass, getPageHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
-import { trackInitiateCheckout } from "@/lib/tracking";
+import { trackInitiateCheckout, trackLead, trackContact } from "@/lib/tracking";
 import { PageBlock } from "@/lib/pageBlocks";
 import { isYouTubeUrl, getYouTubeThumbnailUrl, getSafeImageProps } from "@/lib/youtube";
 
@@ -47,6 +47,33 @@ export function PageBlockRenderer({
   className
 }: PageBlockRendererProps) {
   const [faqOpen, setFaqOpen] = useState<Record<number, boolean>>({ 0: true });
+
+  // Listen to official Tally postMessage event for form submissions in embedded tally blocks
+  React.useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (!e.data) return;
+      let isSubmitted = false;
+      let formId = "";
+      try {
+        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+        if (data?.event === "Tally.FormSubmitted") {
+          isSubmitted = true;
+          formId = data.payload?.formId || "";
+        }
+      } catch {
+        if (typeof e.data === "string" && e.data.includes("Tally.FormSubmitted")) {
+          isSubmitted = true;
+        }
+      }
+
+      if (isSubmitted) {
+        trackLead(pageTitle, "tally_landing_block", { form_id: formId });
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [pageTitle]);
 
   const toggleFaq = (idx: number) => {
     setFaqOpen((prev) => ({ ...prev, [idx]: !prev[idx] }));
@@ -91,7 +118,7 @@ export function PageBlockRenderer({
                 <div className="absolute inset-0 z-0">
                   <Image
                     src={heroDisplaySrc}
-                    alt={block.title || defaults.hero_image_alt || "Hero"}
+                    alt={defaultText(block.title, defaults.hero_image_alt, "Hero") || ""}
                     fill
                     unoptimized={isHeroUnoptimized}
                     sizes="100vw"
@@ -117,14 +144,16 @@ export function PageBlockRenderer({
                     )}
 
                     {/* Title - exactly matching HomeClient */}
-                    <h1
-                      className={cn(
-                        getHeroTitleSizeClass(block.title),
-                        "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
-                      )}
-                    >
-                      <FormattedText text={block.title} />
-                    </h1>
+                    {block.title && (
+                      <h1
+                        className={cn(
+                          getHeroTitleSizeClass(block.title),
+                          "font-black tracking-tighter uppercase leading-[0.95] text-center drop-shadow-md text-balance break-words [overflow-wrap:anywhere]"
+                        )}
+                      >
+                        <FormattedText text={block.title} />
+                      </h1>
+                    )}
 
                     {/* Tagline / Subtitle - exactly matching HomeClient font, più in grande */}
                     {block.tagline && (
@@ -169,6 +198,12 @@ export function PageBlockRenderer({
           /* ================= 2. EVENT DETAILS BLOCK ================= */
           case "event_details": {
             const anchor = getBlockAnchor(block, "event_details");
+            const eventDetailsTitle = defaultText(block.title, defaults.event_details_title, "Data e Informazioni");
+            const dateTimeLabel = defaultText(defaults.date_time_label, "Data & Ora");
+            const locationLabel = defaultText(defaults.location_label, "Luogo");
+            const mapsLabel = defaultText(defaults.google_maps_label, "Apri su Google Maps");
+            const ticketLabel = defaultText(defaults.ticket_label, "Biglietto");
+
             return (
               <section key={block.id || bIdx} id={anchor} className="py-16 px-4 sm:px-6 scroll-mt-24 relative">
                 <div className="max-w-4xl mx-auto">
@@ -183,9 +218,11 @@ export function PageBlockRenderer({
                           </span>
                         )}
 
-                        <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
-                          {stripHtml(block.title || defaults.event_details_title || "Data e Informazioni")}
-                        </h2>
+                        {eventDetailsTitle && (
+                          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
+                            {stripHtml(eventDetailsTitle)}
+                          </h2>
+                        )}
 
                         <div className="space-y-4">
                           {block.date && (
@@ -194,9 +231,11 @@ export function PageBlockRenderer({
                                 <Calendar size={18} />
                               </div>
                               <div>
-                                <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
-                                  {defaults.date_time_label || "Data & Ora"}
-                                </div>
+                                {dateTimeLabel && (
+                                  <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
+                                    {dateTimeLabel}
+                                  </div>
+                                )}
                                 <div className="text-base sm:text-lg font-bold text-foreground">
                                   {stripHtml(block.date)}
                                 </div>
@@ -210,20 +249,22 @@ export function PageBlockRenderer({
                                 <MapPin size={18} />
                               </div>
                               <div>
-                                <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
-                                  {defaults.location_label || "Luogo"}
-                                </div>
+                                {locationLabel && (
+                                  <div className="text-xs uppercase font-bold text-foreground/40 tracking-wider">
+                                    {locationLabel}
+                                  </div>
+                                )}
                                 <div className="text-base sm:text-lg font-bold text-foreground">
                                   {stripHtml(block.location)}
                                 </div>
-                                {block.location_href && (
+                                {block.location_href && mapsLabel && (
                                   <Link
                                     href={block.location_href}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-xs text-foreground/60 hover:text-primary mt-1 font-bold transition-colors"
                                   >
-                                    <span>{defaults.google_maps_label || "Apri su Google Maps"}</span>
+                                    <span>{mapsLabel}</span>
                                     <ExternalLink size={12} />
                                   </Link>
                                 )}
@@ -234,31 +275,40 @@ export function PageBlockRenderer({
                       </div>
 
                       {/* Price & CTA Column */}
-                      <div className="flex flex-col items-center sm:items-end justify-center gap-4 border-t md:border-t-0 md:border-l border-foreground/10 pt-6 md:pt-0 md:pl-8 shrink-0">
-                        {block.price && (
-                          <div className="text-center sm:text-right">
-                            <span className="text-xs text-foreground/40 uppercase tracking-widest font-bold block">
-                              {defaults.ticket_label || "Biglietto"}
-                            </span>
-                            <span className="text-3xl sm:text-4xl font-black text-foreground drop-shadow-xs">
-                              {stripHtml(block.price)}
-                            </span>
-                          </div>
-                        )}
+                      {(block.price || block.cta_label) && (
+                        <div className="flex flex-col items-center sm:items-end justify-center gap-4 border-t md:border-t-0 md:border-l border-foreground/10 pt-6 md:pt-0 md:pl-8 shrink-0">
+                          {block.price && (
+                            <div className="text-center sm:text-right">
+                              {ticketLabel && (
+                                <span className="text-xs text-foreground/40 uppercase tracking-widest font-bold block">
+                                  {ticketLabel}
+                                </span>
+                              )}
+                              <span className="text-3xl sm:text-4xl font-black text-foreground drop-shadow-xs">
+                                {stripHtml(block.price)}
+                              </span>
+                            </div>
+                          )}
 
-                        {block.cta_label && (
-                          <Link
-                            href={block.cta_href || "#"}
-                            onClick={(e) => handleAnchorClickInternal(e, block.cta_href)}
-                            target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
-                            rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:scale-105 flex items-center gap-2"
-                          >
-                            <Ticket size={16} />
-                            <span>{block.cta_label}</span>
-                          </Link>
-                        )}
-                      </div>
+                          {block.cta_label && (
+                            <Link
+                              href={block.cta_href || "#"}
+                              onClick={(e) => {
+                                handleAnchorClickInternal(e, block.cta_href);
+                                if (block.cta_href?.startsWith("http") || block.cta_href?.includes("Biglietti") || block.cta_href?.includes("biglietti")) {
+                                  trackInitiateCheckout(pageTitle, block.cta_href, "landing_hero_cta");
+                                }
+                              }}
+                              target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
+                              rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
+                              className="px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:scale-105 flex items-center gap-2"
+                            >
+                              <Ticket size={16} />
+                              <span>{block.cta_label}</span>
+                            </Link>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -366,9 +416,9 @@ export function PageBlockRenderer({
                           image: item.image,
                           description: item.description,
                           primaryHref: item.action_url || item.primary_href || "#",
-                          primaryLabel: item.action_label || item.primary_label || "Scopri",
+                          primaryLabel: defaultText(item.action_label, item.primary_label, "Scopri"),
                           secondaryHref: item.detail_url || item.secondary_href,
-                          secondaryLabel: item.detail_label || item.secondary_label
+                          secondaryLabel: defaultText(item.detail_label, item.secondary_label)
                         }}
                       />
                     ))}
@@ -393,19 +443,23 @@ export function PageBlockRenderer({
             }
 
             const anchor = getBlockAnchor(block, "eventfrog");
+            const eventfrogTitle = defaultText(block.title, defaults.eventfrog_title, "Acquista Biglietti");
+            const eventfrogBadge = defaultText(defaults.eventfrog_badge, "Biglietteria Ufficiale");
+            const eventfrogFallbackBtn = defaultText(block.fallback_label, defaults.eventfrog_fallback_button, "Apri su Eventfrog");
+
             return (
               <div key={block.id || bIdx} id={anchor} className="scroll-mt-24">
                 <EmbeddedFrameView
-                  title={block.title || defaults.eventfrog_title || "Acquista Biglietti"}
-                  category={defaults.eventfrog_badge || "Biglietteria Ufficiale"}
+                  title={eventfrogTitle}
+                  category={eventfrogBadge || undefined}
                   categoryIcon={Ticket}
                   description={block.subtitle}
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
                   showNavigation={false}
                   className="min-h-0 py-12 sm:py-16"
-                  iframeTitle={block.title || "Biglietti Eventfrog"}
-                  fallbackButtonLabel={block.fallback_label || defaults.eventfrog_fallback_button || "Apri su Eventfrog"}
+                  iframeTitle={eventfrogTitle || "Biglietti Eventfrog"}
+                  fallbackButtonLabel={eventfrogFallbackBtn || undefined}
                   onDirectClick={() => trackInitiateCheckout(pageTitle, embedUrl)}
                 />
               </div>
@@ -432,20 +486,25 @@ export function PageBlockRenderer({
             }
 
             const anchor = getBlockAnchor(block, "tally");
+            const tallyTitle = defaultText(block.title, defaults.tally_title, "Modulo di Iscrizione");
+            const tallyBadge = defaultText(defaults.tally_badge, "Iscrizione Online");
+            const tallyFallbackBtn = defaultText(block.fallback_label, defaults.tally_fallback_button, "Apri su Tally");
+
             return (
               <div key={block.id || bIdx} id={anchor} className="scroll-mt-24">
                 <EmbeddedFrameView
-                  title={block.title || defaults.tally_title || "Modulo di Iscrizione"}
-                  category={defaults.tally_badge || "Iscrizione Online"}
+                  title={tallyTitle}
+                  category={tallyBadge || undefined}
                   categoryIcon={ClipboardList}
                   description={block.subtitle}
                   embedUrl={embedUrl}
                   directUrl={rawUrl}
                   showNavigation={false}
                   className="min-h-0 py-12 sm:py-16"
-                  iframeTitle={block.title || "Modulo Tally"}
-                  fallbackButtonLabel={block.fallback_label || defaults.tally_fallback_button || "Apri su Tally"}
+                  iframeTitle={tallyTitle || "Modulo Tally"}
+                  fallbackButtonLabel={tallyFallbackBtn || undefined}
                   dataTallySrc={embedUrl}
+                  onDirectClick={() => trackContact("tally_landing_external", rawUrl || embedUrl)}
                 />
               </div>
             );
@@ -454,15 +513,19 @@ export function PageBlockRenderer({
           /* ================= 8. SYNOPSIS BLOCK ================= */
           case "synopsis": {
             const anchor = getBlockAnchor(block, "synopsis");
+            const synopsisTitle = defaultText(block.title, defaults.synopsis_title, "La Trama");
+
             return (
               <section key={block.id || bIdx} id={anchor} className="py-20 px-4 sm:px-6 scroll-mt-24 relative">
                 <div className="max-w-4xl mx-auto space-y-12">
-                  <div className="text-center max-w-2xl mx-auto">
-                    <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">
-                      {block.title || defaults.synopsis_title || "La Trama"}
-                    </h2>
-                    <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
-                  </div>
+                  {synopsisTitle && (
+                    <div className="text-center max-w-2xl mx-auto">
+                      <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">
+                        {synopsisTitle}
+                      </h2>
+                      <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     <div className={cn("space-y-6", block.image ? "md:col-span-7" : "md:col-span-12")}>
@@ -499,7 +562,7 @@ export function PageBlockRenderer({
                         >
                           <Image
                             src={getSafeImageProps(block.image).src}
-                            alt={block.title || defaults.synopsis_image_alt || "Foto spettacolo"}
+                            alt={defaultText(block.title, defaults.synopsis_image_alt, "Foto spettacolo") || ""}
                             fill
                             unoptimized={getSafeImageProps(block.image).unoptimized}
                             sizes="(max-width: 768px) 100vw, 40vw"
@@ -608,16 +671,19 @@ export function PageBlockRenderer({
             const reviews = block.items || [];
             if (reviews.length === 0) return null;
             const anchor = getBlockAnchor(block, "reviews");
+            const reviewsTitle = defaultText(block.title, defaults.reviews_title, "Dicono di Noi");
 
             return (
               <section key={block.id || bIdx} id={anchor} className="py-20 px-4 sm:px-6 scroll-mt-24 relative">
                 <div className="max-w-4xl mx-auto space-y-12">
-                  <div className="text-center">
-                    <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
-                      {block.title || defaults.reviews_title || "Dicono di Noi"}
-                    </h2>
-                    <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
-                  </div>
+                  {reviewsTitle && (
+                    <div className="text-center">
+                      <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
+                        {reviewsTitle}
+                      </h2>
+                      <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {reviews.map((rev: any, rIdx: number) => {
@@ -646,9 +712,11 @@ export function PageBlockRenderer({
                             &ldquo;<FormattedText text={rev.quote} />&rdquo;
                           </p>
 
-                          <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
-                            {stripHtml(rev.author)}
-                          </div>
+                          {rev.author && (
+                            <div className="text-xs uppercase font-black tracking-wider text-foreground/60 pt-2 border-t border-foreground/5 flex items-center gap-1.5">
+                              {stripHtml(rev.author)}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -663,16 +731,19 @@ export function PageBlockRenderer({
             const faqs = block.items || [];
             if (faqs.length === 0) return null;
             const anchor = getBlockAnchor(block, "faq");
+            const faqTitle = defaultText(block.title, defaults.faq_title, "Domande Frequenti");
 
             return (
               <section key={block.id || bIdx} id={anchor} className="py-20 px-4 sm:px-6 bg-muted/10 scroll-mt-24 relative">
                 <div className="max-w-3xl mx-auto space-y-8">
-                  <div className="text-center mb-10">
-                    <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
-                      {block.title || defaults.faq_title || "Domande Frequenti"}
-                    </h2>
-                    <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
-                  </div>
+                  {faqTitle && (
+                    <div className="text-center mb-10">
+                      <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-4">
+                        {faqTitle}
+                      </h2>
+                      <div className="w-16 h-1 rounded-full bg-primary/80 mx-auto" />
+                    </div>
+                  )}
 
                   <div className="space-y-4">
                     {faqs.map((f: any, fIdx: number) => {
@@ -726,14 +797,18 @@ export function PageBlockRenderer({
           /* ================= 12. CLOSING CTA BLOCK ================= */
           case "closing_cta": {
             const anchor = getBlockAnchor(block, "closing_cta");
+            const closingTitle = defaultText(block.title, defaults.closing_cta_title, "Unisciti a Noi");
+
             return (
               <section key={block.id || bIdx} id={anchor} className="py-24 px-4 sm:px-6 relative overflow-hidden scroll-mt-24">
                 <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
                   <div className="p-10 sm:p-16 rounded-[3rem] bg-gradient-to-b from-primary/15 via-primary/5 to-transparent border border-primary/20 shadow-2xl relative overflow-hidden backdrop-blur-md">
                     <div className="space-y-6 max-w-2xl mx-auto">
-                      <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
-                        {block.title || defaults.closing_cta_title || "Unisciti a Noi"}
-                      </h2>
+                      {closingTitle && (
+                        <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground">
+                          {closingTitle}
+                        </h2>
+                      )}
                       {block.text && (
                         <p className="text-base sm:text-xl text-foreground/80 leading-relaxed font-medium">
                           <FormattedText text={block.text} />
@@ -743,7 +818,12 @@ export function PageBlockRenderer({
                         {block.cta_label && (
                           <Link
                             href={block.cta_href || "#"}
-                            onClick={(e) => handleAnchorClickInternal(e, block.cta_href)}
+                            onClick={(e) => {
+                              handleAnchorClickInternal(e, block.cta_href);
+                              if (block.cta_href?.startsWith("http") || block.cta_href?.includes("Biglietti") || block.cta_href?.includes("biglietti")) {
+                                trackInitiateCheckout(pageTitle, block.cta_href, "landing_closing_cta");
+                              }
+                            }}
                             target={block.cta_href?.startsWith("http") ? "_blank" : undefined}
                             rel={block.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
                             className="w-full sm:w-auto px-10 py-5 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 hover:scale-105 flex items-center justify-center gap-2"

@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
 
 export interface LegalDocLayoutProps {
-  badge?: string;
-  title: string;
-  description?: string;
-  backHref?: string;
-  backLabel?: string;
+  badge?: string | null;
+  title?: string | null;
+  description?: string | null;
+  backHref?: string | null;
+  backLabel?: string | null;
   className?: string;
   children: React.ReactNode;
 }
@@ -27,7 +27,7 @@ export function LegalDocLayout({
     <div className={cn("min-h-screen py-12 sm:py-16 px-4 sm:px-6", className)}>
       <div className="max-w-4xl mx-auto space-y-8 sm:space-y-12">
         {/* Back Link */}
-        {backHref && (
+        {backHref && backLabel && (
           <Link
             href={backHref}
             className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
@@ -38,23 +38,27 @@ export function LegalDocLayout({
         )}
 
         {/* Document Header */}
-        <div className="space-y-4">
-          {badge && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
-              {badge}
-            </div>
-          )}
+        {(badge || title || description) && (
+          <div className="space-y-4">
+            {badge && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
+                {badge}
+              </div>
+            )}
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-foreground leading-[1.05] text-balance break-words">
-            {title}
-          </h1>
+            {title && (
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-foreground leading-[1.05] text-balance break-words">
+                {title}
+              </h1>
+            )}
 
-          {description && (
-            <p className="text-base sm:text-lg text-foreground/70 max-w-2xl font-medium leading-relaxed">
-              <FormattedText text={description} />
-            </p>
-          )}
-        </div>
+            {description && (
+              <p className="text-base sm:text-lg text-foreground/70 max-w-2xl font-medium leading-relaxed">
+                <FormattedText text={description} />
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Content Body / Cards */}
         <div className="space-y-6 sm:space-y-8">
@@ -66,10 +70,10 @@ export function LegalDocLayout({
 }
 
 export interface LegalDocCardProps {
-  title?: string;
+  title?: string | null;
   icon?: React.ElementType;
   iconColorClass?: string;
-  badge?: string;
+  badge?: string | null;
   headerClassName?: string;
   headerTitleClassName?: string;
   className?: string;

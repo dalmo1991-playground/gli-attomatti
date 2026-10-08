@@ -7,6 +7,7 @@ import { Section } from "@/components/ui/Section";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CatalogCard, CatalogGrid } from "@/components/ui/CatalogCard";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { defaultText } from "@/lib/utils";
 
 export default function RegistrazioniClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -34,13 +35,14 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
 
     return {
       id: page.id || `reg-${slug}`,
-      title: page.title?.trim() || matchingInit?.title || "Iniziativa Teatrale",
-      category: page.category || "Laboratorio & Workshop",
+      title: defaultText(page.title, matchingInit?.title, "Iniziativa Teatrale"),
+      category: defaultText(page.category, "Laboratorio & Workshop"),
       categoryIcon: ClipboardList,
-      description:
-        page.description?.trim() ||
-        matchingInit?.short_description ||
-        "Modulo di registrazione ufficiale online.",
+      description: defaultText(
+        page.description,
+        matchingInit?.short_description,
+        "Modulo di registrazione ufficiale online."
+      ),
       image:
         page.image?.trim() ||
         matchingInit?.hero_image ||
@@ -48,19 +50,23 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
         "/images/1782553290530-TheaterCurtain.webp",
       date: matchingInit?.year ? `Edizione ${matchingInit.year}` : undefined,
       primaryHref: `/Registrazioni/${slug}`,
-      primaryLabel: hub.register_online_cta || "Iscriviti Online",
+      primaryLabel: defaultText(hub.register_online_cta, "Iscriviti Online"),
       secondaryHref:
         page.back_link_href ||
         (matchingInit?.slug ? `/Iniziative/${matchingInit.slug}` : undefined),
-      secondaryLabel: hub.info_cta || "Info"
+      secondaryLabel: defaultText(hub.info_cta, "Info")
     };
   });
+
+  const emptyTitle = defaultText(hub.empty_title, "Nessuna iscrizione aperta");
+  const emptyDesc = defaultText(hub.empty_description, "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!");
+  const viewInitiativesCta = defaultText(hub.view_initiatives_cta, "Vedi Iniziative");
 
   return (
     <div className="min-h-screen">
       <PageHeader
-        title={hub.title || "Iscrizioni & Corsi"}
-        description={hub.description || "Iscriviti ai laboratori teatrali, workshop e alle attività formative della compagnia Gli Attomatti."}
+        title={defaultText(hub.title, "Iscrizioni & Corsi")}
+        description={defaultText(hub.description, "Iscriviti ai laboratori teatrali, workshop e alle attività formative della compagnia Gli Attomatti.")}
       />
 
       <Section className="py-20 lg:py-24">
@@ -71,24 +77,32 @@ export default function RegistrazioniClient({ content: initialContent }: { conte
             ))}
           </CatalogGrid>
         ) : (
-          <div className="max-w-md mx-auto text-center py-16 px-6 bg-muted/20 border border-foreground/5 rounded-3xl">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
-              <ClipboardList size={32} />
+          (emptyTitle || emptyDesc || viewInitiativesCta) && (
+            <div className="max-w-md mx-auto text-center py-16 px-6 bg-muted/20 border border-foreground/5 rounded-3xl">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
+                <ClipboardList size={32} />
+              </div>
+              {emptyTitle && (
+                <h2 className="text-2xl font-black uppercase tracking-tight mb-3">
+                  {emptyTitle}
+                </h2>
+              )}
+              {emptyDesc && (
+                <p className="text-foreground/60 text-sm leading-relaxed mb-8">
+                  {emptyDesc}
+                </p>
+              )}
+              {viewInitiativesCta && (
+                <Link
+                  href="/Iniziative"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+                >
+                  <span>{viewInitiativesCta}</span>
+                  <ArrowRight size={16} />
+                </Link>
+              )}
             </div>
-            <h2 className="text-2xl font-black uppercase tracking-tight mb-3">
-              {hub.empty_title || "Nessuna iscrizione aperta"}
-            </h2>
-            <p className="text-foreground/60 text-sm leading-relaxed mb-8">
-              {hub.empty_description || "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!"}
-            </p>
-            <Link
-              href="/Iniziative"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-primary/20"
-            >
-              <span>{hub.view_initiatives_cta || "Vedi Iniziative"}</span>
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+          )
         )}
       </Section>
     </div>

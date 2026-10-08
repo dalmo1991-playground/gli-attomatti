@@ -13,16 +13,16 @@ import { getSafeImageProps } from "@/lib/youtube";
 import { Ticket, ArrowDown } from "lucide-react";
 
 interface DetailHeroProps {
-  title: string;
+  title?: string | null;
   heroImage?: string;
   imageAlign?: ImageAlign;
-  backLink: {
+  backLink?: {
     href: string;
-    label: string;
-  };
-  subtitle?: string;
+    label?: string | null;
+  } | null;
+  subtitle?: string | null;
   className?: string;
-  mobileCtaLabel?: string;
+  mobileCtaLabel?: string | null;
   onMobileCtaClick?: () => void;
 }
 
@@ -73,22 +73,28 @@ export function DetailHero({
       )}
 
       <div className="max-w-4xl mx-auto text-center relative z-10 w-full px-4">
-        <div className="mb-10 sm:mb-12">
-          <BackLink href={backLink.href} label={backLink.label} />
-        </div>
+        {backLink && backLink.label && backLink.href && (
+          <div className="mb-10 sm:mb-12">
+            <BackLink href={backLink.href} label={backLink.label} />
+          </div>
+        )}
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={cn(
-            getPageHeroTitleSizeClass(title),
-            "font-black uppercase tracking-tighter mb-4 text-white drop-shadow-sm text-balance break-words [overflow-wrap:anywhere]"
-          )}
-        >
-          {title}
-        </motion.h1>
+        {title && (
+          <>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={cn(
+                getPageHeroTitleSizeClass(title),
+                "font-black uppercase tracking-tighter mb-4 text-white drop-shadow-sm text-balance break-words [overflow-wrap:anywhere]"
+              )}
+            >
+              {title}
+            </motion.h1>
 
-        <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 shadow-sm" />
+            <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 shadow-sm" />
+          </>
+        )}
 
         {subtitle && (
           <p className="text-xl sm:text-2xl text-foreground/60 font-bold uppercase tracking-[0.3em]">

@@ -5,8 +5,9 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { trackContact } from "@/lib/tracking";
+import { trackContact, trackSocialClick } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { defaultText } from "@/lib/utils";
 
 export default function ContattiClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -17,6 +18,7 @@ export default function ContattiClient({ content: initialContent }: { content: a
     socials: []
   };
   const socials: any[] = Array.isArray(contatti.socials) ? contatti.socials : [];
+  const emailLabel = defaultText(contatti.email_label, "Email");
 
   const SocialIcon = ({ platform }: { platform: string }) => {
     if (platform === "Facebook") {
@@ -42,8 +44,8 @@ export default function ContattiClient({ content: initialContent }: { content: a
     <div className="min-h-screen">
       {/* Hero Section */}
       <PageHeader
-        title={contatti.title || "Contattaci"}
-        description={contatti.description || "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto."}
+        title={defaultText(contatti.title, "Contattaci")}
+        description={defaultText(contatti.description, "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.")}
       />
 
       {/* Contact Cards */}
@@ -60,9 +62,11 @@ export default function ContattiClient({ content: initialContent }: { content: a
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 sm:mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                 <Mail size={32} className="sm:w-10 sm:h-10" />
               </div>
-              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">
-                {contatti.email_label || "Email"}
-              </h2>
+              {emailLabel && (
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-3 sm:mb-4 opacity-40">
+                  {emailLabel}
+                </h2>
+              )}
               <Link 
                 href={`mailto:${contatti.email}`}
                 onClick={() => trackContact("email", contatti.email)}
@@ -93,6 +97,7 @@ export default function ContattiClient({ content: initialContent }: { content: a
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackSocialClick(social.platform, social.href)}
                     className="text-2xl md:text-3xl font-black hover:text-primary transition-colors"
                   >
                     {social.handle || social.platform}

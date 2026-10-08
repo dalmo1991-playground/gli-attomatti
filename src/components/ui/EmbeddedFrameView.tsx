@@ -3,37 +3,37 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, ShieldCheck, Lock, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, defaultText } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
 
 export interface TrustBadgeItem {
   icon?: React.ElementType;
-  text: string;
+  text?: string | null;
 }
 
 export interface EmbeddedFrameViewProps {
-  title: string;
-  category?: string;
+  title?: string | null;
+  category?: string | null;
   categoryIcon?: React.ElementType;
-  description?: string;
+  description?: string | null;
   embedUrl: string;
   directUrl?: string;
   backHref?: string | null;
-  backLabel?: string;
+  backLabel?: string | null;
   legalHref?: string | null;
-  legalLabel?: string;
+  legalLabel?: string | null;
   showNavigation?: boolean;
-  iframeTitle?: string;
+  iframeTitle?: string | null;
   minHeightClass?: string;
   frameContainerClassName?: string;
   iframeClassName?: string;
   sandbox?: string;
   allow?: string;
   dataTallySrc?: string;
-  notConfiguredTitle?: string;
-  notConfiguredDescription?: string;
-  fallbackNotice?: string;
-  fallbackButtonLabel?: string;
+  notConfiguredTitle?: string | null;
+  notConfiguredDescription?: string | null;
+  fallbackNotice?: string | null;
+  fallbackButtonLabel?: string | null;
   trustBadges?: TrustBadgeItem[];
   onDirectClick?: () => void;
   className?: string;
@@ -75,9 +75,9 @@ export function EmbeddedFrameView({
     <div className={cn("min-h-screen py-8 sm:py-10 px-4 sm:px-6", className)}>
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         {/* Navigation Bar */}
-        {showNavigation && (backHref || legalHref) ? (
+        {showNavigation && ((backHref && backLabel) || (legalHref && legalLabel)) ? (
           <div className="flex items-center justify-between">
-            {backHref ? (
+            {backHref && backLabel ? (
               <Link
                 href={backHref}
                 className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
@@ -89,7 +89,7 @@ export function EmbeddedFrameView({
               <div />
             )}
 
-            {legalHref ? (
+            {legalHref && legalLabel ? (
               <Link
                 href={legalHref}
                 className="text-xs text-foreground/40 hover:text-foreground font-medium underline transition-colors"
@@ -101,24 +101,28 @@ export function EmbeddedFrameView({
         ) : null}
 
         {/* Page Summary Header Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-3 glass">
-          {category && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-wider">
-              {CategoryIcon && <CategoryIcon size={12} />}
-              <span>{category}</span>
-            </div>
-          )}
+        {(category || title || description) && (
+          <div className="p-6 sm:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-3 glass">
+            {category && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-wider">
+                {CategoryIcon && <CategoryIcon size={12} />}
+                <span>{category}</span>
+              </div>
+            )}
 
-          <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-foreground text-balance break-words">
-            {title}
-          </h1>
+            {title && (
+              <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-foreground text-balance break-words">
+                {title}
+              </h1>
+            )}
 
-          {description && (
-            <p className="text-sm sm:text-base text-foreground/70 leading-relaxed max-w-2xl font-medium pt-1">
-              <FormattedText text={description} />
-            </p>
-          )}
-        </div>
+            {description && (
+              <p className="text-sm sm:text-base text-foreground/70 leading-relaxed max-w-2xl font-medium pt-1">
+                <FormattedText text={description} />
+              </p>
+            )}
+          </div>
+        )}
 
         {children}
 
@@ -138,7 +142,7 @@ export function EmbeddedFrameView({
             <iframe
               src={embedUrl}
               data-tally-src={dataTallySrc}
-              title={iframeTitle}
+              title={iframeTitle || undefined}
               width="100%"
               className={cn("w-full border-0 block", minHeightClass, iframeClassName)}
               onLoad={() => setIframeLoaded(true)}
@@ -169,33 +173,37 @@ export function EmbeddedFrameView({
         )}
 
         {/* Direct Link Fallback Card */}
-        {targetDirectUrl && (
+        {targetDirectUrl && (fallbackNotice || fallbackButtonLabel) && (
           <div className="p-4 sm:p-5 rounded-2xl bg-muted/10 border border-foreground/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-            <span className="text-xs sm:text-sm text-foreground/60">
-              {fallbackNotice}
-            </span>
-            <Link
-              href={targetDirectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onDirectClick}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground text-xs font-bold uppercase tracking-wider border border-foreground/10 transition-colors shrink-0"
-            >
-              <span>{fallbackButtonLabel}</span>
-              <ExternalLink size={13} />
-            </Link>
+            {fallbackNotice && (
+              <span className="text-xs sm:text-sm text-foreground/60">
+                {fallbackNotice}
+              </span>
+            )}
+            {fallbackButtonLabel && (
+              <Link
+                href={targetDirectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onDirectClick}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-foreground text-xs font-bold uppercase tracking-wider border border-foreground/10 transition-colors shrink-0"
+              >
+                <span>{fallbackButtonLabel}</span>
+                <ExternalLink size={13} />
+              </Link>
+            )}
           </div>
         )}
 
         {/* Trust & Compliance Badges */}
-        {trustBadges && trustBadges.length > 0 && (
+        {trustBadges && trustBadges.filter((b) => b && defaultText(b.text)).length > 0 && (
           <div className="pt-4 border-t border-foreground/5 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs text-foreground/50 text-center">
-            {trustBadges.map((badge, idx) => {
+            {trustBadges.filter((b) => b && defaultText(b.text)).map((badge, idx) => {
               const BadgeIcon = badge.icon || ShieldCheck;
               return (
                 <div key={idx} className="flex items-center gap-2 font-medium">
                   <BadgeIcon size={14} className="text-primary/70 shrink-0" />
-                  <span>{badge.text}</span>
+                  <span>{defaultText(badge.text)}</span>
                 </div>
               );
             })}

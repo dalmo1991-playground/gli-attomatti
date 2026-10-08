@@ -11,17 +11,17 @@ import { getSafeImageProps } from "@/lib/youtube";
 
 export interface CatalogCardItem {
   id: string;
-  title: string;
-  category?: string;
+  title?: string | null;
+  category?: string | null;
   categoryIcon?: React.ElementType;
-  description?: string;
+  description?: string | null;
   image?: string;
-  date?: string;
-  location?: string;
-  primaryHref: string;
-  primaryLabel?: string;
-  secondaryHref?: string;
-  secondaryLabel?: string;
+  date?: string | null;
+  location?: string | null;
+  primaryHref?: string | null;
+  primaryLabel?: string | null;
+  secondaryHref?: string | null;
+  secondaryLabel?: string | null;
   onPrimaryClick?: () => void;
 }
 
@@ -76,11 +76,19 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
       {/* Content */}
       <div className="flex-1 p-6 sm:p-8 flex flex-col justify-between space-y-6">
         <div className="space-y-3">
-          <Link href={item.primaryHref} className="block group-hover:text-primary transition-colors">
-            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground transition-colors line-clamp-2 text-balance break-words">
-              {item.title}
-            </h3>
-          </Link>
+          {item.title && (
+            item.primaryHref ? (
+              <Link href={item.primaryHref} className="block group-hover:text-primary transition-colors">
+                <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground transition-colors line-clamp-2 text-balance break-words">
+                  {item.title}
+                </h3>
+              </Link>
+            ) : (
+              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground line-clamp-2 text-balance break-words">
+                {item.title}
+              </h3>
+            )
+          )}
 
           {item.description && (
             <p className="text-sm text-foreground/70 leading-relaxed font-medium line-clamp-3">
@@ -108,34 +116,38 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3 pt-2">
-          {item.primaryHref ? (
-            <Link
-              href={item.primaryHref}
-              onClick={item.onPrimaryClick}
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span>{item.primaryLabel || "Accedi"}</span>
-              <ArrowRight size={15} />
-            </Link>
-          ) : (
-            <div className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-foreground/10 text-foreground/40 font-bold text-sm uppercase">
-              <span>{item.primaryLabel || "Non disponibile"}</span>
-            </div>
-          )}
+        {(item.primaryLabel !== null || (item.secondaryHref && item.secondaryLabel !== null)) && (
+          <div className="space-y-3 pt-2">
+            {item.primaryLabel !== null && (
+              item.primaryHref ? (
+                <Link
+                  href={item.primaryHref}
+                  onClick={item.onPrimaryClick}
+                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>{item.primaryLabel || "Accedi"}</span>
+                  <ArrowRight size={15} />
+                </Link>
+              ) : (
+                <div className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-foreground/10 text-foreground/40 font-bold text-sm uppercase">
+                  <span>{item.primaryLabel || "Non disponibile"}</span>
+                </div>
+              )
+            )}
 
-          {item.secondaryHref && (
-            <div className="text-center">
-              <Link
-                href={item.secondaryHref}
-                className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-foreground/50 hover:text-foreground transition-colors pt-1"
-              >
-                <span>{item.secondaryLabel || "Maggiori dettagli"}</span>
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-          )}
-        </div>
+            {item.secondaryHref && item.secondaryLabel !== null && (
+              <div className="text-center">
+                <Link
+                  href={item.secondaryHref}
+                  className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-foreground/50 hover:text-foreground transition-colors pt-1"
+                >
+                  <span>{item.secondaryLabel || "Maggiori dettagli"}</span>
+                  <ArrowRight size={12} />
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -144,7 +156,7 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
 export interface CatalogGridProps {
   children: React.ReactNode;
   className?: string;
-  emptyMessage?: string;
+  emptyMessage?: string | null;
   hasItems?: boolean;
 }
 
@@ -155,6 +167,7 @@ export function CatalogGrid({
   hasItems = true
 }: CatalogGridProps) {
   if (!hasItems) {
+    if (!emptyMessage) return null;
     return (
       <div className="py-20 text-center max-w-md mx-auto">
         <p className="text-foreground/50 font-medium">{emptyMessage}</p>

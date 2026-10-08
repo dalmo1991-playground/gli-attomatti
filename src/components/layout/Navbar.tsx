@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, defaultText } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, Ticket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { trackInitiateCheckout, trackContact } from "@/lib/tracking";
 
 
 export function Navbar({ content }: { content: any }) {
@@ -16,9 +17,17 @@ export function Navbar({ content }: { content: any }) {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
 
-  const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
-  const siteName = content?.site?.name || "Gli Attomatti";
+  const rawNavigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
+  const navigation = rawNavigation.filter((link: any) => link && link.label !== null);
+  const siteName = defaultText(content?.site?.name, "Gli Attomatti");
   const uiNavbar = content?.ui?.navbar || {};
+
+  const buyTicketsLabel = defaultText(uiNavbar.buy_tickets_label, "Acquista Biglietti");
+  const contactUsLabel = defaultText(uiNavbar.contact_us_label, "Contattaci / Scrivici");
+  const mainNavAria = defaultText(uiNavbar.main_nav_aria_label, "Navigazione principale");
+  const mobileNavAria = defaultText(uiNavbar.mobile_nav_aria_label, "Navigazione mobile");
+  const closeMenuAria = defaultText(uiNavbar.close_menu_aria_label, "Chiudi menu");
+  const openMenuAria = defaultText(uiNavbar.open_menu_aria_label, "Apri menu");
 
   const getSafeHref = (href?: string) => {
     if (!href) return "/";
@@ -134,7 +143,7 @@ export function Navbar({ content }: { content: any }) {
         >
           <Image 
             src="/logo_attomatti.svg" 
-            alt={siteName} 
+            alt={siteName || "Logo"} 
             width={40}
             height={40}
             className="h-10 w-auto group-hover:scale-110 transition-transform duration-300"
@@ -142,16 +151,19 @@ export function Navbar({ content }: { content: any }) {
             unoptimized
           />
 
-          <span className="text-xl font-black tracking-tighter uppercase text-primary">
-            {siteName}
-          </span>
+          {siteName && (
+            <span className="text-xl font-black tracking-tighter uppercase text-primary">
+              {siteName}
+            </span>
+          )}
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8 items-center" aria-label={uiNavbar.main_nav_aria_label || "Navigazione principale"}>
+        <nav className="hidden md:flex space-x-8 items-center" aria-label={mainNavAria || undefined}>
           {navigation.map((link: any, idx: number) => {
             const safeHref = getSafeHref(link.href);
-            const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
+            const sublinks = Array.isArray(link.sublinks) ? link.sublinks.filter((s: any) => s && s.label !== null) : [];
+            const hasSublinks = sublinks.length > 0;
             const isActive = pathname === safeHref || (safeHref !== "/" && pathname.startsWith(safeHref + "/"));
 
             return (
@@ -198,7 +210,7 @@ export function Navbar({ content }: { content: any }) {
                       transition={{ duration: 0.2 }}
                       className="absolute top-full left-0 mt-2 w-48 bg-background border border-foreground/5 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                     >
-                      {link.sublinks.map((sub: any, sIdx: number) => {
+                      {sublinks.map((sub: any, sIdx: number) => {
                         const subHref = getSafeHref(sub.href);
                         const isSubActive = pathname === subHref;
 
@@ -228,7 +240,7 @@ export function Navbar({ content }: { content: any }) {
         <button
           className="md:hidden text-foreground min-w-[44px] min-h-[44px] p-2 -mr-2 rounded-xl flex items-center justify-center hover:bg-foreground/5 transition-all active:scale-95"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? (uiNavbar.close_menu_aria_label || "Chiudi menu") : (uiNavbar.open_menu_aria_label || "Apri menu")}
+          aria-label={isOpen ? (closeMenuAria || undefined) : (openMenuAria || undefined)}
           aria-expanded={isOpen}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -246,10 +258,11 @@ export function Navbar({ content }: { content: any }) {
             className="md:hidden w-full max-h-[calc(100dvh-4.5rem)] bg-background/95 backdrop-blur-xl border-t border-foreground/10 flex flex-col"
           >
             <div className="w-full overflow-y-auto overscroll-contain custom-scrollbar touch-pan-y flex-1 min-h-0">
-              <nav className="flex flex-col gap-6 px-6 pt-6 pb-[max(5rem,calc(env(safe-area-inset-bottom)+3rem))]" aria-label={uiNavbar.mobile_nav_aria_label || "Navigazione mobile"}>
+              <nav className="flex flex-col gap-6 px-6 pt-6 pb-[max(5rem,calc(env(safe-area-inset-bottom)+3rem))]" aria-label={mobileNavAria || undefined}>
                 {navigation.map((link: any, idx: number) => {
                   const safeHref = getSafeHref(link.href);
-                  const hasSublinks = Array.isArray(link.sublinks) && link.sublinks.length > 0;
+                  const sublinks = Array.isArray(link.sublinks) ? link.sublinks.filter((s: any) => s && s.label !== null) : [];
+                  const hasSublinks = sublinks.length > 0;
                   const isActive = pathname === safeHref || (safeHref !== "/" && pathname.startsWith(safeHref + "/"));
 
                   return (
@@ -269,7 +282,7 @@ export function Navbar({ content }: { content: any }) {
                       </Link>
                       {hasSublinks && (
                         <div className="flex flex-col gap-3 pl-6 border-l-2 border-foreground/10 ml-1">
-                          {link.sublinks.map((sub: any, sIdx: number) => {
+                          {sublinks.map((sub: any, sIdx: number) => {
                             const subHref = getSafeHref(sub.href);
                             const isSubActive = pathname === subHref;
 
@@ -294,24 +307,36 @@ export function Navbar({ content }: { content: any }) {
                 })}
 
                 {/* Mobile Fast-Actions (Biglietti & Contatti) */}
-                <div className="pt-6 border-t border-foreground/10 space-y-3 mt-2">
-                  <Link
-                    href="/Biglietti"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                  >
-                    <Ticket size={16} />
-                    <span>{uiNavbar.buy_tickets_label || "Acquista Biglietti"}</span>
-                  </Link>
+                {(buyTicketsLabel || contactUsLabel) && (
+                  <div className="pt-6 border-t border-foreground/10 space-y-3 mt-2">
+                    {buyTicketsLabel && (
+                      <Link
+                        href="/Biglietti"
+                        onClick={() => {
+                          setIsOpen(false);
+                          trackInitiateCheckout("Navigazione Biglietti", "/Biglietti", "mobile_nav");
+                        }}
+                        className="w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                      >
+                        <Ticket size={16} />
+                        <span>{buyTicketsLabel}</span>
+                      </Link>
+                    )}
 
-                  <Link
-                    href="/Contatti"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full py-3 px-6 rounded-2xl bg-muted/40 hover:bg-muted/70 text-foreground/80 font-bold text-xs uppercase tracking-wider flex items-center justify-center transition-all active:scale-[0.98] border border-foreground/5"
-                  >
-                    <span>{uiNavbar.contact_us_label || "Contattaci / Scrivici"}</span>
-                  </Link>
-                </div>
+                    {contactUsLabel && (
+                      <Link
+                        href="/Contatti"
+                        onClick={() => {
+                          setIsOpen(false);
+                          trackContact("mobile_nav_cta", "/Contatti");
+                        }}
+                        className="w-full py-3 px-6 rounded-2xl bg-muted/40 hover:bg-muted/70 text-foreground/80 font-bold text-xs uppercase tracking-wider flex items-center justify-center transition-all active:scale-[0.98] border border-foreground/5"
+                      >
+                        <span>{contactUsLabel}</span>
+                      </Link>
+                    )}
+                  </div>
+                )}
               </nav>
             </div>
           </motion.div>

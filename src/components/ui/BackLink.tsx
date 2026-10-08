@@ -6,12 +6,14 @@ import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BackLinkProps {
-  href: string;
-  label: string;
+  href?: string | null;
+  label?: string | null;
   className?: string;
 }
 
 export function BackLink({ href, label, className }: BackLinkProps) {
+  if (!href || !label) return null;
+
   return (
     <Link
       href={href}

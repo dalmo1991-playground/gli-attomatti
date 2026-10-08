@@ -15,7 +15,7 @@ export interface BentoGalleryImage {
 
 interface BentoGalleryProps {
   images: BentoGalleryImage[];
-  title?: string;
+  title?: string | null;
   onImageClick: (index: number) => void;
   className?: string;
 }
@@ -81,7 +81,7 @@ export function BentoGallery({
             >
               <Image 
                 src={displaySrc} 
-                alt={img.alt || title} 
+                alt={img.alt || title || "Foto"} 
                 fill
                 unoptimized={isImageUnoptimized}
                 sizes="(max-width: 768px) 100vw, 50vw"

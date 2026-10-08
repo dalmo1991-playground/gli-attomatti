@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { isYouTubeUrl, getYouTubeEmbedUrl } from "@/lib/youtube";
+import { defaultText } from "@/lib/utils";
 
 export interface LightboxImage {
   url?: string;
@@ -106,7 +107,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
           {/* Close button with safe-area support */}
           <button
             onClick={onClose}
-            aria-label={ui.close_aria_label || "Chiudi galleria"}
+            aria-label={defaultText(ui.close_aria_label, "Chiudi galleria") || undefined}
             className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-50 p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90"
           >
             <X size={26} />
@@ -116,14 +117,14 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                aria-label={ui.prev_aria_label || "Foto precedente"}
+                aria-label={defaultText(ui.prev_aria_label, "Foto precedente") || undefined}
                 className="hidden sm:flex absolute left-4 md:left-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:-translate-x-1"
               >
                 <ChevronLeft size={36} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                aria-label={ui.next_aria_label || "Foto successiva"}
+                aria-label={defaultText(ui.next_aria_label, "Foto successiva") || undefined}
                 className="hidden sm:flex absolute right-4 md:right-8 z-50 p-2 md:p-3 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full transition-all hover:scale-110 hover:translate-x-1"
               >
                 <ChevronRight size={36} />
@@ -147,7 +148,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
                 >
                   <iframe
                     src={getYouTubeEmbedUrl(currentMediaUrl, { autoplay: true })}
-                    title={currentItem?.alt || "Video YouTube"}
+                    title={defaultText(currentItem?.alt, "Video YouTube") || ""}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     className="w-full h-full border-0"
@@ -161,7 +162,7 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
                   exit={{ opacity: 0, scale: 1.04 }}
                   transition={{ duration: 0.2 }}
                   src={currentMediaUrl}
-                  alt={currentItem?.alt || `${ui.default_alt || "Foto"} ${currentIndex + 1}`}
+                  alt={defaultText(currentItem?.alt, `${defaultText(ui.default_alt, "Foto") || "Foto"} ${currentIndex + 1}`) || ""}
                   className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
                 />
               )}

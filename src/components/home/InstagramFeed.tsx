@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Loader2, ShieldCheck, Eye } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
+import { defaultText } from "@/lib/utils";
+import { trackSocialClick } from "@/lib/tracking";
 
 export function InstagramIcon({ size = 20, className = "" }: { size?: number; className?: string }) {
   return (
@@ -132,6 +134,7 @@ function InstagramEmbedCard({
               href={info.canonicalUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackSocialClick("Instagram", info.canonicalUrl)}
               className="hover:text-primary transition-colors inline-flex items-center gap-0.5"
             >
               {card.open_on_instagram} <ArrowUpRight size={11} />
@@ -174,19 +177,27 @@ function InstagramEmbedCard({
 
 export function InstagramFeed({ data }: InstagramFeedProps) {
   const enabled = data?.enabled !== false;
-  const title = data?.title || "";
-  const subtitle = data?.subtitle || "";
-  const profileUrl = data?.profile_url || "https://www.instagram.com/gliattomatti/";
-  const ctaLabel = data?.cta_label || "";
+  const title = defaultText(data?.title);
+  const subtitle = defaultText(data?.subtitle);
+  const profileUrl = defaultText(data?.profile_url, "https://www.instagram.com/gliattomatti/") || "https://www.instagram.com/gliattomatti/";
+  const ctaLabel = defaultText(data?.cta_label);
+  const badge = defaultText((data as any)?.badge);
   const rawPosts = data?.posts || [];
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [globalConsent, setGlobalConsent] = useState(false);
 
-  // Check saved consent in browser storage on mount
+  // Check saved consent in browser storage on mount (both cookie consent and instagram 2-click consent)
   useEffect(() => {
     try {
+      const cookieConsent = localStorage.getItem("attomatti_cookie_consent");
+      if (cookieConsent) {
+        const parsed = JSON.parse(cookieConsent);
+        if (parsed?.marketing === true) {
+          setGlobalConsent(true);
+        }
+      }
       const saved = localStorage.getItem("attomatti_instagram_consent");
       if (saved === "true") {
         setGlobalConsent(true);
@@ -246,41 +257,47 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
         {/* Section Header with Navigation Controls */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 md:mb-12">
           <div className="text-center md:text-left max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4 shadow-sm"
-            >
-              <InstagramIcon size={14} className="animate-pulse" />
-              <span>{(data as any)?.badge}</span>
-            </motion.div>
+            {badge && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4 shadow-sm"
+              >
+                <InstagramIcon size={14} className="animate-pulse" />
+                <span>{badge}</span>
+              </motion.div>
+            )}
 
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.08 }}
-              className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground drop-shadow-sm mb-3"
-            >
-              {title}
-            </motion.h2>
+            {title && (
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.08 }}
+                className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-foreground drop-shadow-sm mb-3"
+              >
+                {title}
+              </motion.h2>
+            )}
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.12 }}
-              className="text-foreground/60 text-base sm:text-lg font-medium leading-relaxed"
-            >
-              {subtitle}
-            </motion.p>
+            {subtitle && (
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.12 }}
+                className="text-foreground/60 text-base sm:text-lg font-medium leading-relaxed"
+              >
+                {subtitle}
+              </motion.p>
+            )}
           </div>
 
           {/* Carousel Arrows & Global Consent Button */}
           <div className="flex items-center gap-3">
-            {!globalConsent && (
+            {!globalConsent && (data as any)?.enable_all_label && (
               <button
                 type="button"
                 onClick={handleGrantGlobalConsent}
@@ -333,18 +350,21 @@ export function InstagramFeed({ data }: InstagramFeedProps) {
         </div>
 
         {/* The ONLY Instagram link: Official follow button below */}
-        <div className="mt-12 md:mt-16 text-center">
-          <Link
-            href={profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-primary text-white font-black text-sm uppercase tracking-wider hover:bg-primary/90 hover:scale-105 transition-all shadow-xl shadow-primary/25 group"
-          >
-            <InstagramIcon size={18} className="group-hover:rotate-12 transition-transform duration-300" />
-            <span>{ctaLabel}</span>
-            <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
-        </div>
+        {ctaLabel && (
+          <div className="mt-12 md:mt-16 text-center">
+            <Link
+              href={profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackSocialClick("Instagram", profileUrl)}
+              className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-primary text-white font-black text-sm uppercase tracking-wider hover:bg-primary/90 hover:scale-105 transition-all shadow-xl shadow-primary/25 group"
+            >
+              <InstagramIcon size={18} className="group-hover:rotate-12 transition-transform duration-300" />
+              <span>{ctaLabel}</span>
+              <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+          </div>
+        )}
       </div>
     </Section>
   );
