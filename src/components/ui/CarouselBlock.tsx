@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, defaultText } from "@/lib/utils";
 import { getSafeImageProps } from "@/lib/youtube";
 
 const MotionImage = motion.create(Image);
@@ -48,8 +48,8 @@ export function CarouselBlock({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const resolvedFallbackAlt = fallbackAlt || uiContent?.fallback_alt || "";
-  const resolvedAriaPrefix = ariaPrefix || uiContent?.aria_prefix || "";
+  const resolvedFallbackAlt = defaultText(fallbackAlt, uiContent?.fallback_alt, "") || "";
+  const resolvedAriaPrefix = defaultText(ariaPrefix, uiContent?.aria_prefix, "") || "";
 
   const validImages = images.filter((img) => img && typeof img.url === "string" && img.url.trim().length > 0);
   const count = validImages.length;

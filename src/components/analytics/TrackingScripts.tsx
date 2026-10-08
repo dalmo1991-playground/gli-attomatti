@@ -50,7 +50,9 @@ function RouteTracker({
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!hasAnalyticsConsent || !gaId) return;
+    const canTrackGa = Boolean(hasAnalyticsConsent && gaId);
+    const canTrackMeta = Boolean(hasMarketingConsent && metaId);
+    if (!canTrackGa && !canTrackMeta) return;
 
     let fired = false;
     const sendPageView = () => {
@@ -62,7 +64,7 @@ function RouteTracker({
       const pageLocation = window.location.href;
       const pageTitle = document.title || "Gli Attomatti";
 
-      if (typeof window.gtag === "function") {
+      if (canTrackGa && typeof window.gtag === "function") {
         window.gtag("event", "page_view", {
           page_title: pageTitle,
           page_location: pageLocation,
@@ -70,7 +72,7 @@ function RouteTracker({
         });
       }
 
-      if (hasMarketingConsent && metaId && typeof window.fbq === "function") {
+      if (canTrackMeta && typeof window.fbq === "function") {
         window.fbq("track", "PageView");
       }
     };
@@ -114,6 +116,8 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
         view_content: true,
         initiate_checkout: true,
         contact: true,
+        lead: true,
+        social_click: true,
       };
     }
   }, [integrations?.events]);
@@ -130,6 +134,14 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
       ad_personalization: hasMarketingConsent ? "granted" : "denied",
     });
   }, [hasAnalyticsConsent, hasMarketingConsent]);
+
+  // Update Meta Pixel Consent state when marketing consent changes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (typeof window.fbq !== "function") return;
+
+    window.fbq("consent", hasMarketingConsent ? "grant" : "revoke");
+  }, [hasMarketingConsent]);
 
   // If neither provider is configured, render nothing
   if (!gaId && !metaId) return null;

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { DetailViewLayout } from "@/components/ui/DetailViewLayout";
 import { trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { defaultText } from "@/lib/utils";
 
 export default function SpettacoloDettaglioClient({
   content: initialContent,
@@ -24,47 +25,57 @@ export default function SpettacoloDettaglioClient({
   }, [show?.title]);
 
   if (!show) {
+    const notFoundTitle = defaultText(spettacoli.not_found_title, "Spettacolo non trovato");
+    const backLabel = defaultText(spettacoli.back_to_archive_label, "Torna all'archivio");
+
     return (
       <div className="pt-32 text-center min-h-[60vh] flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold">{spettacoli.not_found_title || "Spettacolo non trovato"}</h1>
-        <Link href={spettacoli.archive_href || "/Spettacoli"} className="text-primary mt-4 inline-block font-bold hover:underline">
-          {spettacoli.back_to_archive_label || "Torna all'archivio"}
-        </Link>
+        {notFoundTitle && <h1 className="text-4xl font-bold">{notFoundTitle}</h1>}
+        {backLabel && (
+          <Link href={spettacoli.archive_href || "/Spettacoli"} className="text-primary mt-4 inline-block font-bold hover:underline">
+            {backLabel}
+          </Link>
+        )}
       </div>
     );
   }
 
+  const seasonPrefix = defaultText(spettacoli.season_prefix, "Stagione");
+  const subtitle = show.year
+    ? (seasonPrefix ? `${seasonPrefix} ${show.year}` : `${show.year}`)
+    : null;
+
   return (
     <DetailViewLayout
-      title={show.title}
-      subtitle={`${spettacoli.season_prefix || "Stagione"} ${show.year}`}
+      title={defaultText(show.title)}
+      subtitle={subtitle}
       heroImage={show.hero_image}
       imageAlign={show.hero_image_align || show.image_align}
       backLink={{
         href: spettacoli.archive_href || "/Spettacoli",
-        label: spettacoli.back_to_archive_label || "Torna all'Archivio"
+        label: defaultText(spettacoli.back_to_archive_label, "Torna all'Archivio")
       }}
-      mainHeading={spettacoli.detail_main_heading || "Lo Spettacolo"}
-      text={show.text}
+      mainHeading={defaultText(spettacoli.detail_main_heading, "Lo Spettacolo")}
+      text={defaultText(show.text)}
       galleryImages={show.images}
-      datesTitle={show.dates_title || spettacoli.detail_dates_title || "Date e Biglietti"}
+      datesTitle={defaultText(show.dates_title, spettacoli.detail_dates_title, "Date e Biglietti")}
       dates={show.dates}
-      detailsTitle={spettacoli.detail_info_title || "Info Spettacolo"}
+      detailsTitle={defaultText(spettacoli.detail_info_title, "Info Spettacolo")}
       details={show.details}
-      emptyDatesMessage={spettacoli.detail_empty_dates_message || "Nessuna data futura programmata per questo spettacolo."}
-      photoGuideBadgeLabel={content?.pages?.locations?.photo_guide_badge_label}
+      emptyDatesMessage={defaultText(spettacoli.detail_empty_dates_message, "Nessuna data futura programmata per questo spettacolo.")}
+      photoGuideBadgeLabel={defaultText(content?.pages?.locations?.photo_guide_badge_label)}
       onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
       lightboxUi={content?.ui?.lightbox}
-      mobileCtaLabel={
-        show.detail_cta_tickets_label ||
-        show.cta_tickets_label ||
+      mobileCtaLabel={defaultText(
+        show.detail_cta_tickets_label,
+        show.cta_tickets_label,
         spettacoli.detail_cta_tickets_label
-      }
-      mobileFloatingCtaLabel={
-        show.detail_floating_cta_label ||
-        show.floating_cta_label ||
+      )}
+      mobileFloatingCtaLabel={defaultText(
+        show.detail_floating_cta_label,
+        show.floating_cta_label,
         spettacoli.detail_floating_cta_label
-      }
+      )}
     />
   );
 }

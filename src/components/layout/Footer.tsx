@@ -4,16 +4,28 @@ import Link from "next/link";
 import { Mail, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { trackContact } from "@/lib/tracking";
+import { trackContact, trackSocialClick } from "@/lib/tracking";
 import { FormattedText } from "@/components/ui/FormattedText";
+import { defaultText } from "@/lib/utils";
 
 
 export function Footer({ content }: { content: any }) {
   const contatti = content?.pages?.contatti || { email: "", socials: [] };
   const socials: any[] = Array.isArray(contatti.socials) ? contatti.socials : [];
-  const navigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
+  const rawNavigation: any[] = Array.isArray(content?.navigation) ? content.navigation : [];
+  const navigation = rawNavigation.filter((link: any) => link && link.label !== null);
   const site = content?.site || { name: "Gli Attomatti", description: "" };
   const uiFooter = content?.ui?.footer || {};
+
+  const siteName = defaultText(site.name, "Gli Attomatti");
+  const siteDesc = defaultText(site.description);
+  const navTitle = defaultText(uiFooter.nav_title, "Sito");
+  const contactTitle = defaultText(uiFooter.contact_title, "Contattaci");
+  const contactCtaLabel = defaultText(uiFooter.contact_cta_label, "Scrivici ora");
+  const copyrightNotice = defaultText(uiFooter.copyright_notice, "Tutti i diritti riservati.");
+  const legalTerms = defaultText(uiFooter.legal_links?.terms, "Termini");
+  const legalImpressum = defaultText(uiFooter.legal_links?.impressum, "Impressum");
+  const legalPrivacy = defaultText(uiFooter.legal_links?.privacy, "Privacy");
 
   const getSafeHref = (href?: string) => {
     if (!href) return "/";
@@ -55,20 +67,22 @@ export function Footer({ content }: { content: any }) {
             <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src="/logo_attomatti.svg"
-                alt={site.name || "Gli Attomatti"}
+                alt={siteName || "Logo"}
                 width={48}
                 height={48}
                 className="h-12 w-auto group-hover:scale-110 transition-transform duration-500"
                 unoptimized
               />
-              <span className="text-2xl font-black tracking-tighter uppercase text-primary">
-                {site.name || "Gli Attomatti"}
-              </span>
+              {siteName && (
+                <span className="text-2xl font-black tracking-tighter uppercase text-primary">
+                  {siteName}
+                </span>
+              )}
             </Link>
 
-            {site.description && (
+            {siteDesc && (
               <p className="text-xl text-foreground/60 leading-relaxed max-w-sm font-medium">
-                <FormattedText text={site.description} />
+                <FormattedText text={siteDesc} />
               </p>
             )}
             {socials.length > 0 && (
@@ -80,6 +94,7 @@ export function Footer({ content }: { content: any }) {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackSocialClick(social.platform, social.href)}
                       className="w-12 h-12 rounded-full border border-foreground/10 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
                     >
                       <SocialIcon platform={social.platform} />
@@ -91,70 +106,88 @@ export function Footer({ content }: { content: any }) {
           </div>
 
           {/* Navigation Columns */}
-          <div className="lg:col-span-3 space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">
-              {uiFooter.nav_title || "Sito"}
-            </h4>
-            <ul className="space-y-4">
-              {navigation.map((link: any, idx: number) => {
-                const safeHref = getSafeHref(link.href);
-                return (
-                  <li key={link.href || idx}>
-                    <Link
-                      href={safeHref}
-                      className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
-                    >
-                      {link.label}
-                      <ArrowUpRight size={14} className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {navigation.length > 0 && (
+            <div className="lg:col-span-3 space-y-8">
+              {navTitle && (
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40">
+                  {navTitle}
+                </h4>
+              )}
+              <ul className="space-y-4">
+                {navigation.map((link: any, idx: number) => {
+                  const safeHref = getSafeHref(link.href);
+                  return (
+                    <li key={link.href || idx}>
+                      <Link
+                        href={safeHref}
+                        className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
+                      >
+                        {link.label}
+                        <ArrowUpRight size={14} className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
 
           {/* Contact CTA Column */}
-          <div className="lg:col-span-4 space-y-8">
-            <div className="p-8 border-2 border-primary/10 rounded-[2.5rem] space-y-6 bg-primary/5">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
-                {uiFooter.contact_title || "Contattaci"}
-              </h4>
-              {contatti.email && (
-                <Link
-                  href={`mailto:${contatti.email}`}
-                  onClick={() => trackContact("email", contatti.email)}
-                  className="block text-xl font-black hover:text-primary transition-colors break-all"
-                >
-                  {contatti.email}
-                </Link>
-              )}
-              <Link
-                href="/Contatti"
-                className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-primary group"
-              >
-                {uiFooter.contact_cta_label || "Scrivici ora"}
-                <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </Link>
+          {(contactTitle || contatti.email || contactCtaLabel) && (
+            <div className="lg:col-span-4 space-y-8">
+              <div className="p-8 border-2 border-primary/10 rounded-[2.5rem] space-y-6 bg-primary/5">
+                {contactTitle && (
+                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
+                    {contactTitle}
+                  </h4>
+                )}
+                {contatti.email && (
+                  <Link
+                    href={`mailto:${contatti.email}`}
+                    onClick={() => trackContact("email", contatti.email)}
+                    className="block text-xl font-black hover:text-primary transition-colors break-all"
+                  >
+                    {contatti.email}
+                  </Link>
+                )}
+                {contactCtaLabel && (
+                  <Link
+                    href="/Contatti"
+                    className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-primary group"
+                  >
+                    {contactCtaLabel}
+                    <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </Link>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-foreground/40 font-medium">
-            © {new Date().getFullYear()} {site.name || "Gli Attomatti"}. <FormattedText text={uiFooter.copyright_notice || "Tutti i diritti riservati."} />
+            © {new Date().getFullYear()}{siteName ? ` ${siteName}` : ""}{copyrightNotice ? <>. <FormattedText text={copyrightNotice} /></> : null}
           </p>
-          <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
-            <Link href="/Termini" className="hover:text-primary transition-colors">
-              {uiFooter.legal_links?.terms || "Termini"}
-            </Link>
-            <Link href="/Impressum" className="hover:text-primary transition-colors">
-              {uiFooter.legal_links?.impressum || "Impressum"}
-            </Link>
-            <Link href="/Privacy" className="hover:text-primary transition-colors">
-              {uiFooter.legal_links?.privacy || "Privacy"}
-            </Link>
-          </div>
+          {(legalTerms || legalImpressum || legalPrivacy) && (
+            <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
+              {legalTerms && (
+                <Link href="/Termini" className="hover:text-primary transition-colors">
+                  {legalTerms}
+                </Link>
+              )}
+              {legalImpressum && (
+                <Link href="/Impressum" className="hover:text-primary transition-colors">
+                  {legalImpressum}
+                </Link>
+              )}
+              {legalPrivacy && (
+                <Link href="/Privacy" className="hover:text-primary transition-colors">
+                  {legalPrivacy}
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </footer>

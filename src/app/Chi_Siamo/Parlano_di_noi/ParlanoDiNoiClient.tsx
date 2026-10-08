@@ -8,6 +8,7 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { defaultText } from "@/lib/utils";
 
 export default function ParlanoDiNoiClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -15,13 +16,17 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
   const press: any[] = Array.isArray(parlano_di_noi.press) ? parlano_di_noi.press : [];
   const press_contact = parlano_di_noi.press_contact || {};
 
+  const pressTitle = defaultText(press_contact.title);
+  const pressText = defaultText(press_contact.text);
+  const pressCta = defaultText(press_contact.cta_label);
+
   return (
     <div>
       {/* Header */}
       <PageHeader
-        title={parlano_di_noi.title || ""}
-        description={parlano_di_noi.description || ""}
-        backLink={{ href: parlano_di_noi.back_href || "/Chi_Siamo", label: parlano_di_noi.back_label || "" }}
+        title={defaultText(parlano_di_noi.title, "Dicono di noi")}
+        description={defaultText(parlano_di_noi.description)}
+        backLink={{ href: parlano_di_noi.back_href || "/Chi_Siamo", label: defaultText(parlano_di_noi.back_label, "Torna a Chi Siamo") }}
         compact
       />
 
@@ -29,11 +34,18 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
       <Section className="py-12 sm:py-16 md:py-24">
         <div className="max-w-5xl mx-auto space-y-6 sm:space-y-10 md:space-y-12">
           {press.filter((item: any) => item && item.visible !== false).map((item: any, idx: number) => {
+            const quote = defaultText(item.quote);
+            const source = defaultText(item.source);
+            const date = defaultText(item.date);
+            const badgeLabel = defaultText(item.badge_label);
+
             const CardContent = (
               <div className="relative z-10">
-                <blockquote className="text-xl sm:text-2xl md:text-3xl font-serif italic text-foreground/80 leading-relaxed mb-6 sm:mb-8 whitespace-pre-wrap text-pretty">
-                  <FormattedText text={item.quote} />
-                </blockquote>
+                {quote && (
+                  <blockquote className="text-xl sm:text-2xl md:text-3xl font-serif italic text-foreground/80 leading-relaxed mb-6 sm:mb-8 whitespace-pre-wrap text-pretty">
+                    <FormattedText text={quote} />
+                  </blockquote>
+                )}
                 
                 <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 border-t border-foreground/10 pt-6 sm:pt-8">
                   <div className="flex items-center">
@@ -41,20 +53,24 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
                       <ExternalLink size={18} className="text-secondary group-hover:text-secondary-foreground transition-colors" />
                     </div>
                     <div>
-                      <div className="text-lg sm:text-xl font-bold flex items-center">
-                        {item.source}
-                        {item.source_href && <ExternalLink size={14} className="ml-2 opacity-40 group-hover:opacity-100 transition-opacity" />}
-                      </div>
-                      <p className="text-accent text-xs sm:text-sm font-bold uppercase tracking-widest mt-0.5">
-                        {parlano_di_noi.year_prefix}{item.date}
-                      </p>
+                      {source && (
+                        <div className="text-lg sm:text-xl font-bold flex items-center">
+                          {source}
+                          {item.source_href && <ExternalLink size={14} className="ml-2 opacity-40 group-hover:opacity-100 transition-opacity" />}
+                        </div>
+                      )}
+                      {date && (
+                        <p className="text-accent text-xs sm:text-sm font-bold uppercase tracking-widest mt-0.5">
+                          {parlano_di_noi.year_prefix}{date}
+                        </p>
+                      )}
                     </div>
                   </div>
                   
-                  {item.badge_label && (
+                  {badgeLabel && (
                     <div className="inline-block">
                       <div className="px-4 py-1 sm:px-5 sm:py-1.5 bg-accent/10 text-accent border border-accent/30 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-widest shadow-xs">
-                        {item.badge_label}
+                        {badgeLabel}
                       </div>
                     </div>
                   )}
@@ -91,30 +107,30 @@ export default function ParlanoDiNoiClient({ content: initialContent }: { conten
       </Section>
 
       {/* Press Area CTA - Styled like Join Us */}
-      {press_contact && (press_contact.title || press_contact.text) && (
+      {(pressTitle || pressText || pressCta) && (
         <Section className="bg-muted/10 py-12 sm:py-16 md:py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
-            {press_contact.title && (
+            {pressTitle && (
               <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">
-                {press_contact.title}
+                {pressTitle}
               </h2>
             )}
-            {press_contact.text && (
+            {pressText && (
               <p className="text-lg text-foreground/60 mb-10">
-                <FormattedText text={press_contact.text} />
+                <FormattedText text={pressText} />
               </p>
             )}
-            {press_contact.cta_label && (
+            {pressCta && (
               press_contact.cta_href ? (
                 <Link 
                   href={press_contact.cta_href}
                   className="px-10 py-5 bg-primary text-primary-foreground rounded-full font-black text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
                 >
-                  {press_contact.cta_label}
+                  {pressCta}
                 </Link>
               ) : (
                 <div className="px-10 py-5 bg-primary/20 text-primary rounded-full font-black text-lg inline-block">
-                  {press_contact.cta_label}
+                  {pressCta}
                 </div>
               )
             )}

@@ -16,7 +16,9 @@ import {
   Mail,
   HelpCircle,
   ExternalLink,
-  ClipboardList
+  ClipboardList,
+  Send,
+  Share2
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -33,6 +35,8 @@ export function IntegrationsTab() {
       view_content: true,
       initiate_checkout: true,
       contact: true,
+      lead: true,
+      social_click: true,
     }
   };
 
@@ -44,6 +48,8 @@ export function IntegrationsTab() {
     view_content: true,
     initiate_checkout: true,
     contact: true,
+    lead: true,
+    social_click: true,
   };
 
   const isTrackerActive = Boolean((ga.enabled && ga.measurement_id?.trim()) || (meta.enabled && meta.pixel_id?.trim()));
@@ -283,7 +289,71 @@ export function IntegrationsTab() {
               </div>
             </div>
 
-            {/* 5. purchase (Eventfrog) */}
+            {/* 5. lead (Tally) */}
+            <div className="p-5 rounded-2xl bg-foreground/5 border border-foreground/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+                    <Send size={16} />
+                  </span>
+                  <h4 className="font-bold text-sm text-foreground">
+                    Invio Moduli e Iscrizioni (Lead)
+                  </h4>
+                </div>
+                <p className="text-xs text-foreground/60 leading-relaxed pl-8">
+                  <strong>Trigger:</strong> Invio completato con successo di un modulo Tally incorporato (intercettazione evento ufficiale <code>Tally.FormSubmitted</code>) o apertura moduli esterni.<br />
+                  <strong>Piattaforme:</strong> GA4 (<code>generate_lead</code>) · Meta (<code>Lead</code>)<br />
+                  <strong>Parametri:</strong> Titolo del modulo (<code>form_name</code>), ID form, percorso pagina.
+                </p>
+              </div>
+              <div className="pl-8 md:pl-0 shrink-0">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={events.lead !== false}
+                    onChange={(e) => updateContent("integrations.events.lead", e.target.checked)}
+                    className="w-5 h-5 rounded accent-primary cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-foreground">
+                    {events.lead !== false ? "Abilitato" : "Disattivato"}
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/* 6. social_click (Instagram / Facebook) */}
+            <div className="p-5 rounded-2xl bg-foreground/5 border border-foreground/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 rounded-xl bg-pink-500/10 text-pink-400">
+                    <Share2 size={16} />
+                  </span>
+                  <h4 className="font-bold text-sm text-foreground">
+                    Click e Canali Social (SocialClick / Instagram)
+                  </h4>
+                </div>
+                <p className="text-xs text-foreground/60 leading-relaxed pl-8">
+                  <strong>Trigger:</strong> Click verso il profilo Instagram ufficiale, singoli post/reel nel feed, o pagina Facebook (da Home, Contatti e Footer).<br />
+                  <strong>Piattaforme:</strong> GA4 (<code>social_interaction</code>) · Meta (<code>SocialClick</code> / <code>Contact</code>)<br />
+                  <strong>Parametri:</strong> Piattaforma social (<code>Instagram</code>, <code>Facebook</code>), URL di destinazione.
+                </p>
+              </div>
+              <div className="pl-8 md:pl-0 shrink-0">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={events.social_click !== false}
+                    onChange={(e) => updateContent("integrations.events.social_click", e.target.checked)}
+                    className="w-5 h-5 rounded accent-primary cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-foreground">
+                    {events.social_click !== false ? "Abilitato" : "Disattivato"}
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/* 7. purchase (Eventfrog) */}
             <div className="p-5 rounded-2xl bg-foreground/5 border border-foreground/5 flex flex-col md:flex-row md:items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">

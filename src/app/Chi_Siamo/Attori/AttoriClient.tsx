@@ -11,6 +11,8 @@ import { RichText } from "@/components/ui/RichText";
 import Image from "next/image";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getSafeImageProps } from "@/lib/youtube";
+import { defaultText } from "@/lib/utils";
+import { trackViewContent } from "@/lib/tracking";
 
 export default function AttoriClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
@@ -28,13 +30,18 @@ export default function AttoriClient({ content: initialContent }: { content: any
     }));
   }, [list, attori.fallback_actor_alt]);
 
+  const emptyMsg = defaultText(attori.empty_message);
+  const joinTitle = defaultText(join_us.title);
+  const joinText = defaultText(join_us.text);
+  const joinCta = defaultText(join_us.cta_label);
+
   return (
     <div>
       {/* Header */}
       <PageHeader
-        title={attori.title || ""}
-        description={attori.description}
-        backLink={{ href: attori.back_href || "/Chi_Siamo", label: attori.back_label || "" }}
+        title={defaultText(attori.title, "Attori")}
+        description={defaultText(attori.description)}
+        backLink={{ href: attori.back_href || "/Chi_Siamo", label: defaultText(attori.back_label, "Torna a Chi Siamo") }}
         compact
       />
 
@@ -50,7 +57,12 @@ export default function AttoriClient({ content: initialContent }: { content: any
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover="hover"
-                onClick={() => setSelectedActor(person)}
+                onClick={() => {
+                  setSelectedActor(person);
+                  if (person?.name) {
+                    trackViewContent(person.name, "Attore");
+                  }
+                }}
                 className="group text-center cursor-pointer active:scale-[0.98] transition-transform"
               >
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto mb-6 sm:mb-8">
@@ -78,9 +90,11 @@ export default function AttoriClient({ content: initialContent }: { content: any
                 </div>
                 
                 <div className="space-y-2 sm:space-y-3">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3rem] sm:min-h-[4rem] flex items-center justify-center text-balance break-words">
-                    {person.name}
-                  </h3>
+                  {person.name && (
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight group-hover:text-primary transition-colors min-h-[3rem] sm:min-h-[4rem] flex items-center justify-center text-balance break-words">
+                      {person.name}
+                    </h3>
+                  )}
                   {person.role && (
                     <div className="inline-block px-3.5 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
                       {person.role}
@@ -96,37 +110,39 @@ export default function AttoriClient({ content: initialContent }: { content: any
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-foreground/40 font-medium">
-            {attori.empty_message}
-          </div>
+          emptyMsg && (
+            <div className="text-center py-12 text-foreground/40 font-medium">
+              {emptyMsg}
+            </div>
+          )
         )}
       </Section>
 
       {/* Join Us Call to Action */}
-      {join_us && (join_us.title || join_us.text) && (
+      {(joinTitle || joinText || joinCta) && (
         <Section className="bg-muted/10 py-12 sm:py-16 md:py-24 text-center border-t border-foreground/5">
           <div className="max-w-2xl mx-auto">
-            {join_us.title && (
+            {joinTitle && (
               <h2 className="text-2xl sm:text-3xl font-black mb-4 sm:mb-6 uppercase tracking-tight">
-                {join_us.title}
+                {joinTitle}
               </h2>
             )}
-            {join_us.text && (
+            {joinText && (
               <p className="text-base sm:text-lg text-foreground/60 mb-8 sm:mb-10 text-pretty">
-                {join_us.text}
+                {joinText}
               </p>
             )}
-            {join_us.cta_label && (
+            {joinCta && (
               join_us.cta_href ? (
                 <Link 
                   href={join_us.cta_href}
                   className="px-8 sm:px-10 py-4 sm:py-5 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
                 >
-                  {join_us.cta_label}
+                  {joinCta}
                 </Link>
               ) : (
                 <div className="px-8 sm:px-10 py-4 sm:py-5 bg-primary/20 text-primary rounded-full font-black text-base sm:text-lg inline-block">
-                  {join_us.cta_label}
+                  {joinCta}
                 </div>
               )
             )}

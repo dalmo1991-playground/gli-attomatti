@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { verifyDevPassword } from "@/app/actions/devGate";
 import { useRouter } from "next/navigation";
 import { ExternalLink, Lock, ArrowRight, AlertCircle, Theater, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, defaultText } from "@/lib/utils";
 
 interface DevAccessGateProps {
   children: React.ReactNode;
@@ -100,41 +100,53 @@ export function DevAccessGate({
       <div className="max-w-md w-full glass rounded-[2.5rem] p-6 sm:p-10 border border-foreground/10 shadow-2xl relative z-10">
         <div className="text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            <ShieldCheck size={14} className="text-accent" />
-            <span>{ui.badge || "Ambiente di Sviluppo"}</span>
-          </div>
+          {defaultText(ui.badge, "Ambiente di Sviluppo") && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
+              <ShieldCheck size={14} className="text-accent" />
+              <span>{defaultText(ui.badge, "Ambiente di Sviluppo")}</span>
+            </div>
+          )}
 
           {/* Logo / Heading */}
-          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-foreground mb-3 leading-tight">
-            {ui.site_name || "Gli Attomatti"}
-          </h1>
-          <p className="text-foreground/75 text-sm sm:text-base leading-relaxed mb-6">
-            {ui.description || "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:"}
-          </p>
+          {defaultText(ui.site_name, "Gli Attomatti") && (
+            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-foreground mb-3 leading-tight">
+              {defaultText(ui.site_name, "Gli Attomatti")}
+            </h1>
+          )}
+          {defaultText(ui.description, "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:") && (
+            <p className="text-foreground/75 text-sm sm:text-base leading-relaxed mb-6">
+              {defaultText(ui.description, "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:")}
+            </p>
+          )}
 
           {/* Main CTA to Live Site */}
-          <a
-            href="https://gliattomatti.ch"
-            className="inline-flex items-center justify-center gap-2.5 w-full py-4 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-base shadow-lg shadow-primary/25 hover:opacity-95 hover:-translate-y-0.5 active:translate-y-0 transition-all mb-8 group"
-          >
-            <span>{ui.live_site_button || "Vai al sito vero (gliattomatti.ch)"}</span>
-            <ExternalLink size={18} className="group-hover:translate-x-0.5 transition-transform" />
-          </a>
+          {defaultText(ui.live_site_button, "Vai al sito vero (gliattomatti.ch)") && (
+            <a
+              href="https://gliattomatti.ch"
+              className="inline-flex items-center justify-center gap-2.5 w-full py-4 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-base shadow-lg shadow-primary/25 hover:opacity-95 hover:-translate-y-0.5 active:translate-y-0 transition-all mb-8 group"
+            >
+              <span>{defaultText(ui.live_site_button, "Vai al sito vero (gliattomatti.ch)")}</span>
+              <ExternalLink size={18} className="group-hover:translate-x-0.5 transition-transform" />
+            </a>
+          )}
 
           {/* Divider */}
-          <div className="relative flex items-center justify-center mb-8">
-            <div className="border-t border-foreground/10 w-full" />
-            <span className="bg-background/90 px-3.5 py-1 rounded-full text-[11px] uppercase tracking-wider font-bold text-foreground/50 border border-foreground/10 absolute">
-              {ui.divider_label || "Accesso Team & Anteprima"}
-            </span>
-          </div>
+          {defaultText(ui.divider_label, "Accesso Team & Anteprima") && (
+            <div className="relative flex items-center justify-center mb-8">
+              <div className="border-t border-foreground/10 w-full" />
+              <span className="bg-background/90 px-3.5 py-1 rounded-full text-[11px] uppercase tracking-wider font-bold text-foreground/50 border border-foreground/10 absolute">
+                {defaultText(ui.divider_label, "Accesso Team & Anteprima")}
+              </span>
+            </div>
+          )}
 
           {/* Password Section */}
           <div className="text-left mb-2">
-            <p className="text-xs text-foreground/60 mb-3 text-center">
-              {ui.password_instructions || "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:"}
-            </p>
+            {defaultText(ui.password_instructions, "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:") && (
+              <p className="text-xs text-foreground/60 mb-3 text-center">
+                {defaultText(ui.password_instructions, "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:")}
+              </p>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="relative">
@@ -148,7 +160,7 @@ export function DevAccessGate({
                     setPassword(e.target.value);
                     if (error) setError(false);
                   }}
-                  placeholder={ui.password_placeholder || "Inserisci password..."}
+                  placeholder={defaultText(ui.password_placeholder, "Inserisci password...") || ""}
                   className={cn(
                     "w-full pl-10 pr-4 py-3 bg-muted/30 border rounded-2xl text-sm font-medium text-foreground placeholder:text-foreground/40 focus:outline-hidden transition-all",
                     error
@@ -159,27 +171,31 @@ export function DevAccessGate({
                 />
               </div>
 
-              {error && (
+              {error && defaultText(ui.error_message, "Password errata. Riprova.") && (
                 <div className="flex items-center gap-2 text-rose-400 text-xs px-3 py-2 bg-rose-500/10 rounded-xl border border-rose-500/20">
                   <AlertCircle size={14} className="shrink-0" />
-                  <span>{ui.error_message || "Password errata. Riprova."}</span>
+                  <span>{defaultText(ui.error_message, "Password errata. Riprova.")}</span>
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={isSubmitting || !password.trim()}
-                className="w-full py-3.5 px-5 rounded-2xl bg-foreground/10 hover:bg-foreground/15 text-foreground font-bold text-sm flex items-center justify-center gap-2 transition-all border border-foreground/10 hover:border-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <span>{ui.submit_button || "Sblocca e prosegui"}</span>
-                <ArrowRight size={16} />
-              </button>
+              {defaultText(ui.submit_button, "Sblocca e prosegui") && (
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !password.trim()}
+                  className="w-full py-3.5 px-5 rounded-2xl bg-foreground/10 hover:bg-foreground/15 text-foreground font-bold text-sm flex items-center justify-center gap-2 transition-all border border-foreground/10 hover:border-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <span>{defaultText(ui.submit_button, "Sblocca e prosegui")}</span>
+                  <ArrowRight size={16} />
+                </button>
+              )}
             </form>
           </div>
 
-          <p className="text-[11px] text-foreground/40 mt-6 leading-normal">
-            {ui.cookie_notice || "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser."}
-          </p>
+          {defaultText(ui.cookie_notice, "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser.") && (
+            <p className="text-[11px] text-foreground/40 mt-6 leading-normal">
+              {defaultText(ui.cookie_notice, "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser.")}
+            </p>
+          )}
         </div>
       </div>
     </div>

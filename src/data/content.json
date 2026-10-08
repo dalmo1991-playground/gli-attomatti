@@ -394,7 +394,7 @@
         {
           "id": "refunds",
           "title": "3. Rimborsi, rinuncia e politica di presenza responsabile (No-Show)",
-          "intro": "Di norma, i biglietti acquistati per gli spettacoli non sono rimborsabili da parte dell'organizzatore in caso di mancata partecipazione o rinuncia per motivi personali dell'acquirente. I biglietti possono essere liberamente ceduti a terzi.",
+          "intro": "Di norma, i biglietti acquistati per gli spettacoli non sono rimborsabili da parte dell'organizzatore in caso di mancata partecipazione o rinuncia per motivi personali dell'acquirente. I biglietti possono essere liberamente ceduti a terzi. Ai sensi della Direttiva UE 2011/83/UE (art. 16, lett. l) e delle normative a tutela del consumatore applicabili nell'Unione Europea (es. art. 59 lett. n del Codice del Consumo italiano), il diritto di recesso di 14 giorni per gli acquisti a distanza non si applica ai contratti di fornitura di servizi relativi al tempo libero e spettacoli qualora il contratto preveda una data o un periodo di esecuzione specifici.",
           "cards": [
             {
               "title": "Copertura assicurativa facoltativa Eventfrog",
@@ -447,19 +447,19 @@
         {
           "id": "jurisdiction",
           "title": "9. Diritto applicabile e foro competente",
-          "text": "Il rapporto contrattuale è disciplinato esclusivamente dal diritto materiale svizzero. Per qualsiasi controversia il foro competente esclusivo è quello di Zurigo, Svizzera."
+          "text": "Il rapporto contrattuale è disciplinato dal diritto materiale svizzero. Per qualsiasi controversia il foro competente esclusivo è quello di Zurigo, Svizzera. Restano salve le disposizioni inderogabili e le tutele a favore dei consumatori previste dalla legge dello Stato membro dell'Unione Europea in cui l'utente risiede abitualmente (ai sensi del Regolamento UE n. 1215/2012 e della Convenzione di Lugano)."
         }
       ]
     },
     "privacy": {
       "meta": {
         "title": "Informativa sulla Privacy",
-        "description": "Informativa sul trattamento dei dati personali (Datenschutzerklärung) ai sensi della nLPD svizzera."
+        "description": "Informativa sul trattamento dei dati personali ai sensi della nLPD svizzera e del Regolamento UE 2016/679 (GDPR)."
       },
       "back_link": "Torna alla home",
-      "badge": "Datenschutzerklärung",
+      "badge": "nLPD & GDPR",
       "title": "Informativa sulla Privacy",
-      "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD) e al principio di trasparenza (Opt-in).",
+      "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD), al Regolamento Generale sulla Protezione dei Dati dell'Unione Europea (GDPR, Reg. UE 2016/679) e al principio di trasparenza preventiva (Opt-in).",
       "data_controller": {
         "title": "Titolare del trattamento",
         "name": "Gli Attomatti",
@@ -468,8 +468,8 @@
         "email": "compagniateatralegliattomatti@gmail.com"
       },
       "general_processing": {
-        "title": "Trattamento generale dei dati",
-        "text": "Trattiamo i dati personali solo ed esclusivamente nella misura necessaria per fornire un sito web funzionante e per offrire i nostri servizi teatrali, prevendite, registrazioni a eventi e comunicazioni informative."
+        "title": "Trattamento generale dei dati e basi giuridiche",
+        "text": "Trattiamo i dati personali solo ed esclusivamente nella misura necessaria per fornire un sito web funzionante e per offrire i nostri servizi teatrali, prevendite, registrazioni a eventi e comunicazioni informative. Ai sensi dell'art. 6 del GDPR e della nLPD svizzera, le basi giuridiche applicate comprendono: (a) l'esecuzione di un contratto o di misure precontrattuali per l'acquisto di biglietti, l'iscrizione a corsi ed eventi teatrali, o richieste per disponibilità sala; (b) l'adempimento di obblighi legali e fiscali; (c) il consenso esplicito e preventivo dell'interessato per l'attivazione di cookie analitici e di marketing; (d) il nostro legittimo interesse prevalente alla sicurezza informatica e all'efficienza operativa del sito web. In virtù della decisione di adeguatezza della Commissione Europea (art. 45 GDPR), la Svizzera garantisce un livello di protezione dei dati equiparabile a quello dell'Unione Europea, consentendo il libero e sicuro trasferimento dei dati tra Svizzera e Paesi dello Spazio Economico Europeo."
       },
       "server_logs": {
         "title": "File di log del server",
@@ -587,8 +587,8 @@
         "contact_email": "compagniateatralegliattomatti@gmail.com"
       },
       "your_rights": {
-        "title": "I tuoi diritti (nLPD)",
-        "text": "Ai sensi della nuova Legge federale sulla protezione dei dati (nLPD), hai il diritto di richiedere in qualsiasi momento informazioni riguardo ai dati personali che trattiamo sul tuo conto, nonché la correzione, il blocco o la cancellazione di tali dati contattandoci all'indirizzo email: compagniateatralegliattomatti@gmail.com.",
+        "title": "I tuoi diritti (nLPD & GDPR)",
+        "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per i cookie o gli strumenti di tracciamento. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
         "contact_email": "compagniateatralegliattomatti@gmail.com"
       },
       "third_parties": {
@@ -726,7 +726,9 @@
     "events": {
       "view_content": true,
       "initiate_checkout": true,
-      "contact": true
+      "contact": true,
+      "lead": true,
+      "social_click": true
     }
   },
   "ui": {

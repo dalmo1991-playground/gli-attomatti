@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera } from "lucide-react";
+import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera, CalendarX } from "lucide-react";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { LegalDocLayout, LegalDocCard } from "@/components/ui/LegalDocLayout";
+import { defaultText } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const meta = content?.pages?.termini?.meta;
   return {
-    title: meta?.title || "Termini di Biglietteria e Iscrizioni",
-    description: meta?.description || "",
+    title: defaultText(meta?.title, "Termini di Biglietteria e Iscrizioni") || undefined,
+    description: defaultText(meta?.description) || undefined,
     alternates: {
       canonical: "/Termini",
     },
@@ -20,6 +21,7 @@ const sectionIcons: Record<string, { icon: React.ElementType; color: string }> =
   scope: { icon: FileText, color: "bg-primary/10 text-primary" },
   pricing: { icon: Ticket, color: "bg-secondary/10 text-secondary" },
   refunds: { icon: ShieldCheck, color: "bg-accent/10 text-accent" },
+  cancellation: { icon: CalendarX, color: "bg-amber-500/10 text-amber-400" },
   hall_access: { icon: Clock, color: "bg-primary/10 text-primary" },
   rules: { icon: Ban, color: "bg-rose-500/10 text-rose-400" },
   photo_policy: { icon: Camera, color: "bg-amber-500/10 text-amber-400" },
@@ -34,11 +36,11 @@ export default async function TerminiPage() {
 
   return (
     <LegalDocLayout
-      badge={t?.badge}
-      title={t?.title || "Termini e Condizioni"}
-      description={t?.description}
+      badge={defaultText(t?.badge)}
+      title={defaultText(t?.title, "Termini e Condizioni")}
+      description={defaultText(t?.description)}
       backHref="/"
-      backLabel={t?.back_link || "Torna alla home"}
+      backLabel={defaultText(t?.back_link, "Torna alla home")}
     >
       {sections.map((section: any) => {
         const iconConfig = sectionIcons[section.id];
@@ -47,7 +49,7 @@ export default async function TerminiPage() {
         return (
           <LegalDocCard
             key={section.id || section.title}
-            title={section.title}
+            title={defaultText(section.title)}
             icon={Icon}
             iconColorClass={iconConfig?.color}
           >

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ShieldCheck, ChevronDown, ChevronUp, Check, X, Sliders } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FormattedText } from "@/components/ui/FormattedText";
+import { defaultText } from "@/lib/utils";
 
 export interface StoredConsent {
   version: number;
@@ -143,12 +144,35 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
 
   if (!isAnyTrackerActive || !isOpen) return null;
 
-  const renderedDescription = ui.description
-    ? ui.description
+  const title = defaultText(ui.title, "Preferenze sui Cookie & Privacy");
+  const badge = defaultText(ui.badge, "Approccio Trasparente (Opt-in)");
+  const newToolsNotice = defaultText(ui.new_tools_notice, "Nuovi strumenti attivati: richiesto consenso");
+
+  const defaultDesc = `Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi (${isGaActive && "Google Analytics"}) e marketing (${isMetaActive && "Meta Pixel"}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.`;
+  const rawDesc = defaultText(ui.description, defaultDesc);
+  const renderedDescription = rawDesc
+    ? rawDesc
         .replace("{ga}", isGaActive ? "Google Analytics" : "")
         .replace("{meta}", isMetaActive ? "Meta Pixel" : "")
         .replace("()", "")
-    : `Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi (${isGaActive && "Google Analytics"}) e marketing (${isMetaActive && "Meta Pixel"}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.`;
+    : null;
+
+  const necTitle = defaultText(necCat.title, "Cookie Tecnici Necessari");
+  const necDesc = defaultText(necCat.description, "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi.");
+  const necBadge = defaultText(necCat.badge, "Sempre Attivi");
+
+  const anaTitle = defaultText(anaCat.title, "Statistici e Analisi (Google Analytics 4)");
+  const anaDesc = defaultText(anaCat.description, "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati.");
+
+  const mktTitle = defaultText(mktCat.title, "Marketing e Social (Meta Pixel / Instagram)");
+  const mktDesc = defaultText(mktCat.description, "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook.");
+
+  const customizeClose = defaultText(ui.customize_close, "Chiudi personalizzazione");
+  const customizeOpen = defaultText(ui.customize_open, "Personalizza scelte");
+  const privacyPolicyLink = defaultText(ui.privacy_policy_link, "Informativa Privacy");
+  const rejectAllLabel = defaultText(ui.reject_all_label, "Rifiuta non necessari");
+  const savePreferencesLabel = defaultText(ui.save_preferences_label, "Salva preferenze");
+  const acceptAllLabel = defaultText(ui.accept_all_label, "Accetta tutti");
 
   return (
     <AnimatePresence>
@@ -161,32 +185,42 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
       >
         <div className="max-w-4xl mx-auto bg-slate-900/95 border border-foreground/15 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur-xl pointer-events-auto text-foreground space-y-4 sm:space-y-6 max-h-[85dvh] overflow-y-auto overscroll-contain custom-scrollbar">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black uppercase tracking-tight">
-                  {ui.title || "Preferenze sui Cookie & Privacy"}
-                </h3>
-                <span className="text-[11px] font-bold text-foreground/50 uppercase tracking-wider">
-                  {ui.badge || "Approccio Trasparente (Opt-in)"}
-                </span>
-              </div>
-            </div>
+          {(title || badge || (hasNewTrackingNotice && newToolsNotice)) && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {(title || badge) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <ShieldCheck size={22} />
+                  </div>
+                  <div>
+                    {title && (
+                      <h3 className="text-base sm:text-lg font-black uppercase tracking-tight">
+                        {title}
+                      </h3>
+                    )}
+                    {badge && (
+                      <span className="text-[11px] font-bold text-foreground/50 uppercase tracking-wider">
+                        {badge}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
-            {hasNewTrackingNotice && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold border border-amber-500/20">
-                {ui.new_tools_notice || "Nuovi strumenti attivati: richiesto consenso"}
-              </span>
-            )}
-          </div>
+              {hasNewTrackingNotice && newToolsNotice && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold border border-amber-500/20">
+                  {newToolsNotice}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Description */}
-          <p className="text-sm text-foreground/80 leading-relaxed font-medium">
-            <FormattedText text={renderedDescription} />
-          </p>
+          {renderedDescription && (
+            <p className="text-sm text-foreground/80 leading-relaxed font-medium">
+              <FormattedText text={renderedDescription} />
+            </p>
+          )}
 
           {/* Expandable Customization Details */}
           {showDetails && (
@@ -197,30 +231,42 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
               className="space-y-4 pt-4 border-t border-foreground/10 text-xs"
             >
               {/* Necessari */}
-              <div className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4">
-                <div>
-                  <span className="font-bold text-foreground block text-sm">
-                    {necCat.title || "Cookie Tecnici Necessari"}
-                  </span>
-                  <span className="text-foreground/60 leading-relaxed">
-                    {necCat.description || "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi."}
-                  </span>
+              {(necTitle || necDesc) && (
+                <div className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4">
+                  <div>
+                    {necTitle && (
+                      <span className="font-bold text-foreground block text-sm">
+                        {necTitle}
+                      </span>
+                    )}
+                    {necDesc && (
+                      <span className="text-foreground/60 leading-relaxed">
+                        {necDesc}
+                      </span>
+                    )}
+                  </div>
+                  {necBadge && (
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider shrink-0">
+                      {necBadge}
+                    </span>
+                  )}
                 </div>
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider shrink-0">
-                  {necCat.badge || "Sempre Attivi"}
-                </span>
-              </div>
+              )}
 
               {/* Analitici (GA4) */}
-              {isGaActive && (
+              {isGaActive && (anaTitle || anaDesc) && (
                 <label className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4 cursor-pointer hover:bg-foreground/10 transition-colors">
                   <div>
-                    <span className="font-bold text-foreground block text-sm">
-                      {anaCat.title || "Statistici e Analisi (Google Analytics 4)"}
-                    </span>
-                    <span className="text-foreground/60 leading-relaxed">
-                      {anaCat.description || "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati."}
-                    </span>
+                    {anaTitle && (
+                      <span className="font-bold text-foreground block text-sm">
+                        {anaTitle}
+                      </span>
+                    )}
+                    {anaDesc && (
+                      <span className="text-foreground/60 leading-relaxed">
+                        {anaDesc}
+                      </span>
+                    )}
                   </div>
                   <input
                     type="checkbox"
@@ -232,15 +278,19 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
               )}
 
               {/* Marketing (Meta Pixel) */}
-              {isMetaActive && (
+              {isMetaActive && (mktTitle || mktDesc) && (
                 <label className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 flex items-center justify-between gap-4 cursor-pointer hover:bg-foreground/10 transition-colors">
                   <div>
-                    <span className="font-bold text-foreground block text-sm">
-                      {mktCat.title || "Marketing e Social (Meta Pixel / Instagram)"}
-                    </span>
-                    <span className="text-foreground/60 leading-relaxed">
-                      {mktCat.description || "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook."}
-                    </span>
+                    {mktTitle && (
+                      <span className="font-bold text-foreground block text-sm">
+                        {mktTitle}
+                      </span>
+                    )}
+                    {mktDesc && (
+                      <span className="text-foreground/60 leading-relaxed">
+                        {mktDesc}
+                      </span>
+                    )}
                   </div>
                   <input
                     type="checkbox"
@@ -256,45 +306,55 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
             <div className="flex items-center gap-4 text-xs text-foreground/50">
-              <button
-                type="button"
-                onClick={() => setShowDetails((prev) => !prev)}
-                className="hover:text-primary transition-colors inline-flex items-center gap-1 font-bold underline"
-              >
-                <Sliders size={13} />
-                <span>{showDetails ? (ui.customize_close || "Chiudi personalizzazione") : (ui.customize_open || "Personalizza scelte")}</span>
-              </button>
+              {(showDetails ? customizeClose : customizeOpen) && (
+                <button
+                  type="button"
+                  onClick={() => setShowDetails((prev) => !prev)}
+                  className="hover:text-primary transition-colors inline-flex items-center gap-1 font-bold underline"
+                >
+                  <Sliders size={13} />
+                  <span>{showDetails ? customizeClose : customizeOpen}</span>
+                </button>
+              )}
 
-              <Link href="/Privacy" className="hover:text-primary transition-colors underline">
-                {ui.privacy_policy_link || "Informativa Privacy"}
-              </Link>
+              {privacyPolicyLink && (
+                <Link href="/Privacy" className="hover:text-primary transition-colors underline">
+                  {privacyPolicyLink}
+                </Link>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
-              <button
-                type="button"
-                onClick={handleRejectAll}
-                className="flex-1 sm:flex-initial px-5 py-2.5 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/70 hover:text-foreground text-xs font-bold uppercase tracking-wider transition-all"
-              >
-                {ui.reject_all_label || "Rifiuta non necessari"}
-              </button>
+              {rejectAllLabel && (
+                <button
+                  type="button"
+                  onClick={handleRejectAll}
+                  className="flex-1 sm:flex-initial px-5 py-2.5 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-foreground/70 hover:text-foreground text-xs font-bold uppercase tracking-wider transition-all"
+                >
+                  {rejectAllLabel}
+                </button>
+              )}
 
               {showDetails ? (
-                <button
-                  type="button"
-                  onClick={handleSaveCustom}
-                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
-                >
-                  {ui.save_preferences_label || "Salva preferenze"}
-                </button>
+                savePreferencesLabel && (
+                  <button
+                    type="button"
+                    onClick={handleSaveCustom}
+                    className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
+                  >
+                    {savePreferencesLabel}
+                  </button>
+                )
               ) : (
-                <button
-                  type="button"
-                  onClick={handleAcceptAll}
-                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
-                >
-                  {ui.accept_all_label || "Accetta tutti"}
-                </button>
+                acceptAllLabel && (
+                  <button
+                    type="button"
+                    onClick={handleAcceptAll}
+                    className="flex-1 sm:flex-initial px-6 py-2.5 rounded-full bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-primary/20"
+                  >
+                    {acceptAllLabel}
+                  </button>
+                )
               )}
             </div>
           </div>

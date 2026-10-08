@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Calendar, MapPin, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, defaultText } from "@/lib/utils";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
 import { getSafeImageProps } from "@/lib/youtube";
+import { trackInitiateCheckout } from "@/lib/tracking";
 
 const MotionImage = motion.create(Image);
 
@@ -209,42 +210,57 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   )}
 
                   {/* Buttons / Actions Area */}
-                  <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
-                    {/* Button 1 */}
-                    {activeShows[currentShowIndex].cta && (
-                      activeShows[currentShowIndex].cta_href ? (
-                        <Link
-                          href={activeShows[currentShowIndex].cta_href}
-                          className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
-                        >
-                          {activeShows[currentShowIndex].cta}
-                          <ArrowRight size={18} className="ml-2" />
-                        </Link>
-                      ) : (
-                        <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-base flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
-                          <Info size={16} className="mr-2 opacity-80" />
-                          {activeShows[currentShowIndex].cta}
-                        </div>
-                      )
-                    )}
+                  {(() => {
+                    const primaryCta = defaultText(activeShows[currentShowIndex].cta);
+                    const secondaryCta = defaultText(activeShows[currentShowIndex].secondary_cta, activeShows[currentShowIndex].details_label);
+                    if (!primaryCta && !secondaryCta) return null;
 
-                    {/* Button 2 */}
-                    {(activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label) && (
-                      (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
-                        <Link
-                          href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
-                          className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
-                        >
-                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
-                        </Link>
-                      ) : (
-                        <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-xl font-black text-base flex items-center justify-center shadow-xl">
-                          <Info size={16} className="mr-2 text-secondary opacity-80" />
-                          {activeShows[currentShowIndex].secondary_cta || activeShows[currentShowIndex].details_label}
-                        </div>
-                      )
-                    )}
-                  </div>
+                    return (
+                      <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
+                        {/* Button 1 */}
+                        {primaryCta && (
+                          activeShows[currentShowIndex].cta_href ? (
+                            <Link
+                              href={activeShows[currentShowIndex].cta_href}
+                              onClick={() =>
+                                trackInitiateCheckout(
+                                  activeShows[currentShowIndex].title || "Spettacolo",
+                                  activeShows[currentShowIndex].cta_href,
+                                  "home_hero"
+                                )
+                              }
+                              className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                            >
+                              {primaryCta}
+                              <ArrowRight size={18} className="ml-2" />
+                            </Link>
+                          ) : (
+                            <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-base flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
+                              <Info size={16} className="mr-2 opacity-80" />
+                              {primaryCta}
+                            </div>
+                          )
+                        )}
+
+                        {/* Button 2 */}
+                        {secondaryCta && (
+                          (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
+                            <Link
+                              href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
+                              className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
+                            >
+                              {secondaryCta}
+                            </Link>
+                          ) : (
+                            <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-xl font-black text-base flex items-center justify-center shadow-xl">
+                              <Info size={16} className="mr-2 text-secondary opacity-80" />
+                              {secondaryCta}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    );
+                  })()}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -256,54 +272,64 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   src="/logo_attomatti.svg"
-                  alt={content.site.name}
+                  alt={content.site?.name || "Logo"}
                   width={192}
                   height={192}
                   className="h-28 sm:h-36 md:h-44 w-auto mb-6 md:mb-8 animate-float"
                   unoptimized
                 />
 
-                <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-                  <FormattedText text={hero.subtitle} />
-                </p>
-                <div className={cn(
-                  "flex gap-4 sm:gap-6 justify-center items-center w-full",
-                  (!!hero.primary_cta_href === !!hero.secondary_cta_href)
-                    ? "flex-col sm:flex-row"
-                    : "flex-col"
-                )}>
-                  {hero.primary_cta_label && (
-                    hero.primary_cta_href ? (
-                      <Link
-                        href={hero.primary_cta_href}
-                        className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
-                      >
-                        {hero.primary_cta_label}
-                        <ArrowRight size={18} className="ml-2" />
-                      </Link>
-                    ) : (
-                      <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
-                        <Info size={16} className="mr-2 opacity-80" />
-                        {hero.primary_cta_label}
-                      </div>
-                    )
-                  )}
-                  {hero.secondary_cta_label && (
-                    hero.secondary_cta_href ? (
-                      <Link
-                        href={hero.secondary_cta_href}
-                        className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
-                      >
-                        {hero.secondary_cta_label}
-                      </Link>
-                    ) : (
-                      <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-lg font-bold text-base flex items-center justify-center">
-                        <Info size={16} className="mr-2 text-secondary opacity-80" />
-                        {hero.secondary_cta_label}
-                      </div>
-                    )
-                  )}
-                </div>
+                {defaultText(hero.subtitle) && (
+                  <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
+                    <FormattedText text={defaultText(hero.subtitle)!} />
+                  </p>
+                )}
+                {(() => {
+                  const pCta = defaultText(hero.primary_cta_label);
+                  const sCta = defaultText(hero.secondary_cta_label);
+                  if (!pCta && !sCta) return null;
+
+                  return (
+                    <div className={cn(
+                      "flex gap-4 sm:gap-6 justify-center items-center w-full",
+                      (!!hero.primary_cta_href === !!hero.secondary_cta_href)
+                        ? "flex-col sm:flex-row"
+                        : "flex-col"
+                    )}>
+                      {pCta && (
+                        hero.primary_cta_href ? (
+                          <Link
+                            href={hero.primary_cta_href}
+                            className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
+                          >
+                            {pCta}
+                            <ArrowRight size={18} className="ml-2" />
+                          </Link>
+                        ) : (
+                          <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-lg font-bold text-base flex items-center justify-center">
+                            <Info size={16} className="mr-2 opacity-80" />
+                            {pCta}
+                          </div>
+                        )
+                      )}
+                      {sCta && (
+                        hero.secondary_cta_href ? (
+                          <Link
+                            href={hero.secondary_cta_href}
+                            className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
+                          >
+                            {sCta}
+                          </Link>
+                        ) : (
+                          <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-lg font-bold text-base flex items-center justify-center">
+                            <Info size={16} className="mr-2 text-secondary opacity-80" />
+                            {sCta}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}
@@ -345,19 +371,25 @@ export default function HomeClient({ content: initialContent }: { content: any }
       <Section className="bg-muted/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-4xl font-bold mb-6">
-              <FormattedText text={introduction.title} />
-            </h2>
-            <div className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
-              <FormattedText text={introduction.text} />
-            </div>
-            <Link
-              href={introduction.story_button_href || "/Chi_Siamo"}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
-            >
-              <span>{introduction.story_button_label || ""}</span>
-              <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {defaultText(introduction.title) && (
+              <h2 className="text-4xl font-bold mb-6">
+                <FormattedText text={defaultText(introduction.title)!} />
+              </h2>
+            )}
+            {defaultText(introduction.text) && (
+              <div className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
+                <FormattedText text={defaultText(introduction.text)!} />
+              </div>
+            )}
+            {defaultText(introduction.story_button_label) && (
+              <Link
+                href={introduction.story_button_href || "/Chi_Siamo"}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
+              >
+                <span>{defaultText(introduction.story_button_label)}</span>
+                <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
           </div>
           <div className="w-full">
             {introImages && introImages.length > 0 && (

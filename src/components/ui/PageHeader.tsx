@@ -11,12 +11,12 @@ import { getPageHeroTitleSizeClass } from "@/lib/typography";
 import { FormattedText } from "./FormattedText";
 
 interface PageHeaderProps {
-  title: string;
-  description?: string | React.ReactNode;
+  title?: string | null;
+  description?: string | React.ReactNode | null;
   backLink?: {
     href: string;
-    label: string;
-  };
+    label?: string | null;
+  } | null;
   children?: React.ReactNode;
   className?: string;
   compact?: boolean;
@@ -38,29 +38,33 @@ export function PageHeader({
       <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-secondary/15 rounded-full blur-3xl -mb-32 pointer-events-none" />
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        {backLink && (
+        {backLink && backLink.label && backLink.href && (
           <div className="mb-8">
             <BackLink href={backLink.href} label={backLink.label} />
           </div>
         )}
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={cn(
-            getPageHeroTitleSizeClass(title),
-            "font-black mb-8 uppercase tracking-tighter text-balance break-words [overflow-wrap:anywhere]"
-          )}
-        >
-          <FormattedText text={title} />
-        </motion.h1>
+        {title && (
+          <>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={cn(
+                getPageHeroTitleSizeClass(title),
+                "font-black mb-8 uppercase tracking-tighter text-balance break-words [overflow-wrap:anywhere]"
+              )}
+            >
+              <FormattedText text={title} />
+            </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="w-20 h-1 bg-primary mx-auto mb-8 shadow-sm"
-        />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="w-20 h-1 bg-primary mx-auto mb-8 shadow-sm"
+            />
+          </>
+        )}
 
         {description && (
           <motion.div

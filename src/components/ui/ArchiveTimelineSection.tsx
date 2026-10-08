@@ -9,13 +9,13 @@ import { RichText } from "./RichText";
 import { getCardTitleSizeClass } from "@/lib/typography";
 
 export interface ArchiveTimelineSectionProps {
-  title: string;
-  badge?: string;
-  badgePrefix?: string;
+  title?: string | null;
+  badge?: string | null;
+  badgePrefix?: string | null;
   badgeIcon?: React.ElementType;
-  text?: string;
-  href?: string;
-  ctaLabel?: string;
+  text?: string | null;
+  href?: string | null;
+  ctaLabel?: string | null;
   isAlternate?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -47,29 +47,33 @@ export function ArchiveTimelineSection({
             </div>
           )}
 
-          {href ? (
-            <Link href={href} className="block group">
-              <h2
-                className={cn(
-                  getCardTitleSizeClass(title),
-                  "font-black uppercase tracking-tight mb-6 leading-tight group-hover:text-primary transition-colors text-balance break-words [overflow-wrap:anywhere]"
-                )}
-              >
-                {title}
-              </h2>
-            </Link>
-          ) : (
-            <h2
-              className={cn(
-                getCardTitleSizeClass(title),
-                "font-black uppercase tracking-tight mb-6 leading-tight text-balance break-words [overflow-wrap:anywhere]"
+          {title && (
+            <>
+              {href ? (
+                <Link href={href} className="block group">
+                  <h2
+                    className={cn(
+                      getCardTitleSizeClass(title),
+                      "font-black uppercase tracking-tight mb-6 leading-tight group-hover:text-primary transition-colors text-balance break-words [overflow-wrap:anywhere]"
+                    )}
+                  >
+                    {title}
+                  </h2>
+                </Link>
+              ) : (
+                <h2
+                  className={cn(
+                    getCardTitleSizeClass(title),
+                    "font-black uppercase tracking-tight mb-6 leading-tight text-balance break-words [overflow-wrap:anywhere]"
+                  )}
+                >
+                  {title}
+                </h2>
               )}
-            >
-              {title}
-            </h2>
-          )}
 
-          <div className="w-12 h-1 bg-primary mb-8" />
+              <div className="w-12 h-1 bg-primary mb-8" />
+            </>
+          )}
 
           {href && ctaLabel && (
             <Link

@@ -9,13 +9,15 @@ import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { defaultText } from "@/lib/utils";
 
 export default function ChiSiamoClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
   const chi_siamo = content?.pages?.chi_siamo || {};
 
   const sections: any[] = Array.isArray(chi_siamo.content_sections) ? chi_siamo.content_sections : [];
-  const navLinks: any[] = Array.isArray(chi_siamo.navigation_links) ? chi_siamo.navigation_links : [];
+  const rawNavLinks: any[] = Array.isArray(chi_siamo.navigation_links) ? chi_siamo.navigation_links : [];
+  const navLinks = rawNavLinks.filter((l) => l && l.label !== null);
 
   const iconMap: Record<string, any> = {
     users: Users,
@@ -36,18 +38,18 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
     <div>
       {/* Hero Section */}
       <PageHeader
-        title={chi_siamo.title || ""}
-        description={chi_siamo.description}
+        title={defaultText(chi_siamo.title, "Chi Siamo")}
+        description={defaultText(chi_siamo.description)}
       />
 
       {/* Content Sections */}
       {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => (
         <ArchiveTimelineSection
           key={section.slug || idx}
-          title={section.title}
-          badge={section.year}
-          badgePrefix={chi_siamo.year_prefix}
-          text={section.text}
+          title={defaultText(section.title)}
+          badge={defaultText(section.year)}
+          badgePrefix={defaultText(chi_siamo.year_prefix)}
+          text={defaultText(section.text)}
           isAlternate={idx % 2 !== 0}
         >
           {section.images && section.images.length > 0 && (

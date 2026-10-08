@@ -4,13 +4,14 @@ import { Building2, MapPin, Users, Mail, Globe, ShieldAlert } from "lucide-react
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { LegalDocLayout, LegalDocCard } from "@/components/ui/LegalDocLayout";
+import { defaultText } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const imp = content?.pages?.impressum || {};
   return {
-    title: imp.meta?.title || "Note Legali & Impressum",
-    description: imp.meta?.description || "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.",
+    title: defaultText(imp.meta?.title, "Note Legali & Impressum") || undefined,
+    description: defaultText(imp.meta?.description, "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti.") || undefined,
     alternates: {
       canonical: "/Impressum",
     },
@@ -27,11 +28,11 @@ export default async function ImpressumPage() {
 
   return (
     <LegalDocLayout
-      badge={imp.badge || "Note Legali"}
-      title={imp.title || "Impressum"}
-      description={imp.description || "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici."}
+      badge={defaultText(imp.badge, "Note Legali")}
+      title={defaultText(imp.title, "Impressum")}
+      description={defaultText(imp.description, "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici.")}
       backHref="/"
-      backLabel={imp.back_link || "Torna alla home"}
+      backLabel={defaultText(imp.back_link, "Torna alla home")}
     >
       {/* Organizzazione & Indirizzo */}
       <LegalDocCard>
@@ -40,10 +41,14 @@ export default async function ImpressumPage() {
             <Building2 size={24} />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-              {org.section_title || "Organizzazione"}
-            </h2>
-            <p className="text-2xl font-bold text-foreground">{org.name || "Gli Attomatti"}</p>
+            {defaultText(org.section_title, "Organizzazione") && (
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                {defaultText(org.section_title, "Organizzazione")}
+              </h2>
+            )}
+            {defaultText(org.name, "Gli Attomatti") && (
+              <p className="text-2xl font-bold text-foreground">{defaultText(org.name, "Gli Attomatti")}</p>
+            )}
           </div>
         </div>
 
@@ -71,12 +76,12 @@ export default async function ImpressumPage() {
       </LegalDocCard>
 
       {/* Contatti & Web */}
-      <LegalDocCard title={contacts.section_title || "Contatti telematici"}>
+      <LegalDocCard title={defaultText(contacts.section_title, "Contatti telematici")}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
               <Mail size={14} />
-              {contacts.email_label || "Email"}
+              {defaultText(contacts.email_label, "Email")}
             </div>
             <p className="text-foreground/80 font-medium break-all">
               {contacts.email || "compagniateatralegliattomatti@gmail.com"}
@@ -86,7 +91,7 @@ export default async function ImpressumPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-foreground/40">
               <Globe size={14} />
-              {contacts.website_label || "Sito web"}
+              {defaultText(contacts.website_label, "Sito web")}
             </div>
             <Link
               href={contacts.website_url || "https://gliattomatti.ch"}
@@ -100,17 +105,17 @@ export default async function ImpressumPage() {
 
       {/* Esclusione di responsabilità per contenuti e servizi incorporati */}
       <LegalDocCard
-        title={liability.section_title || "Esclusione di responsabilità (Haftungsausschluss)"}
+        title={defaultText(liability.section_title, "Esclusione di responsabilità (Haftungsausschluss)")}
         icon={ShieldAlert}
         iconColorClass="bg-secondary/10 text-secondary"
       >
         <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
           <p>
-            <strong>{liability.contents_title || "Contenuti del sito:"}</strong>{" "}
+            <strong>{defaultText(liability.contents_title, "Contenuti del sito:")}</strong>{" "}
             <FormattedText text={liability.contents_text || "I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento."} />
           </p>
           <p>
-            <strong>{liability.links_title || "Collegamenti esterni e servizi incorporati (iframe embed):"}</strong>{" "}
+            <strong>{defaultText(liability.links_title, "Collegamenti esterni e servizi incorporati (iframe embed):")}</strong>{" "}
             <FormattedText text={liability.links_text_1 || "Il nostro sito include collegamenti telematici a siti terzi nonché servizi digitali incorporati direttamente nelle pagine, in particolare la piattaforma svizzera di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di Tally BV (Muinklaan 23, 9000 Gand, Belgio)."} />
           </p>
           <p>
@@ -121,7 +126,7 @@ export default async function ImpressumPage() {
 
       {/* Copyright */}
       <LegalDocCard
-        title={copyright.section_title || "Diritto d'autore (Copyright)"}
+        title={defaultText(copyright.section_title, "Diritto d'autore (Copyright)")}
         icon={ShieldAlert}
         iconColorClass="bg-accent/10 text-accent"
       >

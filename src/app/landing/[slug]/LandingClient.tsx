@@ -10,6 +10,8 @@ import { getRelativeLuminance } from "@/lib/devTheme";
 import { notFound } from "next/navigation";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { PageBlockRenderer } from "@/components/ui/PageBlockRenderer";
+import { defaultText } from "@/lib/utils";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/tracking";
 
 interface LandingClientProps {
   landing: any;
@@ -38,6 +40,9 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
   useEffect(() => {
     if (landing) {
       setTheme(getLandingTheme(landing));
+      if (landing.title) {
+        trackViewContent(landing.title, "Landing", { slug: landing.slug });
+      }
     }
   }, [landing]);
 
@@ -144,35 +149,50 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
       {/* 1. Standalone Minimal Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-foreground/5 h-20 transition-all">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-3 group shrink-0"
-            title={landingDefaults.back_to_home || "Torna alla Home"}
-          >
-            <Image
-              src={resolvedLogo}
-              alt={header.logo_text || site?.name || "Gli Attomatti"}
-              width={40}
-              height={40}
-              className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
-              priority
-              unoptimized={resolvedLogo.endsWith(".svg")}
-            />
-            <div className="flex flex-col">
-              <span className="font-black text-sm tracking-wider uppercase text-foreground">
-                {header.logo_text || site?.name || "Gli Attomatti"}
-              </span>
-              <span className="text-[10px] text-foreground/50 font-bold uppercase tracking-widest">
-                {header.subtitle || landingDefaults.header_subtitle || "Teatro a Zurigo"}
-              </span>
-            </div>
-          </Link>
+          {(() => {
+            const logoText = defaultText(header.logo_text, site?.name, "Gli Attomatti");
+            const headerSubtitle = defaultText(header.subtitle, landingDefaults.header_subtitle, "Teatro a Zurigo");
+            const backHomeTitle = defaultText(landingDefaults.back_to_home, "Torna alla Home");
+
+            return (
+              <Link
+                href="/"
+                className="flex items-center gap-3 group shrink-0"
+                title={backHomeTitle || undefined}
+              >
+                <Image
+                  src={resolvedLogo}
+                  alt={logoText || "Logo"}
+                  width={40}
+                  height={40}
+                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
+                  priority
+                  unoptimized={resolvedLogo.endsWith(".svg")}
+                />
+                {(logoText || headerSubtitle) && (
+                  <div className="flex flex-col">
+                    {logoText && (
+                      <span className="font-black text-sm tracking-wider uppercase text-foreground">
+                        {logoText}
+                      </span>
+                    )}
+                    {headerSubtitle && (
+                      <span className="text-[10px] text-foreground/50 font-bold uppercase tracking-widest">
+                        {headerSubtitle}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </Link>
+            );
+          })()}
 
           {/* Desktop Anchor Navigation Links */}
           {header.nav_links && Array.isArray(header.nav_links) && header.nav_links.length > 0 && (
             <nav className="hidden md:flex items-center gap-6">
               {header.nav_links.map((link: any, idx: number) => {
-                if (!link.label || !link.href) return null;
+                const label = defaultText(link.label);
+                if (!label || !link.href) return null;
                 return (
                   <Link
                     key={idx}
@@ -180,7 +200,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
                     onClick={(e) => handleAnchorClick(e, link.href)}
                     className="text-xs font-bold uppercase tracking-wider text-foreground/70 hover:text-primary transition-colors py-1"
                   >
-                    {link.label}
+                    {label}
                   </Link>
                 );
               })}
@@ -188,7 +208,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
           )}
 
           <div className="flex items-center gap-3">
-            {header.cta_label && (
+            {defaultText(header.cta_label) && (
               <Link
                 href={header.cta_href || "#"}
                 onClick={(e) => handleAnchorClick(e, header.cta_href)}
@@ -197,7 +217,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
               >
                 <Ticket size={14} />
-                <span>{header.cta_label}</span>
+                <span>{defaultText(header.cta_label)}</span>
               </Link>
             )}
 
@@ -219,7 +239,8 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
         {header.nav_links && Array.isArray(header.nav_links) && header.nav_links.length > 0 && mobileNavOpen && (
           <div className="md:hidden bg-background/95 backdrop-blur-xl border-b border-foreground/10 px-6 py-3 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-200">
             {header.nav_links.map((link: any, idx: number) => {
-              if (!link.label || !link.href) return null;
+              const label = defaultText(link.label);
+              if (!label || !link.href) return null;
               return (
                 <Link
                   key={idx}
@@ -227,7 +248,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
                   onClick={(e) => handleAnchorClick(e, link.href)}
                   className="block text-xs font-bold uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors py-2 border-b border-foreground/5 last:border-0"
                 >
-                  {link.label}
+                  {label}
                 </Link>
               );
             })}
@@ -255,13 +276,15 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
       {/* 3. Standalone Minimal Footer */}
       <footer className="border-t border-foreground/10 py-12 px-4 sm:px-6 bg-muted/20 text-center">
         <div className="max-w-4xl mx-auto space-y-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground/60 hover:text-foreground hover:underline transition-colors"
-          >
-            <span>{landingDefaults.footer_home_link || "Visita il sito ufficiale Gli Attomatti"}</span>
-            <ChevronRight size={14} />
-          </Link>
+          {defaultText(landingDefaults.footer_home_link, "Visita il sito ufficiale Gli Attomatti") && (
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground/60 hover:text-foreground hover:underline transition-colors"
+            >
+              <span>{defaultText(landingDefaults.footer_home_link, "Visita il sito ufficiale Gli Attomatti")}</span>
+              <ChevronRight size={14} />
+            </Link>
+          )}
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-foreground/50">
             <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
               Informativa Privacy
@@ -276,29 +299,32 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
             </Link>
           </div>
           <p className="text-xs text-foreground/40 font-medium">
-            © {new Date().getFullYear()} {site?.name || "Gli Attomatti"}. {landingDefaults.footer_copyright || "Tutti i diritti riservati. Zurigo, Svizzera."}
+            © {new Date().getFullYear()} {defaultText(site?.name, "Gli Attomatti")}{defaultText(landingDefaults.footer_copyright, "Tutti i diritti riservati. Zurigo, Svizzera.") ? `. ${defaultText(landingDefaults.footer_copyright, "Tutti i diritti riservati. Zurigo, Svizzera.")}` : ""}
           </p>
         </div>
       </footer>
 
       {/* 4. Sticky Mobile Bottom CTA Bar with Safe-Area Padding */}
-      {stickyBar.enabled && stickyBar.cta_label && (
+      {stickyBar.enabled && defaultText(stickyBar.cta_label) && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-t border-foreground/10 px-4 pt-3 pb-[max(0.85rem,env(safe-area-inset-bottom))] md:hidden shadow-2xl">
           <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
               <div className="text-xs font-bold truncate text-foreground/90">
-                {stickyBar.text || landing.title}
+                {defaultText(stickyBar.text, landing.title)}
               </div>
             </div>
             <Link
               href={stickyBar.cta_href || "#"}
-              onClick={(e) => handleAnchorClick(e, stickyBar.cta_href)}
+              onClick={(e) => {
+                handleAnchorClick(e, stickyBar.cta_href);
+                trackInitiateCheckout(landing.title || "Landing", stickyBar.cta_href, "landing_sticky_bar");
+              }}
               target={stickyBar.cta_href?.startsWith("http") ? "_blank" : undefined}
               rel={stickyBar.cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
               className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider shrink-0 hover:bg-primary/90 transition-all shadow-md"
             >
-              {stickyBar.cta_label}
+              {defaultText(stickyBar.cta_label)}
             </Link>
           </div>
         </div>
