@@ -152,7 +152,7 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
       {gaId && (
         <Script
           id="google-consent-mode-default"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
