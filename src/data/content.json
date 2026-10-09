@@ -704,7 +704,8 @@
               "date": "24 Ottobre 2026, ore 15:00",
               "location": "Scuol Palace, Mahagoni",
               "ticket_label": "Info & Biglietti",
-              "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
+              "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
+              "location_href": "/Location/scuol-palace"
             }
           ],
           "details": [
