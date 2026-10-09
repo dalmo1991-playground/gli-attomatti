@@ -697,12 +697,12 @@
           "title": "Non Sottovalutare i 40",
           "slug": "non-sottovalutare-i-40",
           "year": "2026",
-          "short_description": "In \"Non sottovalutare i 40\", lo stressato Dario ha dimenticato il suo quarantesimo compleanno, ma la sua eccentrica famiglia è pronta a rinfrescargli la memoria trasformando la giornata in un esilarante incubo domestico. Tra sedie di design dal costo folle, cruciverba incomprensibili e surreali teorie complottiste sugli scioglilingua, riuscirà il protagonista a sopravvivere alla diabolica sorpresa organizzata alle sue spalle?",
-          "text": "\"Non sottovalutare i 40\" di Domenico Scotti di Carlo è un brillante atto unico ambientato tra le mura di una casa tanto essenziale quanto caotica. Il protagonista, Dario, è un uomo stressato che ha completamente dimenticato una data per lui fatidica: il suo quarantesimo compleanno.\n\nLa sua eccentrica famiglia decide di organizzargli una sorpresa a tradimento, cercando di fargli ricordare il traguardo disseminando il numero \"40\" in ogni conversazione della giornata. La scena prende vita in un esilarante crescendo di equivoci animato dalla moglie Maria e dalla figlia Grazia, alle prese con improbabili sedie di design da quarantamila franchi e costosi book fotografici. A loro si uniscono Zia Ave, placidamente immersa nella risoluzione di cruciverba che generano continui fraintendimenti, e Zio Cesare, un filosofo depresso in crisi coniugale che tormenta i parenti con le sue assurde analisi complottiste sugli scioglilingua per bambini.\n\nTra febbri immaginarie a 40, multe per eccesso di velocità a 40 km/h e le continue intromissioni dei famigliari, la commedia si sviluppa con un ritmo serrato. L'opera usa l'umorismo e il paradosso per riflettere con leggerezza sullo scorrere del tempo e sulle folli dinamiche familiari, portando lo sventurato protagonista a dover sopravvivere a un vero e proprio incubo domestico prima di poter spegnere le candeline",
+          "short_description": "Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta. ",
+          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. Ingresso a pagamento.</p>",
           "dates": [
             {
               "date": "24 Ottobre 2026, ore 15:00",
-              "location": "Scuol",
+              "location": "Scuol Palace, Mahagoni",
               "ticket_label": "Info & Biglietti",
               "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
             }
@@ -725,12 +725,7 @@
               "value": "Domenico Scotti di Carlo"
             }
           ],
-          "images": [
-            {
-              "url": "/images/1790869266263-non-sottovalutare-40.webp",
-              "alt": "Locandina"
-            }
-          ],
+          "images": [],
           "hero_image": "/images/1790869266263-non-sottovalutare-40.webp"
         },
         {
