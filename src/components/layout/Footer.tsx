@@ -64,7 +64,7 @@ export function Footer({ content }: { content: any }) {
 
           {/* Brand Column */}
           <div className="lg:col-span-5 space-y-8">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" prefetch={false} className="flex items-center gap-3 group">
               <Image
                 src="/logo_attomatti.svg"
                 alt={siteName || "Logo"}
@@ -92,6 +92,7 @@ export function Footer({ content }: { content: any }) {
                     <Link
                       key={idx}
                       href={social.href}
+                      prefetch={false}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackSocialClick(social.platform, social.href)}
@@ -120,6 +121,7 @@ export function Footer({ content }: { content: any }) {
                     <li key={link.href || idx}>
                       <Link
                         href={safeHref}
+                        prefetch={false}
                         className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
                       >
                         {link.label}
@@ -144,6 +146,7 @@ export function Footer({ content }: { content: any }) {
                 {contatti.email && (
                   <Link
                     href={`mailto:${contatti.email}`}
+                    prefetch={false}
                     onClick={() => trackContact("email", contatti.email)}
                     className="block text-xl font-black hover:text-primary transition-colors break-all"
                   >
@@ -153,6 +156,7 @@ export function Footer({ content }: { content: any }) {
                 {contactCtaLabel && (
                   <Link
                     href="/Contatti"
+                    prefetch={false}
                     className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-primary group"
                   >
                     {contactCtaLabel}
@@ -172,17 +176,17 @@ export function Footer({ content }: { content: any }) {
           {(legalTerms || legalImpressum || legalPrivacy) && (
             <div className="flex items-center gap-6 text-sm text-foreground/50 font-medium">
               {legalTerms && (
-                <Link href="/Termini" className="hover:text-primary transition-colors">
+                <Link href="/Termini" prefetch={false} className="hover:text-primary transition-colors">
                   {legalTerms}
                 </Link>
               )}
               {legalImpressum && (
-                <Link href="/Impressum" className="hover:text-primary transition-colors">
+                <Link href="/Impressum" prefetch={false} className="hover:text-primary transition-colors">
                   {legalImpressum}
                 </Link>
               )}
               {legalPrivacy && (
-                <Link href="/Privacy" className="hover:text-primary transition-colors">
+                <Link href="/Privacy" prefetch={false} className="hover:text-primary transition-colors">
                   {legalPrivacy}
                 </Link>
               )}

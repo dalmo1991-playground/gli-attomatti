@@ -2,6 +2,13 @@ import { getContent } from "@/lib/data";
 import { redirect } from "next/navigation";
 import CheckoutClient from "./CheckoutClient";
 import type { Metadata } from "next";
+export async function generateStaticParams() {
+  const content = await getContent();
+  const pages: any[] = content?.ticketing_pages || [];
+  return pages
+    .filter((p: any) => p && p.slug && p.active !== false)
+    .map((p: any) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({
   params,

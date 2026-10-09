@@ -80,6 +80,7 @@ export function EmbeddedFrameView({
             {backHref && backLabel ? (
               <Link
                 href={backHref}
+                prefetch={false}
                 className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
               >
                 <ArrowLeft size={16} />
@@ -92,6 +93,7 @@ export function EmbeddedFrameView({
             {legalHref && legalLabel ? (
               <Link
                 href={legalHref}
+                prefetch={false}
                 className="text-xs text-foreground/40 hover:text-foreground font-medium underline transition-colors"
               >
                 {legalLabel}
@@ -164,6 +166,7 @@ export function EmbeddedFrameView({
             <div className="pt-2">
               <Link
                 href={backHref || "/"}
+                prefetch={false}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-all"
               >
                 {backLabel}

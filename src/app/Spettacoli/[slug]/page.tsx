@@ -4,7 +4,13 @@ import { createPageMetadata, getTheaterEventJsonLd, getBreadcrumbJsonLd } from "
 import { getMediaDisplayUrl } from "@/lib/youtube";
 import { JsonLd } from "@/components/seo/JsonLd";
 import SpettacoloDettaglioClient from "./SpettacoloClient";
-
+export async function generateStaticParams() {
+  const content = await getContent();
+  const shows = content?.pages?.spettacoli?.archive_sections || [];
+  return shows
+    .filter((s: any) => s && s.slug)
+    .map((s: any) => ({ slug: s.slug }));
+}
 export async function generateMetadata({
   params
 }: {

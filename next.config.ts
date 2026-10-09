@@ -11,20 +11,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_IS_DEV_SITE: String(isDev),
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 31536000,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'img.youtube.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.ytimg.com',
-        pathname: '/**',
-      },
-    ],
+    unoptimized: true,
   },
   experimental: {
     staleTimes: {
@@ -57,16 +44,16 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
       {
-        source: '/((?!api|_next|admin).*)',
+        source: '/((?!api|_next|admin|images|.*\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm)).*)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=86400',
           },
         ],
       },

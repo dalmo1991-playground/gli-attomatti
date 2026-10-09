@@ -138,6 +138,7 @@ export function Navbar({ content }: { content: any }) {
         >
         <Link
           href="/"
+          prefetch={false}
           className="flex items-center gap-3 group"
           onClick={() => setIsOpen(false)}
         >
@@ -180,6 +181,7 @@ export function Navbar({ content }: { content: any }) {
               >
                 <Link
                   href={safeHref}
+                  prefetch={false}
                   onClick={() => setHoveredLink(null)}
                   aria-haspopup={hasSublinks ? "true" : undefined}
                   aria-expanded={hasSublinks ? hoveredLink === link.label : undefined}
@@ -218,6 +220,7 @@ export function Navbar({ content }: { content: any }) {
                           <Link
                             key={sub.href || sIdx}
                             href={subHref}
+                            prefetch={false}
                             onClick={() => setHoveredLink(null)}
                             className={cn(
                               "block px-5 py-3 text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary",
@@ -269,6 +272,7 @@ export function Navbar({ content }: { content: any }) {
                     <div key={link.href || idx} className="space-y-3">
                       <Link
                         href={safeHref}
+                        prefetch={false}
                         onClick={() => setIsOpen(false)}
                         className={cn(
                           "text-xl font-black uppercase tracking-tight flex items-center justify-between py-1 transition-colors active:scale-[0.99]",
@@ -290,6 +294,7 @@ export function Navbar({ content }: { content: any }) {
                               <Link
                                 key={sub.href || sIdx}
                                 href={subHref}
+                                prefetch={false}
                                 onClick={() => setIsOpen(false)}
                                 className={cn(
                                   "text-base font-semibold py-1 transition-colors active:scale-[0.99]",
@@ -312,6 +317,7 @@ export function Navbar({ content }: { content: any }) {
                     {buyTicketsLabel && (
                       <Link
                         href="/Biglietti"
+                        prefetch={false}
                         onClick={() => {
                           setIsOpen(false);
                           trackInitiateCheckout("Navigazione Biglietti", "/Biglietti", "mobile_nav");
@@ -326,6 +332,7 @@ export function Navbar({ content }: { content: any }) {
                     {contactUsLabel && (
                       <Link
                         href="/Contatti"
+                        prefetch={false}
                         onClick={() => {
                           setIsOpen(false);
                           trackContact("mobile_nav_cta", "/Contatti");

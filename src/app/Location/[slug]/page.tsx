@@ -3,6 +3,13 @@ import { redirect } from "next/navigation";
 import LocationClient from "./LocationClient";
 import type { Metadata } from "next";
 import { LocationItem } from "@/lib/locationTypes";
+export async function generateStaticParams() {
+  const content = await getContent();
+  const locations: LocationItem[] = content?.locations || [];
+  return locations
+    .filter((l) => l && l.slug && l.active !== false)
+    .map((l) => ({ slug: l.slug }));
+}
 
 export async function generateMetadata({
   params,

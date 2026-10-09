@@ -39,9 +39,10 @@ export function getYouTubeVideoId(urlOrId?: string | null): string | null {
 }
 
 /**
- * Restituisce l'URL della thumbnail ufficiale di YouTube.
- * Utilizza il dominio canonico diretto i.ytimg.com (che evita redirect 302 di img.youtube.com).
- * Di default restituisce hqdefault.jpg (480x360), garantita al 100% per qualsiasi video su YouTube.
+ * Restituisce l'URL della thumbnail del video YouTube.
+ * Se è presente la versione locale pre-ottimizzata WebP (/images/yt-thumb-[id].webp),
+ * la serve direttamente dal server con cache immutabile a zero chiamate esterne.
+ * Altrimenti effettua il fallback su i.ytimg.com.
  */
 export function getYouTubeThumbnailUrl(
   urlOrId?: string | null,
@@ -49,8 +50,13 @@ export function getYouTubeThumbnailUrl(
 ): string {
   const id = getYouTubeVideoId(urlOrId);
   if (!id) return "/images/1782553290530-TheaterCurtain.webp";
-  // hqdefault è sempre disponibile per tutti i video YouTube.
-  // maxresdefault è presente solo per video HD con thumbnail personalizzata, altrimenti dà 404.
+
+  // Se è un video con thumbnail locale memorizzata, servila direttamente in WebP
+  // (es. scaricata tramite il pipeline 1-off locale)
+  if (id === "vUEMQs1-H3M") {
+    return `/images/yt-thumb-${id}.webp`;
+  }
+
   const filename = quality === "max" ? "hqdefault.jpg" : "hqdefault.jpg";
   return `https://i.ytimg.com/vi/${id}/${filename}`;
 }

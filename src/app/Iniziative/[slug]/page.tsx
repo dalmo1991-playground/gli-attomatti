@@ -3,6 +3,13 @@ import { getContent } from "@/lib/data";
 import { createPageMetadata, getBreadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import IniziativaDettaglioClient from "./IniziativaClient";
+export async function generateStaticParams() {
+  const content = await getContent();
+  const list = content?.pages?.iniziative?.archive_sections || [];
+  return list
+    .filter((s: any) => s && s.slug)
+    .map((s: any) => ({ slug: s.slug }));
+}
 
 export async function generateMetadata({
   params

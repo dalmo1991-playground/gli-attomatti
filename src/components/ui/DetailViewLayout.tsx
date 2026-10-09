@@ -28,6 +28,7 @@ export interface DetailViewLayoutProps {
   details?: DetailInfoItem[];
   emptyDatesMessage?: string | null;
   photoGuideBadgeLabel?: string | null;
+  directionsBadgeLabel?: string | null;
   onTicketClick?: (href: string) => void;
   lightboxUi?: any;
   children?: React.ReactNode;
@@ -41,15 +42,16 @@ export function DetailViewLayout({
   heroImage,
   imageAlign = "center",
   backLink,
-  mainHeading = "Descrizione",
+  mainHeading,
   text,
   galleryImages = [],
-  datesTitle = "Date e Biglietti",
+  datesTitle,
   dates = [],
-  detailsTitle = "Informazioni",
+  detailsTitle,
   details = [],
-  emptyDatesMessage = "Nessuna data programmata al momento.",
+  emptyDatesMessage,
   photoGuideBadgeLabel,
+  directionsBadgeLabel,
   onTicketClick,
   lightboxUi,
   children,
@@ -125,6 +127,7 @@ export function DetailViewLayout({
                 details={details}
                 emptyDatesMessage={emptyDatesMessage}
                 photoGuideBadgeLabel={photoGuideBadgeLabel}
+                directionsBadgeLabel={directionsBadgeLabel}
                 onTicketClick={onTicketClick}
               />
             </div>
@@ -153,6 +156,7 @@ export function DetailViewLayout({
               details={details}
               emptyDatesMessage={emptyDatesMessage}
               photoGuideBadgeLabel={photoGuideBadgeLabel}
+              directionsBadgeLabel={directionsBadgeLabel}
               onTicketClick={onTicketClick}
             />
           </div>

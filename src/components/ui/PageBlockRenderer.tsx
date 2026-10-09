@@ -168,6 +168,7 @@ export function PageBlockRenderer({
                         {block.primary_cta_label && (
                           <Link
                             href={block.primary_cta_href || "#"}
+                            prefetch={false}
                             onClick={(e) => handleAnchorClickInternal(e, block.primary_cta_href)}
                             target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
                             rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
@@ -181,6 +182,7 @@ export function PageBlockRenderer({
                         {block.secondary_cta_label && (
                           <Link
                             href={block.secondary_cta_href || "#"}
+                            prefetch={false}
                             onClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
                             className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                           >
@@ -260,6 +262,7 @@ export function PageBlockRenderer({
                                 {block.location_href && mapsLabel && (
                                   <Link
                                     href={block.location_href}
+                                    prefetch={false}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-xs text-foreground/60 hover:text-primary mt-1 font-bold transition-colors"
@@ -293,6 +296,7 @@ export function PageBlockRenderer({
                           {block.cta_label && (
                             <Link
                               href={block.cta_href || "#"}
+                              prefetch={false}
                               onClick={(e) => {
                                 handleAnchorClickInternal(e, block.cta_href);
                                 if (block.cta_href?.startsWith("http") || block.cta_href?.includes("Biglietti") || block.cta_href?.includes("biglietti")) {
@@ -818,6 +822,7 @@ export function PageBlockRenderer({
                         {block.cta_label && (
                           <Link
                             href={block.cta_href || "#"}
+                            prefetch={false}
                             onClick={(e) => {
                               handleAnchorClickInternal(e, block.cta_href);
                               if (block.cta_href?.startsWith("http") || block.cta_href?.includes("Biglietti") || block.cta_href?.includes("biglietti")) {
@@ -835,6 +840,7 @@ export function PageBlockRenderer({
                         {block.secondary_cta_label && (
                           <Link
                             href={block.secondary_cta_href || "#"}
+                            prefetch={false}
                             onClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
                             className="w-full sm:w-auto px-8 py-4 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/15 font-bold text-sm uppercase tracking-wider transition-all hover:scale-105 flex items-center justify-center gap-2"
                           >

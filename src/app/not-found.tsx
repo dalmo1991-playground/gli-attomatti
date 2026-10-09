@@ -68,6 +68,7 @@ export default async function NotFound() {
             {homeButton && (
               <Link
                 href="/"
+                prefetch={false}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Home size={18} />
@@ -77,6 +78,7 @@ export default async function NotFound() {
             {showsButton && (
               <Link
                 href="/Spettacoli"
+                prefetch={false}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold glass hover:bg-white/10 text-foreground transition-all border border-foreground/10 hover:-translate-y-0.5"
               >
                 <Theater size={18} />

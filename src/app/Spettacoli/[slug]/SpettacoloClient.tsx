@@ -6,6 +6,7 @@ import { DetailViewLayout } from "@/components/ui/DetailViewLayout";
 import { trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { defaultText } from "@/lib/utils";
+import { resolveSlugText } from "@/lib/contentResolver";
 
 export default function SpettacoloDettaglioClient({
   content: initialContent,
@@ -32,7 +33,7 @@ export default function SpettacoloDettaglioClient({
       <div className="pt-32 text-center min-h-[60vh] flex flex-col items-center justify-center">
         {notFoundTitle && <h1 className="text-4xl font-bold">{notFoundTitle}</h1>}
         {backLabel && (
-          <Link href={spettacoli.archive_href || "/Spettacoli"} className="text-primary mt-4 inline-block font-bold hover:underline">
+          <Link href={spettacoli.archive_href || "/Spettacoli"} prefetch={false} className="text-primary mt-4 inline-block font-bold hover:underline">
             {backLabel}
           </Link>
         )}
@@ -53,27 +54,26 @@ export default function SpettacoloDettaglioClient({
       imageAlign={show.hero_image_align || show.image_align}
       backLink={{
         href: spettacoli.archive_href || "/Spettacoli",
-        label: defaultText(spettacoli.back_to_archive_label, "Torna all'Archivio")
+        label: resolveSlugText(show.back_link_label, spettacoli.back_to_archive_label, "Torna all'Archivio")
       }}
-      mainHeading={defaultText(spettacoli.detail_main_heading, "Lo Spettacolo")}
+      mainHeading={resolveSlugText(show.main_heading, spettacoli.detail_main_heading, "Lo Spettacolo")}
       text={defaultText(show.text)}
       galleryImages={show.images}
-      datesTitle={defaultText(show.dates_title, spettacoli.detail_dates_title, "Date e Biglietti")}
+      datesTitle={resolveSlugText(show.dates_title, spettacoli.detail_dates_title, "Date e Biglietti")}
       dates={show.dates}
-      detailsTitle={defaultText(spettacoli.detail_info_title, "Info Spettacolo")}
+      detailsTitle={resolveSlugText(show.details_title, spettacoli.detail_info_title, "Info Spettacolo")}
       details={show.details}
-      emptyDatesMessage={defaultText(spettacoli.detail_empty_dates_message, "Nessuna data futura programmata per questo spettacolo.")}
+      emptyDatesMessage={resolveSlugText(show.empty_dates_message, spettacoli.detail_empty_dates_message, "Nessuna data futura programmata per questo spettacolo.")}
       photoGuideBadgeLabel={defaultText(content?.pages?.locations?.photo_guide_badge_label)}
+      directionsBadgeLabel={defaultText(content?.pages?.locations?.directions_badge_label, "Indicazioni")}
       onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
       lightboxUi={content?.ui?.lightbox}
-      mobileCtaLabel={defaultText(
-        show.detail_cta_tickets_label,
-        show.cta_tickets_label,
+      mobileCtaLabel={resolveSlugText(
+        show.detail_cta_tickets_label || show.cta_tickets_label,
         spettacoli.detail_cta_tickets_label
       )}
-      mobileFloatingCtaLabel={defaultText(
-        show.detail_floating_cta_label,
-        show.floating_cta_label,
+      mobileFloatingCtaLabel={resolveSlugText(
+        show.detail_floating_cta_label || show.floating_cta_label,
         spettacoli.detail_floating_cta_label
       )}
     />
