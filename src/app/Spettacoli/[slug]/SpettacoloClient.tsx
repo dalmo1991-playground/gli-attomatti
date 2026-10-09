@@ -33,7 +33,7 @@ export default function SpettacoloDettaglioClient({
       <div className="pt-32 text-center min-h-[60vh] flex flex-col items-center justify-center">
         {notFoundTitle && <h1 className="text-4xl font-bold">{notFoundTitle}</h1>}
         {backLabel && (
-          <Link href={spettacoli.archive_href || "/Spettacoli"} className="text-primary mt-4 inline-block font-bold hover:underline">
+          <Link href={spettacoli.archive_href || "/Spettacoli"} prefetch={false} className="text-primary mt-4 inline-block font-bold hover:underline">
             {backLabel}
           </Link>
         )}

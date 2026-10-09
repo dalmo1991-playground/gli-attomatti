@@ -83,6 +83,7 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
                   <Link
                     key={idx}
                     href={safeHref}
+                    prefetch={false}
                     className="flex items-center justify-between p-8 bg-background border border-foreground/5 rounded-2xl hover:border-primary/30 transition-all hover:-translate-y-1 group shadow-sm"
                   >
                     <div className="flex items-center">

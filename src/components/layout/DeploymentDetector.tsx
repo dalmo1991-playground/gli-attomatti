@@ -32,6 +32,20 @@ export function DeploymentDetector({ serverVersion }: DeploymentDetectorProps) {
   }, [router]);
 
   const checkVersion = useCallback(async () => {
+    // Attiva il polling di versione SOLO all'interno della pagina /admin
+    // e solo se la chiave di autenticazione admin è memorizzata
+    if (typeof window === "undefined") return;
+    if (!window.location.pathname.startsWith("/admin")) return;
+
+    try {
+      const storedSecret =
+        sessionStorage.getItem("attomatti_admin_secret") ||
+        localStorage.getItem("attomatti_admin_secret");
+      if (!storedSecret) return;
+    } catch {
+      return;
+    }
+
     // Throttle checks to once every 10 seconds minimum
     const now = Date.now();
     if (now - lastCheckedRef.current < 10000) return;

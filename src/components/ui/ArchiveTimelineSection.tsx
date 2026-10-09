@@ -50,7 +50,7 @@ export function ArchiveTimelineSection({
           {title && (
             <>
               {href ? (
-                <Link href={href} className="block group">
+                <Link href={href} prefetch={false} className="block group">
                   <h2
                     className={cn(
                       getCardTitleSizeClass(title),
@@ -78,6 +78,7 @@ export function ArchiveTimelineSection({
           {href && ctaLabel && (
             <Link
               href={href}
+              prefetch={false}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
             >
               <span>{ctaLabel}</span>

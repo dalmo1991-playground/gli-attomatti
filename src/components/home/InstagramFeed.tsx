@@ -126,7 +126,7 @@ function InstagramEmbedCard({
           </button>
 
           <div className="pt-2 flex justify-center items-center gap-3 text-[11px] text-foreground/40 font-medium">
-            <Link href="/Privacy" className="hover:text-primary transition-colors underline">
+            <Link href="/Privacy" prefetch={false} className="hover:text-primary transition-colors underline">
               {card.privacy_link}
             </Link>
             <span>•</span>

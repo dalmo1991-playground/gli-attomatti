@@ -39,7 +39,7 @@ export default function IniziativaDettaglioClient({
           </h1>
         )}
         {notFoundCta && (
-          <Link href={iniziative.archive_href || "/Iniziative"} className="text-primary font-bold hover:underline">
+          <Link href={iniziative.archive_href || "/Iniziative"} prefetch={false} className="text-primary font-bold hover:underline">
             {notFoundCta}
           </Link>
         )}

@@ -89,6 +89,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
         {notFoundBtn && (
           <Link
             href="/Location"
+            prefetch={false}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
           >
             <ArrowLeft size={14} />
@@ -158,6 +159,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
           {backLinkLabel && (
             <Link
               href={location.back_link_href || "/"}
+              prefetch={false}
               className="inline-flex items-center gap-2 text-sm font-bold text-foreground/60 hover:text-primary transition-colors"
             >
               <ArrowLeft size={16} />
@@ -450,6 +452,7 @@ export default function LocationClient({ location: initialLocation, slug, conten
           <div className="text-center pt-6 pb-12">
             <Link
               href={location.back_link_href || "/"}
+              prefetch={false}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-black text-xs uppercase tracking-wider transition-all"
             >
               <ArrowLeft size={16} />

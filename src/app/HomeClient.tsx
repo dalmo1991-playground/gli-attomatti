@@ -75,62 +75,38 @@ export default function HomeClient({ content: initialContent }: { content: any }
         {showMode ? (
           /* Mode 1: Upcoming Shows Slideshow */
           <div className="absolute inset-0 z-0">
-            <AnimatePresence initial={false} custom={heroDirection}>
-              <motion.div
-                key={currentShowIndex}
-                custom={heroDirection}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.5 }
-                }}
-                className="absolute inset-0 z-1"
-              >
-                {(() => {
-                  const { src: showSrc, unoptimized: isShowUnoptimized } = getSafeImageProps(
-                    activeShows[currentShowIndex].image,
-                    "/images/1782553290530-TheaterCurtain.webp"
-                  );
-                  return (
-                    <Image
-                      src={showSrc}
-                      alt={activeShows[currentShowIndex].title || home.fallback_show_alt || ""}
-                      fill
-                      unoptimized={isShowUnoptimized}
-                      sizes="100vw"
-                      className={cn("object-cover opacity-40", getImagePositionClass(activeShows[currentShowIndex].image_align))}
-                      style={{ objectPosition: getImageObjectPositionStyle(activeShows[currentShowIndex].image_align) }}
-                      priority
-                    />
-                  );
-                })()}
+            {/* Layered Image Stack:
+                All active show background images remain mounted in the DOM.
+                Once loaded, they are never unmounted or re-fetched when cycling through shows. */}
+            {activeShows.map((showItem: any, sIdx: number) => {
+              const isActive = sIdx === currentShowIndex;
+              const { src: showSrc, unoptimized: isShowUnoptimized } = getSafeImageProps(
+                showItem.image,
+                "/images/1782553290530-TheaterCurtain.webp"
+              );
 
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Hidden persistent layer for visited hero show images to prevent re-downloading */}
-            <div className="hidden" aria-hidden="true">
-              {activeShows.map((showItem: any, sIdx: number) => {
-                if (sIdx === currentShowIndex) return null;
-                const { src: showBgSrc, unoptimized: isShowBgUnoptimized } = getSafeImageProps(
-                  showItem.image,
-                  "/images/1782553290530-TheaterCurtain.webp"
-                );
-                return (
+              return (
+                <div
+                  key={`hero-bg-slide-${sIdx}-${showSrc}`}
+                  className={cn(
+                    "absolute inset-0 transition-opacity duration-1000 ease-in-out",
+                    isActive ? "opacity-100 z-1" : "opacity-0 pointer-events-none z-0"
+                  )}
+                >
                   <Image
-                    key={`hero-cached-${sIdx}-${showBgSrc}`}
-                    src={showBgSrc}
-                    alt=""
-                    width={1}
-                    height={1}
-                    unoptimized={isShowBgUnoptimized}
+                    src={showSrc}
+                    alt={showItem.title || home.fallback_show_alt || ""}
+                    fill
+                    unoptimized={isShowUnoptimized}
+                    sizes="100vw"
+                    priority={sIdx === 0}
+                    loading={sIdx === 0 ? "eager" : "lazy"}
+                    className={cn("object-cover opacity-40", getImagePositionClass(showItem.image_align))}
+                    style={{ objectPosition: getImageObjectPositionStyle(showItem.image_align) }}
                   />
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
 
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
             {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
@@ -226,6 +202,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                           return (
                             <Link
                               href={href}
+                              prefetch={false}
                               target={href.startsWith("http") ? "_blank" : undefined}
                               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
@@ -264,6 +241,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                           activeShows[currentShowIndex].cta_href ? (
                             <Link
                               href={activeShows[currentShowIndex].cta_href}
+                              prefetch={false}
                               onClick={() =>
                                 trackInitiateCheckout(
                                   activeShows[currentShowIndex].title || "Spettacolo",
@@ -289,6 +267,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                           (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
                             <Link
                               href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
+                              prefetch={false}
                               className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                             >
                               {secondaryCta}
@@ -342,6 +321,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                         hero.primary_cta_href ? (
                           <Link
                             href={hero.primary_cta_href}
+                            prefetch={false}
                             className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
                           >
                             {pCta}
@@ -358,6 +338,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                         hero.secondary_cta_href ? (
                           <Link
                             href={hero.secondary_cta_href}
+                            prefetch={false}
                             className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
                           >
                             {sCta}
@@ -426,6 +407,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
             {defaultText(introduction.story_button_label) && (
               <Link
                 href={introduction.story_button_href || "/Chi_Siamo"}
+                prefetch={false}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary font-bold text-sm transition-all group shadow-xs hover:-translate-y-0.5"
               >
                 <span>{defaultText(introduction.story_button_label)}</span>

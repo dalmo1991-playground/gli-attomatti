@@ -118,6 +118,7 @@ export function renderFormattedContent(
           <Link
             key={idx}
             href={href}
+            prefetch={false}
             className={cn(defaultLinkClass, linkClassName)}
           >
             {label}

@@ -17,6 +17,7 @@ export function BackLink({ href, label, className }: BackLinkProps) {
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(
         "inline-flex items-center text-primary font-bold hover:gap-2 transition-all group select-none",
         className

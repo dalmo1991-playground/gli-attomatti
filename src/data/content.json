@@ -971,18 +971,14 @@
             {
               "url": "/images/1790877901700-vn3m-ZSC_5769.webp",
               "alt": "Esercizi in sala"
-            },
-            {
-              "url": "/images/1790877899875-usw7-ZSC_5791.webp",
-              "alt": "Sul palco"
             }
           ],
           "dates": [
             {
               "date": "Martedì, 19:00 - 21:00",
-              "location": "Balberstrasse 47, Zurich (Wollishofen)",
+              "location_href": "/Location/sala-wollishofen",
+              "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Iscrizioni chiuse",
-              "ticket_href": "",
               "visible": true
             }
           ],
@@ -994,7 +990,7 @@
             },
             {
               "label": "Frequenza",
-              "value": "Settimanale, con periodi di pausa",
+              "value": "Settimanale",
               "visible": true
             },
             {
@@ -1004,7 +1000,7 @@
             },
             {
               "label": "A cura di",
-              "value": "Gli Attomatti - Domenico Scotti di Carlo",
+              "value": "Domenico Scotti di Carlo",
               "visible": true
             }
           ],

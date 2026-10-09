@@ -318,7 +318,7 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
               )}
 
               {privacyPolicyLink && (
-                <Link href="/Privacy" className="hover:text-primary transition-colors underline">
+                <Link href="/Privacy" prefetch={false} className="hover:text-primary transition-colors underline">
                   {privacyPolicyLink}
                 </Link>
               )}

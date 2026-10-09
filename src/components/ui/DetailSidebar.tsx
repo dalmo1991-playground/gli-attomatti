@@ -81,6 +81,7 @@ export function DetailSidebar({
                         <div className="space-y-1.5 mb-4">
                           <Link
                             href={href}
+                            prefetch={false}
                             target={href.startsWith("http") ? "_blank" : undefined}
                             rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                             className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-foreground/75 text-sm hover:text-accent transition-colors group"
@@ -111,6 +112,7 @@ export function DetailSidebar({
                     d.ticket_href?.trim() ? (
                       <Link
                         href={d.ticket_href.trim()}
+                        prefetch={false}
                         target={d.ticket_href.trim().startsWith("http") ? "_blank" : undefined}
                         rel={d.ticket_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
                         onClick={() => onTicketClick?.(d.ticket_href!)}

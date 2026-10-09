@@ -109,6 +109,7 @@ export default function LocationsHubClient({ content: initialContent }: Location
                     {viewDirectionsLabel && (
                       <Link
                         href={`/Location/${loc.slug}`}
+                        prefetch={false}
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20"
                       >
                         <span>{viewDirectionsLabel}</span>

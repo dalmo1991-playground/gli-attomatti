@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/((?!api|_next|admin).*)',
+        source: '/((?!api|_next|admin|images|.*\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm)).*)',
         headers: [
           {
             key: 'Cache-Control',

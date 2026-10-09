@@ -279,6 +279,7 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
           {defaultText(landingDefaults.footer_home_link, "Visita il sito ufficiale Gli Attomatti") && (
             <Link
               href="/"
+              prefetch={false}
               className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground/60 hover:text-foreground hover:underline transition-colors"
             >
               <span>{defaultText(landingDefaults.footer_home_link, "Visita il sito ufficiale Gli Attomatti")}</span>
@@ -286,15 +287,15 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
             </Link>
           )}
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-foreground/50">
-            <Link href="/Privacy" className="hover:text-foreground transition-colors underline">
+            <Link href="/Privacy" prefetch={false} className="hover:text-foreground transition-colors underline">
               Informativa Privacy
             </Link>
             <span>•</span>
-            <Link href="/Termini" className="hover:text-foreground transition-colors underline">
+            <Link href="/Termini" prefetch={false} className="hover:text-foreground transition-colors underline">
               Termini &amp; Condizioni
             </Link>
             <span>•</span>
-            <Link href="/Impressum" className="hover:text-foreground transition-colors underline">
+            <Link href="/Impressum" prefetch={false} className="hover:text-foreground transition-colors underline">
               Note Legali
             </Link>
           </div>

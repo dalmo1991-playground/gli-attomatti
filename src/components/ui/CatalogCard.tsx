@@ -78,7 +78,7 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
         <div className="space-y-3">
           {item.title && (
             item.primaryHref ? (
-              <Link href={item.primaryHref} className="block group-hover:text-primary transition-colors">
+              <Link href={item.primaryHref} prefetch={false} className="block group-hover:text-primary transition-colors">
                 <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground transition-colors line-clamp-2 text-balance break-words">
                   {item.title}
                 </h3>
@@ -122,6 +122,7 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
               item.primaryHref ? (
                 <Link
                   href={item.primaryHref}
+                  prefetch={false}
                   onClick={item.onPrimaryClick}
                   className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-2xl bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
                 >
@@ -139,6 +140,7 @@ export function CatalogCard({ item, index = 0, className }: CatalogCardProps) {
               <div className="text-center">
                 <Link
                   href={item.secondaryHref}
+                  prefetch={false}
                   className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-foreground/50 hover:text-foreground transition-colors pt-1"
                 >
                   <span>{item.secondaryLabel || "Maggiori dettagli"}</span>

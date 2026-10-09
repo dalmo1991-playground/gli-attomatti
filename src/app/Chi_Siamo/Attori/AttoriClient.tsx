@@ -136,6 +136,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
               join_us.cta_href ? (
                 <Link 
                   href={join_us.cta_href}
+                  prefetch={false}
                   className="px-8 sm:px-10 py-4 sm:py-5 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 inline-block"
                 >
                   {joinCta}
@@ -248,6 +249,7 @@ export default function AttoriClient({ content: initialContent }: { content: any
                               <Link 
                                 key={sIdx} 
                                 href={`/Spettacoli/${show.slug}`}
+                                prefetch={false}
                                 onClick={() => setSelectedActor(null)}
                               >
                                 {badgeContent}
