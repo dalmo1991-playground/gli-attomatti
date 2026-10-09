@@ -2,6 +2,13 @@ import { getContent } from "@/lib/data";
 import LandingClient from "./LandingClient";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+export async function generateStaticParams() {
+  const content = await getContent();
+  const landings = content?.landings || [];
+  return landings
+    .filter((l: any) => l && l.slug)
+    .map((l: any) => ({ slug: l.slug }));
+}
 
 export async function generateMetadata({
   params

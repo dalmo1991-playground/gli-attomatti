@@ -4,7 +4,6 @@ import { getContent } from "@/lib/data";
 import { createPageMetadata } from "@/lib/seo";
 import RegistrazioniClient from "./RegistrazioniClient";
 
-export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();

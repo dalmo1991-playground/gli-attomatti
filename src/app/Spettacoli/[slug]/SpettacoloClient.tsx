@@ -65,6 +65,7 @@ export default function SpettacoloDettaglioClient({
       details={show.details}
       emptyDatesMessage={resolveSlugText(show.empty_dates_message, spettacoli.detail_empty_dates_message, "Nessuna data futura programmata per questo spettacolo.")}
       photoGuideBadgeLabel={defaultText(content?.pages?.locations?.photo_guide_badge_label)}
+      directionsBadgeLabel={defaultText(content?.pages?.locations?.directions_badge_label, "Indicazioni")}
       onTicketClick={(href) => trackInitiateCheckout(show.title, href)}
       lightboxUi={content?.ui?.lightbox}
       mobileCtaLabel={resolveSlugText(

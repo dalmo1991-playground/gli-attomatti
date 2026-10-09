@@ -2,12 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { cn, defaultText } from "@/lib/utils";
 import { getSafeImageProps } from "@/lib/youtube";
-
-const MotionImage = motion.create(Image);
 
 export interface CarouselImageItem {
   url: string;
@@ -72,11 +69,21 @@ export function CarouselBlock({
     return () => clearInterval(timer);
   }, [count, isPaused, autoplayIntervalMs, nextSlide]);
 
-  if (count === 0) return null;
+  // Keep track of which slides have been displayed/visited so we progressively mount them
+  // and NEVER unmount them once loaded (avoiding re-fetching when cycling through the carousel)
+  const [visitedIndices, setVisitedIndices] = useState<Set<number>>(() => new Set([0]));
+
+  useEffect(() => {
+    setVisitedIndices((prev) => {
+      if (prev.has(currentIndex)) return prev;
+      const next = new Set(prev);
+      next.add(currentIndex);
+      return next;
+    });
+  }, [currentIndex]);
 
   const currentImage = validImages[currentIndex];
-  const { src: safeSrc, unoptimized: isCarouselUnoptimized, isVideo } = getSafeImageProps(currentImage?.url);
-  const safeAlt = currentImage?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${currentIndex + 1}` : "");
+  const { isVideo } = getSafeImageProps(currentImage?.url);
 
   return (
     <div
@@ -94,27 +101,42 @@ export function CarouselBlock({
         <div className="absolute -bottom-4 -right-4 w-36 h-36 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      {/* Image Transition */}
-      <AnimatePresence mode="popLayout">
-        <MotionImage
-          key={`${safeSrc}-${currentIndex}`}
-          src={safeSrc}
-          alt={safeAlt}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          fill
-          unoptimized={isCarouselUnoptimized}
-          sizes="(max-width: 1024px) 100vw, 60vw"
-          className={cn(
-            "transition-transform duration-700",
-            onImageClick && "cursor-pointer",
-            currentImage?.no_crop ? "object-contain bg-background/50" : "object-cover group-hover:scale-105"
-          )}
-          onClick={() => onImageClick?.(currentIndex)}
-        />
-      </AnimatePresence>
+      {/* Layered Image Stack:
+          Each slide that has been visited remains mounted in the DOM.
+          This ensures once an image is fetched, it is never re-requested from the server on subsequent loops. */}
+      {validImages.map((img, idx) => {
+        if (!visitedIndices.has(idx)) return null;
+
+        const isActive = idx === currentIndex;
+        const { src: itemSafeSrc, unoptimized: isItemUnoptimized } = getSafeImageProps(img?.url);
+        const itemAlt = img?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${idx + 1}` : "");
+
+        return (
+          <div
+            key={`slide-${idx}-${itemSafeSrc}`}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-700 ease-in-out",
+              isActive ? "opacity-100 z-1" : "opacity-0 pointer-events-none z-0"
+            )}
+            onClick={isActive && onImageClick ? () => onImageClick(currentIndex) : undefined}
+          >
+            <Image
+              src={itemSafeSrc}
+              alt={itemAlt}
+              fill
+              priority={idx === 0}
+              loading={idx === 0 ? "eager" : "lazy"}
+              unoptimized={isItemUnoptimized}
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              className={cn(
+                "transition-transform duration-700",
+                isActive && onImageClick && "cursor-pointer",
+                img?.no_crop ? "object-contain bg-background/50" : "object-cover group-hover:scale-105"
+              )}
+            />
+          </div>
+        );
+      })}
 
       {/* Video Indicator Overlay */}
       {isVideo && (

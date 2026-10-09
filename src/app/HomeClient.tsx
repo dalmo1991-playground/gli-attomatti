@@ -87,7 +87,7 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   x: { type: "spring", stiffness: 300, damping: 30 },
                   opacity: { duration: 0.5 }
                 }}
-                className="absolute inset-0"
+                className="absolute inset-0 z-1"
               >
                 {(() => {
                   const { src: showSrc, unoptimized: isShowUnoptimized } = getSafeImageProps(
@@ -110,6 +110,28 @@ export default function HomeClient({ content: initialContent }: { content: any }
 
               </motion.div>
             </AnimatePresence>
+
+            {/* Hidden persistent layer for visited hero show images to prevent re-downloading */}
+            <div className="hidden" aria-hidden="true">
+              {activeShows.map((showItem: any, sIdx: number) => {
+                if (sIdx === currentShowIndex) return null;
+                const { src: showBgSrc, unoptimized: isShowBgUnoptimized } = getSafeImageProps(
+                  showItem.image,
+                  "/images/1782553290530-TheaterCurtain.webp"
+                );
+                return (
+                  <Image
+                    key={`hero-cached-${sIdx}-${showBgSrc}`}
+                    src={showBgSrc}
+                    alt=""
+                    width={1}
+                    height={1}
+                    unoptimized={isShowBgUnoptimized}
+                  />
+                );
+              })}
+            </div>
+
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/20 to-background z-10" />
             {/* Theatrical cross-spotlights (warm gold accent & cool indigo secondary) */}
             <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/15 rounded-full blur-3xl pointer-events-none z-10" />
@@ -187,19 +209,39 @@ export default function HomeClient({ content: initialContent }: { content: any }
                         </div>
                       )}
                       {activeShows[currentShowIndex].location && (
-                        activeShows[currentShowIndex].location_href?.trim() ? (
-                          <Link
-                            href={activeShows[currentShowIndex].location_href.trim()}
-                            target={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "_blank" : undefined}
-                            rel={activeShows[currentShowIndex].location_href.trim().startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
-                          >
-                            <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                            <span className="group-hover:text-primary transition-colors">
-                              {activeShows[currentShowIndex].location}
-                            </span>
-                          </Link>
-                        ) : (
+                        activeShows[currentShowIndex].location_href?.trim() ? (() => {
+                          const showItem = activeShows[currentShowIndex];
+                          const href = showItem.location_href.trim();
+                          const isLocationPage =
+                            href.startsWith("/Location") ||
+                            href.startsWith("/location") ||
+                            href.includes("/Location/") ||
+                            href.includes("/location/");
+                          const directionsLabel = defaultText(
+                            showItem.directions_badge_label,
+                            content?.pages?.locations?.directions_badge_label,
+                            "Indicazioni"
+                          );
+
+                          return (
+                            <Link
+                              href={href}
+                              target={href.startsWith("http") ? "_blank" : undefined}
+                              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm hover:border-primary/50 transition-colors group"
+                            >
+                              <MapPin size={16} className="text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                              <span className="group-hover:text-primary transition-colors">
+                                {showItem.location}
+                              </span>
+                              {isLocationPage && directionsLabel && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-primary/15 text-primary border border-primary/30 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                  {directionsLabel}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })() : (
                           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-sm">
                             <MapPin size={16} className="text-primary shrink-0" />
                             <span>{activeShows[currentShowIndex].location}</span>

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { cookies, headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
@@ -7,8 +6,6 @@ import { getContent } from "@/lib/data";
 import { SITE_URL, DEFAULT_SEO, getOrganizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getSiteVersion } from "@/lib/version";
-
-export const dynamic = 'force-dynamic';
 
 export const viewport: Viewport = {
   themeColor: "#0f172a",
@@ -142,23 +139,6 @@ export default async function RootLayout({
 }>) {
   const content = await getContent();
 
-  const headersList = await headers();
-  const host = headersList.get("x-forwarded-host") || headersList.get("host") || "";
-  const hostname = host.split(":")[0].toLowerCase();
-
-  const isProduction =
-    hostname === "gliattomatti.ch" ||
-    hostname === "www.gliattomatti.ch" ||
-    hostname.endsWith(".gliattomatti.ch");
-
-  const isDev = !isProduction;
-  let initialHasAccess = isProduction;
-
-  if (isDev) {
-    const cookieStore = await cookies();
-    initialHasAccess = cookieStore.get("attomatti_dev_access")?.value === "1";
-  }
-
   const isDevBuild =
     process.env.NODE_ENV !== "production" ||
     process.env.VERCEL_ENV === "preview" ||
@@ -180,8 +160,8 @@ export default async function RootLayout({
       >
         <LayoutWrapper
           content={content}
-          isDev={isDev}
-          initialHasAccess={initialHasAccess}
+          isDev={isDevBuild}
+          initialHasAccess={!isDevBuild}
           serverVersion={siteVersion.version}
         >
           {children}

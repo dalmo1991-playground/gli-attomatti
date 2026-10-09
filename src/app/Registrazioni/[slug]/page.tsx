@@ -2,6 +2,13 @@ import { getContent } from "@/lib/data";
 import { redirect } from "next/navigation";
 import RegistrationClient, { RegistrationPageData } from "./RegistrationClient";
 import type { Metadata } from "next";
+export async function generateStaticParams() {
+  const content = await getContent();
+  const pages: RegistrationPageData[] = content?.registration_pages || [];
+  return pages
+    .filter((p) => p && p.slug && p.active !== false)
+    .map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({
   params,

@@ -71,6 +71,7 @@ export default function IniziativaDettaglioClient({
       details={initiative.details}
       emptyDatesMessage={resolveSlugText(initiative.empty_dates_message, detail.empty_dates || iniziative.detail_empty_dates_message, "Nessun calendario al momento programmato.")}
       photoGuideBadgeLabel={defaultText(content?.pages?.locations?.photo_guide_badge_label)}
+      directionsBadgeLabel={defaultText(content?.pages?.locations?.directions_badge_label, "Indicazioni")}
       onTicketClick={(href) => trackInitiateCheckout(initiative.title, href, "iniziativa_sidebar")}
       lightboxUi={content?.ui?.lightbox}
       mobileCtaLabel={resolveSlugText(

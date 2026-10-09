@@ -103,16 +103,17 @@
       },
       "upcoming_shows": [
         {
-          "active": false,
+          "active": true,
           "title": "Non Sottovalutare i 40",
           "presenter": "La Biennale Svizzera di Teatro Amatoriale presenta",
           "tagline": "40, un numero importante...",
           "date": "24 Ottobre 2026, ore 15:00",
-          "location": "Scuol",
-          "location_href": "",
-          "cta": "Info & Biglietti",
+          "location": "Hotel Scuol Palace, Scuol",
+          "location_href": "/Location/scuol-palace",
+          "directions_badge_label": null,
+          "cta": "Info",
           "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
-          "secondary_cta": "Scopri di più",
+          "secondary_cta": "Scopri lo spettacolo",
           "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
           "image": "/images/1790869266263-non-sottovalutare-40.webp"
         },
@@ -124,6 +125,7 @@
           "date": "Mensilmente, dal 3 ottobre",
           "location": "Balberstrasse 47, Zurich (Wollishofen)",
           "location_href": "/Location/sala-wollishofen",
+          "directions_badge_label": null,
           "cta": "Info & Prenotazioni",
           "cta_href": "/Iniziative/cineforum",
           "secondary_cta": "Offerta Libera",
@@ -698,7 +700,7 @@
           "slug": "non-sottovalutare-i-40",
           "year": "2026",
           "short_description": "Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta. ",
-          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. <b>Ingresso a pagamento.</b></p>",
+          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. <b>Ingresso a pagamento.</b></p><p><i><small>Nota: al momento non siamo a conoscenza della modalità di vendita dei biglietti. Non appena avremo le informazioni, aggorneremo il contenuto di questa pagina</small></i></p>",
           "dates": [
             {
               "date": "24 Ottobre 2026, ore 15:00",
@@ -1460,7 +1462,8 @@
       "detail_meta_title_suffix": "— Come Raggiungerci",
       "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
       "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
-      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
+      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci",
+      "directions_badge_label": "Indicazioni"
     }
   },
   "landings": [

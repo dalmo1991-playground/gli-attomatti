@@ -52,6 +52,17 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
     return () => clearInterval(timer);
   }, [currentIndex]);
 
+  const [visitedIndices, setVisitedIndices] = useState<Set<number>>(() => new Set([0]));
+
+  useEffect(() => {
+    setVisitedIndices((prev) => {
+      if (prev.has(currentIndex)) return prev;
+      const next = new Set(prev);
+      next.add(currentIndex);
+      return next;
+    });
+  }, [currentIndex]);
+
   return (
     <div className={cn("relative overflow-hidden rounded-2xl aspect-[16/9] shadow-2xl", className)}>
       <AnimatePresence initial={false} custom={direction}>
@@ -66,7 +77,7 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
             x: { type: "spring", stiffness: 300, damping: 30 },
             opacity: { duration: 0.4 },
           }}
-          className="absolute inset-0"
+          className="absolute inset-0 z-1"
         >
           <div className="w-full h-full relative">
             {(() => {
@@ -87,12 +98,30 @@ export function AnimatedCarousel({ images, className }: CarouselProps) {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-8">
               <p className="text-white text-lg font-medium drop-shadow-md">
-                {images[currentIndex].alt}
+                {images[currentIndex]?.alt}
               </p>
             </div>
           </div>
         </motion.div>
       </AnimatePresence>
+
+      {/* Hidden persistent layer for visited images to prevent cache evictions/re-fetching */}
+      <div className="hidden" aria-hidden="true">
+        {images.map((img, idx) => {
+          if (!visitedIndices.has(idx) || idx === currentIndex) return null;
+          const { src: visitedSrc, unoptimized: isVisitedUnoptimized } = getSafeImageProps(img?.url);
+          return (
+            <Image
+              key={`cached-${idx}-${visitedSrc}`}
+              src={visitedSrc}
+              alt=""
+              width={1}
+              height={1}
+              unoptimized={isVisitedUnoptimized}
+            />
+          );
+        })}
+      </div>
 
       <button
         className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full glass hover:bg-white/40 transition-colors"
