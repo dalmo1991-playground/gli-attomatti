@@ -3,6 +3,7 @@
 import React, { useEffect, Suspense } from "react";
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
+import { emitDevTrackingEvent } from "@/lib/devTracking";
 import type {} from "@/lib/tracking";
 
 interface TrackingScriptsProps {
@@ -52,7 +53,6 @@ function RouteTracker({
   useEffect(() => {
     const canTrackGa = Boolean(hasAnalyticsConsent && gaId);
     const canTrackMeta = Boolean(hasMarketingConsent && metaId);
-    if (!canTrackGa && !canTrackMeta) return;
 
     let fired = false;
     const sendPageView = () => {
@@ -64,17 +64,41 @@ function RouteTracker({
       const pageLocation = window.location.href;
       const pageTitle = document.title || "Gli Attomatti";
 
-      if (canTrackGa && typeof window.gtag === "function") {
-        window.gtag("event", "page_view", {
+      const gaSent = Boolean(canTrackGa && typeof window.gtag === "function");
+      const metaSent = Boolean(canTrackMeta && typeof window.fbq === "function");
+
+      if (gaSent) {
+        window.gtag!("event", "page_view", {
           page_title: pageTitle,
           page_location: pageLocation,
           page_path: pagePath,
         });
       }
 
-      if (canTrackMeta && typeof window.fbq === "function") {
-        window.fbq("track", "PageView");
+      if (metaSent) {
+        window.fbq!("track", "PageView");
       }
+
+      emitDevTrackingEvent({
+        source: "app",
+        action: "page_view",
+        category: "Navigazione",
+        payload: {
+          page_title: pageTitle,
+          page_path: pagePath,
+          page_location: pageLocation,
+          ga_measurement_id: gaId || "non configurato",
+          meta_pixel_id: metaId || "non configurato",
+        },
+        dispatchedTo: {
+          ga4: gaSent,
+          meta: metaSent,
+        },
+        consentState: {
+          analytics: hasAnalyticsConsent,
+          marketing: hasMarketingConsent,
+        },
+      });
     };
 
     // Watch for <title> mutation in <head> so we fire as soon as Next.js updates the document title
@@ -125,13 +149,31 @@ export function TrackingScripts({ integrations, consent }: TrackingScriptsProps)
   // Update Google Consent Mode v2 when consent state changes
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (typeof window.gtag !== "function") return;
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", {
+        analytics_storage: hasAnalyticsConsent ? "granted" : "denied",
+        ad_storage: hasMarketingConsent ? "granted" : "denied",
+        ad_user_data: hasMarketingConsent ? "granted" : "denied",
+        ad_personalization: hasMarketingConsent ? "granted" : "denied",
+      });
+    }
 
-    window.gtag("consent", "update", {
-      analytics_storage: hasAnalyticsConsent ? "granted" : "denied",
-      ad_storage: hasMarketingConsent ? "granted" : "denied",
-      ad_user_data: hasMarketingConsent ? "granted" : "denied",
-      ad_personalization: hasMarketingConsent ? "granted" : "denied",
+    emitDevTrackingEvent({
+      source: "app",
+      action: "consent_update",
+      category: "Privacy / Consenso",
+      payload: {
+        analytics_storage: hasAnalyticsConsent ? "granted" : "denied",
+        ad_storage: hasMarketingConsent ? "granted" : "denied",
+      },
+      dispatchedTo: {
+        ga4: typeof window.gtag === "function",
+        meta: typeof window.fbq === "function",
+      },
+      consentState: {
+        analytics: hasAnalyticsConsent,
+        marketing: hasMarketingConsent,
+      },
     });
   }, [hasAnalyticsConsent, hasMarketingConsent]);
 

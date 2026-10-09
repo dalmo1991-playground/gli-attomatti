@@ -13,8 +13,14 @@ import {
   SlidersHorizontal,
   Info,
   Lock,
-  Layers
+  Layers,
+  Activity
 } from "lucide-react";
+import {
+  isDevTrackingOverlayEnabled,
+  setDevTrackingOverlayEnabled,
+  DEV_TRACKING_TOGGLE_EVENT_NAME,
+} from "@/lib/devTracking";
 import {
   ThemeColors,
   ThemePreset,
@@ -122,13 +128,34 @@ export function DevThemeCustomizer() {
   const [showImport, setShowImport] = useState(false);
   const [importJson, setImportJson] = useState("");
   const [importError, setImportError] = useState<string | null>(null);
+  const [trackingOverlayEnabled, setTrackingOverlayEnabled] = useState(false);
 
   // Initialize on mount
   useEffect(() => {
     setMounted(true);
     const dev = isDevSite();
     setIsDev(dev);
+    if (dev) {
+      setTrackingOverlayEnabled(isDevTrackingOverlayEnabled());
+    }
   }, []);
+
+  // Sync tracking overlay state if changed elsewhere
+  useEffect(() => {
+    if (!isDev) return;
+
+    const handleToggle = (e: Event) => {
+      const customEvent = e as CustomEvent<{ enabled: boolean }>;
+      if (customEvent.detail) {
+        setTrackingOverlayEnabled(customEvent.detail.enabled);
+      }
+    };
+
+    window.addEventListener(DEV_TRACKING_TOGGLE_EVENT_NAME, handleToggle);
+    return () => {
+      window.removeEventListener(DEV_TRACKING_TOGGLE_EVENT_NAME, handleToggle);
+    };
+  }, [isDev]);
 
   // Sync theme based on route context (Global site vs Isolated Landing Page)
   useEffect(() => {
@@ -426,6 +453,56 @@ export function DevThemeCustomizer() {
 
             {/* Scrollable Content */}
             <div className="p-5 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+              {/* Dev Tools & Tracking Overlay Toggle */}
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-foreground/10 hover:border-foreground/20 transition-all">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-colors",
+                        trackingOverlayEnabled
+                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                          : "bg-foreground/5 text-foreground/50 border-foreground/10"
+                      )}
+                    >
+                      <Activity size={16} className={trackingOverlayEnabled ? "animate-pulse" : ""} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <label
+                          htmlFor="dev-tracking-toggle"
+                          className="font-bold text-xs uppercase tracking-wide cursor-pointer select-none"
+                        >
+                          Overlay Eventi Tracking
+                        </label>
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                          LIVE
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-foreground/60 truncate">
+                        Mostra in sovrimpressione gli eventi GA4 e Meta Pixel attivi
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Toggle Checkbox / Switch */}
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input
+                      id="dev-tracking-toggle"
+                      type="checkbox"
+                      checked={trackingOverlayEnabled}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setTrackingOverlayEnabled(checked);
+                        setDevTrackingOverlayEnabled(checked);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-foreground/15 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 transition-colors" />
+                  </label>
+                </div>
+              </div>
+
               {/* Presets Bar */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">

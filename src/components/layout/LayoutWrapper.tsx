@@ -19,6 +19,11 @@ const DynamicDevThemeCustomizer = dynamic(
   { ssr: false }
 );
 
+const DynamicDevTrackingOverlay = dynamic(
+  () => import("@/components/dev/DevTrackingOverlay").then((m) => m.DevTrackingOverlay),
+  { ssr: false }
+);
+
 interface LayoutWrapperProps {
   children: React.ReactNode;
   content: any;
@@ -77,7 +82,12 @@ function LayoutInner({
 
       <DeploymentDetector serverVersion={serverVersion || "initial"} />
 
-      {isDev && <DynamicDevThemeCustomizer />}
+      {isDev && (
+        <>
+          <DynamicDevThemeCustomizer />
+          <DynamicDevTrackingOverlay />
+        </>
+      )}
     </>
   );
 }
