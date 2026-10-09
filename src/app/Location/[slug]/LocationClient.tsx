@@ -25,6 +25,7 @@ import { Section } from "@/components/ui/Section";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getSafeImageProps } from "@/lib/youtube";
 import { defaultText } from "@/lib/utils";
+import { resolveSlugText } from "@/lib/contentResolver";
 import { trackViewContent } from "@/lib/tracking";
 
 interface LocationClientProps {
@@ -133,21 +134,21 @@ export default function LocationClient({ location: initialLocation, slug, conten
     }
   };
 
-  const backLinkLabel = defaultText(location.back_link_label, ui.back_link_default_label, "Torna indietro");
-  const topBadge = defaultText(location.top_badge);
-  const badge = defaultText(location.badge, ui.default_badge);
-  const venueName = defaultText(location.venue_name, location.title);
-  const mapsButtonLabel = defaultText(ui.google_maps_button_label, "Apri in Google Maps");
-  const publicTransportHeading = defaultText(ui.public_transport_heading, "Mezzi pubblici");
-  const stepsHeading = defaultText(ui.steps_heading, "Guida fotografica");
-  const stepSingle = defaultText(ui.step_single_label, "passo");
-  const stepPlural = defaultText(ui.step_plural_label, "passi");
-  const clickToEnlarge = defaultText(ui.click_to_enlarge_label, "Ingrandisci");
-  const photoPrefix = defaultText(ui.photo_prefix, "Foto:");
-  const parkingHeading = defaultText(ui.parking_heading, "Parcheggio");
-  const accessibilityHeading = defaultText(ui.accessibility_heading, "Accessibilità");
-  const notesHeading = defaultText(ui.notes_heading, "Note pratiche");
-  const bottomBackLabel = defaultText(location.back_link_label, ui.bottom_back_button_label, "Torna indietro");
+  const backLinkLabel = resolveSlugText(location.back_link_label, ui.back_link_default_label, "Torna indietro");
+  const topBadge = resolveSlugText(location.top_badge);
+  const badge = resolveSlugText(location.badge, ui.default_badge);
+  const venueName = resolveSlugText(location.venue_name, location.title);
+  const mapsButtonLabel = resolveSlugText(location.google_maps_button_label, ui.google_maps_button_label, "Apri in Google Maps");
+  const publicTransportHeading = resolveSlugText(location.public_transport_heading, ui.public_transport_heading, "Mezzi pubblici");
+  const stepsHeading = resolveSlugText(location.steps_heading, ui.steps_heading, "Guida fotografica");
+  const stepSingle = resolveSlugText(location.step_single_label, ui.step_single_label, "passo");
+  const stepPlural = resolveSlugText(location.step_plural_label, ui.step_plural_label, "passi");
+  const clickToEnlarge = resolveSlugText(location.click_to_enlarge_label, ui.click_to_enlarge_label, "Ingrandisci");
+  const photoPrefix = resolveSlugText(location.photo_prefix, ui.photo_prefix, "Foto:");
+  const parkingHeading = resolveSlugText(location.parking_heading, ui.parking_heading, "Parcheggio");
+  const accessibilityHeading = resolveSlugText(location.accessibility_heading, ui.accessibility_heading, "Accessibilità");
+  const notesHeading = resolveSlugText(location.notes_heading, ui.notes_heading, "Note pratiche");
+  const bottomBackLabel = resolveSlugText(location.bottom_back_label, location.back_link_label, ui.bottom_back_button_label || "Torna indietro");
 
   return (
     <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6">

@@ -32,11 +32,11 @@ interface DetailSidebarProps {
 }
 
 export function DetailSidebar({
-  datesTitle = "Date e Biglietti",
+  datesTitle,
   dates = [],
-  detailsTitle = "Dettagli",
+  detailsTitle,
   details = [],
-  emptyDatesMessage = "Nessuna data programmata al momento.",
+  emptyDatesMessage,
   photoGuideBadgeLabel = "📷 Guida fotografica & come raggiungerci",
   onTicketClick,
   className
