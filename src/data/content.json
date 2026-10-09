@@ -1,1492 +1,1644 @@
 {
-    "site": {
-        "name": "Gli Attomatti",
-        "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
-        "url": "https://gliattomatti.ch",
-        "language": "it",
-        "seo": {
-            "site_name": "Gli Attomatti",
-            "title_template": "%s | Gli Attomatti",
-            "default_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
-            "default_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
-            "default_image": "/images/1782553290530-TheaterCurtain.webp",
-            "locale": "it_CH",
-            "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
-            "logo_alt": "Gli Attomatti",
-            "keywords": [
-                "compagnia teatrale zurigo",
-                "teatro italiano zurigo",
-                "spettacoli zurigo",
-                "teatro amatoriale svizzera",
-                "gli attomatti",
-                "commedia teatrale zurigo",
-                "cultura italiana zurigo",
-                "eventi italiani zurigo",
-                "biglietti teatro zurigo"
-            ],
-            "socials": [
-                "https://www.instagram.com/gliattomatti/",
-                "https://www.facebook.com/p/Gli-Attomatti-61572328015344/"
-            ]
-        }
+  "site": {
+    "name": "Gli Attomatti",
+    "description": "Compagnia teatrale amatoriale di lingua italiana a Zurigo",
+    "url": "https://gliattomatti.ch",
+    "language": "it",
+    "seo": {
+      "site_name": "Gli Attomatti",
+      "title_template": "%s | Gli Attomatti",
+      "default_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
+      "default_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
+      "default_image": "/images/1782553290530-TheaterCurtain.webp",
+      "locale": "it_CH",
+      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
+      "logo_alt": "Gli Attomatti",
+      "keywords": [
+        "compagnia teatrale zurigo",
+        "teatro italiano zurigo",
+        "spettacoli zurigo",
+        "teatro amatoriale svizzera",
+        "gli attomatti",
+        "commedia teatrale zurigo",
+        "cultura italiana zurigo",
+        "eventi italiani zurigo",
+        "biglietti teatro zurigo"
+      ],
+      "socials": [
+        "https://www.instagram.com/gliattomatti/",
+        "https://www.facebook.com/p/Gli-Attomatti-61572328015344/"
+      ]
+    }
+  },
+  "navigation": [
+    {
+      "label": "Dicono di noi",
+      "href": "/Chi_Siamo/Parlano_di_noi"
     },
-    "navigation": [
+    {
+      "label": "Spettacoli",
+      "href": "/Spettacoli",
+      "sublinks": [
         {
-            "label": "Dicono di noi",
-            "href": "/Chi_Siamo/Parlano_di_noi"
-        },
-        {
-            "label": "Iniziative",
-            "href": "/Iniziative",
-            "sublinks": [
-                {
-                    "label": "Cineforum",
-                    "href": "/Iniziative/cineforum"
-                }
-            ]
-        },
-        {
-            "label": "Contatti",
-            "href": "/Contatti"
+          "label": "Non Sottovalutare i 40",
+          "href": "/Spettacoli/non-sottovalutare-i-40"
         }
-    ],
-    "pages": {
-        "home": {
-            "meta_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
-            "meta_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Scopri i nostri spettacoli, le commedie in scena a Zurigo e acquista i biglietti.",
-            "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
-            "fallback_show_alt": "Spettacolo",
-            "slide_aria_prefix": "Slide",
-            "discover_story_cta": "Scopri la nostra storia",
-            "hero": {
-                "title": "",
-                "subtitle": "Compagnia teatrale amatoriale di lingua italiana a Zurigo.",
-                "primary_cta_label": "",
-                "primary_cta_href": "",
-                "secondary_cta_label": "",
-                "secondary_cta_href": ""
-            },
-            "upcoming_shows": [
-                {
-                    "active": true,
-                    "title": "Cineforum",
-                    "presenter": "Gli Attomatti e UNITRE presentano",
-                    "tagline": "Nel passo lento della meraviglia",
-                    "date": "Mensilmente, dal 3 ottobre",
-                    "location": "Balberstrasse 47, Zurigo (Wollishofen)",
-                    "location_href": "/Location/sala-wollishofen",
-                    "cta": "Info & Prenotazioni",
-                    "cta_href": "/Iniziative/cineforum",
-                    "secondary_cta": "Offerta Libera",
-                    "secondary_cta_href": "",
-                    "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-                    "image_align": "left"
-                }
-            ],
-            "introduction": {
-                "title": "Gli Attomatti",
-                "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e hanno voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione.",
-                "story_button_label": null,
-                "story_button_href": null,
-                "fallback_alt": null,
-                "images": [
-                    {
-                        "url": "/images/1782553648895-DSD00540.webp",
-                        "alt": "ImmagineGruppoCenerentola"
-                    },
-                    {
-                        "url": "/images/1782553714122-DSD02274.webp",
-                        "alt": "Trasferta Cenerentola"
-                    },
-                    {
-                        "url": "/images/1782553781605-DSC_0682.webp",
-                        "alt": "Riunione pre show Cenerentola"
-                    },
-                    {
-                        "url": "/images/1778523241763-DSC_0954.webp",
-                        "alt": "Palmizio"
-                    },
-                    {
-                        "url": "/images/1782553836322-DSC_0980.webp",
-                        "alt": "Cenerentola"
-                    },
-                    {
-                        "url": "/images/1782553876069-DSC_1167.webp",
-                        "alt": "Conti"
-                    },
-                    {
-                        "url": "/images/1782553917098-DSC_1410.webp",
-                        "alt": "Sorelle"
-                    },
-                    {
-                        "url": "/images/1782553964559-DSC_1764.webp",
-                        "alt": "Matrigna"
-                    },
-                    {
-                        "url": "/images/1782553997297-DSC_1840.webp",
-                        "alt": "Principe"
-                    }
-                ]
-            },
-            "instagram_feed": {
-                "enabled": false,
-                "badge": "Social & Backstage",
-                "title": "Seguici su Instagram",
-                "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
-                "handle": "@gliattomatti",
-                "profile_url": "https://www.instagram.com/gliattomatti/",
-                "cta_label": "Segui @gliattomatti",
-                "prev_aria": "Precedente",
-                "next_aria": "Successivo",
-                "enable_all_label": "Abilita tutti i post",
-                "card": {
-                    "badge": "Protezione Privacy (2-Click)",
-                    "default_title": "Post Instagram",
-                    "privacy_explanation": "Per tutelare la tua privacy, i contenuti esterni di Meta sono bloccati. Cliccando accetti il caricamento dell'incorporamento da Instagram e la trasmissione del tuo indirizzo IP a Meta Platforms Ireland Ltd.",
-                    "load_post_button": "Carica questo post",
-                    "show_all_button": "Mostra tutti i post",
-                    "privacy_link": "Informativa Privacy",
-                    "open_on_instagram": "Apri su Instagram",
-                    "loading_text": "Caricamento post..."
-                },
-                "posts": []
-            }
-        },
-        "chi_siamo": {
-            "title": "Chi Siamo",
-            "description": "La compagnia teatrale Gli Attomatti di Zurigo.",
-            "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
-            "meta_description": "La storia, la missione e la passione della compagnia Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
-            "keywords": [
-                "chi siamo teatro zurigo",
-                "compagnia teatrale italiana zurigo",
-                "teatro amatoriale zurigo"
-            ],
-            "photo_alt": "Foto",
-            "photo_aria_prefix": "Foto",
-            "carousel_photo_aria": "Foto",
-            "fallback_photo_alt": "Foto",
-            "year_prefix": "Anno ",
-            "content_sections": [],
-            "navigation_links": [
-                {
-                    "label": "Home",
-                    "href": "/",
-                    "icon": "users",
-                    "visible": true
-                },
-                {
-                    "label": "Dicono di Noi",
-                    "href": "/Chi_Siamo/Parlano_di_noi",
-                    "icon": "message-square",
-                    "visible": true
-                }
-            ]
-        },
-        "attori": {
-            "title": "Le Persone",
-            "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
-            "description": "Le persone che rendono possibile la magia del teatro Attomatti.",
-            "meta_title": "Gli Attori & Il Cast — Gli Attomatti",
-            "meta_description": "Scopri gli attori, i registi e il cast della compagnia teatrale Gli Attomatti a Zurigo: le persone che danno vita agli spettacoli.",
-            "keywords": [
-                "attori teatro zurigo",
-                "cast teatrale",
-                "registi teatro zurigo",
-                "recitazione italiana zurigo"
-            ],
-            "empty_list": "Nessun membro attualmente inserito.",
-            "empty_message": "Nessun membro attualmente inserito.",
-            "shows_heading": "Spettacoli e Ruoli",
-            "back_label": "Torna a Chi Siamo",
-            "back_href": "/Chi_Siamo",
-            "back_link_label": "Torna a Chi Siamo",
-            "modal_close_aria": "Chiudi scheda attore",
-            "close_modal_aria": "Chiudi scheda attore",
-            "fallback_actor_alt": "Attore",
-            "default_actor_alt": "Attore",
-            "list": [],
-            "join_us": {
-                "title": "Vuoi unirti a noi?",
-                "text": "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
-                "cta_label": "Contattaci",
-                "cta_href": "/Contatti"
-            }
-        },
-        "parlano_di_noi": {
-            "title": "Dicono di Noi",
-            "description": "Gli Attomatti sulla stampa",
-            "meta_title": "Dicono di Noi — Recensioni & Rassegna Stampa",
-            "meta_description": "Articoli, recensioni, opinioni del pubblico e rassegna stampa sugli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
-            "keywords": [
-                "recensioni teatro zurigo",
-                "rassegna stampa teatro",
-                "parlano di noi attomatti"
-            ],
-            "back_label": "Torna a Chi Siamo",
-            "back_href": "/Chi_Siamo",
-            "back_link_label": "Torna a Chi Siamo",
-            "year_prefix": "Anno ",
-            "press": [
-                {
-                    "source": "RSI",
-                    "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
-                    "quote": "Servizio della RSI sul corso di teatro condotto dagli Attomatti e dedicato a Dario Fo, nel centenario della sua nascita.",
-                    "date": "2026",
-                    "badge_label": "Servizi TV",
-                    "visible": true
-                },
-                {
-                    "source": "laRegione.ch",
-                    "quote": "Articolo sulla Federazione Filodrammatiche della Svizzera italiana di cui gli Attomatti fanno parte dal 2026.",
-                    "date": "2026",
-                    "source_href": "https://www.laregione.ch/ticino7/ticino7/1935465/compagnie-teatro-amatoriale-ffsi-responsabile-camponovo-quinte",
-                    "badge_label": "Articolo di giornale"
-                }
-            ],
-            "press_contact": {
-                "title": "Area Stampa",
-                "text": "Sei un giornalista o un blogger e vuoi parlare della nostra compagnia? Contattaci per ricevere il press kit o per fissare un'intervista.",
-                "cta_label": "Contattaci",
-                "cta_href": "/Contatti"
-            }
-        },
-        "spettacoli": {
-            "title": "I Nostri Spettacoli",
-            "description": "Tutte le produzioni teatrali della compagnia.",
-            "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",
-            "meta_description": "Scopri gli spettacoli teatrali, le commedie e le produzioni in scena della compagnia teatrale Gli Attomatti a Zurigo.",
-            "empty_archive": "Nessuno spettacolo in archivio al momento.",
-            "empty_message": "Nessuno spettacolo in archivio al momento.",
-            "season_prefix": "Stagione",
-            "year_prefix": "Anno ",
-            "discover_cta": "Scopri lo spettacolo",
-            "discover_show_cta": "Scopri lo spettacolo",
-            "back_to_archive_label": "Torna all'archivio",
-            "archive_href": "/Spettacoli",
-            "detail_main_heading": "Lo Spettacolo",
-            "detail_dates_title": "Date e Biglietti",
-            "detail_info_title": "Info Spettacolo",
-            "detail_empty_dates_message": "Nessuna data futura programmata per questo spettacolo.",
-            "detail_cta_tickets_label": "Date e Biglietti",
-            "detail_floating_cta_label": "Biglietti & Date",
-            "not_found_title": "Spettacolo non trovato",
-            "detail": {
-                "back_link_label": "Torna all'Archivio",
-                "season_prefix": "Stagione",
-                "show_heading": "Lo Spettacolo",
-                "dates_title": "Date e Biglietti",
-                "details_title": "Info Spettacolo",
-                "empty_dates": "Nessuna data futura programmata per questo spettacolo.",
-                "not_found_title": "Spettacolo non trovato",
-                "not_found_cta": "Torna all'archivio"
-            },
-            "archive_sections": []
-        },
-        "iniziative": {
-            "title": "Le Nostre Iniziative",
-            "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
-            "meta_title": "Iniziative, Corsi & Progetti Teatrali — Gli Attomatti",
-            "meta_description": "Scopri i corsi di teatro, i laboratori e le rassegne culturali della compagnia teatrale Gli Attomatti a Zurigo.",
-            "keywords": [
-                "corsi teatro zurigo",
-                "laboratori teatrali zurigo",
-                "iniziative teatrali",
-                "workshop teatro svizzera"
-            ],
-            "empty_title": "Nuove iniziative in arrivo",
-            "empty_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
-            "empty_archive_title": "Nuove iniziative in arrivo",
-            "empty_archive_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
-            "edition_prefix": "Edizione",
-            "year_prefix": "Anno ",
-            "discover_cta": "Scopri l'iniziativa",
-            "discover_initiative_cta": "Scopri l'iniziativa",
-            "back_to_list_label": "Torna all'elenco iniziative",
-            "archive_href": "/Iniziative",
-            "detail_main_heading": "L'Iniziativa",
-            "detail_dates_title": "Date e Iscrizioni",
-            "detail_info_title": "Info Iniziativa",
-            "detail_empty_dates_message": "Nessun calendario al momento programmato.",
-            "detail_cta_tickets_label": "Date e Iscrizioni",
-            "detail_floating_cta_label": "Iscrizioni & Date",
-            "not_found_title": "Iniziativa non trovata",
-            "detail": {
-                "back_link_label": "Torna alle Iniziative",
-                "edition_prefix": "Edizione",
-                "initiative_heading": "L'Iniziativa",
-                "dates_title": "Date e Iscrizioni",
-                "details_title": "Info Iniziativa",
-                "empty_dates": "Nessun calendario al momento programmato.",
-                "not_found_title": "Iniziativa non trovata",
-                "not_found_cta": "Torna all'elenco iniziative"
-            },
-            "archive_sections": [
-                {
-                    "title": "Cineforum",
-                    "slug": "cineforum",
-                    "year": "2026-27",
-                    "short_description": "\"Nel passo lento della meraviglia\" è un invito a rallentare il passo e ad abitare il tempo del cinema. Cinque incontri, cinque sguardi sul tempo.",
-                    "text": "<p><b>Nel passo lento della meraviglia</b> - <i>Un invito a rallentare il passo e ad abitare il tempo del cinema</i></p><p>Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.</p><p>Il titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.</p><p>Il programma attraversa quasi un secolo di sguardi sul tempo: dalla catena di montaggio di <b>Tempi moderni</b> di Charlie Chaplin alla villeggiatura sospesa di <b>Le vacanze di Monsieur Hulot</b> di Jacques Tati, dall'inerzia giovanile de <b>I vitelloni</b> di Federico Fellini alla fuga inattesa di <b>Pane e tulipani</b> di Silvio Soldini, fino al lunghissimo viaggio a bordo di un tosaerba di <b>Una storia vera</b> di David Lynch. Cinque storie diverse, accomunate da una domanda: che cosa accade quando ci concediamo di rallentare?</p><p>Entrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.</p><p>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria tramite il modulo di registrazione presente in questa pagina. Per gli iscritti UNITRE l'ingresso è compreso nella quota associativa.</p><p><b>Nota: i titoli in programma potrebbero cambiare</b>. Sarà nostra cura aggiornare prontamente questa pagina.</p>",
-                    "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-                    "detail_cta_tickets_label": "Gli Appuntamenti",
-                    "detail_floating_cta_label": "Gli Appuntamenti",
-                    "dates": [
-                        {
-                            "date": "Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00",
-                            "location": "Balberstrasse 47, 8038 Zürich",
-                            "ticket_label": "Registrati",
-                            "ticket_href": "/Registrazioni/14-11-26",
-                            "location_href": "/Location/sala-wollishofen"
-                        },
-                        {
-                            "date": "I vitelloni - 16 gennaio 2027, ore 18:00",
-                            "location": "Balberstrasse 47, 8038 Zürich",
-                            "ticket_label": "Registrati",
-                            "ticket_href": "/Registrazioni/16-01-27",
-                            "location_href": "/Location/sala-wollishofen"
-                        },
-                        {
-                            "date": "Pane e tulipani - 20 febbraio 2027, ore 18:00",
-                            "location": "Balberstrasse 47, 8038 Zürich",
-                            "ticket_label": "Registrati",
-                            "ticket_href": "/Registrazioni/20-02-27",
-                            "location_href": "/Location/sala-wollishofen"
-                        },
-                        {
-                            "date": "Una storia vera - 20 marzo 2027, ore 18:00",
-                            "location": "Balberstrasse 47, 8038 Zürich",
-                            "ticket_label": "Registrati",
-                            "ticket_href": "/Registrazioni/20-03-27",
-                            "location_href": "/Location/sala-wollishofen"
-                        },
-                        {
-                            "date": "Tempi moderni - 3 ottobre 2026, ore 18:00",
-                            "location": "Balberstrasse 47, 8038 Zürich",
-                            "ticket_label": "",
-                            "ticket_href": "",
-                            "location_href": "/Location/sala-wollishofen"
-                        }
-                    ],
-                    "details": [
-                        {
-                            "label": "Attomatti",
-                            "value": "+41 78 942 39 93"
-                        },
-                        {
-                            "label": "UNITRE",
-                            "value": "+41 76 639 09 52"
-                        },
-                        {
-                            "label": "Prezzo",
-                            "value": "Offerta Libera"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-                            "alt": "Locandina",
-                            "no_crop": true
-                        },
-                        {
-                            "url": "/images/1791099916565-cwdb-P00_7892.webp",
-                            "alt": "Foto della prima data del 3 ottobre"
-                        },
-                        {
-                            "url": "/images/1791099914761-g1g0-P00_7889_01.webp",
-                            "alt": "Foto della prima data del 3 ottobre"
-                        },
-                        {
-                            "url": "/images/1791099912910-ha2u-P00_7908.webp",
-                            "alt": "Foto della prima data del 3 ottobre"
-                        }
-                    ],
-                    "hero_image_align": "left"
-                }
-            ]
-        },
-        "contatti": {
-            "title": "Contattaci",
-            "description": "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
-            "email": "compagniateatralegliattomatti@gmail.com",
-            "email_label": "Email",
-            "socials": [
-                {
-                    "platform": "Instagram",
-                    "href": "https://www.instagram.com/gliattomatti/",
-                    "handle": "@gliattomatti",
-                    "visible": true
-                },
-                {
-                    "platform": "Facebook",
-                    "href": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
-                    "handle": "Gli Attomatti",
-                    "visible": true
-                }
-            ]
-        },
-        "impressum": {
-            "meta": {
-                "title": "Note Legali & Impressum",
-                "description": "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti."
-            },
-            "back_link": "Torna alla home",
-            "badge": "Note Legali",
-            "title": "Impressum",
-            "description": "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici.",
-            "organization": {
-                "section_title": "Organizzazione",
-                "name": "Gli Attomatti",
-                "address_label": "Indirizzo",
-                "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
-                "represented_by_label": "Rappresentato da",
-                "represented_by": "Domenico Scotti di Carlo"
-            },
-            "contacts": {
-                "section_title": "Contatti telematici",
-                "email_label": "Email",
-                "email": "compagniateatralegliattomatti@gmail.com",
-                "website_label": "Sito web",
-                "website_url": "https://gliattomatti.ch"
-            },
-            "liability": {
-                "section_title": "Esclusione di responsabilità (Haftungsausschluss)",
-                "contents_title": "Contenuti del sito:",
-                "contents_text": "I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento.",
-                "links_title": "Collegamenti esterni e servizi incorporati (iframe embed):",
-                "links_text_1": "Il nostro sito include collegamenti telematici a siti terzi nonché servizi digitali incorporati direttamente nelle pagine, in particolare la piattaforma svizzera di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
-                "links_text_2": "L'accesso, la compilazione e l'utilizzo di tali servizi terzi avvengono a esclusivo rischio dell'utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori."
-            },
-            "copyright": {
-                "section_title": "Diritto d'autore (Copyright)",
-                "text": "I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d'autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d'autore richiede il previo consenso scritto dell'autore o degli autori in questione."
-            }
-        },
-        "termini": {
-            "meta": {
-                "title": "Termini di Biglietteria e Iscrizioni",
-                "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione agli eventi e l'accesso agli spettacoli teatrali della compagnia Gli Attomatti a Zurigo."
-            },
-            "back_link": "Torna alla home",
-            "badge": "Regolamento Spettacoli & Eventi",
-            "title": "Termini e Condizioni",
-            "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione a corsi ed eventi teatrali, e regolamento di sala della compagnia teatrale Gli Attomatti.",
-            "sections": [
-                {
-                    "id": "scope",
-                    "title": "1. Ambito di applicazione e canali di fruizione",
-                    "intro": "Le presenti Condizioni Generali disciplinano il rapporto tra l'utente e l'organizzatore Gli Attomatti (Zurigo, Svizzera) in merito alla partecipazione agli spettacoli teatrali, corsi, laboratori ed eventi culturali promossi.",
-                    "items": [
-                        {
-                            "label": "Biglietti per spettacoli a pagamento:",
-                            "text": "l'acquisto può essere completato direttamente sul portale di ticketing o mediante le casse incorporate (iframe embed) integrate nelle nostre pagine dell'hub /Biglietti e delle sezioni /Biglietti/[slug]. L'elaborazione tecnica della transazione e l'emissione del titolo d'accesso con QR code sono gestiti dalla piattaforma partner svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera), alle cui condizioni contrattuali per gli acquirenti si rimanda per gli aspetti transazionali."
-                        },
-                        {
-                            "label": "Iscrizioni a eventi gratuiti, workshop o audizioni:",
-                            "text": "la prenotazione avviene tramite moduli interattivi (anche incorporati via iframe) forniti dalla piattaforma Tally BV (Gand, Belgio) raggiungibili all'hub /Registrazioni, alle pagine /Registrazioni/[slug] o link associati."
-                        },
-                        {
-                            "label": "Richieste per affitto sala (Saalvermietung) o contatti speciali:",
-                            "text": "i moduli compilabili sul sito hanno valore di richiesta informativa preliminare e non costituiscono di per sé un contratto di locazione perfezionato, il quale richiede espressa conferma scritta e stipula tra le parti."
-                        }
-                    ]
-                },
-                {
-                    "id": "pricing",
-                    "title": "2. Prezzi, acquisto e perfezionamento delle registrazioni",
-                    "paragraphs": [
-                        "Tutti i prezzi dei biglietti per gli spettacoli sono espressi in Franchi Svizzeri (CHF). L'acquisto si perfeziona con il buon fine del pagamento su Eventfrog e l'invio telematico del biglietto elettronico recante codice QR univoco.",
-                        "Per gli eventi gestiti tramite registrazione via form (Tally), la partecipazione è confermata unicamente a seguito del completamento del modulo."
-                    ]
-                },
-                {
-                    "id": "refunds",
-                    "title": "3. Rimborsi, rinuncia e politica di presenza responsabile (No-Show)",
-                    "intro": "Di norma, i biglietti acquistati per gli spettacoli non sono rimborsabili da parte dell'organizzatore in caso di mancata partecipazione o rinuncia per motivi personali dell'acquirente. I biglietti possono essere liberamente ceduti a terzi. Ai sensi della Direttiva UE 2011/83/UE (art. 16, lett. l) e delle normative a tutela del consumatore applicabili nell'Unione Europea (es. art. 59 lett. n del Codice del Consumo italiano), il diritto di recesso di 14 giorni per gli acquisti a distanza non si applica ai contratti di fornitura di servizi relativi al tempo libero e spettacoli qualora il contratto preveda una data o un periodo di esecuzione specifici.",
-                    "cards": [
-                        {
-                            "title": "Copertura assicurativa facoltativa Eventfrog",
-                            "text": "In fase di acquisto sulla cassa Eventfrog, l'acquirente può facoltativamente sottoscrivere l'assicurazione di annullamento e rimborso offerta direttamente da Eventfrog o da compagnie partner. In tal caso, il diritto al rimborso è disciplinato esclusivamente dalla polizza sottoscritta ed è gestito direttamente con Eventfrog."
-                        },
-                        {
-                            "title": "Presenza responsabile per eventi gratuiti su registrazione (Tally)",
-                            "text": "Per i corsi, workshop o spettacoli gratuiti a posti limitati, l'iscrizione impegna il partecipante a presenziare. Qualora sopraggiungesse un impedimento, è richiesto di comunicare la disdetta con tempestività (scrivendo a compagniateatralegliattomatti@gmail.com) al fine di consentire lo scorrimento della lista d'attesa ad altre persone interessate."
-                        }
-                    ]
-                },
-                {
-                    "id": "cancellation",
-                    "title": "4. Annullamento o rinvio dell'evento",
-                    "paragraphs": [
-                        "In caso di annullamento definitivo di uno spettacolo o evento per cause di forza maggiore, disposizioni di pubblica sicurezza o impedimenti organizzativi insormontabili, l'importo nominale dei biglietti acquistati sarà rimborsato all'acquirente secondo le modalità operative della piattaforma Eventfrog.",
-                        "In caso di rinvio a data alternativa, il biglietto o l'iscrizione rimane valido per la nuova data comunicata. Qualora l'utente non possa partecipare nella nuova data, avrà facoltà di richiedere il rimborso o cancellare l'iscrizione secondo le tempistiche indicate tempestivamente dall'organizzatore."
-                    ]
-                },
-                {
-                    "id": "hall_access",
-                    "title": "5. Accesso in sala, orari e puntualità",
-                    "paragraphs": [
-                        "Gli orari esatti di apertura delle porte, del botteghino e di inizio della rappresentazione sono indicati caso per caso nelle informazioni specifiche di ciascuno spettacolo sul sito web e sul biglietto emesso.",
-                        "Si raccomanda di presentarsi con congruo anticipo. Per tutelare il lavoro degli interpreti e la concentrazione del pubblico, a spettacolo iniziato l'ingresso in sala potrebbe non essere consentito fino all'eventuale primo intervallo utile, a discrezione del personale di sala."
-                    ]
-                },
-                {
-                    "id": "rules",
-                    "title": "6. Norme di sala, riprese e divieti",
-                    "text": "Durante la rappresentazione è severamente vietato effettuare riprese audio/video integrali o utilizzare il flash fotografico. I telefoni cellulari e altri dispositivi elettronici devono essere silenziati prima dell'inizio dello spettacolo. L'organizzatore si riserva il diritto di allontanare dalla sala chiunque turbi il regolare svolgimento della recita."
-                },
-                {
-                    "id": "photo_policy",
-                    "title": "7. Foto, riprese video e diritto all'immagine",
-                    "intro": "Durante gli spettacoli, i workshop, le prove aperte e gli eventi organizzati dalla compagnia teatrale Gli Attomatti, possono essere effettuate riprese fotografiche e registrazioni video a scopo di documentazione culturale, archivio storico e divulgazione artistica. Tali contenuti possono essere pubblicati sui canali ufficiali della compagnia (inclusi il presente sito web, i profili social ufficiali come Instagram e Facebook, o materiali promozionali e rassegne stampa).",
-                    "notice_box": {
-                        "title": "Preferisci non comparire? Basta dircelo!",
-                        "paragraphs": [
-                            "Rispettiamo pienamente la riservatezza e le preferenze di ciascuno spettatore e partecipante: se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all'ingresso o in qualsiasi momento durante la serata. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.",
-                            "Inoltre, se in seguito dovessi notare una tua immagine in una foto o in un video già pubblicato e desiderassi la rimozione o l'oscuramento, puoi richiederlo in qualsiasi momento scrivendoci a compagniateatralegliattomatti@gmail.com: provvederemo con la massima tempestività."
-                        ]
-                    }
-                },
-                {
-                    "id": "third_party",
-                    "title": "8. Servizi terzi incorporati e limitazione di responsabilità tecnica",
-                    "text": "L'incorporamento dei moduli e delle casse digitali (iframe di Eventfrog AG e Tally BV) avviene nel rispetto dei migliori standard di sicurezza web. Tuttavia, Gli Attomatti non possono essere ritenuti responsabili per temporanee interruzioni di rete, indisponibilità dei server terzi, malfunzionamenti dei gateway bancari o ritardi nella consegna delle notifiche telematiche imputabili ai rispettivi fornitori esterni indipendenti."
-                },
-                {
-                    "id": "jurisdiction",
-                    "title": "9. Diritto applicabile e foro competente",
-                    "text": "Il rapporto contrattuale è disciplinato dal diritto materiale svizzero. Per qualsiasi controversia il foro competente esclusivo è quello di Zurigo, Svizzera. Restano salve le disposizioni inderogabili e le tutele a favore dei consumatori previste dalla legge dello Stato membro dell'Unione Europea in cui l'utente risiede abitualmente (ai sensi del Regolamento UE n. 1215/2012 e della Convenzione di Lugano)."
-                }
-            ]
-        },
-        "privacy": {
-            "meta": {
-                "title": "Informativa sulla Privacy",
-                "description": "Informativa sul trattamento dei dati personali ai sensi della nLPD svizzera e del Regolamento UE 2016/679 (GDPR)."
-            },
-            "back_link": "Torna alla home",
-            "badge": "nLPD & GDPR",
-            "title": "Informativa sulla Privacy",
-            "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD), al Regolamento Generale sulla Protezione dei Dati dell'Unione Europea (GDPR, Reg. UE 2016/679) e al principio di trasparenza preventiva (Opt-in).",
-            "data_controller": {
-                "title": "Titolare del trattamento",
-                "name": "Gli Attomatti",
-                "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
-                "email_label": "Contatto email:",
-                "email": "compagniateatralegliattomatti@gmail.com"
-            },
-            "general_processing": {
-                "title": "Trattamento generale dei dati e basi giuridiche",
-                "text": "Trattiamo i dati personali solo ed esclusivamente nella misura necessaria per fornire un sito web funzionante e per offrire i nostri servizi teatrali, prevendite, registrazioni a eventi e comunicazioni informative. Ai sensi dell'art. 6 del GDPR e della nLPD svizzera, le basi giuridiche applicate comprendono: (a) l'esecuzione di un contratto o di misure precontrattuali per l'acquisto di biglietti, l'iscrizione a corsi ed eventi teatrali, o richieste per disponibilità sala; (b) l'adempimento di obblighi legali e fiscali; (c) il consenso esplicito e preventivo dell'interessato per l'attivazione di cookie analitici e di marketing; (d) il nostro legittimo interesse prevalente alla sicurezza informatica e all'efficienza operativa del sito web. In virtù della decisione di adeguatezza della Commissione Europea (art. 45 GDPR), la Svizzera garantisce un livello di protezione dei dati equiparabile a quello dell'Unione Europea, consentendo il libero e sicuro trasferimento dei dati tra Svizzera e Paesi dello Spazio Economico Europeo."
-            },
-            "server_logs": {
-                "title": "File di log del server",
-                "text": "Il nostro fornitore di hosting, Vercel, raccoglie e memorizza automaticamente dati tecnici nei file di log del server che il tuo browser ci trasmette. Questi includono indirizzo IP, tipo e versione del browser, sistema operativo utilizzato, URL di riferimento e ora della richiesta al server. Questi dati sono necessari per il funzionamento sicuro del server e non vengono incrociati o uniti ad altre fonti di dati."
-            },
-            "cookie_opt_in": {
-                "title": "Cookie, sessioni e servizi incorporati (Opt-in)",
-                "intro_1": "Questo sito adotta una politica rigorosa di consenso preventivo (Opt-in): nessun cookie o tracker analitico o di marketing viene attivato prima che tu abbia espresso il tuo consenso esplicito tramite il banner delle preferenze.",
-                "intro_2": "Per garantire il corretto funzionamento dell'interfaccia, della biglietteria e dei moduli di registrazione, vengono impiegati elementi tecnici strettamente necessari (cookie propri o sessioni di terze parti integrate tramite iframe). Tali elementi tecnici non profilano l'utente e non richiedono consenso preventivo ai sensi della nLPD e del GDPR, ma sono elencati di seguito per assoluta trasparenza:",
-                "table_heading": "Tabella dei cookie e componenti attivi:",
-                "columns": {
-                    "name": "Nome / Origine",
-                    "provider": "Fornitore",
-                    "duration": "Durata",
-                    "purpose": "Finalità"
-                },
-                "rows": {
-                    "own_consent": {
-                        "name": "attomatti_cookie_consent",
-                        "provider": "Sito proprio (Locale)",
-                        "duration": "1 anno",
-                        "purpose": "Tecnico essenziale: memorizza le scelte di consenso privacy espresse nel banner."
-                    },
-                    "eventfrog": {
-                        "name": "eventfrog.ch (iframe)",
-                        "provider": "Eventfrog AG (Svizzera)",
-                        "duration": "Sessione di acquisto",
-                        "purpose": "Tecnico essenziale: gestione del carrello, sicurezza della transazione e avanzamento del checkout nei widget di cassa incorporati."
-                    },
-                    "tally": {
-                        "name": "tally.so (iframe)",
-                        "provider": "Tally BV (Belgio / UE)",
-                        "duration": "Sessione modulo",
-                        "purpose": "Tecnico essenziale: token di sicurezza anti-CSRF e conservazione temporanea dello stato di compilazione del form. Nessuna profilazione pubblicitaria sui rispondenti."
-                    },
-                    "google_analytics": {
-                        "name": "_ga, _ga_*",
-                        "provider": "Google LLC (USA)",
-                        "duration": "2 anni",
-                        "purpose": "Analitico (previo consenso): statistiche aggregate e anonimizzate sulle visite."
-                    },
-                    "meta_pixel": {
-                        "name": "_fbp",
-                        "provider": "Meta Platforms Ireland Ltd.",
-                        "duration": "90 giorni",
-                        "purpose": "Marketing (previo consenso): misurazione dell'efficacia delle campagne Instagram/Facebook."
-                    },
-                    "youtube": {
-                        "name": "youtube-nocookie.com (iframe)",
-                        "provider": "Google Ireland Limited / YouTube (USA/UE)",
-                        "duration": "Sessione / Persistente all'avvio del video",
-                        "purpose": "Multimediale essenziale: riproduzione dei video e trailer teatrali incorporati con modalità di privacy avanzata (nessun cookie di profilazione salvato prima della riproduzione attiva)."
-                    }
-                }
-            },
-            "youtube": {
-                "title": "Video e Trailer Teatrali Incorporati (YouTube)",
-                "paragraphs": [
-                    "Nelle schede degli spettacoli, nelle gallerie multimediali e nelle landing page possono essere incorporati trailer e video informativi ospitati sulla piattaforma YouTube, gestita da Google Ireland Limited (Gordon House, Barrow Street, Dublino 4, Irlanda).",
-                    "Al fine di tutelare al massimo la riservatezza dei visitatori, tutti i video YouTube sul nostro sito sono incorporati utilizzando la modalità di privacy avanzata ufficiale (dominio youtube-nocookie.com). In questo modo, YouTube non memorizza cookie o informazioni sul comportamento degli utenti prima che il visitatore decida attivamente di avviare la riproduzione del filmato.",
-                    "Solo quando l'utente clicca su \"Play\", viene stabilita una connessione diretta con i server di Google per avviare lo streaming del flusso video, il che può comportare la trasmissione dell'indirizzo IP del dispositivo a Google. Per maggiori dettagli sulla gestione dei dati da parte di Google e YouTube, consultare le Norme sulla privacy di Google: policies.google.com/privacy."
-                ],
-                "privacy_url": "https://policies.google.com/privacy"
-            },
-            "google_analytics": {
-                "title": "Google Analytics 4 (Google LLC)",
-                "paragraphs": [
-                    "Sul sito è integrato lo strumento di analisi web Google Analytics 4, gestito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
-                    "In conformità alla Google Consent Mode v2, Google Analytics è configurato per rimanere completamente bloccato finché non viene prestato il consenso analitico. L'indirizzo IP del visitatore viene anonimizzato prima della registrazione.",
-                    "I dati raccolti possono essere elaborati su server situati negli Stati Uniti sulla base dello Swiss-US Data Privacy Framework. Puoi revocare il consenso in qualsiasi momento tramite il nostro gestore delle preferenze."
-                ]
-            },
-            "meta_pixel": {
-                "title": "Meta Pixel (Meta Platforms Ireland Limited)",
-                "paragraphs": [
-                    "Utilizziamo il Meta Pixel per monitorare l'efficacia delle inserzioni pubblicitarie su Instagram e Facebook e per promuovere la vendita dei biglietti per i nostri spettacoli. Il servizio è fornito da Meta Platforms Ireland Limited (Merrion Road, Dublin 4, D04 X2K5, Irlanda).",
-                    "Il Pixel entra in funzione esclusivamente dopo il tuo esplicito opt-in per la categoria marketing. Il pixel consente a Meta di identificare i visitatori del nostro sito come gruppo target per la visualizzazione di annunci. Maggiori informazioni nella privacy policy di Meta: privacycenter.instagram.com/policy."
-                ],
-                "privacy_url": "https://privacycenter.instagram.com/policy"
-            },
-            "eventfrog": {
-                "title": "Biglietteria Online e Casse Incorporate (Eventfrog AG)",
-                "paragraphs": [
-                    "Per la vendita, prevendita ed emissione dei biglietti teatrali ci avvaliamo della piattaforma svizzera specializzata Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera).",
-                    "I servizi di cassa possono essere raggiunti tramite link esterni o incorporati direttamente (embedded) tramite iframe all'interno delle pagine del nostro sito (in particolare nell'hub /Biglietti, nelle sezioni /Biglietti/[slug] e nelle schede dedicate agli spettacoli).",
-                    "Quando acquisti un biglietto (tramite la cassa incorporata o sul sito Eventfrog), la transazione avviene tramite connessione cifrata diretta con i server di Eventfrog AG. I dati anagrafici, di recapito e di pagamento necessari al perfezionamento dell'ordine vengono trattati direttamente da Eventfrog AG in qualità di titolare indipendente e fornitore del servizio, in piena conformità alla Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
-                    "La compagnia Gli Attomatti riceve unicamente i dati necessari per la gestione degli ingressi in sala (nominativo, tipologia di biglietto, codice QR) e non ha accesso né archivia dati di carte di credito o coordinate bancarie. Per l'informativa completa di Eventfrog AG consultare: eventfrog.ch/it/privacy.html."
-                ],
-                "privacy_url": "https://eventfrog.ch/it/privacy.html"
-            },
-            "tally": {
-                "title": "Moduli di Registrazione, Iscrizione e Contatto Incorporati (Tally.so)",
-                "paragraphs": [
-                    "Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci) e per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su /Saalvermietung), utilizziamo la piattaforma di moduli interattivi fornita da Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
-                    "I moduli possono essere compilati tramite incorporamento diretto (iframe embed) all'interno delle nostre pagine dedicate (nell'hub /Registrazioni, nelle sezioni /Registrazioni/[slug], landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.",
-                    "Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o preferenze) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all'interno dell'Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
-                    "La compagnia teatrale Gli Attomatti utilizza le risposte raccolte unicamente per dare seguito alla specifica finalità per cui sono state fornite (es. invio istruzioni per l'evento, organizzazione della lista presenze, preventivo per l'affitto della sala). I dati non vengono ceduti a terzi né utilizzati per scopi promozionali non autorizzati. I moduli Tally integrati non utilizzano cookie o pixel pubblicitari di profilazione sui rispondenti.",
-                    "Per maggiori informazioni sull'infrastruttura di sicurezza e la gestione privacy di Tally BV consultare: tally.so/help/privacy-policy."
-                ],
-                "privacy_url": "https://tally.so/help/privacy-policy"
-            },
-            "typography_social": {
-                "title": "Risorse tipografiche e social",
-                "fonts_title": "Font tipografici (Google Fonts)",
-                "fonts_text": "Per garantire una resa grafica uniforme, questo sito utilizza font forniti da Google. Il caricamento tecnico di tali risorse può comportare la trasmissione dell'indirizzo IP del visitatore ai server di Google LLC.",
-                "social_title": "Contenuti social Instagram (Soluzione 2-Click)",
-                "social_text": "I post incorporati di Instagram nella home page sono protetti da un meccanismo a due clic (2-Click): all'apertura del sito nessun dato viene trasmesso a Meta. Solo cliccando attivamente su \"Carica questo post\" viene stabilita una connessione diretta con i server di Instagram."
-            },
-            "photo_rights": {
-                "title": "Fotografie e riprese durante gli eventi (Diritto all'immagine)",
-                "paragraphs": [
-                    "Durante le rappresentazioni teatrali, i workshop e gli eventi promossi dalla compagnia, possono essere realizzate riprese fotografiche e audiovisive destinate alla documentazione artistica e alla comunicazione istituzionale sui nostri canali ufficiali (sito web e social network quali Instagram e Facebook).",
-                    "Nel pieno rispetto della nLPD e della sfera privata di ciascuno, chiunque partecipi ha la facoltà di opporsi in qualsiasi momento alla propria ripresa: è sufficiente informare il personale di sala all'ingresso o durante l'evento. Inoltre, è sempre possibile richiedere la rimozione tempestiva di fotografie o video in cui si compare inviando un'email a: compagniateatralegliattomatti@gmail.com."
-                ],
-                "contact_email": "compagniateatralegliattomatti@gmail.com"
-            },
-            "your_rights": {
-                "title": "I tuoi diritti (nLPD & GDPR)",
-                "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per i cookie o gli strumenti di tracciamento. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
-                "contact_email": "compagniateatralegliattomatti@gmail.com"
-            },
-            "third_parties": {
-                "resend": {
-                    "title": "Invio di Notifiche ed Email Transazionali (Resend)",
-                    "paragraphs": [
-                        "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
-                        "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
-                        "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
-                    ],
-                    "privacy_url": "https://resend.com/legal/privacy-policy"
-                }
-            },
-            "resend": {
-                "title": "Invio di Notifiche ed Email Transazionali (Resend)",
-                "paragraphs": [
-                    "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
-                    "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
-                    "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
-                ],
-                "privacy_url": "https://resend.com/legal/privacy-policy"
-            },
-            "recaptcha": {
-                "title": "Sicurezza Tecnica e Protezione Anti-Bot (Google reCAPTCHA)",
-                "paragraphs": [
-                    "Per proteggere i moduli telematici e le finestre modali di richiesta email contro abusi, spam automatizzato e attacchi di tipo brute-force, il nostro sito impiega il servizio di sicurezza reCAPTCHA fornito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
-                    "reCAPTCHA analizza il comportamento del visitatore sul modulo (es. tempi di compilazione e indirizzo IP) al fine esclusivo di verificare se l'invio è operato da una persona reale o da uno script bot dannoso. Tale trattamento tecnico è fondato sul nostro legittimo interesse prevalente (art. 6 cpv. 1 lett. f GDPR e art. 31 cpv. 1 nLPD) a garantire la stabilità e la sicurezza informatica del sito web e a prevenire l'inoltro di email fraudolente.",
-                    "L'uso di reCAPTCHA è soggetto alle Norme sulla privacy e ai Termini di servizio di Google: policies.google.com/privacy e policies.google.com/terms."
-                ],
-                "privacy_url": "https://policies.google.com/privacy"
-            }
-        },
-        "locations": {
-            "meta_title": "Teatri & Location — Gli Attomatti",
-            "meta_description": "Indicazioni pratiche e guide fotografiche per raggiungere i teatri e le sale dei nostri spettacoli a Zurigo.",
-            "hub_title": "Teatri & Location",
-            "hub_description": "Indicazioni pratiche e fotografiche per raggiungere i teatri, le sale prove e le location degli eventi teatrali a Zurigo.",
-            "hub_badge_default": "Location Teatrale",
-            "hub_steps_suffix": "tappe fotografiche",
-            "hub_view_directions_label": "Vedi Indicazioni",
-            "hub_empty_title": "Nessuna location configurata",
-            "hub_empty_description": "Non sono al momento presenti guide fotografiche attive.",
-            "default_badge": "Indicazioni Teatro & Location",
-            "google_maps_button_label": "Apri in Google Maps",
-            "public_transport_heading": "Mezzi Pubblici nelle Vicinanze",
-            "transport_tram_title": "Trasporto pubblico",
-            "lines_prefix": "Linee:",
-            "steps_heading": "Come Arrivare Passo-Passo",
-            "step_single_label": "Tappa",
-            "step_plural_label": "Tappe",
-            "click_to_enlarge_label": "🔍 Clicca per ingrandire",
-            "photo_prefix": "📷",
-            "image_alt_fallback": "Foto tappa",
-            "parking_heading": "Parcheggi & Auto",
-            "accessibility_heading": "Accessibilità & Disabilità",
-            "notes_heading": "Informazioni Aggiuntive",
-            "back_link_default_label": "Torna al sito",
-            "bottom_back_button_label": "Torna alla pagina principale",
-            "not_found_title": "Location in fase di allestimento",
-            "not_found_description": "Le indicazioni per questa location non sono ancora disponibili o sono in fase di aggiornamento nella bozza.",
-            "not_found_button_label": "Tutte le Location",
-            "detail_meta_title_suffix": "— Come Raggiungerci",
-            "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
-            "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
-            "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
-        }
+      ]
     },
-    "landings": [
+    {
+      "label": "Iniziative",
+      "href": "/Iniziative",
+      "sublinks": [
         {
-            "id": "landing-cineforum",
-            "slug": "cineforum",
-            "title": "Cineforum — Nel passo lento della meraviglia",
-            "active": true,
-            "theme_color": "gold",
-            "header": {
-                "logo_text": "UNITRE & Gli Attomatti",
-                "cta_label": "Prenota",
-                "cta_href": "#registrazione",
-                "nav_links": [],
-                "subtitle": "Cinema a Zurigo",
-                "logo_image": ""
-            },
-            "sticky_bar": {
-                "enabled": false,
-                "text": "Cineforum",
-                "cta_label": "Prenota",
-                "cta_href": "#registrazione"
-            },
-            "blocks": [
-                {
-                    "id": "b-cineforum-hero",
-                    "type": "hero",
-                    "anchor": "hero",
-                    "badge": "UNITRE & Gli Attomatti presentano",
-                    "title": "Cineforum",
-                    "tagline": "Nel passo lento della meraviglia \nUn invito a rallentare e ad abitare il tempo del cinema",
-                    "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-                    "primary_cta_label": "Prenota",
-                    "primary_cta_href": "#registrazione",
-                    "secondary_cta_label": "Guarda il Programma",
-                    "secondary_cta_href": "#programma",
-                    "hero_image_align": "left"
-                },
-                {
-                    "id": "b-cineforum-synopsis",
-                    "type": "synopsis",
-                    "anchor": "sinossi",
-                    "title": "Nel passo lento della meraviglia",
-                    "text": "Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.\n\nIl titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.\n\nEntrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.",
-                    "quote": "Produciamo più velocemente e quindi abbiamo più tempo. Ma ne siamo proprio sicuri?",
-                    "quote_author": "Rosaria Carpio, UNITRE"
-                },
-                {
-                    "id": "b-cineforum-programma",
-                    "type": "faq",
-                    "anchor": "programma",
-                    "title": "I 5 Film in Programmazione",
-                    "items": [
-                        {
-                            "question": "\"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 novembre 2026, ore 18:00",
-                            "answer": "Un capolavoro assoluto di comicità visiva e raffinatezza. Il tempo della vacanza al mare si trasforma in una serie esilarante di piccoli equivoci e gesti surreali che rivelano le manie e la poesia dell'animo umano.\n<b>Nota: il titolo potrebbe subire variazioni</b>"
-                        },
-                        {
-                            "question": "\"I vitelloni\" di Federico Fellini — 16 gennaio 2027, ore 18:00",
-                            "answer": "Il primo grande trionfo internazionale di Fellini. Il ritratto indimenticabile di cinque giovani sognatori nella provincia romagnola, sospesi tra l'ozio delle serate invernali, il desiderio di partire e la paura di crescere."
-                        },
-                        {
-                            "question": "\"Pane e tulipani\" di Silvio Soldini — 20 febbraio 2027, ore 18:00",
-                            "answer": "Una commedia luminosa e gentile vincitrice di 9 David di Donatello. Dimenticata in autogrill durante una gita di famiglia, la casalinga Rosalba decide di non tornare a casa e inventarsi una nuova vita meravigliosa a Venezia."
-                        },
-                        {
-                            "question": "\"Una storia vera\" (The Straight Story) di David Lynch — 20 marzo 2027, ore 18:00",
-                            "answer": "Il commovente viaggio reale dell'anziano Alvin Straight a bordo di un trattorino tosaerba attraverso gli orizzonti dell'Iowa e del Wisconsin per fare pace con il fratello malato. Una meditazione universale sul perdono e sulla lentezza del cammino."
-                        },
-                        {
-                            "question": "\"Tempi moderni\" di Charlie Chaplin — 3 ottobre 2026, ore 18:00",
-                            "answer": "La satira più celebre e profonda sull'alienazione dei ritmi frenetici moderni. Charlot alle prese con gli ingranaggi della fabbrica in un inno imperituro alla dignità, alla tenerezza e alla risata liberatoria. Apertura ufficiale della rassegna."
-                        }
-                    ]
-                },
-                {
-                    "id": "b-cineforum-details",
-                    "type": "event_details",
-                    "anchor": "dettagli",
-                    "title": "Prossimo appuntamento",
-                    "info_badge": "Prenotazione obbligatoria",
-                    "date": "Sabato 14 novembre, ore 18:00",
-                    "location": "Balberstrasse 47, 8038 Zürich",
-                    "location_href": "/Location/sala-wollishofen",
-                    "price": "Offerta Libera",
-                    "cta_label": "Prenota",
-                    "cta_href": "#registrazione"
-                },
-                {
-                    "id": "b-cineforum-gallery",
-                    "type": "gallery",
-                    "anchor": "locandina",
-                    "title": "La Locandina",
-                    "images": [
-                        {
-                            "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-                            "alt": "Locandina Cineforum Nel passo lento della meraviglia",
-                            "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro",
-                            "no_crop": true
-                        }
-                    ]
-                },
-                {
-                    "id": "b-1791100510424",
-                    "type": "gallery",
-                    "title": "Alcune immagini del primo appuntamento",
-                    "images": [
-                        {
-                            "url": "/images/1791099916565-cwdb-P00_7892.webp",
-                            "alt": "Momento di discussione e confronto dopo il film"
-                        },
-                        {
-                            "url": "/images/1791099912910-ha2u-P00_7908.webp",
-                            "alt": "Pubblico in sala durante la proiezione del primo appuntamento"
-                        },
-                        {
-                            "url": "/images/1791099914761-g1g0-P00_7889_01.webp",
-                            "alt": "Momento di discussione e confronto dopo il film"
-                        }
-                    ]
-                },
-                {
-                    "id": "b-cineforum-faq",
-                    "type": "faq",
-                    "anchor": "faq",
-                    "title": "Domande Frequenti",
-                    "items": [
-                        {
-                            "question": "Come funziona l'ingresso a offerta libera?",
-                            "answer": "L'evento è aperto a tutti gli appassionati con ingresso a offerta libera per supportare l'organizzazione e la sala. Per gli iscritti a UNITRE Zurigo, la partecipazione a tutti e cinque gli incontri è già interamente compresa nella quota sociale annuale. In ogni caso, è necessaria la prenotazione."
-                        },
-                        {
-                            "question": "Perché è richiesta la prenotazione?",
-                            "answer": "La sala ABZ Saal ha una capienza confortevole ma limitata. Prenotare in anticipo garantisce a tutti un posto a sedere ottimale e ci permette di organizzare al meglio lo spazio in sala."
-                        },
-                        {
-                            "question": "Posso partecipare solo a singole date?",
-                            "answer": "Assolutamente sì. Puoi scegliere di seguire l'intero percorso o iscriverti ai singoli titoli che ti incuriosiscono di più. Ti invitiamo a iscriverti a ogni singola serata: il modulo di registrazione è già disponibile."
-                        },
-                        {
-                            "question": "In che lingua sono proiettati i film?",
-                            "answer": "I film sono offerti in lingua italiana."
-                        },
-                        {
-                            "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
-                            "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Le indicazioni dettagliate sono disponibili [qui](/Location/sala-wollishofen)."
-                        },
-                        {
-                            "question": "Il programma potrebbe subire variazioni?",
-                            "answer": "Purtroppo sì. La proiezione dei film è soggetta alla disponibilità dei diritti d'autore e ad altre questioni tecniche. Per questi motivi, i film in visione nelle date potrebbero variare. Sarà nostra cura aggiornare prontamente questa pagina e avvisare chi si sia già iscritto prima del cambiamento."
-                        }
-                    ]
-                },
-                {
-                    "id": "b-1791027853708",
-                    "type": "tally",
-                    "title": "Registrati per il prossimo appuntamento",
-                    "subtitle": "",
-                    "tally_url": "https://tally.so/r/Eky7ON",
-                    "fallback_label": "Apri il modulo",
-                    "show_privacy_note": true,
-                    "anchor": "registrazione"
-                },
-                {
-                    "id": "b-1791027943995",
-                    "type": "closing_cta",
-                    "title": "Vuoi scoprire le altre serate?",
-                    "text": "Unisciti a noi per i prossimi appuntamenti. Puoi già registrarti oggi!",
-                    "cta_label": "Scopri di più",
-                    "cta_href": "/Iniziative/cineforum"
-                }
-            ],
-            "theme": {
-                "preset": "gold",
-                "background": "#f2e2d3",
-                "foreground": "#09090b",
-                "primary": "#5c0809",
-                "primaryForeground": "#ffffff",
-                "secondary": "#9C523A",
-                "secondaryForeground": "#ffffff",
-                "accent": "#D4AF37",
-                "accentForeground": "#ffffff",
-                "muted": "#ffffff"
-            }
+          "label": "Cineforum",
+          "href": "/Iniziative/cineforum"
         }
-    ],
-    "ticketing_hub": {
-        "active": true,
-        "title": "Biglietti",
-        "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento.",
-        "buy_ticket_cta": "Acquista Biglietto",
-        "details_cta": "Dettagli",
-        "empty_title": "Nessuna prevendita aperta",
-        "empty_description": "Al momento non ci sono biglietti in vendita diretta. Scopri il nostro cartellone e i prossimi spettacoli in arrivo!",
-        "view_shows_cta": "Vedi Spettacoli",
-        "checkout_page": {
-            "default_back_link": "Torna al sito",
-            "terms_link": "Termini di Biglietteria",
-            "default_category": "Biglietteria Ufficiale",
-            "iframe_trouble_notice": "Difficoltà di visualizzazione con il riquadro? Puoi completare l'acquisto sul portale esterno:",
-            "open_on_eventfrog": "Apri su Eventfrog",
-            "not_configured_title": "Prevendita non ancora configurata",
-            "not_configured_description": "La prevendita per questa pagina non è al momento collegata a un evento attivo.",
-            "secure_transaction_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
-            "ssl_encryption_notice": "Crittografia SSL a 256-bit conforme agli standard di sicurezza bancari",
-            "rules_refunds_link": "Regolamento e Rimborsi",
-            "privacy_link": "Informativa Privacy"
-        }
+      ]
     },
-    "ticketing_pages": [],
-    "registration_hub": {
-        "active": true,
-        "title": "Registrazioni",
-        "description": "Questa pagina raccoglie tutte le registrazioni attive al momento.",
-        "register_online_cta": "Iscriviti Online",
-        "info_cta": "Info",
-        "empty_title": "Nessuna iscrizione aperta",
-        "empty_description": "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!",
-        "view_initiatives_cta": "Vedi Iniziative",
-        "registration_page": {
-            "default_back_link": "Torna al sito",
-            "privacy_link": "Informativa Privacy",
-            "default_category": "Modulo di Iscrizione",
-            "iframe_trouble_notice": "Difficoltà di compilazione? Puoi aprire il modulo in una nuova finestra:",
-            "open_on_tally": "Apri su Tally",
-            "not_configured_title": "Modulo non ancora configurato",
-            "not_configured_description": "Il modulo di registrazione per questa pagina non è al momento collegato a un form Tally attivo.",
-            "secure_form_notice": "Modulo sicuro e conforme nLPD / GDPR (Tally BV, server UE)",
-            "data_privacy_notice": "Protezione e trattamento confidenziale dei dati secondo la nLPD",
-            "terms_link": "Termini & Regolamento",
-            "contact_link": "Hai domande? Contattaci"
-        }
-    },
-    "registration_pages": [
+    {
+      "label": "Contatti",
+      "href": "/Contatti"
+    }
+  ],
+  "pages": {
+    "home": {
+      "meta_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
+      "meta_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Scopri i nostri spettacoli, le commedie in scena a Zurigo e acquista i biglietti.",
+      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
+      "fallback_show_alt": "Spettacolo",
+      "slide_aria_prefix": "Slide",
+      "discover_story_cta": "Scopri la nostra storia",
+      "hero": {
+        "title": "",
+        "subtitle": "Compagnia teatrale amatoriale di lingua italiana a Zurigo.",
+        "primary_cta_label": "",
+        "primary_cta_href": "",
+        "secondary_cta_label": "",
+        "secondary_cta_href": ""
+      },
+      "upcoming_shows": [
         {
-            "id": "reg-1790954268119",
-            "title": "Le vacanze di Monsieur Hulot",
-            "slug": "14-11-26",
-            "category": "Cineforum",
-            "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
-            "tally_url": "https://tally.so/r/Eky7ON",
-            "back_link_label": "Torna indietro",
-            "back_link_href": "/Iniziative/cineforum",
-            "active": true
-        },
-        {
-            "id": "reg-1790954967375",
-            "title": "I vitelloni",
-            "slug": "16-01-27",
-            "category": "Cineforum",
-            "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
-            "tally_url": "https://tally.so/r/2EQGpV",
-            "back_link_label": "Torna indietro",
-            "back_link_href": "/Iniziative/cineforum",
-            "active": true
+          "active": true,
+          "title": "Cineforum",
+          "presenter": "Gli Attomatti e UNITRE presentano",
+          "tagline": "Nel passo lento della meraviglia",
+          "date": "Mensilmente, dal 3 ottobre",
+          "location": "Balberstrasse 47, Zurigo (Wollishofen)",
+          "location_href": "/Location/sala-wollishofen",
+          "directions_badge_label": null,
+          "cta": "Info & Prenotazioni",
+          "cta_href": "/Iniziative/cineforum",
+          "secondary_cta": "Offerta Libera",
+          "secondary_cta_href": "",
+          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "image_align": "left"
         },
         {
-            "id": "reg-1790954972841",
-            "title": "Pane e tulipani",
-            "slug": "20-02-27",
-            "category": "Cineforum",
-            "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
-            "tally_url": "https://tally.so/r/Gx8AZj",
-            "back_link_label": "Torna indietro",
-            "back_link_href": "/Iniziative/cineforum",
-            "active": true
-        },
-        {
-            "id": "reg-1790954973513",
-            "title": "Una storia vera",
-            "slug": "20-03-27",
-            "category": "Cineforum",
-            "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
-            "tally_url": "https://tally.so/r/obXLq1",
-            "back_link_label": "Torna indietro",
-            "back_link_href": "/Iniziative/cineforum",
-            "active": true
+          "active": true,
+          "title": "Non Sottovalutare i 40",
+          "presenter": "La Biennale Svizzera di Teatro Amatoriale presenta",
+          "tagline": "Uno spettacolo degli Attomatti",
+          "date": "24 Ottobre 2026, ore 15:00",
+          "location": "Hotel Scuol Palace, Scuol",
+          "location_href": "/Location/scuol-palace",
+          "directions_badge_label": null,
+          "cta": "Info",
+          "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
+          "secondary_cta": "Scopri lo spettacolo",
+          "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
+          "image": "/images/1790869266263-non-sottovalutare-40.webp"
         }
-    ],
-    "integrations": {
-        "google_analytics": {
-            "enabled": true,
-            "measurement_id": "G-S3X4GHJRGR"
-        },
-        "meta_pixel": {
-            "enabled": false,
-            "pixel_id": ""
-        },
-        "eventfrog": {
-            "enabled": false
-        },
-        "tally": {
-            "enabled": false
-        },
-        "cookie_consent": {
-            "version": 1
-        },
-        "events": {
-            "view_content": true,
-            "initiate_checkout": true,
-            "contact": true,
-            "lead": true,
-            "social_click": true
-        }
-    },
-    "ui": {
-        "navbar": {
-            "main_nav_aria_label": "Navigazione principale",
-            "mobile_nav_aria_label": "Navigazione mobile",
-            "open_menu_aria_label": "Apri menu",
-            "close_menu_aria_label": "Chiudi menu",
-            "buy_tickets_label": "Acquista Biglietti",
-            "contact_us_label": "Contattaci / Scrivici"
-        },
-        "footer": {
-            "nav_title": "Sito",
-            "contact_title": "Contattaci",
-            "contact_cta_label": "Scrivici ora",
-            "copyright_notice": "Tutti i diritti riservati.",
-            "legal_links": {
-                "terms": "Termini",
-                "impressum": "Impressum",
-                "privacy": "Privacy"
-            }
-        },
-        "not_found": {
-            "meta_title": "Pagina non trovata",
-            "meta_description": "La pagina cercata non è stata trovata o è stata spostata.",
-            "badge": "Errore 404 • Fuori Scena",
-            "code": "404",
-            "heading": "Questa scena è ancora dietro le quinte",
-            "message": "Sembra che il copione abbia preso un’altra direzione o che la pagina cercata sia stata spostata nel foyer.",
-            "home_button": "Torna alla Home",
-            "shows_button": "I Nostri Spettacoli"
-        },
-        "lightbox": {
-            "close_aria_label": "Chiudi galleria",
-            "prev_aria_label": "Foto precedente",
-            "next_aria_label": "Foto successiva",
-            "default_alt": "Foto"
-        },
-        "cookie_banner": {
-            "title": "Preferenze sui Cookie & Privacy",
-            "badge": "Approccio Trasparente (Opt-in)",
-            "new_tools_notice": "Nuovi strumenti attivati: richiesto consenso",
-            "description": "Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi ({ga}) e marketing ({meta}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.",
-            "customize_open": "Personalizza scelte",
-            "customize_close": "Chiudi personalizzazione",
-            "privacy_policy_link": "Informativa Privacy",
-            "reject_all_label": "Rifiuta non necessari",
-            "accept_all_label": "Accetta tutti",
-            "save_preferences_label": "Salva preferenze",
-            "categories": {
-                "necessary": {
-                    "title": "Cookie Tecnici Necessari",
-                    "badge": "Sempre Attivi",
-                    "description": "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi."
-                },
-                "analytics": {
-                    "title": "Statistici e Analisi (Google Analytics 4)",
-                    "description": "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati."
-                },
-                "marketing": {
-                    "title": "Marketing e Social (Meta Pixel / Instagram)",
-                    "description": "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook."
-                }
-            }
-        },
-        "privacy_consent_button": {
-            "label": "Modifica preferenze sui cookie"
-        },
-        "dev_gate": {
-            "badge": "Ambiente di Sviluppo",
-            "title": "Gli Attomatti",
-            "description": "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:",
-            "live_site_cta": "Vai al sito ufficiale (gliattomatti.ch)",
-            "divider_label": "Accesso Team & Anteprima",
-            "form_prompt": "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:",
-            "placeholder": "Inserisci password...",
-            "error_message": "Password errata. Riprova.",
-            "submit_label": "Sblocca e prosegui",
-            "cookie_notice": "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser."
-        },
-        "preview_banner": {
-            "aria_label": "Modalità Anteprima Bozza",
-            "badge": "Anteprima Live",
-            "message": "Stai visualizzando il sito con le modifiche non pubblicate sincronizzate in tempo reale dal CMS.",
-            "cms_link": "Pannello CMS",
-            "cms_link_title": "Torna al pannello di amministrazione",
-            "exit_button": "Esci dall'anteprima",
-            "exit_button_title": "Esci dalla modalità anteprima e torna alla versione pubblica"
-        },
-        "shared_detail": {
-            "dates_title": "Date e Biglietti",
-            "details_title": "Info Spettacolo",
-            "empty_dates_message": "Nessuna data programmata al momento.",
-            "back_to_archive": "Torna all'archivio",
-            "back_to_initiatives": "Torna all'elenco iniziative",
-            "back_to_home": "Torna alla home",
-            "year_prefix": "Anno",
-            "season_prefix": "Stagione",
-            "edition_prefix": "Edizione"
-        },
-        "landing_defaults": {
-            "preview_loading": "Caricamento anteprima...",
-            "back_to_home": "Torna alla Home",
-            "back_to_site": "Torna al sito",
-            "menu_aria_label": "Menu navigazione ancore",
-            "header_subtitle": "Teatro a Zurigo",
-            "hero_alt": "Hero",
-            "event_details_title": "Data e Informazioni",
-            "date_time_label": "Data & Ora",
-            "location_label": "Luogo",
-            "google_maps_label": "Indicazioni",
-            "ticket_label": "Biglietto",
-            "synopsis_title": "La Trama",
-            "synopsis_image_alt": "Foto spettacolo",
-            "gallery_image_alt": "Scena",
-            "reviews_title": "Dicono di Noi",
-            "faq_title": "Domande Frequenti",
-            "eventfrog_badge": "Biglietteria Ufficiale",
-            "eventfrog_title": "Acquista Biglietti",
-            "eventfrog_iframe_title": "Biglietti Eventfrog",
-            "eventfrog_fallback_trouble": "Problemi con il riquadro? Puoi completare l'acquisto anche sul portale esterno:",
-            "eventfrog_fallback_button": "Apri su Eventfrog",
-            "eventfrog_not_configured": "La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell'Admin.",
-            "eventfrog_security_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
-            "eventfrog_terms_link": "Termini di Biglietteria",
-            "eventfrog_privacy_link": "Informativa Privacy",
-            "tally_badge": "Modulo di Iscrizione",
-            "tally_title": "Iscriviti o Registrati",
-            "tally_iframe_title": "Modulo Tally",
-            "tally_fallback_trouble": "Problemi con il modulo? Puoi compilarlo a schermo intero:",
-            "tally_fallback_button": "Apri su Tally",
-            "tally_not_configured": "Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell'Admin.",
-            "tally_security_notice": "Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)",
-            "tally_privacy_link": "Informativa Privacy",
-            "tally_contact_link": "Contattaci",
-            "closing_cta_title": "Non Perdere lo Spettacolo",
-            "footer_home_link": "Visita il sito ufficiale Gli Attomatti",
-            "footer_copyright": "Tutti i diritti riservati. Zurigo, Svizzera."
-        },
-        "carousel": {
-            "fallback_alt": "Foto",
-            "aria_prefix": "Foto",
-            "prev_aria_label": "Foto precedente",
-            "next_aria_label": "Foto successiva"
-        }
-    },
-    "emails": {
-        "settings": {
-            "from_name": "Gli Attomatti",
-            "from_email": "no-reply@mail.gliattomatti.ch",
-            "reply_to": "compagniateatralegliattomatti@gmail.com",
-            "footer_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
-            "privacy_note": "Ricevi questa email in seguito alla tua registrazione a un nostro evento o iniziativa teatrale.",
-            "test_recipient": "info@gliattomatti.ch",
-            "dlq_alert_email": "marco.dalmolin.1991@gmail.com",
-            "dlq_alert_enabled": true
-        },
-        "templates": [
-            {
-                "id": "cineforum-confirmation",
-                "name": "Conferma Iscrizione Cineforum",
-                "enabled": true,
-                "theme": "cineforum",
-                "subject": "Iscrizione confermata: {{data.formName}}",
-                "preheader": "Abbiamo registrato la tua prenotazione per la serata di cineforum",
-                "badge": "Cineforum",
-                "heading": "La tua prenotazione è confermata!",
-                "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
-                "event_date": "",
-                "event_location": "",
-                "cta_label": "Tutte le date del Cineforum",
-                "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
-                "field_mapping": {
-                    "sample_payload_json": "{\n  \"eventId\": \"10356a55-a1ac-450c-9867-55796553770f\",\n  \"createdAt\": \"2026-10-04T14:14:04.897Z\",\n  \"data\": {\n    \"responseId\": \"a78e6b0c-dedd-48cb-9404-1b42c10dedd8\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"2EQGpV\",\n    \"formName\": \"Cineforum - I vitelloni - 16 Gennaio 2027, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/2EQGpV/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/2EQGpV/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"fields\": [\n      {\n        \"key\": \"question_2xdg0e\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_xNbLKd\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_ZRkL0V\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_V1Oy8g\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
-                    "recipient_email_path": "data.fields[label=Email].value",
-                    "recipient_name_path": "data.fields[label=Nome e Cognome].value"
-                },
-                "sender_profile": {
-                    "from_name": "Gli Attomatti & UNITRE",
-                    "from_email": "cineforum@mail.gliattomatti.ch",
-                    "reply_to": "compagniateatralegliattomatti@gmail.com"
-                },
-                "subcases": [
-                    {
-                        "id": "cineforum-1",
-                        "name": "Le vacanze di Monsieur Hulot (14 Novembre)",
-                        "custom_fields": {
-                            "event_title": "Le vacanze di Monsieur Hulot",
-                            "event_date": "14 novembre 2026, ore 18:00"
-                        }
-                    },
-                    {
-                        "id": "cineforum-2",
-                        "name": "I vitelloni",
-                        "custom_fields": {
-                            "event_title": "I vitelloni",
-                            "event_date": "16 gennaio 2027, ore 18:00"
-                        }
-                    },
-                    {
-                        "id": "cineforum-3",
-                        "name": "Pane e tulipani",
-                        "custom_fields": {
-                            "event_title": "Pane e tulipani",
-                            "event_date": "20 febbraio 2027, ore 18:00"
-                        }
-                    },
-                    {
-                        "id": "cineforum-4",
-                        "name": "Una storia vera",
-                        "custom_fields": {
-                            "event_title": "Una storia vera",
-                            "event_date": "20 marzo 2027, ore 18:00"
-                        }
-                    }
-                ],
-                "blocks": [
-                    {
-                        "id": "block-header",
-                        "type": "header",
-                        "brand_name": "GLI ATTOMATTI & UNITRE",
-                        "tagline": "",
-                        "align": "center"
-                    },
-                    {
-                        "id": "block-1791142683214",
-                        "type": "image",
-                        "image_url": "https://gli-attomatti.vercel.app/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-                        "alt": "Locandina Evento",
-                        "align": "full",
-                        "full_width": true
-                    },
-                    {
-                        "id": "block-1791126590992",
-                        "type": "divider",
-                        "style": "spacer",
-                        "spacing": "md"
-                    },
-                    {
-                        "id": "block-heading",
-                        "type": "heading",
-                        "text": "La tua prenotazione è confermata!",
-                        "level": "h1",
-                        "align": "left"
-                    },
-                    {
-                        "id": "block-body",
-                        "type": "text",
-                        "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**, in programma il **{{event_date}}**. Numero partecipanti: **{{data.fields[label=Numero di partecipanti].value}}**",
-                        "align": "left"
-                    },
-                    {
-                        "id": "block-1791142839814",
-                        "type": "calendar",
-                        "header_label": "",
-                        "title": "Cineforum - {{event_title}}",
-                        "start_date": "{{event_date}}",
-                        "end_date": "",
-                        "location": "Balberstrasse 47, Zurigo (Wollishofen)",
-                        "description": "",
-                        "align": "center"
-                    },
-                    {
-                        "id": "block-1791126717083",
-                        "type": "text",
-                        "content": "Siamo felici di averti con noi in sala! \n\nSe dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
-                        "align": "left"
-                    },
-                    {
-                        "id": "block-button",
-                        "type": "button",
-                        "label": "Ulteriori informazioni",
-                        "url": "https://gliattomatti.ch/landing/cineforum",
-                        "align": "center",
-                        "style": "pill"
-                    },
-                    {
-                        "id": "block-divider",
-                        "type": "divider",
-                        "style": "gradient",
-                        "spacing": "md"
-                    },
-                    {
-                        "id": "block-1791118336869",
-                        "type": "image",
-                        "image_url": "https://gliattomatti.ch/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-                        "alt": "Locandina Evento",
-                        "align": "center",
-                        "full_width": false
-                    },
-                    {
-                        "id": "block-social",
-                        "type": "social_links",
-                        "instagram_url": "https://instagram.com/gliattomatti",
-                        "website_url": "https://gliattomatti.ch",
-                        "align": "center"
-                    },
-                    {
-                        "id": "block-footer",
-                        "type": "footer",
-                        "legal_text": "Gli Attomatti & UNITRE • Zurigo, Svizzera",
-                        "privacy_note": "Ricevi questa email in seguito a una registrazione o richiesta sul sito gliattomatti.ch",
-                        "show_privacy_link": true
-                    }
-                ],
-                "customColors": {
-                    "muted": "#ffffff"
-                }
-            }
+      ],
+      "introduction": {
+        "title": "Gli Attomatti",
+        "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e hanno voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione.",
+        "story_button_label": null,
+        "story_button_href": null,
+        "fallback_alt": null,
+        "images": [
+          {
+            "url": "/images/1782553648895-DSD00540.webp",
+            "alt": "ImmagineGruppoCenerentola"
+          },
+          {
+            "url": "/images/1782553714122-DSD02274.webp",
+            "alt": "Trasferta Cenerentola"
+          },
+          {
+            "url": "/images/1782553781605-DSC_0682.webp",
+            "alt": "Riunione pre show Cenerentola"
+          },
+          {
+            "url": "/images/1778523241763-DSC_0954.webp",
+            "alt": "Palmizio"
+          },
+          {
+            "url": "/images/1782553836322-DSC_0980.webp",
+            "alt": "Cenerentola"
+          },
+          {
+            "url": "/images/1782553876069-DSC_1167.webp",
+            "alt": "Conti"
+          },
+          {
+            "url": "/images/1782553917098-DSC_1410.webp",
+            "alt": "Sorelle"
+          },
+          {
+            "url": "/images/1782553964559-DSC_1764.webp",
+            "alt": "Matrigna"
+          },
+          {
+            "url": "/images/1782553997297-DSC_1840.webp",
+            "alt": "Principe"
+          }
         ]
+      },
+      "instagram_feed": {
+        "enabled": false,
+        "badge": "Social & Backstage",
+        "title": "Seguici su Instagram",
+        "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
+        "handle": "@gliattomatti",
+        "profile_url": "https://www.instagram.com/gliattomatti/",
+        "cta_label": "Segui @gliattomatti",
+        "prev_aria": "Precedente",
+        "next_aria": "Successivo",
+        "enable_all_label": "Abilita tutti i post",
+        "card": {
+          "badge": "Protezione Privacy (2-Click)",
+          "default_title": "Post Instagram",
+          "privacy_explanation": "Per tutelare la tua privacy, i contenuti esterni di Meta sono bloccati. Cliccando accetti il caricamento dell'incorporamento da Instagram e la trasmissione del tuo indirizzo IP a Meta Platforms Ireland Ltd.",
+          "load_post_button": "Carica questo post",
+          "show_all_button": "Mostra tutti i post",
+          "privacy_link": "Informativa Privacy",
+          "open_on_instagram": "Apri su Instagram",
+          "loading_text": "Caricamento post..."
+        },
+        "posts": []
+      }
     },
-    "locations": [
+    "chi_siamo": {
+      "title": "Chi Siamo",
+      "description": "La compagnia teatrale Gli Attomatti di Zurigo.",
+      "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
+      "meta_description": "La storia, la missione e la passione della compagnia Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
+      "keywords": [
+        "chi siamo teatro zurigo",
+        "compagnia teatrale italiana zurigo",
+        "teatro amatoriale zurigo"
+      ],
+      "photo_alt": "Foto",
+      "photo_aria_prefix": "Foto",
+      "carousel_photo_aria": "Foto",
+      "fallback_photo_alt": "Foto",
+      "year_prefix": "Anno ",
+      "content_sections": [],
+      "navigation_links": [
         {
-            "id": "loc-1791226340633",
-            "slug": "sala-wollishofen",
-            "title": "Wollishofen",
-            "venue_name": "ABZ-Gemeinschaftsraum",
-            "address": "Balberstrasse 47, 8038 Zürich",
-            "google_maps_url": "https://maps.app.goo.gl/pz3aigqZoPrjEaqE6",
-            "active": true,
-            "hero_image": "/images/1782553290530-TheaterCurtain.webp",
-            "description": "",
-            "public_transport": [
-                {
-                    "type": "tram",
-                    "stop": "Wollishoferplatz",
-                    "lines": "",
-                    "walking_time": "5 min a piedi",
-                    "types": [
-                        "tram",
-                        "bus"
-                    ],
-                    "line_badges": [
-                        {
-                            "number": "7",
-                            "bg_color": "#000000",
-                            "text_color": "#ffffff"
-                        },
-                        {
-                            "number": "184",
-                            "bg_color": "#ffffff",
-                            "text_color": "#000000"
-                        },
-                        {
-                            "number": "185",
-                            "bg_color": "#ffffff",
-                            "text_color": "#000000"
-                        },
-                        {
-                            "number": "N18",
-                            "bg_color": "#000000",
-                            "text_color": "#ffff00"
-                        }
-                    ]
-                },
-                {
-                    "type": "tram",
-                    "stop": "Butzenstrasse",
-                    "lines": "",
-                    "walking_time": "5 min a piedi",
-                    "types": [
-                        "tram",
-                        "bus"
-                    ],
-                    "line_badges": [
-                        {
-                            "number": "7",
-                            "bg_color": "#000000",
-                            "text_color": "#ffffff"
-                        },
-                        {
-                            "number": "184",
-                            "bg_color": "#ffffff",
-                            "text_color": "#000000"
-                        },
-                        {
-                            "number": "185",
-                            "bg_color": "#ffffff",
-                            "text_color": "#000000"
-                        },
-                        {
-                            "number": "70",
-                            "bg_color": "#fafafa",
-                            "text_color": "#000000"
-                        },
-                        {
-                            "number": "N18",
-                            "bg_color": "#000000",
-                            "text_color": "#ffff00"
-                        }
-                    ]
-                },
-                {
-                    "type": "tram",
-                    "stop": "Wollishofen",
-                    "lines": "",
-                    "walking_time": "20 min a piedi",
-                    "types": [
-                        "train"
-                    ],
-                    "line_badges": [
-                        {
-                            "number": "S8",
-                            "bg_color": "#581e83",
-                            "text_color": "#ffffff"
-                        },
-                        {
-                            "number": "S24",
-                            "bg_color": "#193969",
-                            "text_color": "#ffffff"
-                        }
-                    ]
-                }
-            ],
-            "steps": [],
-            "parking_info": "",
-            "accessibility_info": "",
-            "notes": "",
-            "back_link_label": "Torna indietro",
-            "back_link_href": "/",
-            "badge": "",
-            "category_badge": ""
+          "label": "Home",
+          "href": "/",
+          "icon": "users",
+          "visible": true
+        },
+        {
+          "label": "Dicono di Noi",
+          "href": "/Chi_Siamo/Parlano_di_noi",
+          "icon": "message-square",
+          "visible": true
         }
+      ]
+    },
+    "attori": {
+      "title": "Le Persone",
+      "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
+      "description": "Le persone che rendono possibile la magia del teatro Attomatti.",
+      "meta_title": "Gli Attori & Il Cast — Gli Attomatti",
+      "meta_description": "Scopri gli attori, i registi e il cast della compagnia teatrale Gli Attomatti a Zurigo: le persone che danno vita agli spettacoli.",
+      "keywords": [
+        "attori teatro zurigo",
+        "cast teatrale",
+        "registi teatro zurigo",
+        "recitazione italiana zurigo"
+      ],
+      "empty_list": "Nessun membro attualmente inserito.",
+      "empty_message": "Nessun membro attualmente inserito.",
+      "shows_heading": "Spettacoli e Ruoli",
+      "back_label": "Torna a Chi Siamo",
+      "back_href": "/Chi_Siamo",
+      "back_link_label": "Torna a Chi Siamo",
+      "modal_close_aria": "Chiudi scheda attore",
+      "close_modal_aria": "Chiudi scheda attore",
+      "fallback_actor_alt": "Attore",
+      "default_actor_alt": "Attore",
+      "list": [],
+      "join_us": {
+        "title": "Vuoi unirti a noi?",
+        "text": "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
+        "cta_label": "Contattaci",
+        "cta_href": "/Contatti"
+      }
+    },
+    "parlano_di_noi": {
+      "title": "Dicono di Noi",
+      "description": "Gli Attomatti sulla stampa",
+      "meta_title": "Dicono di Noi — Recensioni & Rassegna Stampa",
+      "meta_description": "Articoli, recensioni, opinioni del pubblico e rassegna stampa sugli spettacoli teatrali della compagnia Gli Attomatti a Zurigo.",
+      "keywords": [
+        "recensioni teatro zurigo",
+        "rassegna stampa teatro",
+        "parlano di noi attomatti"
+      ],
+      "back_label": "Torna a Chi Siamo",
+      "back_href": "/Chi_Siamo",
+      "back_link_label": "Torna a Chi Siamo",
+      "year_prefix": "Anno ",
+      "press": [
+        {
+          "source": "RSI",
+          "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
+          "quote": "Servizio della RSI sul corso di teatro condotto dagli Attomatti e dedicato a Dario Fo, nel centenario della sua nascita.",
+          "date": "2026",
+          "badge_label": "Servizi TV",
+          "visible": true
+        },
+        {
+          "source": "laRegione.ch",
+          "quote": "Articolo sulla Federazione Filodrammatiche della Svizzera italiana di cui gli Attomatti fanno parte dal 2026.",
+          "date": "2026",
+          "source_href": "https://www.laregione.ch/ticino7/ticino7/1935465/compagnie-teatro-amatoriale-ffsi-responsabile-camponovo-quinte",
+          "badge_label": "Articolo di giornale"
+        }
+      ],
+      "press_contact": {
+        "title": "Area Stampa",
+        "text": "Sei un giornalista o un blogger e vuoi parlare della nostra compagnia? Contattaci per ricevere il press kit o per fissare un'intervista.",
+        "cta_label": "Contattaci",
+        "cta_href": "/Contatti"
+      }
+    },
+    "spettacoli": {
+      "title": "I Nostri Spettacoli",
+      "description": "Tutte le produzioni teatrali della compagnia.",
+      "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",
+      "meta_description": "Scopri gli spettacoli teatrali, le commedie e le produzioni in scena della compagnia teatrale Gli Attomatti a Zurigo.",
+      "empty_archive": "Nessuno spettacolo in archivio al momento.",
+      "empty_message": "Nessuno spettacolo in archivio al momento.",
+      "season_prefix": "Stagione",
+      "year_prefix": "Anno ",
+      "discover_cta": "Scopri lo spettacolo",
+      "discover_show_cta": "Scopri lo spettacolo",
+      "back_to_archive_label": "Torna all'archivio",
+      "archive_href": "/Spettacoli",
+      "detail_main_heading": "Lo Spettacolo",
+      "detail_dates_title": "Date e Biglietti",
+      "detail_info_title": "Info Spettacolo",
+      "detail_empty_dates_message": "Nessuna data futura programmata per questo spettacolo.",
+      "detail_cta_tickets_label": "Date e Biglietti",
+      "detail_floating_cta_label": "Biglietti & Date",
+      "not_found_title": "Spettacolo non trovato",
+      "detail": {
+        "back_link_label": "Torna all'Archivio",
+        "season_prefix": "Stagione",
+        "show_heading": "Lo Spettacolo",
+        "dates_title": "Date e Biglietti",
+        "details_title": "Info Spettacolo",
+        "empty_dates": "Nessuna data futura programmata per questo spettacolo.",
+        "not_found_title": "Spettacolo non trovato",
+        "not_found_cta": "Torna all'archivio"
+      },
+      "archive_sections": [
+        {
+          "title": "Non Sottovalutare i 40",
+          "slug": "non-sottovalutare-i-40",
+          "year": "2026",
+          "short_description": "Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta. ",
+          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. <b>Ingresso a pagamento.</b></p><p><i><small>Nota: al momento non siamo a conoscenza della modalità di vendita dei biglietti. Non appena avremo le informazioni, aggorneremo il contenuto di questa pagina</small></i></p>",
+          "dates": [
+            {
+              "date": "24 Ottobre 2026, ore 15:00",
+              "location": "Hotel Scuol Palace, Scuol",
+              "ticket_label": "Info",
+              "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
+              "location_href": "/Location/scuol-palace"
+            }
+          ],
+          "details": [
+            {
+              "label": "Genere",
+              "value": "Commedia"
+            },
+            {
+              "label": "Durata",
+              "value": "30 minuti"
+            },
+            {
+              "label": "Testo & regia",
+              "value": "Domenico Scotti di Carlo"
+            }
+          ],
+          "images": [],
+          "hero_image": "/images/1790869266263-non-sottovalutare-40.webp"
+        }
+      ]
+    },
+    "iniziative": {
+      "title": "Le Nostre Iniziative",
+      "description": "Workshop, corsi di teatro, laboratori ed eventi speciali per scoprire e vivere la magia della scena a Zurigo.",
+      "meta_title": "Iniziative, Corsi & Progetti Teatrali — Gli Attomatti",
+      "meta_description": "Scopri i corsi di teatro, i laboratori e le rassegne culturali della compagnia teatrale Gli Attomatti a Zurigo.",
+      "keywords": [
+        "corsi teatro zurigo",
+        "laboratori teatrali zurigo",
+        "iniziative teatrali",
+        "workshop teatro svizzera"
+      ],
+      "empty_title": "Nuove iniziative in arrivo",
+      "empty_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
+      "empty_archive_title": "Nuove iniziative in arrivo",
+      "empty_archive_description": "Stiamo preparando i prossimi laboratori ed eventi teatrali. Torna a trovarci presto!",
+      "edition_prefix": "Edizione",
+      "year_prefix": "Anno ",
+      "discover_cta": "Scopri l'iniziativa",
+      "discover_initiative_cta": "Scopri l'iniziativa",
+      "back_to_list_label": "Torna all'elenco iniziative",
+      "archive_href": "/Iniziative",
+      "detail_main_heading": "L'Iniziativa",
+      "detail_dates_title": "Date e Iscrizioni",
+      "detail_info_title": "Info Iniziativa",
+      "detail_empty_dates_message": "Nessun calendario al momento programmato.",
+      "detail_cta_tickets_label": "Date e Iscrizioni",
+      "detail_floating_cta_label": "Iscrizioni & Date",
+      "not_found_title": "Iniziativa non trovata",
+      "detail": {
+        "back_link_label": "Torna alle Iniziative",
+        "edition_prefix": "Edizione",
+        "initiative_heading": "L'Iniziativa",
+        "dates_title": "Date e Iscrizioni",
+        "details_title": "Info Iniziativa",
+        "empty_dates": "Nessun calendario al momento programmato.",
+        "not_found_title": "Iniziativa non trovata",
+        "not_found_cta": "Torna all'elenco iniziative"
+      },
+      "archive_sections": [
+        {
+          "title": "Cineforum",
+          "slug": "cineforum",
+          "year": "2026-27",
+          "short_description": "\"Nel passo lento della meraviglia\" è un invito a rallentare il passo e ad abitare il tempo del cinema. Cinque incontri, cinque sguardi sul tempo.",
+          "text": "<p><b>Nel passo lento della meraviglia</b> - <i>Un invito a rallentare il passo e ad abitare il tempo del cinema</i></p><p>Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.</p><p>Il titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.</p><p>Il programma attraversa quasi un secolo di sguardi sul tempo: dalla catena di montaggio di <b>Tempi moderni</b> di Charlie Chaplin alla villeggiatura sospesa di <b>Le vacanze di Monsieur Hulot</b> di Jacques Tati, dall'inerzia giovanile de <b>I vitelloni</b> di Federico Fellini alla fuga inattesa di <b>Pane e tulipani</b> di Silvio Soldini, fino al lunghissimo viaggio a bordo di un tosaerba di <b>Una storia vera</b> di David Lynch. Cinque storie diverse, accomunate da una domanda: che cosa accade quando ci concediamo di rallentare?</p><p>Entrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.</p><p>L'evento è aperto a tutto il pubblico con ingresso a offerta libera, previa prenotazione obbligatoria tramite il modulo di registrazione presente in questa pagina. Per gli iscritti UNITRE l'ingresso è compreso nella quota associativa.</p><p><small><b>Nota: i titoli in programma potrebbero cambiare</b>. Sarà nostra cura aggiornare prontamente questa pagina.</small></p>",
+          "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "detail_cta_tickets_label": "Gli Appuntamenti",
+          "detail_floating_cta_label": "Gli Appuntamenti",
+          "dates": [
+            {
+              "date": "Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "Registrati",
+              "ticket_href": "/Registrazioni/14-11-26",
+              "location_href": "/Location/sala-wollishofen"
+            },
+            {
+              "date": "I vitelloni - 16 gennaio 2027, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "Registrati",
+              "ticket_href": "/Registrazioni/16-01-27",
+              "location_href": "/Location/sala-wollishofen"
+            },
+            {
+              "date": "Pane e tulipani - 20 febbraio 2027, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "Registrati",
+              "ticket_href": "/Registrazioni/20-02-27",
+              "location_href": "/Location/sala-wollishofen"
+            },
+            {
+              "date": "Una storia vera - 20 marzo 2027, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "Registrati",
+              "ticket_href": "/Registrazioni/20-03-27",
+              "location_href": "/Location/sala-wollishofen"
+            },
+            {
+              "date": "Tempi moderni - 3 ottobre 2026, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "",
+              "ticket_href": "",
+              "location_href": "/Location/sala-wollishofen"
+            }
+          ],
+          "details": [
+            {
+              "label": "Attomatti",
+              "value": "+41 78 942 39 93"
+            },
+            {
+              "label": "UNITRE",
+              "value": "+41 76 639 09 52"
+            },
+            {
+              "label": "Prezzo",
+              "value": "Offerta Libera"
+            }
+          ],
+          "images": [
+            {
+              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+              "alt": "Locandina",
+              "no_crop": true
+            },
+            {
+              "url": "/images/1791099916565-cwdb-P00_7892.webp",
+              "alt": "Foto della prima data del 3 ottobre"
+            },
+            {
+              "url": "/images/1791099914761-g1g0-P00_7889_01.webp",
+              "alt": "Foto della prima data del 3 ottobre"
+            },
+            {
+              "url": "/images/1791099912910-ha2u-P00_7908.webp",
+              "alt": "Foto della prima data del 3 ottobre"
+            }
+          ],
+          "hero_image_align": "left"
+        }
+      ]
+    },
+    "contatti": {
+      "title": "Contattaci",
+      "description": "Siamo felici di ascoltarti. Scrivici per informazioni sugli spettacoli, collaborazioni o semplicemente per un saluto.",
+      "email": "compagniateatralegliattomatti@gmail.com",
+      "email_label": "Email",
+      "socials": [
+        {
+          "platform": "Instagram",
+          "href": "https://www.instagram.com/gliattomatti/",
+          "handle": "@gliattomatti",
+          "visible": true
+        },
+        {
+          "platform": "Facebook",
+          "href": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
+          "handle": "Gli Attomatti",
+          "visible": true
+        }
+      ]
+    },
+    "impressum": {
+      "meta": {
+        "title": "Note Legali & Impressum",
+        "description": "Note legali e informazioni editoriali della compagnia teatrale Gli Attomatti."
+      },
+      "back_link": "Torna alla home",
+      "badge": "Note Legali",
+      "title": "Impressum",
+      "description": "Informazioni obbligatorie ai sensi della legislazione svizzera sui media e sui servizi telematici.",
+      "organization": {
+        "section_title": "Organizzazione",
+        "name": "Gli Attomatti",
+        "address_label": "Indirizzo",
+        "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
+        "represented_by_label": "Rappresentato da",
+        "represented_by": "Domenico Scotti di Carlo"
+      },
+      "contacts": {
+        "section_title": "Contatti telematici",
+        "email_label": "Email",
+        "email": "compagniateatralegliattomatti@gmail.com",
+        "website_label": "Sito web",
+        "website_url": "https://gliattomatti.ch"
+      },
+      "liability": {
+        "section_title": "Esclusione di responsabilità (Haftungsausschluss)",
+        "contents_title": "Contenuti del sito:",
+        "contents_text": "I contenuti delle nostre pagine sono stati redatti con la massima diligenza. Tuttavia, non possiamo garantire la piena esattezza, completezza e tempestività delle informazioni fornite in ogni momento.",
+        "links_title": "Collegamenti esterni e servizi incorporati (iframe embed):",
+        "links_text_1": "Il nostro sito include collegamenti telematici a siti terzi nonché servizi digitali incorporati direttamente nelle pagine, in particolare la piattaforma svizzera di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i moduli interattivi di iscrizione di Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+        "links_text_2": "L'accesso, la compilazione e l'utilizzo di tali servizi terzi avvengono a esclusivo rischio dell'utente. Gli Attomatti non esercitano alcun controllo sulla conformazione tecnica, sulle politiche di sicurezza, sulla disponibilità dei server o sui contenuti erogati da tali provider indipendenti. La responsabilità per i dati e per le transazioni effettuate tramite tali piattaforme ricade interamente sui rispettivi gestori."
+      },
+      "copyright": {
+        "section_title": "Diritto d'autore (Copyright)",
+        "text": "I contenuti e le opere pubblicate su questo sito sono disciplinati dalle leggi svizzere sul diritto d'autore. Qualsiasi riproduzione, elaborazione, distribuzione o qualsiasi altra forma di utilizzo al di fuori dei limiti del diritto d'autore richiede il previo consenso scritto dell'autore o degli autori in questione."
+      }
+    },
+    "termini": {
+      "meta": {
+        "title": "Termini di Biglietteria e Iscrizioni",
+        "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione agli eventi e l'accesso agli spettacoli teatrali della compagnia Gli Attomatti a Zurigo."
+      },
+      "back_link": "Torna alla home",
+      "badge": "Regolamento Spettacoli & Eventi",
+      "title": "Termini e Condizioni",
+      "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione a corsi ed eventi teatrali, e regolamento di sala della compagnia teatrale Gli Attomatti.",
+      "sections": [
+        {
+          "id": "scope",
+          "title": "1. Ambito di applicazione e canali di fruizione",
+          "intro": "Le presenti Condizioni Generali disciplinano il rapporto tra l'utente e l'organizzatore Gli Attomatti (Zurigo, Svizzera) in merito alla partecipazione agli spettacoli teatrali, corsi, laboratori ed eventi culturali promossi.",
+          "items": [
+            {
+              "label": "Biglietti per spettacoli a pagamento:",
+              "text": "l'acquisto può essere completato direttamente sul portale di ticketing o mediante le casse incorporate (iframe embed) integrate nelle nostre pagine dell'hub /Biglietti e delle sezioni /Biglietti/[slug]. L'elaborazione tecnica della transazione e l'emissione del titolo d'accesso con QR code sono gestiti dalla piattaforma partner svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera), alle cui condizioni contrattuali per gli acquirenti si rimanda per gli aspetti transazionali."
+            },
+            {
+              "label": "Iscrizioni a eventi gratuiti, workshop o audizioni:",
+              "text": "la prenotazione avviene tramite moduli interattivi (anche incorporati via iframe) forniti dalla piattaforma Tally BV (Gand, Belgio) raggiungibili all'hub /Registrazioni, alle pagine /Registrazioni/[slug] o link associati."
+            },
+            {
+              "label": "Richieste per affitto sala (Saalvermietung) o contatti speciali:",
+              "text": "i moduli compilabili sul sito hanno valore di richiesta informativa preliminare e non costituiscono di per sé un contratto di locazione perfezionato, il quale richiede espressa conferma scritta e stipula tra le parti."
+            }
+          ]
+        },
+        {
+          "id": "pricing",
+          "title": "2. Prezzi, acquisto e perfezionamento delle registrazioni",
+          "paragraphs": [
+            "Tutti i prezzi dei biglietti per gli spettacoli sono espressi in Franchi Svizzeri (CHF). L'acquisto si perfeziona con il buon fine del pagamento su Eventfrog e l'invio telematico del biglietto elettronico recante codice QR univoco.",
+            "Per gli eventi gestiti tramite registrazione via form (Tally), la partecipazione è confermata unicamente a seguito del completamento del modulo."
+          ]
+        },
+        {
+          "id": "refunds",
+          "title": "3. Rimborsi, rinuncia e politica di presenza responsabile (No-Show)",
+          "intro": "Di norma, i biglietti acquistati per gli spettacoli non sono rimborsabili da parte dell'organizzatore in caso di mancata partecipazione o rinuncia per motivi personali dell'acquirente. I biglietti possono essere liberamente ceduti a terzi. Ai sensi della Direttiva UE 2011/83/UE (art. 16, lett. l) e delle normative a tutela del consumatore applicabili nell'Unione Europea (es. art. 59 lett. n del Codice del Consumo italiano), il diritto di recesso di 14 giorni per gli acquisti a distanza non si applica ai contratti di fornitura di servizi relativi al tempo libero e spettacoli qualora il contratto preveda una data o un periodo di esecuzione specifici.",
+          "cards": [
+            {
+              "title": "Copertura assicurativa facoltativa Eventfrog",
+              "text": "In fase di acquisto sulla cassa Eventfrog, l'acquirente può facoltativamente sottoscrivere l'assicurazione di annullamento e rimborso offerta direttamente da Eventfrog o da compagnie partner. In tal caso, il diritto al rimborso è disciplinato esclusivamente dalla polizza sottoscritta ed è gestito direttamente con Eventfrog."
+            },
+            {
+              "title": "Presenza responsabile per eventi gratuiti su registrazione (Tally)",
+              "text": "Per i corsi, workshop o spettacoli gratuiti a posti limitati, l'iscrizione impegna il partecipante a presenziare. Qualora sopraggiungesse un impedimento, è richiesto di comunicare la disdetta con tempestività (scrivendo a compagniateatralegliattomatti@gmail.com) al fine di consentire lo scorrimento della lista d'attesa ad altre persone interessate."
+            }
+          ]
+        },
+        {
+          "id": "cancellation",
+          "title": "4. Annullamento o rinvio dell'evento",
+          "paragraphs": [
+            "In caso di annullamento definitivo di uno spettacolo o evento per cause di forza maggiore, disposizioni di pubblica sicurezza o impedimenti organizzativi insormontabili, l'importo nominale dei biglietti acquistati sarà rimborsato all'acquirente secondo le modalità operative della piattaforma Eventfrog.",
+            "In caso di rinvio a data alternativa, il biglietto o l'iscrizione rimane valido per la nuova data comunicata. Qualora l'utente non possa partecipare nella nuova data, avrà facoltà di richiedere il rimborso o cancellare l'iscrizione secondo le tempistiche indicate tempestivamente dall'organizzatore."
+          ]
+        },
+        {
+          "id": "hall_access",
+          "title": "5. Accesso in sala, orari e puntualità",
+          "paragraphs": [
+            "Gli orari esatti di apertura delle porte, del botteghino e di inizio della rappresentazione sono indicati caso per caso nelle informazioni specifiche di ciascuno spettacolo sul sito web e sul biglietto emesso.",
+            "Si raccomanda di presentarsi con congruo anticipo. Per tutelare il lavoro degli interpreti e la concentrazione del pubblico, a spettacolo iniziato l'ingresso in sala potrebbe non essere consentito fino all'eventuale primo intervallo utile, a discrezione del personale di sala."
+          ]
+        },
+        {
+          "id": "rules",
+          "title": "6. Norme di sala, riprese e divieti",
+          "text": "Durante la rappresentazione è severamente vietato effettuare riprese audio/video integrali o utilizzare il flash fotografico. I telefoni cellulari e altri dispositivi elettronici devono essere silenziati prima dell'inizio dello spettacolo. L'organizzatore si riserva il diritto di allontanare dalla sala chiunque turbi il regolare svolgimento della recita."
+        },
+        {
+          "id": "photo_policy",
+          "title": "7. Foto, riprese video e diritto all'immagine",
+          "intro": "Durante gli spettacoli, i workshop, le prove aperte e gli eventi organizzati dalla compagnia teatrale Gli Attomatti, possono essere effettuate riprese fotografiche e registrazioni video a scopo di documentazione culturale, archivio storico e divulgazione artistica. Tali contenuti possono essere pubblicati sui canali ufficiali della compagnia (inclusi il presente sito web, i profili social ufficiali come Instagram e Facebook, o materiali promozionali e rassegne stampa).",
+          "notice_box": {
+            "title": "Preferisci non comparire? Basta dircelo!",
+            "paragraphs": [
+              "Rispettiamo pienamente la riservatezza e le preferenze di ciascuno spettatore e partecipante: se non desideri essere fotografato/a o ripreso/a, ti invitiamo a comunicarlo liberamente al nostro personale all'ingresso o in qualsiasi momento durante la serata. Sarà nostra cura indicarti le aree o adottare le dovute accortezze affinché tu non venga inquadrato/a.",
+              "Inoltre, se in seguito dovessi notare una tua immagine in una foto o in un video già pubblicato e desiderassi la rimozione o l'oscuramento, puoi richiederlo in qualsiasi momento scrivendoci a compagniateatralegliattomatti@gmail.com: provvederemo con la massima tempestività."
+            ]
+          }
+        },
+        {
+          "id": "third_party",
+          "title": "8. Servizi terzi incorporati e limitazione di responsabilità tecnica",
+          "text": "L'incorporamento dei moduli e delle casse digitali (iframe di Eventfrog AG e Tally BV) avviene nel rispetto dei migliori standard di sicurezza web. Tuttavia, Gli Attomatti non possono essere ritenuti responsabili per temporanee interruzioni di rete, indisponibilità dei server terzi, malfunzionamenti dei gateway bancari o ritardi nella consegna delle notifiche telematiche imputabili ai rispettivi fornitori esterni indipendenti."
+        },
+        {
+          "id": "jurisdiction",
+          "title": "9. Diritto applicabile e foro competente",
+          "text": "Il rapporto contrattuale è disciplinato dal diritto materiale svizzero. Per qualsiasi controversia il foro competente esclusivo è quello di Zurigo, Svizzera. Restano salve le disposizioni inderogabili e le tutele a favore dei consumatori previste dalla legge dello Stato membro dell'Unione Europea in cui l'utente risiede abitualmente (ai sensi del Regolamento UE n. 1215/2012 e della Convenzione di Lugano)."
+        }
+      ]
+    },
+    "privacy": {
+      "meta": {
+        "title": "Informativa sulla Privacy",
+        "description": "Informativa sul trattamento dei dati personali ai sensi della nLPD svizzera e del Regolamento UE 2016/679 (GDPR)."
+      },
+      "back_link": "Torna alla home",
+      "badge": "nLPD & GDPR",
+      "title": "Informativa sulla Privacy",
+      "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD), al Regolamento Generale sulla Protezione dei Dati dell'Unione Europea (GDPR, Reg. UE 2016/679) e al principio di trasparenza preventiva (Opt-in).",
+      "data_controller": {
+        "title": "Titolare del trattamento",
+        "name": "Gli Attomatti",
+        "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
+        "email_label": "Contatto email:",
+        "email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "general_processing": {
+        "title": "Trattamento generale dei dati e basi giuridiche",
+        "text": "Trattiamo i dati personali solo ed esclusivamente nella misura necessaria per fornire un sito web funzionante e per offrire i nostri servizi teatrali, prevendite, registrazioni a eventi e comunicazioni informative. Ai sensi dell'art. 6 del GDPR e della nLPD svizzera, le basi giuridiche applicate comprendono: (a) l'esecuzione di un contratto o di misure precontrattuali per l'acquisto di biglietti, l'iscrizione a corsi ed eventi teatrali, o richieste per disponibilità sala; (b) l'adempimento di obblighi legali e fiscali; (c) il consenso esplicito e preventivo dell'interessato per l'attivazione di cookie analitici e di marketing; (d) il nostro legittimo interesse prevalente alla sicurezza informatica e all'efficienza operativa del sito web. In virtù della decisione di adeguatezza della Commissione Europea (art. 45 GDPR), la Svizzera garantisce un livello di protezione dei dati equiparabile a quello dell'Unione Europea, consentendo il libero e sicuro trasferimento dei dati tra Svizzera e Paesi dello Spazio Economico Europeo."
+      },
+      "server_logs": {
+        "title": "File di log del server",
+        "text": "Il nostro fornitore di hosting, Vercel, raccoglie e memorizza automaticamente dati tecnici nei file di log del server che il tuo browser ci trasmette. Questi includono indirizzo IP, tipo e versione del browser, sistema operativo utilizzato, URL di riferimento e ora della richiesta al server. Questi dati sono necessari per il funzionamento sicuro del server e non vengono incrociati o uniti ad altre fonti di dati."
+      },
+      "cookie_opt_in": {
+        "title": "Cookie, sessioni e servizi incorporati (Opt-in)",
+        "intro_1": "Questo sito adotta una politica rigorosa di consenso preventivo (Opt-in): nessun cookie o tracker analitico o di marketing viene attivato prima che tu abbia espresso il tuo consenso esplicito tramite il banner delle preferenze.",
+        "intro_2": "Per garantire il corretto funzionamento dell'interfaccia, della biglietteria e dei moduli di registrazione, vengono impiegati elementi tecnici strettamente necessari (cookie propri o sessioni di terze parti integrate tramite iframe). Tali elementi tecnici non profilano l'utente e non richiedono consenso preventivo ai sensi della nLPD e del GDPR, ma sono elencati di seguito per assoluta trasparenza:",
+        "table_heading": "Tabella dei cookie e componenti attivi:",
+        "columns": {
+          "name": "Nome / Origine",
+          "provider": "Fornitore",
+          "duration": "Durata",
+          "purpose": "Finalità"
+        },
+        "rows": {
+          "own_consent": {
+            "name": "attomatti_cookie_consent",
+            "provider": "Sito proprio (Locale)",
+            "duration": "1 anno",
+            "purpose": "Tecnico essenziale: memorizza le scelte di consenso privacy espresse nel banner."
+          },
+          "eventfrog": {
+            "name": "eventfrog.ch (iframe)",
+            "provider": "Eventfrog AG (Svizzera)",
+            "duration": "Sessione di acquisto",
+            "purpose": "Tecnico essenziale: gestione del carrello, sicurezza della transazione e avanzamento del checkout nei widget di cassa incorporati."
+          },
+          "tally": {
+            "name": "tally.so (iframe)",
+            "provider": "Tally BV (Belgio / UE)",
+            "duration": "Sessione modulo",
+            "purpose": "Tecnico essenziale: token di sicurezza anti-CSRF e conservazione temporanea dello stato di compilazione del form. Nessuna profilazione pubblicitaria sui rispondenti."
+          },
+          "google_analytics": {
+            "name": "_ga, _ga_*",
+            "provider": "Google LLC (USA)",
+            "duration": "2 anni",
+            "purpose": "Analitico (previo consenso): statistiche aggregate e anonimizzate sulle visite."
+          },
+          "meta_pixel": {
+            "name": "_fbp",
+            "provider": "Meta Platforms Ireland Ltd.",
+            "duration": "90 giorni",
+            "purpose": "Marketing (previo consenso): misurazione dell'efficacia delle campagne Instagram/Facebook."
+          },
+          "youtube": {
+            "name": "youtube-nocookie.com (iframe)",
+            "provider": "Google Ireland Limited / YouTube (USA/UE)",
+            "duration": "Sessione / Persistente all'avvio del video",
+            "purpose": "Multimediale essenziale: riproduzione dei video e trailer teatrali incorporati con modalità di privacy avanzata (nessun cookie di profilazione salvato prima della riproduzione attiva)."
+          }
+        }
+      },
+      "youtube": {
+        "title": "Video e Trailer Teatrali Incorporati (YouTube)",
+        "paragraphs": [
+          "Nelle schede degli spettacoli, nelle gallerie multimediali e nelle landing page possono essere incorporati trailer e video informativi ospitati sulla piattaforma YouTube, gestita da Google Ireland Limited (Gordon House, Barrow Street, Dublino 4, Irlanda).",
+          "Al fine di tutelare al massimo la riservatezza dei visitatori, tutti i video YouTube sul nostro sito sono incorporati utilizzando la modalità di privacy avanzata ufficiale (dominio youtube-nocookie.com). In questo modo, YouTube non memorizza cookie o informazioni sul comportamento degli utenti prima che il visitatore decida attivamente di avviare la riproduzione del filmato.",
+          "Solo quando l'utente clicca su \"Play\", viene stabilita una connessione diretta con i server di Google per avviare lo streaming del flusso video, il che può comportare la trasmissione dell'indirizzo IP del dispositivo a Google. Per maggiori dettagli sulla gestione dei dati da parte di Google e YouTube, consultare le Norme sulla privacy di Google: policies.google.com/privacy."
+        ],
+        "privacy_url": "https://policies.google.com/privacy"
+      },
+      "google_analytics": {
+        "title": "Google Analytics 4 (Google LLC)",
+        "paragraphs": [
+          "Sul sito è integrato lo strumento di analisi web Google Analytics 4, gestito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
+          "In conformità alla Google Consent Mode v2, Google Analytics è configurato per rimanere completamente bloccato finché non viene prestato il consenso analitico. L'indirizzo IP del visitatore viene anonimizzato prima della registrazione.",
+          "I dati raccolti possono essere elaborati su server situati negli Stati Uniti sulla base dello Swiss-US Data Privacy Framework. Puoi revocare il consenso in qualsiasi momento tramite il nostro gestore delle preferenze."
+        ]
+      },
+      "meta_pixel": {
+        "title": "Meta Pixel (Meta Platforms Ireland Limited)",
+        "paragraphs": [
+          "Utilizziamo il Meta Pixel per monitorare l'efficacia delle inserzioni pubblicitarie su Instagram e Facebook e per promuovere la vendita dei biglietti per i nostri spettacoli. Il servizio è fornito da Meta Platforms Ireland Limited (Merrion Road, Dublin 4, D04 X2K5, Irlanda).",
+          "Il Pixel entra in funzione esclusivamente dopo il tuo esplicito opt-in per la categoria marketing. Il pixel consente a Meta di identificare i visitatori del nostro sito come gruppo target per la visualizzazione di annunci. Maggiori informazioni nella privacy policy di Meta: privacycenter.instagram.com/policy."
+        ],
+        "privacy_url": "https://privacycenter.instagram.com/policy"
+      },
+      "eventfrog": {
+        "title": "Biglietteria Online e Casse Incorporate (Eventfrog AG)",
+        "paragraphs": [
+          "Per la vendita, prevendita ed emissione dei biglietti teatrali ci avvaliamo della piattaforma svizzera specializzata Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera).",
+          "I servizi di cassa possono essere raggiunti tramite link esterni o incorporati direttamente (embedded) tramite iframe all'interno delle pagine del nostro sito (in particolare nell'hub /Biglietti, nelle sezioni /Biglietti/[slug] e nelle schede dedicate agli spettacoli).",
+          "Quando acquisti un biglietto (tramite la cassa incorporata o sul sito Eventfrog), la transazione avviene tramite connessione cifrata diretta con i server di Eventfrog AG. I dati anagrafici, di recapito e di pagamento necessari al perfezionamento dell'ordine vengono trattati direttamente da Eventfrog AG in qualità di titolare indipendente e fornitore del servizio, in piena conformità alla Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
+          "La compagnia Gli Attomatti riceve unicamente i dati necessari per la gestione degli ingressi in sala (nominativo, tipologia di biglietto, codice QR) e non ha accesso né archivia dati di carte di credito o coordinate bancarie. Per l'informativa completa di Eventfrog AG consultare: eventfrog.ch/it/privacy.html."
+        ],
+        "privacy_url": "https://eventfrog.ch/it/privacy.html"
+      },
+      "tally": {
+        "title": "Moduli di Registrazione, Iscrizione e Contatto Incorporati (Tally.so)",
+        "paragraphs": [
+          "Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci) e per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su /Saalvermietung), utilizziamo la piattaforma di moduli interattivi fornita da Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+          "I moduli possono essere compilati tramite incorporamento diretto (iframe embed) all'interno delle nostre pagine dedicate (nell'hub /Registrazioni, nelle sezioni /Registrazioni/[slug], landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.",
+          "Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o preferenze) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all'interno dell'Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
+          "La compagnia teatrale Gli Attomatti utilizza le risposte raccolte unicamente per dare seguito alla specifica finalità per cui sono state fornite (es. invio istruzioni per l'evento, organizzazione della lista presenze, preventivo per l'affitto della sala). I dati non vengono ceduti a terzi né utilizzati per scopi promozionali non autorizzati. I moduli Tally integrati non utilizzano cookie o pixel pubblicitari di profilazione sui rispondenti.",
+          "Per maggiori informazioni sull'infrastruttura di sicurezza e la gestione privacy di Tally BV consultare: tally.so/help/privacy-policy."
+        ],
+        "privacy_url": "https://tally.so/help/privacy-policy"
+      },
+      "typography_social": {
+        "title": "Risorse tipografiche e social",
+        "fonts_title": "Font tipografici (Google Fonts)",
+        "fonts_text": "Per garantire una resa grafica uniforme, questo sito utilizza font forniti da Google. Il caricamento tecnico di tali risorse può comportare la trasmissione dell'indirizzo IP del visitatore ai server di Google LLC.",
+        "social_title": "Contenuti social Instagram (Soluzione 2-Click)",
+        "social_text": "I post incorporati di Instagram nella home page sono protetti da un meccanismo a due clic (2-Click): all'apertura del sito nessun dato viene trasmesso a Meta. Solo cliccando attivamente su \"Carica questo post\" viene stabilita una connessione diretta con i server di Instagram."
+      },
+      "photo_rights": {
+        "title": "Fotografie e riprese durante gli eventi (Diritto all'immagine)",
+        "paragraphs": [
+          "Durante le rappresentazioni teatrali, i workshop e gli eventi promossi dalla compagnia, possono essere realizzate riprese fotografiche e audiovisive destinate alla documentazione artistica e alla comunicazione istituzionale sui nostri canali ufficiali (sito web e social network quali Instagram e Facebook).",
+          "Nel pieno rispetto della nLPD e della sfera privata di ciascuno, chiunque partecipi ha la facoltà di opporsi in qualsiasi momento alla propria ripresa: è sufficiente informare il personale di sala all'ingresso o durante l'evento. Inoltre, è sempre possibile richiedere la rimozione tempestiva di fotografie o video in cui si compare inviando un'email a: compagniateatralegliattomatti@gmail.com."
+        ],
+        "contact_email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "your_rights": {
+        "title": "I tuoi diritti (nLPD & GDPR)",
+        "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per i cookie o gli strumenti di tracciamento. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
+        "contact_email": "compagniateatralegliattomatti@gmail.com"
+      },
+      "third_parties": {
+        "resend": {
+          "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+          "paragraphs": [
+            "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
+            "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+            "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
+          ],
+          "privacy_url": "https://resend.com/legal/privacy-policy"
+        }
+      },
+      "resend": {
+        "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+        "paragraphs": [
+          "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
+          "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+          "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
+        ],
+        "privacy_url": "https://resend.com/legal/privacy-policy"
+      },
+      "recaptcha": {
+        "title": "Sicurezza Tecnica e Protezione Anti-Bot (Google reCAPTCHA)",
+        "paragraphs": [
+          "Per proteggere i moduli telematici e le finestre modali di richiesta email contro abusi, spam automatizzato e attacchi di tipo brute-force, il nostro sito impiega il servizio di sicurezza reCAPTCHA fornito da Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA).",
+          "reCAPTCHA analizza il comportamento del visitatore sul modulo (es. tempi di compilazione e indirizzo IP) al fine esclusivo di verificare se l'invio è operato da una persona reale o da uno script bot dannoso. Tale trattamento tecnico è fondato sul nostro legittimo interesse prevalente (art. 6 cpv. 1 lett. f GDPR e art. 31 cpv. 1 nLPD) a garantire la stabilità e la sicurezza informatica del sito web e a prevenire l'inoltro di email fraudolente.",
+          "L'uso di reCAPTCHA è soggetto alle Norme sulla privacy e ai Termini di servizio di Google: policies.google.com/privacy e policies.google.com/terms."
+        ],
+        "privacy_url": "https://policies.google.com/privacy"
+      }
+    },
+    "locations": {
+      "meta_title": "Teatri & Location — Gli Attomatti",
+      "meta_description": "Indicazioni pratiche e guide fotografiche per raggiungere i teatri e le sale dei nostri spettacoli a Zurigo.",
+      "hub_title": "Teatri & Location",
+      "hub_description": "Indicazioni pratiche e fotografiche per raggiungere i teatri, le sale prove e le location degli eventi teatrali a Zurigo.",
+      "hub_badge_default": "Location Teatrale",
+      "hub_steps_suffix": "tappe fotografiche",
+      "hub_view_directions_label": "Vedi Indicazioni",
+      "hub_empty_title": "Nessuna location configurata",
+      "hub_empty_description": "Non sono al momento presenti guide fotografiche attive.",
+      "default_badge": "Indicazioni Teatro & Location",
+      "google_maps_button_label": "Apri in Google Maps",
+      "public_transport_heading": "Mezzi Pubblici nelle Vicinanze",
+      "transport_tram_title": "Trasporto pubblico",
+      "lines_prefix": "Linee:",
+      "steps_heading": "Come Arrivare Passo-Passo",
+      "step_single_label": "Tappa",
+      "step_plural_label": "Tappe",
+      "click_to_enlarge_label": "🔍 Clicca per ingrandire",
+      "photo_prefix": "📷",
+      "image_alt_fallback": "Foto tappa",
+      "parking_heading": "Parcheggi & Auto",
+      "accessibility_heading": "Accessibilità & Disabilità",
+      "notes_heading": "Informazioni Aggiuntive",
+      "back_link_default_label": "Torna al sito",
+      "bottom_back_button_label": "Torna alla pagina principale",
+      "not_found_title": "Location in fase di allestimento",
+      "not_found_description": "Le indicazioni per questa location non sono ancora disponibili o sono in fase di aggiornamento nella bozza.",
+      "not_found_button_label": "Tutte le Location",
+      "detail_meta_title_suffix": "— Come Raggiungerci",
+      "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
+      "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
+      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
+    }
+  },
+  "landings": [
+    {
+      "id": "landing-cineforum",
+      "slug": "cineforum",
+      "title": "Cineforum — Nel passo lento della meraviglia",
+      "active": true,
+      "theme_color": "gold",
+      "header": {
+        "logo_text": "UNITRE & Gli Attomatti",
+        "cta_label": "Prenota",
+        "cta_href": "#registrazione",
+        "nav_links": [],
+        "subtitle": "Cinema a Zurigo",
+        "logo_image": ""
+      },
+      "sticky_bar": {
+        "enabled": false,
+        "text": "Cineforum",
+        "cta_label": "Prenota",
+        "cta_href": "#registrazione"
+      },
+      "blocks": [
+        {
+          "id": "b-cineforum-hero",
+          "type": "hero",
+          "anchor": "hero",
+          "badge": "UNITRE & Gli Attomatti presentano",
+          "title": "Cineforum",
+          "tagline": "Nel passo lento della meraviglia \nUn invito a rallentare e ad abitare il tempo del cinema",
+          "hero_image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "primary_cta_label": "Prenota",
+          "primary_cta_href": "#registrazione",
+          "secondary_cta_label": "Guarda il Programma",
+          "secondary_cta_href": "#programma",
+          "hero_image_align": "left"
+        },
+        {
+          "id": "b-cineforum-synopsis",
+          "type": "synopsis",
+          "anchor": "sinossi",
+          "title": "Nel passo lento della meraviglia",
+          "text": "Produciamo più in fretta, comunichiamo più in fretta, ci spostiamo più in fretta: dovremmo avere più tempo che mai. Eppure ne siamo davvero sicuri? Forse, nel correre, abbiamo perso un'arte che un tempo era di tutti: quella di indugiare. Fermarsi senza uno scopo preciso, lasciare che lo sguardo si posi sulle cose, prendersi un respiro. È da qui che nasce questo cineforum, dal desiderio di riconquistare, almeno per una sera al mese, il piacere di un tempo che non va riempito ma vissuto.\n\nIl titolo prende spunto da <i>La lentezza</i> di Milan Kundera e dalla sua nostalgia per i perdigiorno di un tempo, figure capaci di vagabondare senza meta e di contemplare il mondo con occhi pazienti. Indugiare è un verbo che sembra appartenere a un'altra epoca, e proprio per questo ci interroga. Gli Attomatti e UNITRE hanno scelto di farne il filo conduttore di un percorso in cinque film \"fuori norma\", opere che sfuggono ai ritmi del consumo veloce e ci accompagnano attraverso la storia del cinema d'autore.\n\nEntrare in una sala buia è un po' come ritrovare un rifugio: le luci si spengono, le voci e i suoni ci avvolgono e per un paio d'ore ci separano da ciò che sta fuori. Ma il cinema non ci trattiene, ci restituisce al mondo con qualcosa in più. Per questo ogni proiezione sarà seguita da un momento di confronto, aperto a tutti: l'auspicio è che questi film accendano discussioni vive e illuminanti, e che la sala diventi un luogo d'incontro oltre che di visione.",
+          "quote": "Produciamo più velocemente e quindi abbiamo più tempo. Ma ne siamo proprio sicuri?",
+          "quote_author": "Rosaria Carpio, UNITRE"
+        },
+        {
+          "id": "b-cineforum-programma",
+          "type": "faq",
+          "anchor": "programma",
+          "title": "I 5 Film in Programmazione",
+          "items": [
+            {
+              "question": "\"Le vacanze di Monsieur Hulot\" di Jacques Tati — 14 novembre 2026, ore 18:00",
+              "answer": "Un capolavoro assoluto di comicità visiva e raffinatezza. Il tempo della vacanza al mare si trasforma in una serie esilarante di piccoli equivoci e gesti surreali che rivelano le manie e la poesia dell'animo umano.\n<b>Nota: il titolo potrebbe subire variazioni</b>"
+            },
+            {
+              "question": "\"I vitelloni\" di Federico Fellini — 16 gennaio 2027, ore 18:00",
+              "answer": "Il primo grande trionfo internazionale di Fellini. Il ritratto indimenticabile di cinque giovani sognatori nella provincia romagnola, sospesi tra l'ozio delle serate invernali, il desiderio di partire e la paura di crescere."
+            },
+            {
+              "question": "\"Pane e tulipani\" di Silvio Soldini — 20 febbraio 2027, ore 18:00",
+              "answer": "Una commedia luminosa e gentile vincitrice di 9 David di Donatello. Dimenticata in autogrill durante una gita di famiglia, la casalinga Rosalba decide di non tornare a casa e inventarsi una nuova vita meravigliosa a Venezia."
+            },
+            {
+              "question": "\"Una storia vera\" (The Straight Story) di David Lynch — 20 marzo 2027, ore 18:00",
+              "answer": "Il commovente viaggio reale dell'anziano Alvin Straight a bordo di un trattorino tosaerba attraverso gli orizzonti dell'Iowa e del Wisconsin per fare pace con il fratello malato. Una meditazione universale sul perdono e sulla lentezza del cammino."
+            },
+            {
+              "question": "\"Tempi moderni\" di Charlie Chaplin — 3 ottobre 2026, ore 18:00",
+              "answer": "La satira più celebre e profonda sull'alienazione dei ritmi frenetici moderni. Charlot alle prese con gli ingranaggi della fabbrica in un inno imperituro alla dignità, alla tenerezza e alla risata liberatoria. Apertura ufficiale della rassegna."
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-details",
+          "type": "event_details",
+          "anchor": "dettagli",
+          "title": "Prossimo appuntamento",
+          "info_badge": "Prenotazione obbligatoria",
+          "date": "Sabato 14 novembre, ore 18:00",
+          "location": "Balberstrasse 47, 8038 Zürich",
+          "location_href": "/Location/sala-wollishofen",
+          "price": "Offerta Libera",
+          "cta_label": "Prenota",
+          "cta_href": "#registrazione"
+        },
+        {
+          "id": "b-cineforum-gallery",
+          "type": "gallery",
+          "anchor": "locandina",
+          "title": "La Locandina",
+          "images": [
+            {
+              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+              "alt": "Locandina Cineforum Nel passo lento della meraviglia",
+              "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro",
+              "no_crop": true
+            }
+          ]
+        },
+        {
+          "id": "b-1791100510424",
+          "type": "gallery",
+          "title": "Alcune immagini del primo appuntamento",
+          "images": [
+            {
+              "url": "/images/1791099916565-cwdb-P00_7892.webp",
+              "alt": "Momento di discussione e confronto dopo il film"
+            },
+            {
+              "url": "/images/1791099912910-ha2u-P00_7908.webp",
+              "alt": "Pubblico in sala durante la proiezione del primo appuntamento"
+            },
+            {
+              "url": "/images/1791099914761-g1g0-P00_7889_01.webp",
+              "alt": "Momento di discussione e confronto dopo il film"
+            }
+          ]
+        },
+        {
+          "id": "b-cineforum-faq",
+          "type": "faq",
+          "anchor": "faq",
+          "title": "Domande Frequenti",
+          "items": [
+            {
+              "question": "Come funziona l'ingresso a offerta libera?",
+              "answer": "L'evento è aperto a tutti gli appassionati con ingresso a offerta libera per supportare l'organizzazione e la sala. Per gli iscritti a UNITRE Zurigo, la partecipazione a tutti e cinque gli incontri è già interamente compresa nella quota sociale annuale. In ogni caso, è necessaria la prenotazione."
+            },
+            {
+              "question": "Perché è richiesta la prenotazione?",
+              "answer": "La sala ABZ Saal ha una capienza confortevole ma limitata. Prenotare in anticipo garantisce a tutti un posto a sedere ottimale e ci permette di organizzare al meglio lo spazio in sala."
+            },
+            {
+              "question": "Posso partecipare solo a singole date?",
+              "answer": "Assolutamente sì. Puoi scegliere di seguire l'intero percorso o iscriverti ai singoli titoli che ti incuriosiscono di più. Ti invitiamo a iscriverti a ogni singola serata: il modulo di registrazione è già disponibile."
+            },
+            {
+              "question": "In che lingua sono proiettati i film?",
+              "answer": "I film sono offerti in lingua italiana."
+            },
+            {
+              "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
+              "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Le indicazioni dettagliate sono disponibili [qui](/Location/sala-wollishofen)."
+            },
+            {
+              "question": "Il programma potrebbe subire variazioni?",
+              "answer": "Purtroppo sì. La proiezione dei film è soggetta alla disponibilità dei diritti d'autore e ad altre questioni tecniche. Per questi motivi, i film in visione nelle date potrebbero variare. Sarà nostra cura aggiornare prontamente questa pagina e avvisare chi si sia già iscritto prima del cambiamento."
+            }
+          ]
+        },
+        {
+          "id": "b-1791027853708",
+          "type": "tally",
+          "title": "Registrati per il prossimo appuntamento",
+          "subtitle": "",
+          "tally_url": "https://tally.so/r/Eky7ON",
+          "fallback_label": "Apri il modulo",
+          "show_privacy_note": true,
+          "anchor": "registrazione"
+        },
+        {
+          "id": "b-1791027943995",
+          "type": "closing_cta",
+          "title": "Vuoi scoprire le altre serate?",
+          "text": "Unisciti a noi per i prossimi appuntamenti. Puoi già registrarti oggi!",
+          "cta_label": "Scopri di più",
+          "cta_href": "/Iniziative/cineforum"
+        }
+      ],
+      "theme": {
+        "preset": "gold",
+        "background": "#f2e2d3",
+        "foreground": "#09090b",
+        "primary": "#5c0809",
+        "primaryForeground": "#ffffff",
+        "secondary": "#9C523A",
+        "secondaryForeground": "#ffffff",
+        "accent": "#D4AF37",
+        "accentForeground": "#ffffff",
+        "muted": "#ffffff"
+      }
+    }
+  ],
+  "ticketing_hub": {
+    "active": true,
+    "title": "Biglietti",
+    "description": "Questa pagina raccoglie tutti i biglietti in vendita al momento.",
+    "buy_ticket_cta": "Acquista Biglietto",
+    "details_cta": "Dettagli",
+    "empty_title": "Nessuna prevendita aperta",
+    "empty_description": "Al momento non ci sono biglietti in vendita diretta. Scopri il nostro cartellone e i prossimi spettacoli in arrivo!",
+    "view_shows_cta": "Vedi Spettacoli",
+    "checkout_page": {
+      "default_back_link": "Torna al sito",
+      "terms_link": "Termini di Biglietteria",
+      "default_category": "Biglietteria Ufficiale",
+      "iframe_trouble_notice": "Difficoltà di visualizzazione con il riquadro? Puoi completare l'acquisto sul portale esterno:",
+      "open_on_eventfrog": "Apri su Eventfrog",
+      "not_configured_title": "Prevendita non ancora configurata",
+      "not_configured_description": "La prevendita per questa pagina non è al momento collegata a un evento attivo.",
+      "secure_transaction_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
+      "ssl_encryption_notice": "Crittografia SSL a 256-bit conforme agli standard di sicurezza bancari",
+      "rules_refunds_link": "Regolamento e Rimborsi",
+      "privacy_link": "Informativa Privacy"
+    }
+  },
+  "ticketing_pages": [],
+  "registration_hub": {
+    "active": true,
+    "title": "Registrazioni",
+    "description": "Questa pagina raccoglie tutte le registrazioni attive al momento.",
+    "register_online_cta": "Iscriviti Online",
+    "info_cta": "Info",
+    "empty_title": "Nessuna iscrizione aperta",
+    "empty_description": "Al momento le registrazioni per corsi e workshop sono chiuse. Consulta le nostre iniziative in programma!",
+    "view_initiatives_cta": "Vedi Iniziative",
+    "registration_page": {
+      "default_back_link": "Torna al sito",
+      "privacy_link": "Informativa Privacy",
+      "default_category": "Modulo di Iscrizione",
+      "iframe_trouble_notice": "Difficoltà di compilazione? Puoi aprire il modulo in una nuova finestra:",
+      "open_on_tally": "Apri su Tally",
+      "not_configured_title": "Modulo non ancora configurato",
+      "not_configured_description": "Il modulo di registrazione per questa pagina non è al momento collegato a un form Tally attivo.",
+      "secure_form_notice": "Modulo sicuro e conforme nLPD / GDPR (Tally BV, server UE)",
+      "data_privacy_notice": "Protezione e trattamento confidenziale dei dati secondo la nLPD",
+      "terms_link": "Termini & Regolamento",
+      "contact_link": "Hai domande? Contattaci"
+    }
+  },
+  "registration_pages": [
+    {
+      "id": "reg-1790954268119",
+      "title": "Le vacanze di Monsieur Hulot",
+      "slug": "14-11-26",
+      "category": "Cineforum",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
+      "tally_url": "https://tally.so/r/Eky7ON",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954967375",
+      "title": "I vitelloni",
+      "slug": "16-01-27",
+      "category": "Cineforum",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
+      "tally_url": "https://tally.so/r/2EQGpV",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954972841",
+      "title": "Pane e tulipani",
+      "slug": "20-02-27",
+      "category": "Cineforum",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
+      "tally_url": "https://tally.so/r/Gx8AZj",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    },
+    {
+      "id": "reg-1790954973513",
+      "title": "Una storia vera",
+      "slug": "20-03-27",
+      "category": "Cineforum",
+      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
+      "tally_url": "https://tally.so/r/obXLq1",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/Iniziative/cineforum",
+      "active": true
+    }
+  ],
+  "integrations": {
+    "google_analytics": {
+      "enabled": true,
+      "measurement_id": "G-S3X4GHJRGR"
+    },
+    "meta_pixel": {
+      "enabled": false,
+      "pixel_id": ""
+    },
+    "eventfrog": {
+      "enabled": false
+    },
+    "tally": {
+      "enabled": false
+    },
+    "cookie_consent": {
+      "version": 1
+    },
+    "events": {
+      "view_content": true,
+      "initiate_checkout": true,
+      "contact": true,
+      "lead": true,
+      "social_click": true
+    }
+  },
+  "ui": {
+    "navbar": {
+      "main_nav_aria_label": "Navigazione principale",
+      "mobile_nav_aria_label": "Navigazione mobile",
+      "open_menu_aria_label": "Apri menu",
+      "close_menu_aria_label": "Chiudi menu",
+      "buy_tickets_label": "Acquista Biglietti",
+      "contact_us_label": "Contattaci / Scrivici"
+    },
+    "footer": {
+      "nav_title": "Sito",
+      "contact_title": "Contattaci",
+      "contact_cta_label": "Scrivici ora",
+      "copyright_notice": "Tutti i diritti riservati.",
+      "legal_links": {
+        "terms": "Termini",
+        "impressum": "Impressum",
+        "privacy": "Privacy"
+      }
+    },
+    "not_found": {
+      "meta_title": "Pagina non trovata",
+      "meta_description": "La pagina cercata non è stata trovata o è stata spostata.",
+      "badge": "Errore 404 • Fuori Scena",
+      "code": "404",
+      "heading": "Questa scena è ancora dietro le quinte",
+      "message": "Sembra che il copione abbia preso un’altra direzione o che la pagina cercata sia stata spostata nel foyer.",
+      "home_button": "Torna alla Home",
+      "shows_button": "I Nostri Spettacoli"
+    },
+    "lightbox": {
+      "close_aria_label": "Chiudi galleria",
+      "prev_aria_label": "Foto precedente",
+      "next_aria_label": "Foto successiva",
+      "default_alt": "Foto"
+    },
+    "cookie_banner": {
+      "title": "Preferenze sui Cookie & Privacy",
+      "badge": "Approccio Trasparente (Opt-in)",
+      "new_tools_notice": "Nuovi strumenti attivati: richiesto consenso",
+      "description": "Questo sito utilizza cookie tecnici strettamente necessari al funzionamento. Previo tuo consenso esplicito, possiamo utilizzare strumenti di analisi ({ga}) e marketing ({meta}) per comprendere il nostro pubblico e promuovere gli spettacoli teatrali.",
+      "customize_open": "Personalizza scelte",
+      "customize_close": "Chiudi personalizzazione",
+      "privacy_policy_link": "Informativa Privacy",
+      "reject_all_label": "Rifiuta non necessari",
+      "accept_all_label": "Accetta tutti",
+      "save_preferences_label": "Salva preferenze",
+      "categories": {
+        "necessary": {
+          "title": "Cookie Tecnici Necessari",
+          "badge": "Sempre Attivi",
+          "description": "Indispensabili per la navigazione sicura, la memorizzazione delle scelte di privacy e il funzionamento tecnico dei moduli e casse incorporate (Tally ed Eventfrog). Sempre attivi."
+        },
+        "analytics": {
+          "title": "Statistici e Analisi (Google Analytics 4)",
+          "description": "Raccolgono dati anonimizzati sull'utilizzo del sito per aiutarci a capire quali spettacoli e pagine sono più apprezzati."
+        },
+        "marketing": {
+          "title": "Marketing e Social (Meta Pixel / Instagram)",
+          "description": "Consentono di misurare l'efficacia delle inserzioni per la vendita dei biglietti su Instagram e Facebook."
+        }
+      }
+    },
+    "privacy_consent_button": {
+      "label": "Modifica preferenze sui cookie"
+    },
+    "dev_gate": {
+      "badge": "Ambiente di Sviluppo",
+      "title": "Gli Attomatti",
+      "description": "Questo è il nostro sito di sviluppo e collaudo. Se stavi cercando il nostro sito ufficiale per spettacoli, date e biglietti:",
+      "live_site_cta": "Vai al sito ufficiale (gliattomatti.ch)",
+      "divider_label": "Accesso Team & Anteprima",
+      "form_prompt": "Se fai parte del team o desideri visionare l'anteprima, inserisci la password:",
+      "placeholder": "Inserisci password...",
+      "error_message": "Password errata. Riprova.",
+      "submit_label": "Sblocca e prosegui",
+      "cookie_notice": "L'accesso verrà memorizzato in un cookie per non richiedere nuovamente la password su questo browser."
+    },
+    "preview_banner": {
+      "aria_label": "Modalità Anteprima Bozza",
+      "badge": "Anteprima Live",
+      "message": "Stai visualizzando il sito con le modifiche non pubblicate sincronizzate in tempo reale dal CMS.",
+      "cms_link": "Pannello CMS",
+      "cms_link_title": "Torna al pannello di amministrazione",
+      "exit_button": "Esci dall'anteprima",
+      "exit_button_title": "Esci dalla modalità anteprima e torna alla versione pubblica"
+    },
+    "shared_detail": {
+      "dates_title": "Date e Biglietti",
+      "details_title": "Info Spettacolo",
+      "empty_dates_message": "Nessuna data programmata al momento.",
+      "back_to_archive": "Torna all'archivio",
+      "back_to_initiatives": "Torna all'elenco iniziative",
+      "back_to_home": "Torna alla home",
+      "year_prefix": "Anno",
+      "season_prefix": "Stagione",
+      "edition_prefix": "Edizione"
+    },
+    "landing_defaults": {
+      "preview_loading": "Caricamento anteprima...",
+      "back_to_home": "Torna alla Home",
+      "back_to_site": "Torna al sito",
+      "menu_aria_label": "Menu navigazione ancore",
+      "header_subtitle": "Teatro a Zurigo",
+      "hero_alt": "Hero",
+      "event_details_title": "Data e Informazioni",
+      "date_time_label": "Data & Ora",
+      "location_label": "Luogo",
+      "google_maps_label": "Indicazioni",
+      "ticket_label": "Biglietto",
+      "synopsis_title": "La Trama",
+      "synopsis_image_alt": "Foto spettacolo",
+      "gallery_image_alt": "Scena",
+      "reviews_title": "Dicono di Noi",
+      "faq_title": "Domande Frequenti",
+      "eventfrog_badge": "Biglietteria Ufficiale",
+      "eventfrog_title": "Acquista Biglietti",
+      "eventfrog_iframe_title": "Biglietti Eventfrog",
+      "eventfrog_fallback_trouble": "Problemi con il riquadro? Puoi completare l'acquisto anche sul portale esterno:",
+      "eventfrog_fallback_button": "Apri su Eventfrog",
+      "eventfrog_not_configured": "La prevendita online per questa pagina non è ancora configurata. Incolla il link Eventfrog nell'Admin.",
+      "eventfrog_security_notice": "Transazione sicura gestita da Eventfrog AG (Olten, Svizzera)",
+      "eventfrog_terms_link": "Termini di Biglietteria",
+      "eventfrog_privacy_link": "Informativa Privacy",
+      "tally_badge": "Modulo di Iscrizione",
+      "tally_title": "Iscriviti o Registrati",
+      "tally_iframe_title": "Modulo Tally",
+      "tally_fallback_trouble": "Problemi con il modulo? Puoi compilarlo a schermo intero:",
+      "tally_fallback_button": "Apri su Tally",
+      "tally_not_configured": "Il modulo di registrazione online per questa pagina non è ancora configurato. Incolla il link Tally nell'Admin.",
+      "tally_security_notice": "Modulo sicuro conforme a GDPR e nLPD svizzera (Tally BV, server UE)",
+      "tally_privacy_link": "Informativa Privacy",
+      "tally_contact_link": "Contattaci",
+      "closing_cta_title": "Non Perdere lo Spettacolo",
+      "footer_home_link": "Visita il sito ufficiale Gli Attomatti",
+      "footer_copyright": "Tutti i diritti riservati. Zurigo, Svizzera."
+    },
+    "carousel": {
+      "fallback_alt": "Foto",
+      "aria_prefix": "Foto",
+      "prev_aria_label": "Foto precedente",
+      "next_aria_label": "Foto successiva"
+    }
+  },
+  "emails": {
+    "settings": {
+      "from_name": "Gli Attomatti",
+      "from_email": "no-reply@mail.gliattomatti.ch",
+      "reply_to": "compagniateatralegliattomatti@gmail.com",
+      "footer_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+      "privacy_note": "Ricevi questa email in seguito alla tua registrazione a un nostro evento o iniziativa teatrale.",
+      "test_recipient": "info@gliattomatti.ch",
+      "dlq_alert_email": "marco.dalmolin.1991@gmail.com",
+      "dlq_alert_enabled": true
+    },
+    "templates": [
+      {
+        "id": "cineforum-confirmation",
+        "name": "Conferma Iscrizione Cineforum",
+        "enabled": true,
+        "theme": "cineforum",
+        "subject": "Iscrizione confermata: {{data.formName}}",
+        "preheader": "Abbiamo registrato la tua prenotazione per la serata di cineforum",
+        "badge": "Cineforum",
+        "heading": "La tua prenotazione è confermata!",
+        "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+        "event_date": "",
+        "event_location": "",
+        "cta_label": "Tutte le date del Cineforum",
+        "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
+        "field_mapping": {
+          "sample_payload_json": "{\n  \"eventId\": \"10356a55-a1ac-450c-9867-55796553770f\",\n  \"createdAt\": \"2026-10-04T14:14:04.897Z\",\n  \"data\": {\n    \"responseId\": \"a78e6b0c-dedd-48cb-9404-1b42c10dedd8\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"2EQGpV\",\n    \"formName\": \"Cineforum - I vitelloni - 16 Gennaio 2027, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/2EQGpV/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/2EQGpV/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"fields\": [\n      {\n        \"key\": \"question_2xdg0e\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_xNbLKd\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_ZRkL0V\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_V1Oy8g\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
+          "recipient_email_path": "data.fields[label=Email].value",
+          "recipient_name_path": "data.fields[label=Nome e Cognome].value"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti & UNITRE",
+          "from_email": "cineforum@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        },
+        "subcases": [
+          {
+            "id": "cineforum-1",
+            "name": "Le vacanze di Monsieur Hulot (14 Novembre)",
+            "custom_fields": {
+              "event_title": "Le vacanze di Monsieur Hulot",
+              "event_date": "14 novembre 2026, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-2",
+            "name": "I vitelloni",
+            "custom_fields": {
+              "event_title": "I vitelloni",
+              "event_date": "16 gennaio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-3",
+            "name": "Pane e tulipani",
+            "custom_fields": {
+              "event_title": "Pane e tulipani",
+              "event_date": "20 febbraio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-4",
+            "name": "Una storia vera",
+            "custom_fields": {
+              "event_title": "Una storia vera",
+              "event_date": "20 marzo 2027, ore 18:00"
+            }
+          }
+        ],
+        "blocks": [
+          {
+            "id": "block-header",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI & UNITRE",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791142683214",
+            "type": "image",
+            "image_url": "https://gli-attomatti.vercel.app/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+            "alt": "Locandina Evento",
+            "align": "full",
+            "full_width": true
+          },
+          {
+            "id": "block-1791126590992",
+            "type": "divider",
+            "style": "spacer",
+            "spacing": "md"
+          },
+          {
+            "id": "block-heading",
+            "type": "heading",
+            "text": "La tua prenotazione è confermata!",
+            "level": "h1",
+            "align": "left"
+          },
+          {
+            "id": "block-body",
+            "type": "text",
+            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**, in programma il **{{event_date}}**. Numero partecipanti: **{{data.fields[label=Numero di partecipanti].value}}**",
+            "align": "left"
+          },
+          {
+            "id": "block-1791142839814",
+            "type": "calendar",
+            "header_label": "",
+            "title": "Cineforum - {{event_title}}",
+            "start_date": "{{event_date}}",
+            "end_date": "",
+            "location": "Balberstrasse 47, Zurigo (Wollishofen)",
+            "description": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791126717083",
+            "type": "text",
+            "content": "Siamo felici di averti con noi in sala! \n\nSe dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+            "align": "left"
+          },
+          {
+            "id": "block-button",
+            "type": "button",
+            "label": "Ulteriori informazioni",
+            "url": "https://gliattomatti.ch/landing/cineforum",
+            "align": "center",
+            "style": "pill"
+          },
+          {
+            "id": "block-divider",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "block-1791118336869",
+            "type": "image",
+            "image_url": "https://gliattomatti.ch/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
+            "alt": "Locandina Evento",
+            "align": "center",
+            "full_width": false
+          },
+          {
+            "id": "block-social",
+            "type": "social_links",
+            "instagram_url": "https://instagram.com/gliattomatti",
+            "website_url": "https://gliattomatti.ch",
+            "align": "center"
+          },
+          {
+            "id": "block-footer",
+            "type": "footer",
+            "legal_text": "Gli Attomatti & UNITRE • Zurigo, Svizzera",
+            "privacy_note": "Ricevi questa email in seguito a una registrazione o richiesta sul sito gliattomatti.ch",
+            "show_privacy_link": true
+          }
+        ],
+        "customColors": {
+          "muted": "#ffffff"
+        }
+      }
     ]
+  },
+  "locations": [
+    {
+      "id": "loc-1791226340633",
+      "slug": "sala-wollishofen",
+      "title": "Wollishofen",
+      "venue_name": "ABZ-Gemeinschaftsraum",
+      "address": "Balberstrasse 47, 8038 Zürich",
+      "google_maps_url": "https://maps.app.goo.gl/pz3aigqZoPrjEaqE6",
+      "active": true,
+      "hero_image": "/images/1782553290530-TheaterCurtain.webp",
+      "description": "",
+      "public_transport": [
+        {
+          "type": "tram",
+          "stop": "Wollishoferplatz",
+          "lines": "",
+          "walking_time": "5 min a piedi",
+          "types": [
+            "tram",
+            "bus"
+          ],
+          "line_badges": [
+            {
+              "number": "7",
+              "bg_color": "#000000",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "184",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "185",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "N18",
+              "bg_color": "#000000",
+              "text_color": "#ffff00"
+            }
+          ]
+        },
+        {
+          "type": "tram",
+          "stop": "Butzenstrasse",
+          "lines": "",
+          "walking_time": "5 min a piedi",
+          "types": [
+            "tram",
+            "bus"
+          ],
+          "line_badges": [
+            {
+              "number": "7",
+              "bg_color": "#000000",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "184",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "185",
+              "bg_color": "#ffffff",
+              "text_color": "#000000"
+            },
+            {
+              "number": "70",
+              "bg_color": "#fafafa",
+              "text_color": "#000000"
+            },
+            {
+              "number": "N18",
+              "bg_color": "#000000",
+              "text_color": "#ffff00"
+            }
+          ]
+        },
+        {
+          "type": "tram",
+          "stop": "Wollishofen",
+          "lines": "",
+          "walking_time": "20 min a piedi",
+          "types": [
+            "train"
+          ],
+          "line_badges": [
+            {
+              "number": "S8",
+              "bg_color": "#581e83",
+              "text_color": "#ffffff"
+            },
+            {
+              "number": "S24",
+              "bg_color": "#193969",
+              "text_color": "#ffffff"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1791558658445",
+          "title": "Vista aerea",
+          "instruction": "Utilizza questa vista aerea per orientarti - in seguito, ti guideremo passo-passo da Wollishoferplatz alla sala",
+          "image": "/images/1791558797773-9tke-SalaWolli1.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791558946058",
+          "title": "Scendi dal tram",
+          "instruction": "Da Wollishoferplatz, imbocca il vicoletto tra il ristorante Dapura Mia e la macelleria",
+          "image": "/images/1791558806979-z0ny-SalaWolli2.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559005910",
+          "title": "Attraversa la strada ed imbocca il vicoletto",
+          "instruction": "",
+          "image": "/images/1791558805932-l34k-SalaWolli3.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559006459",
+          "title": "Prosegui dritto",
+          "instruction": "",
+          "image": "/images/1791558804887-7p2z-SalaWolli4.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559006866",
+          "title": "GIra a destra",
+          "instruction": "Dopo il cortile della scuola, gira a destra. <b>Nota: l'edificio della scuola sulla sinistra è stato demolito ed, al momento, è un cantiere</b>",
+          "image": "/images/1791558803638-jypu-SalaWolli5.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559007300",
+          "title": "Gira a destra",
+          "instruction": "",
+          "image": "/images/1791558802034-6pvq-SalaWolli6.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559007750",
+          "title": "Prosegui dritto",
+          "instruction": "La sala si trova sulla destra, un centinaio di metri dopo la svolta.",
+          "image": "/images/1791558800652-ipnz-SalaWolli7.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559008230",
+          "title": "Eccoci arrivati",
+          "instruction": "L'ingresso della sala è sotto l'arco, sulla sinistra - proprio dove indica la freccia",
+          "image": "/images/1791558799227-dq7s-SalaWolli8.webp",
+          "image_caption": ""
+        }
+      ],
+      "parking_info": "Parcheggi limitati in zona a strisce bianche.",
+      "accessibility_info": "Una parte della sala è accessibile alle carrozine. Contattaci per maggiori dettagli.",
+      "notes": "",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "badge": "",
+      "category_badge": ""
+    },
+    {
+      "id": "loc-1791538044387",
+      "slug": "scuol-palace",
+      "title": "Sala \"Mahagoni\"",
+      "venue_name": "Scuol Palace",
+      "address": "Nairs 500, 7550 Scuol",
+      "google_maps_url": "https://www.scuolpalace.ch/",
+      "active": true,
+      "hero_image": "/images/1782553290530-TheaterCurtain.webp",
+      "description": "Sede della Biennale Svizzera del Teatro Amatoriale, Gli Attomatti si esibiranno all'interno dello spazio \"Mahagoni\"",
+      "public_transport": [],
+      "steps_heading": null,
+      "steps": [
+        {
+          "id": "step-1791559456716",
+          "title": "Mappa",
+          "instruction": "Materiale fornito dall'organizzazione della biennale.",
+          "image": "/images/1791559498421-0-7yo2-MappaScuol.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791538044387-1",
+          "title": "Vista aerea",
+          "instruction": "Materiale fornito dall'organizzazione della biennale.",
+          "image": "/images/1791538338568-0-8nnx-Screenshot_2026-10-09_at_11.32.03.webp",
+          "image_caption": "Mappa fornita dall'organizzazione"
+        }
+      ],
+      "parking_info": "",
+      "accessibility_info": "",
+      "notes": "",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "badge": "",
+      "category_badge": ""
+    }
+  ]
 }
