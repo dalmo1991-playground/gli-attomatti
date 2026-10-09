@@ -698,12 +698,12 @@
           "slug": "non-sottovalutare-i-40",
           "year": "2026",
           "short_description": "Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta. ",
-          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. Ingresso a pagamento.</p>",
+          "text": "<p>Dario sta per compiere quarant’anni, ma preferirebbe dimenticarsene. La sua famiglia, invece, ha preparato una sorpresa: riempire la giornata di riferimenti al numero 40, tra cruciverba, scioglilingua, acquisti improbabili, equivoci e una febbre decisamente sospetta.</p><p>Scritto da Domenico Scotti di Carlo, <i>Non sottovalutare i 40</i> è un brillante atto unico portato in scena dalla compagnia Gli Attomatti. Una commedia dal ritmo vivace e dalle situazioni paradossali che affronta con leggerezza, complicità e tante risate il fatidico traguardo dei quaranta e le dinamiche quotidiane di famiglia.</p><p>Lo spettacolo sarà presentato all'interno della prestigiosa <i>Biennale Svizzera del Teatro Amatoriale</i>, in programma a Scuol (Bassa Engadina) dal 23 al 25 ottobre. La rassegna è il principale punto d'incontro del teatro popolare elvetico: un festival itinerante e inclusivo che riunisce compagnie e spettatori provenienti da tutte e quattro le regioni linguistiche della Svizzera (italiana, romancia, tedesca e francese). Per un intero fine settimana, storie ed energie teatrali si intrecciano al di là di ogni barriera linguistica, ospitate in cornici d'eccezione come lo storico Scuol Palace e la Fundaziun Nairs.</p><p>L'evento è aperto al pubblico. Gli Attomatti si esibiranno sabato 24 ottobre alle ore 15:00. <b>Ingresso a pagamento.</b></p>",
           "dates": [
             {
               "date": "24 Ottobre 2026, ore 15:00",
-              "location": "Scuol Palace, Mahagoni",
-              "ticket_label": "Info & Biglietti",
+              "location": "Hotel Scuol Palace, Scuol",
+              "ticket_label": "Info",
               "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
               "location_href": "/Location/scuol-palace"
             }
@@ -718,11 +718,7 @@
               "value": "30 minuti"
             },
             {
-              "label": "Regia",
-              "value": "Domenico Scotti di Carlo"
-            },
-            {
-              "label": "Testo",
+              "label": "Testo & regia",
               "value": "Domenico Scotti di Carlo"
             }
           ],
@@ -1477,7 +1473,8 @@
       "header": {
         "logo_text": "Gli Attomatti",
         "cta_label": "Info & Biglietti",
-        "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/"
+        "cta_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
+        "logo_image": "/images/1791558797773-9tke-SalaWolli1.webp"
       },
       "sticky_bar": {
         "enabled": true,
@@ -2292,9 +2289,66 @@
           ]
         }
       ],
-      "steps": [],
-      "parking_info": "",
-      "accessibility_info": "",
+      "steps": [
+        {
+          "id": "step-1791558658445",
+          "title": "Vista aerea",
+          "instruction": "Utilizza questa vista aerea per orientarti - in seguito, ti guideremo passo-passo da Wollishoferplatz alla sala",
+          "image": "/images/1791558797773-9tke-SalaWolli1.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791558946058",
+          "title": "Scendi dal tram",
+          "instruction": "Da Wollishoferplatz, imbocca il vicoletto tra il ristorante Dapura Mia e la macelleria",
+          "image": "/images/1791558806979-z0ny-SalaWolli2.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559005910",
+          "title": "Attraversa la strada ed imbocca il vicoletto",
+          "instruction": "",
+          "image": "/images/1791558805932-l34k-SalaWolli3.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559006459",
+          "title": "Prosegui dritto",
+          "instruction": "",
+          "image": "/images/1791558804887-7p2z-SalaWolli4.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559006866",
+          "title": "GIra a destra",
+          "instruction": "Dopo il cortile della scuola, gira a destra. <b>Nota: l'edificio della scuola sulla sinistra è stato demolito ed, al momento, è un cantiere</b>",
+          "image": "/images/1791558803638-jypu-SalaWolli5.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559007300",
+          "title": "Gira a destra",
+          "instruction": "",
+          "image": "/images/1791558802034-6pvq-SalaWolli6.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559007750",
+          "title": "Prosegui dritto",
+          "instruction": "La sala si trova sulla destra, un centinaio di metri dopo la svolta.",
+          "image": "/images/1791558800652-ipnz-SalaWolli7.webp",
+          "image_caption": ""
+        },
+        {
+          "id": "step-1791559008230",
+          "title": "Eccoci arrivati",
+          "instruction": "L'ingresso della sala è sotto l'arco, sulla sinistra - proprio dove indica la freccia",
+          "image": "/images/1791558799227-dq7s-SalaWolli8.webp",
+          "image_caption": ""
+        }
+      ],
+      "parking_info": "Parcheggi limitati in zona a strisce bianche.",
+      "accessibility_info": "Una parte della sala è accessibile alle carrozine. Contattaci per maggiori dettagli.",
       "notes": "",
       "back_link_label": "Torna indietro",
       "back_link_href": "/",
@@ -2315,9 +2369,16 @@
       "steps_heading": null,
       "steps": [
         {
+          "id": "step-1791559456716",
+          "title": "Mappa",
+          "instruction": "Materiale fornito dall'organizzazione della biennale.",
+          "image": "/images/1791559498421-0-7yo2-MappaScuol.webp",
+          "image_caption": ""
+        },
+        {
           "id": "step-1791538044387-1",
-          "title": "Mappa fornita dall'organizzazione",
-          "instruction": "",
+          "title": "Vista aerea",
+          "instruction": "Materiale fornito dall'organizzazione della biennale.",
           "image": "/images/1791538338568-0-8nnx-Screenshot_2026-10-09_at_11.32.03.webp",
           "image_caption": "Mappa fornita dall'organizzazione"
         }
