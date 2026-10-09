@@ -761,7 +761,8 @@
             "detail_meta_title_suffix": "— Come Raggiungerci",
             "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
             "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
-            "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
+            "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci",
+            "directions_badge_label": "Indicazioni"
         }
     },
     "landings": [
