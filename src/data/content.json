@@ -2299,6 +2299,35 @@
       "back_link_href": "/",
       "badge": "",
       "category_badge": ""
+    },
+    {
+      "id": "loc-1791538044387",
+      "slug": "scuol-palace",
+      "title": "Sala \"Mahagoni\"",
+      "venue_name": "Scuol Palace",
+      "address": "Nairs 500, 7550 Scuol",
+      "google_maps_url": "https://www.scuolpalace.ch/",
+      "active": true,
+      "hero_image": "/images/1782553290530-TheaterCurtain.webp",
+      "description": "Sede della Biennale Svizzera del Teatro Amatoriale, Gli Attomatti si esibiranno all'interno dello spazio \"Mahagoni\"",
+      "public_transport": [],
+      "steps_heading": null,
+      "steps": [
+        {
+          "id": "step-1791538044387-1",
+          "title": "Mappa fornita dall'organizzazione",
+          "instruction": "",
+          "image": "/images/1791538338568-0-8nnx-Screenshot_2026-10-09_at_11.32.03.webp",
+          "image_caption": "Mappa fornita dall'organizzazione"
+        }
+      ],
+      "parking_info": "",
+      "accessibility_info": "",
+      "notes": "",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "badge": "",
+      "category_badge": ""
     }
   ]
 }
