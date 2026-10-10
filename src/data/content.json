@@ -1976,7 +1976,24 @@
       "back_to_home": "Torna alla home",
       "year_prefix": "Anno",
       "season_prefix": "Stagione",
-      "edition_prefix": "Edizione"
+      "edition_prefix": "Edizione",
+      "share_title": "Condividi",
+      "share_button_label": "Condividi questo evento"
+    },
+    "share_modal": {
+      "modal_title": "Condividi",
+      "modal_description": "Spargi la voce tra amici e colleghi appassionati di teatro.",
+      "copy_link_label": "Copia link",
+      "link_copied_label": "Copiato!",
+      "close_aria_label": "Chiudi finestra di condivisione",
+      "share_aria_label": "Condividi questa pagina",
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "telegram": "Telegram",
+        "facebook": "Facebook",
+        "twitter": "X (Twitter)",
+        "email": "Email"
+      }
     },
     "landing_defaults": {
       "preview_loading": "Caricamento anteprima...",

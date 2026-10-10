@@ -31,17 +31,19 @@ export function constantTimeCompare(a?: string | null, b?: string | null): boole
  */
 export function getClientIp(req: Request | NextRequest): string {
   const headers = req.headers;
+
+  // Set by Vercel's edge: cannot be forged by the client
+  const vercelForwarded = headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim();
+  if (vercelForwarded) return vercelForwarded;
+
+  const realIp = headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
   const xForwardedFor = headers.get("x-forwarded-for");
   if (xForwardedFor) {
     const firstIp = xForwardedFor.split(",")[0]?.trim();
     if (firstIp) return firstIp;
   }
-
-  const vercelIp = headers.get("x-vercel-ip");
-  if (vercelIp) return vercelIp.trim();
-
-  const realIp = headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
 
   return "127.0.0.1";
 }

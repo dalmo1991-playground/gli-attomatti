@@ -37,14 +37,7 @@ export function DeploymentDetector({ serverVersion }: DeploymentDetectorProps) {
     if (typeof window === "undefined") return;
     if (!window.location.pathname.startsWith("/admin")) return;
 
-    try {
-      const storedSecret =
-        sessionStorage.getItem("attomatti_admin_secret") ||
-        localStorage.getItem("attomatti_admin_secret");
-      if (!storedSecret) return;
-    } catch {
-      return;
-    }
+    if (!(window as any).__attomattiAdminActive) return;
 
     // Throttle checks to once every 10 seconds minimum
     const now = Date.now();

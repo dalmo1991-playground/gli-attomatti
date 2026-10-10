@@ -23,6 +23,7 @@ import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { Section } from "@/components/ui/Section";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
+import { ShareButton } from "@/components/ui/ShareButton";
 import { getSafeImageProps } from "@/lib/youtube";
 import { defaultText } from "@/lib/utils";
 import { resolveSlugText } from "@/lib/contentResolver";
@@ -210,18 +211,28 @@ export default function LocationClient({ location: initialLocation, slug, conten
                 </div>
               )}
 
-              {location.google_maps_url && mapsButtonLabel && (
-                <Link
-                  href={location.google_maps_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20 shrink-0 self-start sm:self-auto"
-                >
-                  <Navigation size={14} />
-                  <span>{mapsButtonLabel}</span>
-                  <ExternalLink size={12} className="opacity-70" />
-                </Link>
-              )}
+              <div className="flex flex-wrap items-center gap-3 shrink-0 self-start sm:self-auto">
+                <ShareButton
+                  variant="button"
+                  label="Condividi sala"
+                  title={`${location.venue_name || location.title} — Gli Attomatti`}
+                  description={location.description || location.address}
+                  uiContent={liveContent?.ui?.share_modal}
+                />
+
+                {location.google_maps_url && mapsButtonLabel && (
+                  <Link
+                    href={location.google_maps_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md shadow-primary/20 shrink-0"
+                  >
+                    <Navigation size={14} />
+                    <span>{mapsButtonLabel}</span>
+                    <ExternalLink size={12} className="opacity-70" />
+                  </Link>
+                )}
+              </div>
             </div>
 
             {location.description && (

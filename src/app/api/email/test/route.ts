@@ -10,7 +10,7 @@ import {
 import { sendTransactionalEmail, SendEmailAttachment } from "@/lib/email/resend";
 import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
 import { parseEventDate, generateIcsCalendarContent } from "@/lib/email/calendar";
-import { checkAdminAuth } from "../queue/route";
+import { checkAdminAuth } from "@/lib/adminAuth";
 
 export const dynamic = "force-dynamic";
 

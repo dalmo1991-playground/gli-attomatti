@@ -213,7 +213,7 @@ export async function DELETE(request: Request) {
       const subPath = cleanUrl.replace(/^images\//, '');
       const localPath = path.resolve(allowedBaseDir, subPath);
 
-      if (!localPath.startsWith(allowedBaseDir)) {
+      if (!localPath.startsWith(allowedBaseDir + path.sep)) {
         throw new Error(`Percorso non consentito: ${url}`);
       }
 

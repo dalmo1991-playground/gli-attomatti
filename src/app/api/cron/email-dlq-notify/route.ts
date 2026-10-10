@@ -3,6 +3,7 @@ import { getContent } from "@/lib/data";
 import { listFailedEmails } from "@/lib/email/dlq";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 import { SITE_URL } from "@/lib/seo";
+import { escapeHtml } from "@/lib/email/blocks";
 
 export const dynamic = "force-dynamic";
 
@@ -124,8 +125,8 @@ async function handleDlqNotification(req: NextRequest) {
   const rowsHtml = sampleList
     .map((item) => {
       const recipientStr = item.recipient.name
-        ? `${item.recipient.name} &lt;${item.recipient.email}&gt;`
-        : item.recipient.email;
+        ? `${escapeHtml(item.recipient.name)} &lt;${escapeHtml(item.recipient.email)}&gt;`
+        : escapeHtml(item.recipient.email);
       const formattedDate = new Date(item.lastAttemptAt).toLocaleString("it-IT", {
         timeZone: "Europe/Zurich",
         day: "2-digit",
@@ -140,10 +141,10 @@ async function handleDlqNotification(req: NextRequest) {
             ${recipientStr}
           </td>
           <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 12px; color: #cbd5e1;">
-            ${item.subject || "Nessun oggetto"}
+            ${escapeHtml(item.subject || "Nessun oggetto")}
           </td>
           <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #fb7185; font-family: monospace;">
-            ${item.error?.message || "Errore sconosciuto"}
+            ${escapeHtml(item.error?.message || "Errore sconosciuto")}
           </td>
           <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #94a3b8; text-align: right; white-space: nowrap;">
             ${formattedDate}

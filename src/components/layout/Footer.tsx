@@ -7,6 +7,7 @@ import Image from "next/image";
 import { trackContact, trackSocialClick } from "@/lib/tracking";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { defaultText } from "@/lib/utils";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 
 export function Footer({ content }: { content: any }) {
@@ -85,9 +86,9 @@ export function Footer({ content }: { content: any }) {
                 <FormattedText text={siteDesc} />
               </p>
             )}
-            {socials.length > 0 && (
-              <div className="flex gap-4">
-                {socials.filter((s: any) => s && s.visible !== false).map((social: any, idx: number) => {
+            <div className="flex flex-wrap items-center gap-4">
+              {socials.length > 0 &&
+                socials.filter((s: any) => s && s.visible !== false).map((social: any, idx: number) => {
                   return social.href ? (
                     <Link
                       key={idx}
@@ -102,8 +103,14 @@ export function Footer({ content }: { content: any }) {
                     </Link>
                   ) : null;
                 })}
-              </div>
-            )}
+
+              <ShareButton
+                variant="icon"
+                label="Condividi il sito"
+                className="w-12 h-12"
+                uiContent={content?.ui?.share_modal}
+              />
+            </div>
           </div>
 
           {/* Navigation Columns */}

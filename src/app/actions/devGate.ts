@@ -4,7 +4,11 @@ import { cookies } from "next/headers";
 import { constantTimeCompare } from "@/lib/security";
 
 export async function verifyDevPassword(password: string) {
-  const configuredPassword = process.env.DEV_GATE_PASSWORD || "attomatti";
+  const configuredPassword =
+    process.env.DEV_GATE_PASSWORD || (process.env.NODE_ENV === "development" ? "attomatti" : "");
+  if (!configuredPassword) {
+    return { success: false, error: "Accesso non configurato. Imposta DEV_GATE_PASSWORD." };
+  }
   
   // Use constant-time comparison to prevent timing attacks
   if (constantTimeCompare(password.trim(), configuredPassword)) {

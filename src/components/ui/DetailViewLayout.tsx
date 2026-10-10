@@ -34,6 +34,10 @@ export interface DetailViewLayoutProps {
   children?: React.ReactNode;
   mobileCtaLabel?: string | null;
   mobileFloatingCtaLabel?: string | null;
+  shareTitle?: string | null;
+  shareItemTitle?: string;
+  shareItemDescription?: string;
+  shareUiContent?: Record<string, unknown>;
 }
 
 export function DetailViewLayout({
@@ -56,7 +60,11 @@ export function DetailViewLayout({
   lightboxUi,
   children,
   mobileCtaLabel,
-  mobileFloatingCtaLabel
+  mobileFloatingCtaLabel,
+  shareTitle,
+  shareItemTitle,
+  shareItemDescription,
+  shareUiContent
 }: DetailViewLayoutProps) {
   const [lightbox, setLightbox] = useState<{
     isOpen: boolean;
@@ -129,6 +137,10 @@ export function DetailViewLayout({
                 photoGuideBadgeLabel={photoGuideBadgeLabel}
                 directionsBadgeLabel={directionsBadgeLabel}
                 onTicketClick={onTicketClick}
+                shareTitle={shareTitle}
+                shareItemTitle={shareItemTitle || (title || undefined)}
+                shareItemDescription={shareItemDescription || (subtitle || undefined)}
+                shareUiContent={shareUiContent}
               />
             </div>
 
@@ -158,6 +170,10 @@ export function DetailViewLayout({
               photoGuideBadgeLabel={photoGuideBadgeLabel}
               directionsBadgeLabel={directionsBadgeLabel}
               onTicketClick={onTicketClick}
+              shareTitle={shareTitle}
+              shareItemTitle={shareItemTitle || (title || undefined)}
+              shareItemDescription={shareItemDescription || (subtitle || undefined)}
+              shareUiContent={shareUiContent}
             />
           </div>
         </div>

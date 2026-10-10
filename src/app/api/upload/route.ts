@@ -46,7 +46,15 @@ export async function POST(request: Request) {
     try {
       const body = await request.json();
       if (body.action === 'commit') {
-        const items = (body.items || []) as Array<{ path: string; sha: string; url?: string }>;
+        const rawItems = (body.items || []) as Array<{ path: string; sha: string; url?: string }>;
+        // Security: only .webp files directly inside public/images can be committed
+        const SAFE_PATH = /^public\/images\/[A-Za-z0-9._-]+\.webp$/;
+        const items = rawItems.filter(
+          (i) => i && typeof i.path === 'string' && SAFE_PATH.test(i.path) && !i.path.includes('..')
+        );
+        if (items.length !== rawItems.length) {
+          return NextResponse.json({ error: 'Percorso file non consentito' }, { status: 400 });
+        }
         if (items.length === 0) {
           return NextResponse.json({ error: 'Nessun elemento da committare' }, { status: 400 });
         }

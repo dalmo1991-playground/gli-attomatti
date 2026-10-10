@@ -1,11 +1,13 @@
-import { execSync } from 'child_process';
-
 function getLocalGitBranch(): string | undefined {
+  // Only meaningful on a developer machine; never spawn git in deployed environments
+  if (process.env.NODE_ENV === 'production') return undefined;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { execSync } = require('child_process') as typeof import('child_process');
     return execSync('git rev-parse --abbrev-ref HEAD', { stdio: 'pipe' })
       .toString()
       .trim();
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }
@@ -50,6 +52,114 @@ export function resolveTargetBranch(host?: string): string {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
+
+interface GitHubContext {
+  repo: string;
+  branch: string;
+  headers: Record<string, string>;
+}
+
+/**
+ * Reads GitHub credentials from the environment and builds the common request context.
+ * Throws if GITHUB_TOKEN / GITHUB_REPO are not configured.
+ */
+function getGitHubContext(overrideBranch?: string): GitHubContext {
+  const token = process.env.GITHUB_TOKEN;
+  const rawRepo = process.env.GITHUB_REPO;
+  if (!token || !rawRepo) {
+    throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
+  }
+
+  return {
+    repo: rawRepo.replace('https://github.com/', '').replace(/\/$/, ''),
+    branch: overrideBranch || resolveTargetBranch(),
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'Attomatti-CMS'
+    }
+  };
+}
+
+async function githubError(res: Response, what: string): Promise<Error> {
+  const err = await res.json().catch(() => ({}));
+  return new Error(`${what}: ${err.message || res.statusText}`);
+}
+
+function toBase64(content: string | Buffer, isBinary?: boolean): string {
+  return isBinary
+    ? (content as Buffer).toString('base64')
+    : Buffer.from(content as string).toString('base64');
+}
+
+/**
+ * Creates ONE commit on the target branch applying the given tree items
+ * (Git Data API: ref -> base tree -> new tree -> commit -> ref update).
+ * A tree item with `sha: null` deletes the file.
+ */
+async function commitTree(
+  ctx: GitHubContext,
+  treeItems: Array<{ path: string; mode: '100644'; type: 'blob'; sha: string | null }>,
+  message: string
+) {
+  const { repo, branch, headers } = ctx;
+  const api = `https://api.github.com/repos/${repo}/git`;
+
+  // 1. Latest commit on the branch
+  const refRes = await fetch(`${api}/ref/heads/${branch}`, { cache: 'no-store', headers });
+  if (!refRes.ok) throw await githubError(refRes, `Failed to get branch ref (${branch})`);
+  const latestCommitSha: string | undefined = (await refRes.json()).object?.sha;
+  if (!latestCommitSha) throw new Error(`Unable to resolve commit SHA for branch ${branch}`);
+
+  // 2. Base tree of that commit
+  const commitRes = await fetch(`${api}/commits/${latestCommitSha}`, { cache: 'no-store', headers });
+  if (!commitRes.ok) throw await githubError(commitRes, `Failed to get commit (${latestCommitSha})`);
+  const baseTreeSha: string | undefined = (await commitRes.json()).tree?.sha;
+  if (!baseTreeSha) throw new Error(`Unable to resolve base tree SHA for commit ${latestCommitSha}`);
+
+  // 3. New tree
+  const treeRes = await fetch(`${api}/trees`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ base_tree: baseTreeSha, tree: treeItems })
+  });
+  if (!treeRes.ok) throw await githubError(treeRes, 'Failed to create Git tree');
+  const newTreeSha: string = (await treeRes.json()).sha;
+
+  // 4. New commit
+  const newCommitRes = await fetch(`${api}/commits`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ message, tree: newTreeSha, parents: [latestCommitSha] })
+  });
+  if (!newCommitRes.ok) throw await githubError(newCommitRes, 'Failed to create Git commit');
+  const newCommitSha: string = (await newCommitRes.json()).sha;
+
+  // 5. Fast-forward the branch (never forced)
+  const updateRefRes = await fetch(`${api}/refs/heads/${branch}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ sha: newCommitSha, force: false })
+  });
+  if (!updateRefRes.ok) {
+    throw await githubError(updateRefRes, `Failed to update branch ${branch} to ${newCommitSha}`);
+  }
+
+  return {
+    success: true,
+    branch,
+    repo,
+    commitSha: newCommitSha,
+    shortSha: newCommitSha.substring(0, 7),
+    commitUrl: `https://github.com/${repo}/commit/${newCommitSha}`,
+    count: treeItems.length
+  };
+}
+
 /**
  * Commits a file to GitHub via the REST API.
  */
@@ -66,81 +176,31 @@ export async function commitToGitHub({
   branch?: string;
   isBinary?: boolean;
 }) {
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO; // e.g. "owner/repo"
-  const branch = overrideBranch || resolveTargetBranch();
-
-
-  if (!token || !repo) {
-    throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
-  }
-
-  const maskedToken = `${token.substring(0, 4)}...${token.substring(token.length - 4)}`;
-  console.log(`[GitHub API] Config: Repo=${repo}, Branch=${branch}, Token=${maskedToken} (len: ${token.length})`);
-
-  // Sanitize repo: remove https://github.com/ and trailing slashes
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
-
-
+  const ctx = getGitHubContext(overrideBranch);
+  const { repo, branch, headers } = ctx;
   const baseUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-  console.log(`[GitHub API] Attempting to commit to: ${baseUrl} on branch: ${branch}`);
 
-  // 1. Try to get the existing file SHA (if it exists)
+  // 1. Existing file SHA (if the file already exists)
   let sha: string | undefined;
   try {
-    const res = await fetch(`${baseUrl}?ref=${branch}`, {
-      cache: 'no-store',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'Attomatti-CMS'
-      },
-    });
+    const res = await fetch(`${baseUrl}?ref=${branch}`, { cache: 'no-store', headers });
     if (res.ok) {
-      const data = await res.json();
-      sha = data.sha;
-      console.log(`[GitHub API] Found existing file SHA: ${sha}`);
-    } else {
-      console.log(`[GitHub API] SHA fetch returned status ${res.status}. Possibly a new file.`);
+      sha = (await res.json()).sha;
     }
-  } catch (e) {
-    console.log(`[GitHub API] Failed to fetch SHA:`, e);
+  } catch {
     // File likely doesn't exist yet
   }
 
-
-  // 2. Prepare the payload
-  // Content must be base64 encoded
-  const contentBase64 = isBinary 
-    ? (content as Buffer).toString('base64')
-    : Buffer.from(content as string).toString('base64');
-
-  const body = {
-    message,
-    content: contentBase64,
-    branch,
-    sha // If provided, updates the file; if not, creates it
-  };
-
-  // 3. Push to GitHub
+  // 2. Push (with sha updates the file; without creates it)
   const pushRes = await fetch(baseUrl, {
     method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      'User-Agent': 'Attomatti-CMS'
-    },
-
-    body: JSON.stringify(body),
+    headers,
+    body: JSON.stringify({ message, content: toBase64(content, isBinary), branch, sha })
   });
 
   if (!pushRes.ok) {
-    const errorData = await pushRes.json();
-    console.error(`[GitHub API] Push failed:`, errorData);
-    throw new Error(`GitHub API Error: ${errorData.message || pushRes.statusText}`);
+    throw await githubError(pushRes, 'GitHub API Error');
   }
-
 
   const data = await pushRes.json();
   const commitSha: string | undefined = data.commit?.sha || data.sha;
@@ -164,26 +224,15 @@ export async function commitToGitHub({
  * Lists images stored under public/images in GitHub repository via REST API.
  */
 export async function listGitHubImages(branchOverride?: string): Promise<Array<{ url: string; name: string; size?: number }>> {
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO;
-  const branch = branchOverride || resolveTargetBranch();
-
-  if (!token || !repo) {
+  if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO) {
     return [];
   }
 
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
+  const { repo, branch, headers } = getGitHubContext(branchOverride);
   const url = `https://api.github.com/repos/${repo}/contents/public/images?ref=${branch}`;
 
   try {
-    const res = await fetch(url, {
-      cache: 'no-store',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'Attomatti-CMS'
-      }
-    });
+    const res = await fetch(url, { cache: 'no-store', headers });
 
     if (!res.ok) {
       console.warn(`[GitHub API] List images failed with status ${res.status}`);
@@ -229,7 +278,7 @@ export async function commitMultipleToGitHub({
     return { success: true, count: 0 };
   }
 
-  // If only 1 file, delegate to standard commitToGitHub
+  // A single file goes through the simpler Contents API
   if (files.length === 1) {
     return commitToGitHub({
       path: files[0].path,
@@ -240,155 +289,31 @@ export async function commitMultipleToGitHub({
     });
   }
 
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO;
-  const branch = overrideBranch || resolveTargetBranch();
+  const ctx = getGitHubContext(overrideBranch);
 
-  if (!token || !repo) {
-    throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
-  }
-
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json',
-    'User-Agent': 'Attomatti-CMS'
-  };
-
-  console.log(`[GitHub API] Starting batch commit of ${files.length} files to ${repo} on branch: ${branch}`);
-
-  // 1. Get the latest commit SHA on the target branch
-  const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
-    cache: 'no-store',
-    headers
-  });
-
-  if (!refRes.ok) {
-    const err = await refRes.json().catch(() => ({}));
-    throw new Error(`Failed to get branch ref (${branch}): ${err.message || refRes.statusText}`);
-  }
-  const refData = await refRes.json();
-  const latestCommitSha = refData.object?.sha;
-  if (!latestCommitSha) {
-    throw new Error(`Unable to resolve commit SHA for branch ${branch}`);
-  }
-
-  // 2. Get the base tree SHA from the latest commit
-  const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits/${latestCommitSha}`, {
-    cache: 'no-store',
-    headers
-  });
-  if (!commitRes.ok) {
-    const err = await commitRes.json().catch(() => ({}));
-    throw new Error(`Failed to get commit (${latestCommitSha}): ${err.message || commitRes.statusText}`);
-  }
-  const commitData = await commitRes.json();
-  const baseTreeSha = commitData.tree?.sha;
-  if (!baseTreeSha) {
-    throw new Error(`Unable to resolve base tree SHA for commit ${latestCommitSha}`);
-  }
-
-  // 3. Create blobs for each file in parallel
   const treeItems = await Promise.all(
     files.map(async (file) => {
-      const contentBase64 = file.isBinary
-        ? (file.content as Buffer).toString('base64')
-        : Buffer.from(file.content as string).toString('base64');
-
-      const blobRes = await fetch(`https://api.github.com/repos/${repo}/git/blobs`, {
+      const blobRes = await fetch(`https://api.github.com/repos/${ctx.repo}/git/blobs`, {
         method: 'POST',
-        headers,
-        body: JSON.stringify({
-          content: contentBase64,
-          encoding: 'base64'
-        })
+        headers: ctx.headers,
+        body: JSON.stringify({ content: toBase64(file.content, file.isBinary), encoding: 'base64' })
       });
+      if (!blobRes.ok) throw await githubError(blobRes, `Failed to create blob for ${file.path}`);
 
-      if (!blobRes.ok) {
-        const err = await blobRes.json().catch(() => ({}));
-        throw new Error(`Failed to create blob for ${file.path}: ${err.message || blobRes.statusText}`);
-      }
-
-      const blobData = await blobRes.json();
       return {
         path: file.path,
         mode: '100644' as const,
         type: 'blob' as const,
-        sha: blobData.sha
+        sha: (await blobRes.json()).sha as string
       };
     })
   );
 
-  // 4. Create new tree referencing the base tree
-  const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      base_tree: baseTreeSha,
-      tree: treeItems
-    })
-  });
-
-  if (!treeRes.ok) {
-    const err = await treeRes.json().catch(() => ({}));
-    throw new Error(`Failed to create Git tree: ${err.message || treeRes.statusText}`);
-  }
-  const treeData = await treeRes.json();
-  const newTreeSha = treeData.sha;
-
-  // 5. Create new commit
-  const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      message,
-      tree: newTreeSha,
-      parents: [latestCommitSha]
-    })
-  });
-
-  if (!newCommitRes.ok) {
-    const err = await newCommitRes.json().catch(() => ({}));
-    throw new Error(`Failed to create Git commit: ${err.message || newCommitRes.statusText}`);
-  }
-  const newCommitData = await newCommitRes.json();
-  const newCommitSha = newCommitData.sha;
-
-  // 6. Update target branch reference
-  const updateRefRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
-    method: 'PATCH',
-    headers,
-    body: JSON.stringify({
-      sha: newCommitSha,
-      force: false
-    })
-  });
-
-  if (!updateRefRes.ok) {
-    const err = await updateRefRes.json().catch(() => ({}));
-    throw new Error(`Failed to update branch ${branch} to ${newCommitSha}: ${err.message || updateRefRes.statusText}`);
-  }
-
-  const shortSha = newCommitSha ? newCommitSha.substring(0, 7) : undefined;
-  const commitUrl = newCommitSha ? `https://github.com/${repo}/commit/${newCommitSha}` : undefined;
-
-  console.log(`[GitHub API] Batch commit successful! SHA=${shortSha}, URL=${commitUrl}`);
-
-  return {
-    success: true,
-    branch,
-    repo,
-    commitSha: newCommitSha,
-    shortSha,
-    commitUrl,
-    count: files.length
-  };
+  return commitTree(ctx, treeItems, message);
 }
 
 /**
- * Deletes multiple files in a SINGLE Git commit using GitHub's Git Data API
- * (Tree with sha: null -> Commit -> Ref update).
+ * Deletes multiple files in a SINGLE Git commit (tree items with sha: null).
  */
 export async function deleteMultipleFromGitHub({
   paths,
@@ -403,56 +328,7 @@ export async function deleteMultipleFromGitHub({
     return { success: true, count: 0 };
   }
 
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO;
-  const branch = overrideBranch || resolveTargetBranch();
-
-  if (!token || !repo) {
-    throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
-  }
-
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json',
-    'User-Agent': 'Attomatti-CMS'
-  };
-
-  console.log(`[GitHub API] Starting batch delete of ${paths.length} files from ${repo} on branch: ${branch}`);
-
-  // 1. Get the latest commit SHA on the target branch
-  const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
-    cache: 'no-store',
-    headers
-  });
-
-  if (!refRes.ok) {
-    const err = await refRes.json().catch(() => ({}));
-    throw new Error(`Failed to get branch ref (${branch}): ${err.message || refRes.statusText}`);
-  }
-  const refData = await refRes.json();
-  const latestCommitSha = refData.object?.sha;
-  if (!latestCommitSha) {
-    throw new Error(`Unable to resolve commit SHA for branch ${branch}`);
-  }
-
-  // 2. Get the base tree SHA from the latest commit
-  const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits/${latestCommitSha}`, {
-    cache: 'no-store',
-    headers
-  });
-  if (!commitRes.ok) {
-    const err = await commitRes.json().catch(() => ({}));
-    throw new Error(`Failed to get commit (${latestCommitSha}): ${err.message || commitRes.statusText}`);
-  }
-  const commitData = await commitRes.json();
-  const baseTreeSha = commitData.tree?.sha;
-  if (!baseTreeSha) {
-    throw new Error(`Unable to resolve base tree SHA for commit ${latestCommitSha}`);
-  }
-
-  // 3. Create tree items with sha: null to remove files
+  const ctx = getGitHubContext(overrideBranch);
   const treeItems = paths.map((p) => ({
     path: p,
     mode: '100644' as const,
@@ -460,70 +336,7 @@ export async function deleteMultipleFromGitHub({
     sha: null
   }));
 
-  // 4. Create new tree referencing the base tree
-  const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      base_tree: baseTreeSha,
-      tree: treeItems
-    })
-  });
-
-  if (!treeRes.ok) {
-    const err = await treeRes.json().catch(() => ({}));
-    throw new Error(`Failed to create Git delete tree: ${err.message || treeRes.statusText}`);
-  }
-  const treeData = await treeRes.json();
-  const newTreeSha = treeData.sha;
-
-  // 5. Create new commit
-  const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      message,
-      tree: newTreeSha,
-      parents: [latestCommitSha]
-    })
-  });
-
-  if (!newCommitRes.ok) {
-    const err = await newCommitRes.json().catch(() => ({}));
-    throw new Error(`Failed to create Git delete commit: ${err.message || newCommitRes.statusText}`);
-  }
-  const newCommitData = await newCommitRes.json();
-  const newCommitSha = newCommitData.sha;
-
-  // 6. Update target branch reference
-  const updateRefRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
-    method: 'PATCH',
-    headers,
-    body: JSON.stringify({
-      sha: newCommitSha,
-      force: false
-    })
-  });
-
-  if (!updateRefRes.ok) {
-    const err = await updateRefRes.json().catch(() => ({}));
-    throw new Error(`Failed to update branch ${branch} to ${newCommitSha}: ${err.message || updateRefRes.statusText}`);
-  }
-
-  const shortSha = newCommitSha ? newCommitSha.substring(0, 7) : undefined;
-  const commitUrl = newCommitSha ? `https://github.com/${repo}/commit/${newCommitSha}` : undefined;
-
-  console.log(`[GitHub API] Batch delete successful! SHA=${shortSha}, URL=${commitUrl}`);
-
-  return {
-    success: true,
-    branch,
-    repo,
-    commitSha: newCommitSha,
-    shortSha,
-    commitUrl,
-    count: paths.length
-  };
+  return commitTree(ctx, treeItems, message);
 }
 
 /**
@@ -537,36 +350,16 @@ export async function createGitHubBlob({
   content: string | Buffer;
   isBinary?: boolean;
 }): Promise<string> {
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO;
-  if (!token || !repo) throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
-
-  const contentBase64 = isBinary
-    ? (content as Buffer).toString('base64')
-    : Buffer.from(content as string).toString('base64');
+  const { repo, headers } = getGitHubContext();
 
   const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      'User-Agent': 'Attomatti-CMS'
-    },
-    body: JSON.stringify({
-      content: contentBase64,
-      encoding: 'base64'
-    })
+    headers,
+    body: JSON.stringify({ content: toBase64(content, isBinary), encoding: 'base64' })
   });
+  if (!res.ok) throw await githubError(res, 'Failed to create blob');
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(`Failed to create blob: ${err.message || res.statusText}`);
-  }
-
-  const data = await res.json();
-  return data.sha;
+  return (await res.json()).sha;
 }
 
 /**
@@ -581,46 +374,9 @@ export async function commitTreeItems({
   message: string;
   branch?: string;
 }) {
-  if (!items || items.length === 0) return { success: true, count: 0 };
+  if (!items || items.length === 0) return { success: true, count: 0, commitSha: undefined, commitUrl: undefined };
 
-  const token = process.env.GITHUB_TOKEN;
-  let repo = process.env.GITHUB_REPO;
-  const branch = overrideBranch || resolveTargetBranch();
-  if (!token || !repo) throw new Error('GITHUB_TOKEN or GITHUB_REPO not configured');
-  repo = repo.replace('https://github.com/', '').replace(/\/$/, '');
-
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json',
-    'User-Agent': 'Attomatti-CMS'
-  };
-
-  // 1. Get latest commit
-  const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, {
-    cache: 'no-store',
-    headers
-  });
-  if (!refRes.ok) {
-    const err = await refRes.json().catch(() => ({}));
-    throw new Error(`Failed to get branch ref (${branch}): ${err.message || refRes.statusText}`);
-  }
-  const refData = await refRes.json();
-  const latestCommitSha = refData.object?.sha;
-
-  // 2. Get base tree
-  const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits/${latestCommitSha}`, {
-    cache: 'no-store',
-    headers
-  });
-  if (!commitRes.ok) {
-    const err = await commitRes.json().catch(() => ({}));
-    throw new Error(`Failed to get commit (${latestCommitSha}): ${err.message || commitRes.statusText}`);
-  }
-  const commitData = await commitRes.json();
-  const baseTreeSha = commitData.tree?.sha;
-
-  // 3. Create tree
+  const ctx = getGitHubContext(overrideBranch);
   const treeItems = items.map((item) => ({
     path: item.path,
     mode: '100644' as const,
@@ -628,60 +384,5 @@ export async function commitTreeItems({
     sha: item.sha
   }));
 
-  const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      base_tree: baseTreeSha,
-      tree: treeItems
-    })
-  });
-  if (!treeRes.ok) {
-    const err = await treeRes.json().catch(() => ({}));
-    throw new Error(`Failed to create tree: ${err.message || treeRes.statusText}`);
-  }
-  const treeData = await treeRes.json();
-
-  // 4. Create commit
-  const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      message,
-      tree: treeData.sha,
-      parents: [latestCommitSha]
-    })
-  });
-  if (!newCommitRes.ok) {
-    const err = await newCommitRes.json().catch(() => ({}));
-    throw new Error(`Failed to create commit: ${err.message || newCommitRes.statusText}`);
-  }
-  const newCommitData = await newCommitRes.json();
-
-  // 5. Update ref
-  const updateRefRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
-    method: 'PATCH',
-    headers,
-    body: JSON.stringify({
-      sha: newCommitData.sha,
-      force: false
-    })
-  });
-  if (!updateRefRes.ok) {
-    const err = await updateRefRes.json().catch(() => ({}));
-    throw new Error(`Failed to update ref: ${err.message || updateRefRes.statusText}`);
-  }
-
-  const shortSha = newCommitData.sha ? newCommitData.sha.substring(0, 7) : undefined;
-  const commitUrl = newCommitData.sha ? `https://github.com/${repo}/commit/${newCommitData.sha}` : undefined;
-
-  return {
-    success: true,
-    branch,
-    repo,
-    commitSha: newCommitData.sha,
-    shortSha,
-    commitUrl,
-    count: items.length
-  };
+  return commitTree(ctx, treeItems, message);
 }

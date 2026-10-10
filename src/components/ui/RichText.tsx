@@ -18,27 +18,45 @@ function isHtml(str: string): boolean {
   return /<(?:p|strong|b|em|i|u|a|ul|ol|li|br|span|div)\b[^>]*>/i.test(str);
 }
 
+const ALLOWED_TAGS = new Set([
+  "p", "br", "strong", "b", "em", "i", "u", "a", "ul", "ol", "li",
+  "span", "div", "h2", "h3", "h4", "blockquote", "small", "s", "del", "sub", "sup"
+]);
+
+const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i;
+
 /**
- * Basic safe sanitizer: strips dangerous tags like script, iframe, object, embed, style,
- * and removes on* attributes (onclick, onerror, etc.) and javascript: URLs.
+ * Allow-list HTML sanitizer.
+ * - Drops dangerous elements together with their content (script, style, iframe, svg...).
+ * - Keeps only a small set of formatting tags.
+ * - Strips EVERY attribute except a safe `href` on <a> (http/https/mailto/tel/relative/#),
+ *   and forces target/rel on links.
  */
 function sanitizeHtml(dirtyHtml: string): string {
   if (!dirtyHtml) return "";
-  let clean = dirtyHtml
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
-    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
-    .replace(/<\/?(?:source-footnote|sources-carousel-inline|citation-tag)[^>]*>/gi, "")
-    .replace(/\s*data-path-to-node="[^"]*"/gi, "")
-    .replace(/\s*_ng(?:host|content)[^=]*="[^"]*"/gi, "")
-    .replace(/\s*ng-[^=]*="[^"]*"/gi, "")
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "")
-    .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
 
-  return clean;
+  return dirtyHtml
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<(script|style|iframe|object|embed|noscript|template|svg|math|form|textarea|select)\b[\s\S]*?<\/\1\s*>/gi, "")
+    .replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g, (match, rawTag: string, attrs: string) => {
+      const tag = rawTag.toLowerCase();
+      if (!ALLOWED_TAGS.has(tag)) return "";
+
+      if (match.startsWith("</")) return `</${tag}>`;
+
+      if (tag === "a") {
+        const hrefMatch = attrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+        const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? hrefMatch?.[3] ?? "").trim();
+        if (!href || !SAFE_HREF.test(href)) return "<a>";
+        const external = /^https?:\/\//i.test(href);
+        const safeHref = href.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+        return external
+          ? `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`
+          : `<a href="${safeHref}">`;
+      }
+
+      return tag === "br" ? "<br>" : `<${tag}>`;
+    });
 }
 
 export function RichText({
@@ -46,16 +64,19 @@ export function RichText({
   className = "",
   as: Component = "div"
 }: RichTextProps) {
-  if (!content || typeof content !== "string" || !content.trim()) {
-    return null;
-  }
+  // Hooks must run before any early return (Rules of Hooks)
+  const safeContent = typeof content === "string" ? content : "";
 
   // Pre-process markdown links [text](url) -> <a href="url">text</a>
   const processedContent = useMemo(() => {
-    return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-  }, [content]);
+    return safeContent.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  }, [safeContent]);
 
   const hasHtml = useMemo(() => isHtml(processedContent), [processedContent]);
+
+  if (!safeContent.trim()) {
+    return null;
+  }
 
   // If HTML is present, render with safe markup and refined typography
   if (hasHtml) {

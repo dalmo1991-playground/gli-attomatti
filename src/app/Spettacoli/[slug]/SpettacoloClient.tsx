@@ -76,6 +76,8 @@ export default function SpettacoloDettaglioClient({
         show.detail_floating_cta_label || show.floating_cta_label,
         spettacoli.detail_floating_cta_label
       )}
+      shareTitle={resolveSlugText(show.share_title, content?.ui?.shared_detail?.share_button_label, "Condividi questo spettacolo")}
+      shareUiContent={content?.ui?.share_modal}
     />
   );
 }

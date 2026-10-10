@@ -10,7 +10,7 @@ import { sendTransactionalEmail } from "@/lib/email/resend";
 
 export const dynamic = "force-dynamic";
 
-import { checkAdminAuth } from "../queue/route";
+import { checkAdminAuth } from "@/lib/adminAuth";
 
 /**
  * Retries a single failed email record.

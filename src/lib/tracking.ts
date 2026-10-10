@@ -15,13 +15,14 @@ declare global {
       contact?: boolean;
       lead?: boolean;
       social_click?: boolean;
+      share?: boolean;
     };
   }
 }
 
 import { emitDevTrackingEvent } from "./devTracking";
 
-export type TrackingEventKey = "view_content" | "initiate_checkout" | "contact" | "lead" | "social_click";
+export type TrackingEventKey = "view_content" | "initiate_checkout" | "contact" | "lead" | "social_click" | "share";
 
 function isEventEnabled(eventName: TrackingEventKey): boolean {
   if (typeof window === "undefined") return false;
@@ -239,6 +240,49 @@ export function trackSocialClick(
     action: "social_click",
     category: "Social",
     payload: { platform, destinationUrl },
+    dispatchedTo: { ga4: gaDispatched, meta: metaDispatched },
+  });
+}
+
+/**
+ * Track Content/Page Share (Milestone: share)
+ * Methods/Channels: "native", "copy_link", "whatsapp", "telegram", "facebook", "twitter", "email"
+ */
+export function trackShare(
+  channel: string,
+  targetUrl: string,
+  title?: string
+) {
+  if (typeof window === "undefined") return;
+  if (!isEventEnabled("share")) return;
+
+  const gaDispatched = typeof window.gtag === "function";
+  const metaDispatched = typeof window.fbq === "function";
+
+  // Google Analytics 4
+  if (gaDispatched) {
+    window.gtag!("event", "share", {
+      method: channel,
+      content_type: "page",
+      item_id: targetUrl,
+      title: title || (typeof document !== "undefined" ? document.title : ""),
+    });
+  }
+
+  // Meta Pixel
+  if (metaDispatched) {
+    window.fbq!("trackCustom", "Share", {
+      channel,
+      url: targetUrl,
+      title: title || (typeof document !== "undefined" ? document.title : ""),
+    });
+  }
+
+  emitDevTrackingEvent({
+    source: "app",
+    action: "share",
+    category: "Social",
+    payload: { channel, targetUrl, title },
     dispatchedTo: { ga4: gaDispatched, meta: metaDispatched },
   });
 }

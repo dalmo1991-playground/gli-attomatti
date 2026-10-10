@@ -6,6 +6,7 @@ import { Calendar, MapPin, Ticket } from "lucide-react";
 import { cn, defaultText } from "@/lib/utils";
 
 import { FormattedText } from "./FormattedText";
+import { ShareButton } from "./ShareButton";
 
 export interface DetailDate {
   date: string;
@@ -31,6 +32,10 @@ interface DetailSidebarProps {
   directionsBadgeLabel?: string | null;
   onTicketClick?: (href: string) => void;
   className?: string;
+  shareTitle?: string | null;
+  shareItemTitle?: string;
+  shareItemDescription?: string;
+  shareUiContent?: Record<string, unknown>;
 }
 
 export function DetailSidebar({
@@ -42,7 +47,11 @@ export function DetailSidebar({
   photoGuideBadgeLabel = "📷 Guida fotografica & come raggiungerci",
   directionsBadgeLabel = "Indicazioni",
   onTicketClick,
-  className
+  className,
+  shareTitle,
+  shareItemTitle,
+  shareItemDescription,
+  shareUiContent
 }: DetailSidebarProps) {
   const hasDates = Boolean(dates && dates.length > 0);
   const showDatesCard = Boolean(datesTitle || hasDates || emptyDatesMessage);
@@ -160,6 +169,17 @@ export function DetailSidebar({
             ))}
           </div>
         </div>
+      )}
+
+      {/* Share Card */}
+      {shareTitle !== null && (
+        <ShareButton
+          variant="card"
+          label={shareTitle || "Condividi questo evento"}
+          title={shareItemTitle}
+          description={shareItemDescription}
+          uiContent={shareUiContent}
+        />
       )}
     </div>
   );
