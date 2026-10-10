@@ -1839,6 +1839,17 @@
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
       "active": true
+    },
+    {
+      "id": "reg-1791650272334",
+      "title": "Newsletter Attomatta",
+      "slug": "newsletter",
+      "category": "",
+      "description": "Compila il modulo per iscriverti alla nostra newsletter.  Maggiori informazioni sulla privacy [qui](/Privacy).",
+      "tally_url": "https://tally.so/r/obrA15",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "active": true
     }
   ],
   "integrations": {
