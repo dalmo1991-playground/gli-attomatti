@@ -21,6 +21,7 @@ import { TicketingTab } from "./tabs/TicketingTab";
 import { RegistrationsTab } from "./tabs/RegistrationsTab";
 import { LocationsTab } from "./tabs/LocationsTab";
 import { PressTab } from "./tabs/PressTab";
+import { BlogTab } from "./tabs/BlogTab";
 import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
 import { GalleryTab } from "./tabs/GalleryTab";
@@ -45,6 +46,8 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
       return "/Chi_Siamo/Attori";
     case "parlano_di_noi":
       return "/Chi_Siamo/Parlano_di_noi";
+    case "blog":
+      return "/Chi_Siamo/Blog";
     case "spettacoli":
       return "/Spettacoli";
     case "iniziative":
@@ -195,6 +198,7 @@ function AdminContent() {
                     />
                   )}
                   {activeTab === "parlano_di_noi" && <PressTab />}
+                  {activeTab === "blog" && <BlogTab />}
                   {activeTab === "contatti" && <ContactTab />}
                   {activeTab === "json" && <JsonTab onNavigateTab={(tab) => setActiveTab(tab)} />}
                 </div>

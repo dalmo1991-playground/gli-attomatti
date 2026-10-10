@@ -36,40 +36,38 @@ interface AdminSidebarProps {
 
 const navSections = [
   {
-    category: "Guida & Supporto",
-    items: [
-      { id: "guida", label: "Guida & Manuale", icon: BookOpen }
-    ]
-  },
-  {
-    category: "Configurazione & Media",
-    items: [
-      { id: "site", label: "Sito & Meta", icon: Globe },
-      { id: "navigation", label: "Menu Navigazione", icon: MenuIcon },
-      { id: "home", label: "Home Page", icon: HomeIcon },
-      { id: "gallery", label: "Galleria Immagini", icon: Images },
-      { id: "emails", label: "Email & Notifiche", icon: Send },
-      { id: "integrations", label: "Marketing & Privacy", icon: Sliders }
-    ]
-  },
-  {
     category: "Pagine e Contenuti",
     items: [
+      { id: "home", label: "Home Page", icon: HomeIcon },
       { id: "chi_siamo", label: "Chi Siamo", icon: Users },
       { id: "attori", label: "Cast & Staff", icon: Users },
+      { id: "parlano_di_noi", label: "Dicono di Noi", icon: Newspaper },
+      { id: "blog", label: "Blog & Notizie", icon: BookOpen },
       { id: "spettacoli", label: "Spettacoli", icon: Theater },
       { id: "iniziative", label: "Iniziative & Corsi", icon: Compass },
       { id: "ticketing", label: "Biglietti & Casse", icon: Ticket },
       { id: "registrations", label: "Registrazioni & Moduli", icon: ClipboardList },
       { id: "locations", label: "Teatri & Location", icon: MapPin },
       { id: "landing", label: "Landing Pages", icon: Rocket },
-      { id: "parlano_di_noi", label: "Dicono di Noi", icon: Newspaper },
       { id: "contatti", label: "Contatti & Social", icon: Mail }
     ]
   },
   {
-    category: "Strumenti Sviluppatore",
-    items: [{ id: "json", label: "Sorgente JSON", icon: Code }]
+    category: "Configurazione & Media",
+    items: [
+      { id: "navigation", label: "Menu Navigazione", icon: MenuIcon },
+      { id: "site", label: "Sito & Meta", icon: Globe },
+      { id: "gallery", label: "Galleria Immagini", icon: Images },
+      { id: "emails", label: "Email & Notifiche", icon: Send },
+      { id: "integrations", label: "Marketing & Privacy", icon: Sliders }
+    ]
+  },
+  {
+    category: "Guida & Strumenti",
+    items: [
+      { id: "guida", label: "Guida & Manuale", icon: BookOpen },
+      { id: "json", label: "Sorgente JSON", icon: Code }
+    ]
   }
 ];
 

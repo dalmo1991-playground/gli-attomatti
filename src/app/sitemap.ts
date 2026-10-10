@@ -65,6 +65,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: `${BASE_URL}/Chi_Siamo/Blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${BASE_URL}/Contatti`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
@@ -149,6 +155,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
+  // Dynamic blog articles: /Chi_Siamo/Blog/[slug]
+  const blogArticles: { slug: string; visible?: boolean }[] =
+    content?.pages?.blog?.articles ?? [];
+  const blogRoutes: MetadataRoute.Sitemap = blogArticles
+    .filter((a) => a.visible !== false && a.slug)
+    .map((a) => ({
+      url: `${BASE_URL}/Chi_Siamo/Blog/${a.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }));
+
   return [
     ...staticRoutes,
     ...showRoutes,
@@ -156,5 +174,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...landingRoutes,
     ...ticketingRoutes,
     ...registrationRoutes,
+    ...blogRoutes,
   ];
 }

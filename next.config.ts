@@ -93,6 +93,16 @@ const nextConfig: NextConfig = {
         destination: 'https://tally.so/r/LZaPOz',
         permanent: false,
       },
+      {
+        source: '/chi-siamo/blog',
+        destination: '/Chi_Siamo/Blog',
+        permanent: true,
+      },
+      {
+        source: '/chi-siamo/blog/:slug',
+        destination: '/Chi_Siamo/Blog/:slug',
+        permanent: true,
+      },
     ];
   },
 };

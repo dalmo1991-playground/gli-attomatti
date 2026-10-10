@@ -197,25 +197,120 @@ export function escapeHtml(str: string = ""): string {
 }
 
 /**
- * Converts markdown bold and links to safe inline email HTML.
- * Escapes HTML entities first to prevent arbitrary HTML/script injection from dynamic variables.
+ * Safe tags allowed in email text blocks.
+ */
+const EMAIL_SAFE_INLINE_TAGS = new Set([
+  "strong", "b", "em", "i", "mark", "u", "s", "del", "a", "span", "br", "p"
+]);
+
+/**
+ * Converts markdown and safe HTML (such as <i>, <em>, <b>, <strong>, <mark>, <a>, <br>)
+ * to email-client-compatible inline HTML.
+ * Prevents raw HTML tags from showing as text while defending against unsafe tags/scripts.
  */
 export function formatMarkdown(text: string = "", linkColor: string = "#fb7185"): string {
   if (!text) return "";
-  const paragraphs = text.split(/\n\s*\n/);
 
-  return paragraphs
-    .map((p) => {
-      // Escape raw HTML entities first to protect against user-supplied HTML injection
-      let html = escapeHtml(p.trim());
+  // 1. Normalize linebreaks inside block HTML elements to split cleanly into paragraphs
+  const normalized = text
+    .replace(/<\/p>\s*<p[^>]*>/gi, "\n\n")
+    .replace(/<br\s*\/?>/gi, "\n");
+
+  const rawParagraphs = normalized.split(/\n\s*\n/);
+
+  return rawParagraphs
+    .map((rawP) => {
+      let p = rawP.trim();
+      if (!p) return "";
+
+      // Strip outer <p> and </p> if present
+      p = p.replace(/^<p[^>]*>/i, "").replace(/<\/p>$/i, "").trim();
+      if (!p) return "";
+
+      // 2. Tokenize or preserve safe tags, sanitize unsafe tags & attributes
+      // Match all HTML tags <...>
+      let html = p.replace(/<\/?([a-zA-Z0-9]+)\b([^>]*)>/g, (match, rawTagName: string, rawAttrs: string) => {
+        const tag = rawTagName.toLowerCase();
+
+        // Disallow dangerous or unsupported tags
+        if (!EMAIL_SAFE_INLINE_TAGS.has(tag)) {
+          return "";
+        }
+
+        const isClosing = match.startsWith("</");
+
+        switch (tag) {
+          case "i":
+          case "em":
+            return isClosing
+              ? "</em>"
+              : '<em style="font-style: italic; font-family: Georgia, \'Times New Roman\', serif; color: inherit;">';
+
+          case "b":
+          case "strong":
+            return isClosing
+              ? "</strong>"
+              : '<strong style="color: inherit; font-weight: 700;">';
+
+          case "mark":
+            // Email clients often do not render <mark> properly, use inline styled span
+            return isClosing
+              ? "</span>"
+              : `<span style="color: ${linkColor}; font-weight: 700;">`;
+
+          case "u":
+            return isClosing
+              ? "</span>"
+              : '<span style="text-decoration: underline;">';
+
+          case "s":
+          case "del":
+            return isClosing
+              ? "</span>"
+              : '<span style="text-decoration: line-through; opacity: 0.7;">';
+
+          case "a": {
+            if (isClosing) return "</a>";
+            const hrefMatch = rawAttrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+            const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? hrefMatch?.[3] ?? "").trim();
+            if (!href || !/^(https?:\/\/|mailto:|tel:)/i.test(href)) {
+              return '<span style="text-decoration: underline;">';
+            }
+            const safeHref = href.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+            return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="color: ${linkColor}; text-decoration: underline; font-weight: 600;">`;
+          }
+
+          case "br":
+            return "<br />";
+
+          case "span":
+          case "p":
+            return isClosing ? "</span>" : "<span>";
+
+          default:
+            return "";
+        }
+      });
+
+      // 3. Process Markdown formatting for un-tagged markdown text:
+      // Markdown bold: **text**
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: inherit; font-weight: 700;">$1</strong>');
+      // Markdown italic: *text* (single asterisk, not preceded or followed by another asterisk)
+      html = html.replace(/(^|[^*])\*([^*]+)\*([^*]|$)/g, '$1<em style="font-style: italic; font-family: Georgia, \'Times New Roman\', serif; color: inherit;">$2</em>$3');
+      // Markdown highlight: ==text==
+      html = html.replace(/==([^=]+)==/g, `<span style="color: ${linkColor}; font-weight: 700;">$1</span>`);
+      // Markdown links: [text](url)
       html = html.replace(
         /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
         `<a href="$2" target="_blank" rel="noopener noreferrer" style="color: ${linkColor}; text-decoration: underline; font-weight: 600;">$1</a>`
       );
+
+      // 4. Line breaks to <br />
       html = html.replace(/\n/g, "<br />");
+
       return `<p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: inherit;">${html}</p>`;
     })
+    .filter(Boolean)
     .join("");
 }
 

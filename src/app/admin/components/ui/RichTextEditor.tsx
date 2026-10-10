@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   Bold,
   Italic,
+  Highlighter,
   List,
   ListOrdered,
   Link as LinkIcon,
@@ -89,7 +90,8 @@ export function RichTextEditor({
     italic: false,
     unorderedList: false,
     orderedList: false,
-    link: false
+    link: false,
+    highlight: false
   });
 
   // Link dialog state
@@ -135,7 +137,8 @@ export function RichTextEditor({
         italic: document.queryCommandState("italic"),
         unorderedList: document.queryCommandState("insertUnorderedList"),
         orderedList: document.queryCommandState("insertOrderedList"),
-        link: !!document.queryCommandValue("createLink") || checkAncestorTag("A")
+        link: !!document.queryCommandValue("createLink") || checkAncestorTag("A"),
+        highlight: checkAncestorTag("MARK")
       });
     } catch {
       // ignore
@@ -151,6 +154,15 @@ export function RichTextEditor({
       node = node.parentNode;
     }
     return false;
+  };
+
+  // Execute standard formatting commands without losing editor selection
+  const executeCommand = (command: string, arg: string | undefined = undefined) => {
+    if (disabled || isSourceMode) return;
+    editorRef.current?.focus();
+    document.execCommand(command, false, arg);
+    handleInput();
+    updateActiveFormats();
   };
 
   // Toggle between Visual WYSIWYG and HTML Source mode
@@ -178,11 +190,57 @@ export function RichTextEditor({
     }
   };
 
-  // Execute standard formatting commands
-  const executeCommand = (command: string, arg: string | undefined = undefined) => {
+  // Toggle highlight with <mark> tag
+  const handleToggleHighlight = () => {
     if (disabled || isSourceMode) return;
     editorRef.current?.focus();
-    document.execCommand(command, false, arg);
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+
+    // Check if selection is inside a <mark>
+    let markNode: HTMLElement | null = null;
+    let node: Node | null = range.commonAncestorContainer;
+    while (node && node !== editorRef.current) {
+      if (node.nodeName === "MARK") {
+        markNode = node as HTMLElement;
+        break;
+      }
+      node = node.parentNode;
+    }
+
+    if (markNode) {
+      // Unwrap <mark>
+      const parent = markNode.parentNode;
+      if (parent) {
+        const docFrag = document.createDocumentFragment();
+        while (markNode.firstChild) {
+          docFrag.appendChild(markNode.firstChild);
+        }
+        parent.replaceChild(docFrag, markNode);
+      }
+    } else if (!range.collapsed) {
+      // Wrap selection in <mark>
+      try {
+        const mark = document.createElement("mark");
+        range.surroundContents(mark);
+        // Reselect mark contents
+        const newRange = document.createRange();
+        newRange.selectNodeContents(mark);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } catch {
+        // Fallback for non-contiguous boundary crossings (e.g. crossing italic/bold edges)
+        const mark = document.createElement("mark");
+        const contents = range.extractContents();
+        mark.appendChild(contents);
+        range.insertNode(mark);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(mark);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
+    }
     handleInput();
     updateActiveFormats();
   };
@@ -336,6 +394,7 @@ export function RichTextEditor({
           {/* Bold */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => executeCommand("bold")}
             disabled={isSourceMode}
             title="Grassetto (Ctrl/Cmd + B)"
@@ -352,6 +411,7 @@ export function RichTextEditor({
           {/* Italic */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => executeCommand("italic")}
             disabled={isSourceMode}
             title="Corsivo (Ctrl/Cmd + I)"
@@ -365,11 +425,29 @@ export function RichTextEditor({
             <Italic size={15} strokeWidth={2.5} />
           </button>
 
+          {/* Highlight / Colore Primario */}
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={handleToggleHighlight}
+            disabled={isSourceMode}
+            title="Frase in risalto / Citazione (Colore primario)"
+            className={cn(
+              "p-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 disabled:opacity-30 disabled:pointer-events-none",
+              activeFormats.highlight
+                ? "bg-primary text-white shadow-sm"
+                : "text-primary/80 hover:bg-primary/10 hover:text-primary"
+            )}
+          >
+            <Highlighter size={15} strokeWidth={2.5} />
+          </button>
+
           <div className="w-[1px] h-4 bg-foreground/10 mx-1" />
 
           {/* Bullet List */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => executeCommand("insertUnorderedList")}
             disabled={isSourceMode}
             title="Elenco puntato"
@@ -386,6 +464,7 @@ export function RichTextEditor({
           {/* Numbered List */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => executeCommand("insertOrderedList")}
             disabled={isSourceMode}
             title="Elenco numerato"
@@ -404,6 +483,7 @@ export function RichTextEditor({
           {/* Link */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleOpenLinkDialog}
             disabled={isSourceMode}
             title="Inserisci Link (Ctrl/Cmd + K)"
@@ -421,6 +501,7 @@ export function RichTextEditor({
           {activeFormats.link && !isSourceMode && (
             <button
               type="button"
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => executeCommand("unlink")}
               title="Rimuovi Link"
               className="p-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/20 transition-all flex items-center justify-center"
@@ -432,6 +513,7 @@ export function RichTextEditor({
           {/* Remove Format */}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => executeCommand("removeFormat")}
             disabled={isSourceMode}
             title="Pulisci formattazione"
@@ -482,7 +564,7 @@ export function RichTextEditor({
             onMouseUp={updateActiveFormats}
             style={{ minHeight: "120px" }}
             data-placeholder={placeholder}
-            className="w-full h-full outline-none text-sm text-foreground leading-relaxed font-medium empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/20 empty:before:pointer-events-none [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2 [&_li]:my-1 [&_strong]:font-bold [&_strong]:text-foreground [&_em]:italic [&_a]:text-primary [&_a]:underline [&_a]:font-bold"
+            className="w-full h-full outline-none text-sm text-foreground leading-relaxed font-medium empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/20 empty:before:pointer-events-none [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2 [&_li]:my-1 [&_strong]:font-bold [&_strong]:text-foreground [&_b]:font-bold [&_b]:text-foreground [&_em]:font-serif [&_em]:italic [&_em]:font-normal [&_em]:text-foreground/95 [&_i]:font-serif [&_i]:italic [&_i]:font-normal [&_i]:text-foreground/95 [&_mark]:bg-transparent [&_mark]:text-primary [&_mark]:font-bold [&_em_mark]:font-serif [&_em_mark]:italic [&_em_mark]:text-primary [&_em_mark]:font-bold [&_i_mark]:font-serif [&_i_mark]:italic [&_i_mark]:text-primary [&_i_mark]:font-bold [&_mark_em]:font-serif [&_mark_em]:italic [&_mark_em]:text-primary [&_mark_em]:font-bold [&_mark_i]:font-serif [&_mark_i]:italic [&_mark_i]:text-primary [&_mark_i]:font-bold [&_a]:text-primary [&_a]:underline [&_a]:font-bold"
           />
         </div>
 

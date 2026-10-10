@@ -589,6 +589,27 @@ export function GuidaTab({ onNavigateTab }: GuidaTabProps) {
                 <div className="p-4 rounded-2xl bg-background border border-foreground/10 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 font-bold text-foreground">
+                      <BookOpen size={18} className="text-primary" />
+                      <span>Blog & Racconti</span>
+                    </div>
+                    {onNavigateTab && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateTab("blog")}
+                        className="text-[11px] font-bold text-primary hover:underline"
+                      >
+                        Apri scheda →
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-xs text-foreground/60 leading-relaxed">
+                    Pubblica racconti, annunci e retroscena dal palcoscenico con capitoli modulari (testi e gallerie). Puoi inoltre confezionare ogni articolo in formato email per inviarlo ai tuoi iscritti tramite newsletter!
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-background border border-foreground/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 font-bold text-foreground">
                       <Mail size={18} className="text-primary" />
                       <span>Email & Notifiche</span>
                     </div>
@@ -668,6 +689,43 @@ export function GuidaTab({ onNavigateTab }: GuidaTabProps) {
                     <p className="text-xs text-foreground/60 leading-relaxed">
                       Ogni modifica viene memorizzata nel tuo browser ogni minuto. Se chiudi la pagina, riaprendola un banner 
                       ti permetterà di ripristinare il tuo lavoro con un solo clic.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Guida Formattazione Testo: Grassetto, Corsivo ed Evidenziazione */}
+              <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
+                <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                  Stili di Testo nei Paragrafi (Grassetto, Corsivo e Frasi ad Effetto)
+                </h4>
+                <p className="text-xs text-foreground/70 leading-relaxed">
+                  Nei campi di testo e nell&apos;editor visivo puoi dare risalto ai contenuti con una gerarchia visiva chiara:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div className="p-3 rounded-xl bg-background border border-foreground/10 space-y-1">
+                    <div className="text-xs font-bold text-foreground">
+                      <strong>Grassetto</strong>
+                    </div>
+                    <p className="text-[11px] text-foreground/60">
+                      Usa il pulsante <strong>B</strong> o <code className="text-primary font-mono font-bold">**testo**</code> / <code className="text-primary font-mono font-bold">&lt;b&gt;</code>. Bianco puro ad alto contrasto per titoli o concetti chiave.
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-foreground/10 space-y-1">
+                    <div className="text-xs font-semibold italic text-foreground tracking-wide">
+                      <em>Corsivo</em>
+                    </div>
+                    <p className="text-[11px] text-foreground/60">
+                      Usa il pulsante <em>I</em> o <code className="text-primary font-mono font-bold">*testo*</code> / <code className="text-primary font-mono font-bold">&lt;i&gt;</code>. Spessore medio e tracciamento arioso per titoli di opere o sfumature espressive.
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-background border border-foreground/10 space-y-1">
+                    <div className="text-xs font-bold text-primary">
+                      Evidenziatore (Colore Primario)
+                    </div>
+                    <p className="text-[11px] text-foreground/60">
+                      Usa l&apos;icona evidenziatore o <code className="text-primary font-mono font-bold">==testo==</code> / <code className="text-primary font-mono font-bold">&lt;mark&gt;</code>. Colora le parole nel colore primario per citazioni, battute o frasi a effetto.
                     </p>
                   </div>
                 </div>

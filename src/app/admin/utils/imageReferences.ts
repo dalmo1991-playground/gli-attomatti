@@ -92,10 +92,22 @@ export function findAllImageReferences(content: any): Map<string, ImageReference
     }
     if (Array.isArray(chiSiamo.content_sections)) {
       chiSiamo.content_sections.forEach((sec: any, sIdx: number) => {
+        const secLabel = sec.title || `#${sIdx + 1}`;
         if (Array.isArray(sec.images)) {
           sec.images.forEach((img: any, iIdx: number) => {
             if (img?.url) {
-              registerRef(img.url, "Chi Siamo", `Sezione "${sec.title || `#${sIdx + 1}`}" (Foto #${iIdx + 1})`, "chi_siamo", `pages.chi_siamo.content_sections.${sIdx}.images.${iIdx}`);
+              registerRef(img.url, "Chi Siamo", `Sezione "${secLabel}" (Foto #${iIdx + 1})`, "chi_siamo", `pages.chi_siamo.content_sections.${sIdx}.images.${iIdx}`);
+            }
+          });
+        }
+        if (Array.isArray(sec.blocks)) {
+          sec.blocks.forEach((block: any, bIdx: number) => {
+            if (block.type === "gallery" && Array.isArray(block.images)) {
+              block.images.forEach((img: any, iIdx: number) => {
+                if (img?.url) {
+                  registerRef(img.url, "Chi Siamo", `Sezione "${secLabel}" - Blocco #${bIdx + 1} (Foto #${iIdx + 1})`, "chi_siamo", `pages.chi_siamo.content_sections.${sIdx}.blocks.${bIdx}.images.${iIdx}`);
+                }
+              });
             }
           });
         }
@@ -108,6 +120,36 @@ export function findAllImageReferences(content: any): Map<string, ImageReference
         }
       });
     }
+  }
+
+  // 3b. Blog & Racconti
+  const blog = content.pages?.blog;
+  if (blog && Array.isArray(blog.articles)) {
+    blog.articles.forEach((art: any, aIdx: number) => {
+      const artTitle = art.title || `Articolo #${aIdx + 1}`;
+      if (Array.isArray(art.content_sections)) {
+        art.content_sections.forEach((sec: any, sIdx: number) => {
+          const secTitle = sec.title || `Capitolo #${sIdx + 1}`;
+          if (Array.isArray(sec.blocks)) {
+            sec.blocks.forEach((b: any, bIdx: number) => {
+              if (b.type === "gallery" && Array.isArray(b.images)) {
+                b.images.forEach((img: any, iIdx: number) => {
+                  if (img?.url) {
+                    registerRef(
+                      img.url,
+                      "Blog",
+                      `"${artTitle}" → ${secTitle} (Foto #${iIdx + 1})`,
+                      "blog",
+                      `pages.blog.articles.${aIdx}.content_sections.${sIdx}.blocks.${bIdx}.images.${iIdx}`
+                    );
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   // 4. Cast & Staff (Attori)

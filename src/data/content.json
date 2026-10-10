@@ -285,6 +285,12 @@
           "href": "/Chi_Siamo/Parlano_di_noi",
           "icon": "message-square",
           "visible": true
+        },
+        {
+          "label": "Il Nostro Blog",
+          "href": "/Chi_Siamo/Blog",
+          "icon": "newspaper",
+          "visible": true
         }
       ],
       "photo_alt": "Foto",
@@ -662,6 +668,57 @@
         "cta_href": "/Contatti"
       },
       "back_link_label": "Torna a Chi Siamo"
+    },
+    "blog": {
+      "meta_title": "Blog & Racconti — Gli Attomatti",
+      "meta_description": "Storie di scena, annunci, retroscena e racconti della compagnia teatrale Gli Attomatti a Zurigo.",
+      "keywords": [
+        "blog teatro zurigo",
+        "storie teatro italiano",
+        "annunci compagnia teatrale"
+      ],
+      "title": "Storie & Notizie",
+      "description": "Storie, annunci e retroscena dal palcoscenico.",
+      "year_prefix": "Anno ",
+      "discover_cta": "Leggi l'articolo",
+      "back_to_archive_label": "Torna al Blog",
+      "archive_href": "/Chi_Siamo/Blog",
+      "empty_message": "Nessun articolo pubblicato al momento.",
+      "not_found_title": "Articolo non trovato",
+      "articles": [
+        {
+          "slug": "dietro-le-quinte-del-debutto",
+          "title": "Dietro le quinte del nostro debutto",
+          "year": "2025",
+          "date": "Maggio 2025",
+          "short_description": "Come un gruppo di appassionati ha trasformato un sogno in una commedia in scena davanti al pubblico di Zurigo.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "L'inizio dell'avventura",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Tutto è cominciato con un copione stropicciato e tanta voglia di mettersi in gioco. Portare in scena una commedia a Zurigo in lingua italiana sembrava una sfida enorme, eppure ogni prova ha portato una nuova scintilla di fiducia e complicità tra noi.</p><p><i>Prima ancora di imparare a recitare, abbiamo imparato ad ascoltarci.</i></p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Prove a teatro"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Tra risate, piccoli intoppi e momenti di pura improvvisazione, il giorno del debutto è arrivato prima di quanto potessimo immaginare. Quando il sipario si è alzato, abbiamo sentito il calore del pubblico ripagare ogni singola ora di lavoro.</p>"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "spettacoli": {
       "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",
@@ -1237,8 +1294,8 @@
         },
         {
           "id": "third_party",
-          "title": "8. Servizi terzi incorporati e limitazione di responsabilità tecnica",
-          "text": "L'incorporamento dei moduli e delle casse digitali (iframe di Eventfrog AG e Tally BV) avviene nel rispetto dei migliori standard di sicurezza web. Tuttavia, Gli Attomatti non possono essere ritenuti responsabili per temporanee interruzioni di rete, indisponibilità dei server terzi, malfunzionamenti dei gateway bancari o ritardi nella consegna delle notifiche telematiche imputabili ai rispettivi fornitori esterni indipendenti."
+          "title": "8. Servizi terzi incorporati, iscrizioni e comunicazioni",
+          "text": "L'incorporamento dei moduli di registrazione (Tally BV), della biglietteria digitale (Eventfrog AG) e l'inoltro delle comunicazioni email e newsletter avvengono nel rispetto dei migliori standard di sicurezza web e della legge svizzera sulla protezione dei dati (nLPD). Gli elenchi di iscrizione alla newsletter sono gestiti nel pieno rispetto della privacy; per cancellarsi dalle comunicazioni periodiche della compagnia teatrale è sufficiente inviare un'email a compagniateatralegliattomatti@gmail.com o a info@gliattomatti.ch. Gli Attomatti non possono essere ritenuti responsabili per temporanee interruzioni di rete o indisponibilità dei server terzi indipendenti."
         },
         {
           "id": "jurisdiction",
@@ -1357,12 +1414,12 @@
         "privacy_url": "https://eventfrog.ch/it/privacy.html"
       },
       "tally": {
-        "title": "Moduli di Registrazione, Iscrizione e Contatto Incorporati (Tally.so)",
+        "title": "Moduli di Iscrizione, Registrazione Eventi e Newsletter (Tally.so)",
         "paragraphs": [
-          "Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci) e per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su /Saalvermietung), utilizziamo la piattaforma di moduli interattivi fornita da Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+          "Per la gestione delle registrazioni a eventi ad accesso controllato o gratuiti (workshop, audizioni, laboratori teatrali, serate per soci), per richieste telematiche strutturate (ad esempio la verifica disponibilità e richiesta affitto sala su /Saalvermietung) e per l'iscrizione volontaria alla Newsletter informativa della compagnia teatrale, utilizziamo la piattaforma di moduli interattivi fornita da Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
           "I moduli possono essere compilati tramite incorporamento diretto (iframe embed) all'interno delle nostre pagine dedicate (nell'hub /Registrazioni, nelle sezioni /Registrazioni/[slug], landing page promozionali o finestre modali) oppure tramite reindirizzamento al link ufficiale su Tally.",
-          "Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o preferenze) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all'interno dell'Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
-          "La compagnia teatrale Gli Attomatti utilizza le risposte raccolte unicamente per dare seguito alla specifica finalità per cui sono state fornite (es. invio istruzioni per l'evento, organizzazione della lista presenze, preventivo per l'affitto della sala). I dati non vengono ceduti a terzi né utilizzati per scopi promozionali non autorizzati. I moduli Tally integrati non utilizzano cookie o pixel pubblicitari di profilazione sui rispondenti.",
+          "Quando compili un modulo, i dati personali liberamente conferiti (es. nome, cognome, indirizzo email, recapito telefonico, fascia oraria richiesta o consenso alla ricezione di comunicazioni teatrali) vengono acquisiti ed elaborati da Tally BV in qualità di responsabile del trattamento (Data Processor). I server e i database di Tally sono ospitati su infrastrutture cloud sicure (AWS / Google Cloud) situate all'interno dell'Unione Europea (Belgio e Germania), nel pieno rispetto del Regolamento Generale sulla Protezione dei Dati (GDPR) e della Nuova Legge Federale Svizzera sulla Protezione dei Dati (nLPD).",
+          "La lista dei contatti iscritti alla Newsletter e alle attività teatrali viene custodita su Tally e consultata esclusivamente dai referenti autorizzati della compagnia Gli Attomatti. I dati non vengono mai ceduti, venduti o trasferiti a soggetti terzi per scopi promozionali esterni. Non è presente una procedura automatica di disiscrizione con link automatico: chiunque desideri cancellarsi dalla newsletter o non ricevere più aggiornamenti può semplicemente inviare una mail con la richiesta a compagniateatralegliattomatti@gmail.com (o info@gliattomatti.ch) e verrà rimosso tempestivamente e definitivamente dalla lista.",
           "Per maggiori informazioni sull'infrastruttura di sicurezza e la gestione privacy di Tally BV consultare: tally.so/help/privacy-policy."
         ],
         "privacy_url": "https://tally.so/help/privacy-policy"
@@ -1384,25 +1441,27 @@
       },
       "your_rights": {
         "title": "I tuoi diritti (nLPD & GDPR)",
-        "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per i cookie o gli strumenti di tracciamento. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
+        "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per la newsletter, per i moduli o per i cookie. Per gli iscritti alla newsletter, non è presente un sistema automatico di disiscrizione: per essere rimossi dalla lista è sufficiente inviare un'email a compagniateatralegliattomatti@gmail.com e provvederemo immediatamente alla cancellazione manuale. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
         "contact_email": "compagniateatralegliattomatti@gmail.com"
       },
       "third_parties": {
         "resend": {
-          "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+          "title": "Distribuzione Email, Newsletter e Notifiche (Resend / Google Workspace)",
           "paragraphs": [
-            "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
-            "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+            "Per il recapito delle comunicazioni informative (newsletter periodiche con annunci di spettacoli, articoli del blog e novità della compagnia) nonché per le conferme d'iscrizione e le notifiche relative agli eventi a cui l'utente si è volontariamente registrato, la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA) e/o dei servizi di posta elettronica Google Workspace / Gmail (Google Cloud EMEA Limited, 70 Sir John Rogerson's Quay, Dublino 2, Irlanda).",
+            "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario ed eventuale nominativo) vengono trasmessi ai server dei fornitori tramite canale cifrato e protetto (TLS/HTTPS). I fornitori agiscono in qualità di responsabili del trattamento (Data Processor) ed elaborano i dati unicamente per l'invio della specifica comunicazione richiesta o acconsentita dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+            "Per non ricevere più le comunicazioni informative della compagnia, non è richiesto alcun link automatico: è sufficiente rispondere al messaggio o inviare un'email a compagniateatralegliattomatti@gmail.com indicando la volontà di disiscriversi, e il contatto verrà tempestivamente rimosso dalla lista iscritti.",
             "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
           ],
           "privacy_url": "https://resend.com/legal/privacy-policy"
         }
       },
       "resend": {
-        "title": "Invio di Notifiche ed Email Transazionali (Resend)",
+        "title": "Distribuzione Email, Newsletter e Notifiche (Resend / Google Workspace)",
         "paragraphs": [
-          "Per il recapito automatizzato delle conferme d'iscrizione, delle ricevute di prenotazione e delle notifiche relative agli eventi a cui l'utente si è volontariamente registrato (es. cineforum, workshop o richieste di affitto sala), la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica transazionale fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA).",
-          "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario, nome del compilatore, titolo e data dell'evento selezionato) vengono trasmessi ai server di Resend tramite canale cifrato e protetto (TLS/HTTPS). Resend agisce in qualità di responsabile del trattamento (Data Processor) ed elabora i dati unicamente per l'invio della specifica transazione richiesta dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+          "Per il recapito delle comunicazioni informative (newsletter periodiche con annunci di spettacoli, articoli del blog e novità della compagnia) nonché per le conferme d'iscrizione e le notifiche relative agli eventi a cui l'utente si è volontariamente registrato, la compagnia teatrale Gli Attomatti si avvale dell'infrastruttura di posta elettronica fornita da Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA) e/o dei servizi di posta elettronica Google Workspace / Gmail (Google Cloud EMEA Limited, 70 Sir John Rogerson's Quay, Dublino 2, Irlanda).",
+          "I dati strettamente necessari per il recapito telematico della comunicazione (indirizzo email del destinatario ed eventuale nominativo) vengono trasmessi ai server dei fornitori tramite canale cifrato e protetto (TLS/HTTPS). I fornitori agiscono in qualità di responsabili del trattamento (Data Processor) ed elaborano i dati unicamente per l'invio della specifica comunicazione richiesta o acconsentita dall'interessato, senza impiegare gli indirizzi per finalità proprie o di profilazione commerciale.",
+          "Per non ricevere più le comunicazioni informative della compagnia, non è richiesto alcun link automatico: è sufficiente rispondere al messaggio o inviare un'email a compagniateatralegliattomatti@gmail.com indicando la volontà di disiscriversi, e il contatto verrà tempestivamente rimosso dalla lista iscritti.",
           "Per maggiori dettagli sulla politica di conformità e sicurezza di Resend, consultare: resend.com/legal/privacy-policy."
         ],
         "privacy_url": "https://resend.com/legal/privacy-policy"
