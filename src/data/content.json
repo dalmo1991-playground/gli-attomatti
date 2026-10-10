@@ -237,32 +237,38 @@
         "teatro amatoriale zurigo"
       ],
       "title": "Chi Siamo",
-      "description": "Portiamo la passione del teatro italiano nel cuore di Zurigo.",
+      "description": "Una storia che si fa insieme",
       "year_prefix": "Anno ",
       "fallback_photo_alt": "Foto",
       "photo_aria_prefix": "Foto",
       "content_sections": [
         {
           "title": "Le origini",
-          "text": "<ul><li>fondazione del gruppo</li><li>magari qualcosa su prima degli attomatti</li><li>qualche riga per spiegare perché lo facciamo e l'importanza del teatro<br></li></ul>",
+          "text": "<p><i>Ci sono storie che nascono da un grande progetto, altre da un sogno custodito per anni.&nbsp;</i></p><p>Quella degli Attomatti, invece, nasce da qualcosa di molto più semplice e profondamente umano: il desiderio di trovare degli amici.</p>\n<p>È il 2020 quando Domenico Scotti Di Carlo, napoletano di nascita e teatrante per vocazione, arriva a Zurigo. Alle spalle ha anni trascorsi tra palcoscenici, studi ed esperienze in diverse compagnie teatrali, dalla sua Napoli fino a Pavia, dove ha approfondito la propria formazione artistica. Davanti a sé, una nuova città, una nuova lingua e una vita tutta da costruire.</p>\nTrasferirsi all’estero, però, non significa soltanto cambiare indirizzo. Significa ricominciare. Cercare nuovi punti di riferimento, nuove abitudini e, soprattutto, nuove persone con cui condividere un pezzo di strada.<p></p>\n<p>Per Domenico, abituato da sempre a vivere il teatro non soltanto come arte, ma anche come occasione di incontro, la soluzione sembrava quasi scontata: cercare una compagnia teatrale italiana a Zurigo.</p>",
           "images": [],
           "visible": true
         },
         {
-          "title": "Stagione 2024-25",
-          "text": "<p>Il primo spettacolo</p><p><ul><li>qualcosa su ditegli sempre di si (poi metto io delle foto)</li><li>magari l'inizio del corso di teatro con la prima edizione \"sperimentale\"</li></ul></p>",
+          "title": "Un’idea nata dagli ostacoli",
+          "text": "<p><i>Facile a dirsi. Un po’ meno a farsi.</i></p><p>Sono gli anni della pandemia, delle restrizioni, degli incontri rimandati e delle porte che sembrano rimanere ostinatamente chiuse. I tentativi non mancano, ma le possibilità sono poche. Quando finalmente si presenta l’occasione di unirsi a un gruppo teatrale nel Canton Argovia, una nuova ondata di Covid e le difficoltà organizzative finiscono per interrompere anche quell’esperienza.</p><p>Eppure, proprio da quella serie di tentativi andati a vuoto, comincia a prendere forma un’idea.</p><p><i>Se non si riesce a trovare una compagnia teatrale, perché non crearne una?</i></p><p>Non ci sono ancora attori, né un copione, né tantomeno uno spettacolo in programma. Ci sono soltanto alcuni contatti, un po’ di esperienza teatrale e una buona dose di ostinazione.</p><p>Comincia così il passaparola. Qualche messaggio, alcuni annunci, persone che ne invitano altre. L’obiettivo non è necessariamente trovare attori esperti, ma riunire chi abbia voglia di recitare, conoscere nuove persone e condividere un’esperienza. E, un incontro dopo l’altro, quel gruppo comincia davvero a formarsi.</p><p></p>",
           "images": [],
           "visible": true
         },
         {
-          "title": "Stagione 2025-26",
-          "text": "<p>La consolidazione del gruppo<br><ul><li>una cenerentola con gli spettacoli fuori da zh</li><li>seconda stagione del corso di teatro a tema dario fo</li><li>inizio collaborazioni con libriamo ed altre associazioni</li><li>serate a tema teatro (carnevale natale)</li></ul></p>",
+          "title": "La nascita della compagnia",
+          "text": "<p><i>Nell’estate del 2024 nascono gli Attomatti.</i></p><p>A comporre la prima formazione sono persone diversissime tra loro: studenti e lavoratori, diciottenni e sessantenni, caratteri, professioni e storie di vita che difficilmente si sarebbero incrociati altrove.</p><p>A unirli, almeno inizialmente, non è certo l’esperienza sul palcoscenico. Quella, a dire il vero, scarseggia parecchio.</p><p><i>Ma non manca la voglia di mettersi in gioco.</i></p><p>Il nome della compagnia viene scelto insieme. Tra proposte, idee e confronti, prende vita quello che sembra racchiudere perfettamente lo spirito del gruppo: <i>Gli Attomatti</i>.</p><p>Un nome che lascia intuire una certa predisposizione alla follia. Quella buona, naturalmente. Quella che spinge persone fino a poco prima sconosciute a ritrovarsi in una sala, improvvisare situazioni improbabili e, soprattutto, accettare di mettersi in ridicolo davanti agli altri.</p><p>Il primo ostacolo, però, è evidente: come si porta in scena una commedia con persone che, nella maggior parte dei casi, non hanno mai recitato?</p><p><i>La risposta è semplice: non si comincia dalla commedia.</i></p><p>Le prime prove diventano così una sorta di laboratorio teatrale: esercizi di espressione, improvvisazioni, giochi collettivi, lavoro sul corpo, sulla voce e sull’ascolto. Domenico mette a disposizione del gruppo gli strumenti acquisiti durante il proprio percorso artistico, ma è attraverso il contributo e l’entusiasmo di tutti che il progetto comincia a trovare una propria identità.</p><p><i>Prima ancora di imparare a interpretare un personaggio, bisogna imparare a fidarsi degli altri.</i></p><p>Perché il teatro è anche questo: uno spazio in cui persone differenti imparano a collaborare, ad ascoltarsi, a superare le proprie insicurezze e a scoprire possibilità che forse non sapevano nemmeno di avere.</p><p></p>",
           "visible": true,
           "images": []
         },
         {
-          "title": "Stagione 2026-27",
-          "text": "<p>Uno sguardo verso il futuro</p><p><ul><li>siamo entrati nell'associazione ticinese e abbiamo la biennale. cosa vuol dire per noi</li><li>piani e spettacoli per il fututo (questo possiamo anche cambiarlo in futuro)</li><li>il cineforum e unitre</li><li>corso a tema shakespeare</li></ul></p>",
+          "title": "Il primo debutto",
+          "text": "<p>Passano i mesi. Il gruppo cresce, prende confidenza con il palcoscenico e comincia a trovare una propria identità.</p><p><i>Arriva allora il momento di affrontare un vero copione.</i></p><p>La scelta non è immediata. Vengono valutati diversi testi, cercando quello capace di valorizzare le qualità dei partecipanti e di accompagnarli verso il loro primo incontro con il pubblico.</p><p>Alla fine, la scelta ricade su un grande classico del teatro italiano: <i>Ditegli sempre di sì</i>, di Eduardo De Filippo.</p><p>È una commedia che il regista conosce bene, avendola già affrontata nel proprio percorso teatrale. Un testo ricco di equivoci, situazioni comiche e personaggi che richiedono precisione, ascolto e un grande lavoro d’insieme.</p><p>Dall’estate del 2024 alla primavera del 2025 trascorrono mesi di prove, tentativi, difficoltà, risate e piccoli successi.</p><p>Poi arriva finalmente il momento tanto atteso.</p><p>Nella primavera del 2025, gli Attomatti debuttano davanti al pubblico di Zurigo con due rappresentazioni di <i>Ditegli sempre di sì.</i></p><p>Per molti è la prima volta su un palcoscenico. Per tutti è il coronamento di un percorso cominciato quasi per caso, con il desiderio di conoscere nuove persone.</p><p><i>Il primo sipario si alza.&nbsp;</i></p><p>E con esso prende vita qualcosa che, soltanto pochi mesi prima, esisteva unicamente nell’immaginazione di un piccolo gruppo di sconosciuti.</p>",
+          "images": [],
+          "visible": true
+        },
+        {
+          "title": "Oltre il primo sipario",
+          "text": "<p><i>Ma il teatro, come la vita, è fatto anche di nuove sfide.</i></p><p>Conclusa questa prima esperienza, emerge il desiderio di andare oltre. Il percorso compiuto ha dimostrato quanto il teatro possa unire persone perse, trasformare le insicurezze in coraggio e dare vita a qualcosa di conpiso. Il regista sente così l’esigenza di ampliare il progetto, coinvolgere nuove energie e aprire le porte della compagnia a chiunque abbia voglia di mettersi in gioco.</p><p>Del resto, Zurigo è una città in continuo movimento, abitata da persone che arrivano da Paesi, culture e percorsi differenti. Quante di loro stanno cercando un’occasione per incontrarsi, fare amicizia o semplicemente sentirsi parte di qualcosa?</p><p><i>Il teatro potrebbe essere ancora una volta la risposta.</i></p><p>Vengono organizzate due giornate di provini, pubblicizzate attraverso i social e il passaparola. La partecipazione è incoraggiante: arrivano soprattutto giovani adulti, molti intorno ai trent’anni, con esperienze perse ma accomunati dal desiderio di mettersi alla prova.</p><p>Sono due giornate intense, ricche di incontri e nuove possibilità.</p><p>La compagnia si arricchisce così di nuovi volti, nuove energie e nuove ambizioni. E questa volta c’è già un progetto artistico pronto a prendere vita.</p><p>Da qualche tempo, infatti, il regista sta lavorando a una personale rilettura della fiaba di Cenerentola, ispirata alle grandi versioni della tradizione ma destinata a diventare qualcosa di perso.</p><p>Una storia conosciuta da tutti, eppure ancora capace di sorprendere.</p><p><i>Nasce così il progetto di Una Cenerentola.</i></p><p>Ma questa è un’altra storia. Un nuovo capitolo fatto di personaggi, costumi, prove e palcoscenici che porteranno la compagnia anche oltre i confini di Zurigo.</p><p>Quello che era cominciato come il tentativo di trovare qualche amico si è trasformato, nel frattempo, in un progetto collettivo.</p><p><i>Perché gli Attomatti, prima ancora di essere una compagnia teatrale, sono il risultato di una convinzione semplice: il teatro non è soltanto il luogo in cui si raccontano storie. È anche il luogo in cui le storie delle persone si incontrano.</i></p><p>E quella degli Attomatti, in fondo, è cominciata proprio così.</p>",
           "images": [],
           "visible": true
         }
@@ -1833,6 +1839,17 @@
       "back_link_label": "Torna indietro",
       "back_link_href": "/Iniziative/cineforum",
       "active": true
+    },
+    {
+      "id": "reg-1791650272334",
+      "title": "Newsletter Attomatta",
+      "slug": "newsletter",
+      "category": "",
+      "description": "Compila il modulo per iscriverti alla nostra newsletter.  Maggiori informazioni sulla privacy [qui](/Privacy).",
+      "tally_url": "https://tally.so/r/obrA15",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "active": true
     }
   ],
   "integrations": {
@@ -2183,6 +2200,59 @@
         ],
         "customColors": {
           "muted": "#ffffff"
+        }
+      },
+      {
+        "id": "newsletter",
+        "name": "Registrazione Newsletter",
+        "enabled": true,
+        "subject": "Notifica: Iscrizione alla newsletter de Gli Attomatti",
+        "preheader": "",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "b1",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "b3",
+            "type": "heading",
+            "text": "Grazie per l'iscrizione alla nostra newsletter!",
+            "level": "h1",
+            "align": "left"
+          },
+          {
+            "id": "b4",
+            "type": "text",
+            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nGrazie per l'iscrizione alla newsletter della compagnia teatrale Gli Attomatti. D’ora in poi riceverai aggiornamenti su spettacoli, laboratori e iniziative della compagnia a Zurigo.\n\nTi scriviamo per confermare che l’indirizzo **{{data.fields[label=Email].value}}** è stato registrato alla newsletter. Se non desideri più ricevere le nostre comunicazioni, puoi annullare l’iscrizione in qualsiasi momento rispondendo a questa email  oppure scrivendo a compagniateatralegliattomatti@gmail.com. Ti rimuoveremo dalla lista il prima possibile.\n\nNon ricordi di aver richiesto l’iscrizione? Rispondi a questa email segnalandocelo e cancelleremo subito il tuo indirizzo. I tuoi dati sono trattati nel rispetto della nostra Informativa sulla Privacy.\n\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "b6",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "b7",
+            "type": "footer",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+            "privacy_note": "Ricevi questa email in seguito a una registrazione.",
+            "show_privacy_link": true
+          }
+        ],
+        "field_mapping": {
+          "sample_payload_json": "{\n  \"eventId\": \"4288369a-8d67-4f6d-98b3-4cc94276d7ae\",\n  \"createdAt\": \"2026-10-10T16:44:07.162Z\",\n  \"data\": {\n    \"responseId\": \"82f76c02-4766-458a-ab3c-c06712f4908a\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"obrA15\",\n    \"formName\": \"Newsletter Attomatta\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/obrA15/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJvYnJBMTUiLCJpYXQiOjE3OTE2NTA2NDd9.UFXTAsvi1wiVs5al5K6sGMMHYCpgeRPvG40lra9RBDA&signature=4f082816aebefbfb6d3675bed0c2c8b3837978377a4b18080b26d2e4cb99458a\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/obrA15/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJvYnJBMTUiLCJpYXQiOjE3OTE2NTA2NDd9.UFXTAsvi1wiVs5al5K6sGMMHYCpgeRPvG40lra9RBDA&signature=4f082816aebefbfb6d3675bed0c2c8b3837978377a4b18080b26d2e4cb99458a\",\n    \"fields\": [\n      {\n        \"key\": \"question_61eA8B\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_7Jb1RA\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_o0DKob\",\n        \"label\": null,\n        \"type\": \"CHECKBOXES\",\n        \"value\": [\n          \"9323fd7b-da70-478e-b997-b4d39486badb\"\n        ],\n        \"options\": [\n          {\n            \"id\": \"9323fd7b-da70-478e-b997-b4d39486badb\",\n            \"text\": \"Acconsento a ricevere la newsletter della compagnia teatrale Gli Attomatti all’indirizzo email indicato. Il consenso è revocabile in qualsiasi momento inviando una email a compagniateatralegliattomatti@gmail.com. Maggiori informazioni sulla privacy sul nostro sito.\"\n          }\n        ]\n      },\n      {\n        \"key\": \"question_o0DKob_9323fd7b-da70-478e-b997-b4d39486badb\",\n        \"label\": \"Checkbox (Acconsento a ricevere la newsletter della compagnia teatrale Gli Attomatti all’indirizzo email indicato. Il consenso è revocabile in qualsiasi momento inviando una email a compagniateatralegliattomatti@gmail.com. Maggiori informazioni sulla privacy sul nostro sito.)\",\n        \"type\": \"CHECKBOXES\",\n        \"value\": true\n      }\n    ]\n  }\n}",
+          "recipient_email_path": "{{data.fields[label=Email].value}}",
+          "recipient_name_path": "{{data.fields[label=Nome e Cognome].value}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti",
+          "from_email": "newsletter@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
         }
       }
     ]
