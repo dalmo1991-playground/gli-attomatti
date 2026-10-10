@@ -243,45 +243,26 @@
       "photo_aria_prefix": "Foto",
       "content_sections": [
         {
-          "title": "La Nostra Storia",
-          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          "images": [
-            {
-              "url": "/images/1782553781605-DSC_0682.webp",
-              "alt": "Foto sezione"
-            }
-          ],
+          "title": "Le origini",
+          "text": "<ul><li>fondazione del gruppo</li><li>magari qualcosa su prima degli attomatti</li><li>qualche riga per spiegare perché lo facciamo e l'importanza del teatro<br></li></ul>",
+          "images": [],
           "visible": true
         },
         {
-          "title": "La Nostra Missione",
-          "text": "La missione degli Attomatti è creare un ponte culturale attraverso il teatro. Vogliamo offrire agli italiani a Zurigo e agli amanti della nostra lingua un punto di incontro dove l'arte diventa comunità.\n\nOgni nostra produzione è frutto di mesi di prove, passione e dedizione, con l'obiettivo di emozionare e far riflettere il nostro pubblico.",
-          "images": [
-            {
-              "url": "/images/1782553648895-DSD00540.webp",
-              "alt": "Foto sezione"
-            },
-            {
-              "url": "/images/1782553714122-DSD02274.webp",
-              "alt": "Foto sezione"
-            }
-          ],
+          "title": "Stagione 2024-25",
+          "text": "<p>Il primo spettacolo</p><p><ul><li>qualcosa su ditegli sempre di si (poi metto io delle foto)</li><li>magari l'inizio del corso di teatro con la prima edizione \"sperimentale\"</li></ul></p>",
+          "images": [],
           "visible": true
         },
         {
-          "title": "Verso l'infinito e oltre",
-          "text": "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "title": "Stagione 2025-26",
+          "text": "<p>La consolidazione del gruppo<br><ul><li>una cenerentola con gli spettacoli fuori da zh</li><li>seconda stagione del corso di teatro a tema dario fo</li><li>inizio collaborazioni con libriamo ed altre associazioni</li><li>serate a tema teatro (carnevale natale)</li></ul></p>",
           "visible": true,
-          "images": [
-            {
-              "url": "/images/1790869266263-non-sottovalutare-40.webp",
-              "alt": "Foto sezione"
-            }
-          ]
+          "images": []
         },
         {
-          "title": "Cosa aspettarci dalla biennale",
-          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          "title": "Stagione 2026-27",
+          "text": "<p>Uno sguardo verso il futuro</p><p><ul><li>siamo entrati nell'associazione ticinese e abbiamo la biennale. cosa vuol dire per noi</li><li>piani e spettacoli per il fututo (questo possiamo anche cambiarlo in futuro)</li><li>il cineforum e unitre</li><li>corso a tema shakespeare</li></ul></p>",
           "images": [],
           "visible": true
         }
