@@ -53,7 +53,7 @@ export default async function TerminiPage() {
             icon={Icon}
             iconColorClass={iconConfig?.color}
           >
-            <div className="space-y-3 text-foreground/80 leading-relaxed font-medium">
+            <div className="space-y-4 text-foreground/80 leading-relaxed font-medium">
               {section.intro && <p><FormattedText text={section.intro} /></p>}
               {section.text && <p><FormattedText text={section.text} /></p>}
 

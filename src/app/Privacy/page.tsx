@@ -266,7 +266,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.google_analytics.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -288,7 +288,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.meta_pixel.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -322,7 +322,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.youtube.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -356,7 +356,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.eventfrog.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -390,7 +390,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.tally.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -424,7 +424,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.resend.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -458,7 +458,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.recaptcha.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -532,7 +532,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.photo_rights.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
