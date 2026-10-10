@@ -39,6 +39,10 @@
       "href": "/Chi_Siamo",
       "sublinks": [
         {
+          "label": "Storie & Notizie",
+          "href": "/Chi_Siamo/Blog"
+        },
+        {
           "label": "Le Persone",
           "href": "/Chi_Siamo/Attori"
         },
@@ -287,7 +291,7 @@
           "visible": true
         },
         {
-          "label": "Il Nostro Blog",
+          "label": "Storie & Notizie",
           "href": "/Chi_Siamo/Blog",
           "icon": "newspaper",
           "visible": true
@@ -679,7 +683,7 @@
       ],
       "title": "Storie & Notizie",
       "description": "Storie, annunci e retroscena dal palcoscenico.",
-      "year_prefix": "Anno ",
+      "year_prefix": null,
       "discover_cta": "Leggi l'articolo",
       "back_to_archive_label": "Torna al Blog",
       "archive_href": "/Chi_Siamo/Blog",
