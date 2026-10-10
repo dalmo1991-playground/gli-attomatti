@@ -2201,6 +2201,59 @@
         "customColors": {
           "muted": "#ffffff"
         }
+      },
+      {
+        "id": "newsletter",
+        "name": "Registrazione Newsletter",
+        "enabled": true,
+        "subject": "Notifica: Iscrizione alla newsletter de Gli Attomatti",
+        "preheader": "",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "b1",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "b3",
+            "type": "heading",
+            "text": "Grazie per l'iscrizione alla nostra newsletter!",
+            "level": "h1",
+            "align": "left"
+          },
+          {
+            "id": "b4",
+            "type": "text",
+            "content": "Ciao {{data.fields[label=Nome e Cognome].value}},\n\nGrazie per l'iscrizione alla newsletter della compagnia teatrale Gli Attomatti. D’ora in poi riceverai aggiornamenti su spettacoli, laboratori e iniziative della compagnia a Zurigo.\n\nTi scriviamo per confermare che l’indirizzo **{{data.fields[label=Email].value}}** è stato registrato alla newsletter. Se non desideri più ricevere le nostre comunicazioni, puoi annullare l’iscrizione in qualsiasi momento rispondendo a questa email  oppure scrivendo a compagniateatralegliattomatti@gmail.com. Ti rimuoveremo dalla lista il prima possibile.\n\nNon ricordi di aver richiesto l’iscrizione? Rispondi a questa email segnalandocelo e cancelleremo subito il tuo indirizzo. I tuoi dati sono trattati nel rispetto della nostra Informativa sulla Privacy.\n\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "b6",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "b7",
+            "type": "footer",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+            "privacy_note": "Ricevi questa email in seguito a una registrazione.",
+            "show_privacy_link": true
+          }
+        ],
+        "field_mapping": {
+          "sample_payload_json": "{\n  \"eventId\": \"4288369a-8d67-4f6d-98b3-4cc94276d7ae\",\n  \"createdAt\": \"2026-10-10T16:44:07.162Z\",\n  \"data\": {\n    \"responseId\": \"82f76c02-4766-458a-ab3c-c06712f4908a\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"obrA15\",\n    \"formName\": \"Newsletter Attomatta\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/obrA15/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJvYnJBMTUiLCJpYXQiOjE3OTE2NTA2NDd9.UFXTAsvi1wiVs5al5K6sGMMHYCpgeRPvG40lra9RBDA&signature=4f082816aebefbfb6d3675bed0c2c8b3837978377a4b18080b26d2e4cb99458a\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/obrA15/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiJvYnJBMTUiLCJpYXQiOjE3OTE2NTA2NDd9.UFXTAsvi1wiVs5al5K6sGMMHYCpgeRPvG40lra9RBDA&signature=4f082816aebefbfb6d3675bed0c2c8b3837978377a4b18080b26d2e4cb99458a\",\n    \"fields\": [\n      {\n        \"key\": \"question_61eA8B\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_7Jb1RA\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_o0DKob\",\n        \"label\": null,\n        \"type\": \"CHECKBOXES\",\n        \"value\": [\n          \"9323fd7b-da70-478e-b997-b4d39486badb\"\n        ],\n        \"options\": [\n          {\n            \"id\": \"9323fd7b-da70-478e-b997-b4d39486badb\",\n            \"text\": \"Acconsento a ricevere la newsletter della compagnia teatrale Gli Attomatti all’indirizzo email indicato. Il consenso è revocabile in qualsiasi momento inviando una email a compagniateatralegliattomatti@gmail.com. Maggiori informazioni sulla privacy sul nostro sito.\"\n          }\n        ]\n      },\n      {\n        \"key\": \"question_o0DKob_9323fd7b-da70-478e-b997-b4d39486badb\",\n        \"label\": \"Checkbox (Acconsento a ricevere la newsletter della compagnia teatrale Gli Attomatti all’indirizzo email indicato. Il consenso è revocabile in qualsiasi momento inviando una email a compagniateatralegliattomatti@gmail.com. Maggiori informazioni sulla privacy sul nostro sito.)\",\n        \"type\": \"CHECKBOXES\",\n        \"value\": true\n      }\n    ]\n  }\n}",
+          "recipient_email_path": "{{data.fields[label=Email].value}}",
+          "recipient_name_path": "{{data.fields[label=Nome e Cognome].value}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti",
+          "from_email": "newsletter@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        }
       }
     ]
   },
