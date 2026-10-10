@@ -27,9 +27,11 @@ import { GalleryTab } from "./tabs/GalleryTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { EmailTab } from "./tabs/EmailTab";
 import { JsonTab } from "./tabs/JsonTab";
+import { GuidaTab } from "./tabs/GuidaTab";
 
 const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): string => {
   switch (tab) {
+    case "guida":
     case "home":
     case "site":
     case "navigation":
@@ -70,7 +72,13 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
 };
 
 function AdminContent() {
-  const [activeTab, setActiveTab] = useState("spettacoli");
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("tab");
+      if (p) return p;
+    }
+    return "guida";
+  });
   const [activeLandingSlug, setActiveLandingSlug] = useState<string>("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -118,7 +126,16 @@ function AdminContent() {
         isSidebarCollapsed={isSidebarCollapsed}
         onToggleCollapse={handleToggleCollapse}
         isPreviewOpen={isPreviewOpen}
-        onTogglePreview={() => setIsPreviewOpen((prev) => !prev)}
+        onTogglePreview={() => {
+          setIsPreviewOpen((prev) => {
+            const next = !prev;
+            if (next && !isSidebarCollapsed && typeof window !== "undefined" && window.innerWidth >= 1024) {
+              setIsSidebarCollapsed(true);
+            }
+            return next;
+          });
+        }}
+        onSelectTab={(tab) => setActiveTab(tab)}
       />
 
       <div className="flex">
@@ -133,7 +150,7 @@ function AdminContent() {
 
         <main
           className={cn(
-            "flex-1 min-h-[calc(100vh-4rem)] p-4 sm:p-6 md:p-8 overflow-x-hidden transition-all duration-300",
+            "flex-1 min-h-[calc(100vh-4rem)] p-4 sm:p-6 md:p-8 overflow-x-clip transition-all duration-300",
             isSidebarCollapsed ? "md:pl-16" : "md:pl-72"
           )}
         >
@@ -147,12 +164,13 @@ function AdminContent() {
               </div>
             </div>
           ) : (
-            <div className={cn("mx-auto transition-all", isPreviewOpen || activeTab === "emails" ? "max-w-[1850px] w-full" : "max-w-5xl")}>
+            <div className={cn("mx-auto transition-all", isPreviewOpen || activeTab === "emails" ? "max-w-[1920px] w-full" : "max-w-5xl")}>
               <DraftBanner />
 
-              <div className={cn("flex gap-8 items-start", isPreviewOpen ? "flex-col xl:flex-row" : "")}>
-                {/* Editing Tab Pane */}
-                <div className={cn("w-full transition-all pb-24", isPreviewOpen ? "xl:w-1/2 min-w-0" : activeTab === "emails" ? "w-full min-w-0" : "max-w-5xl mx-auto")}>
+              <div className={cn("flex gap-8 items-start", isPreviewOpen ? "flex-col lg:flex-row" : "")}>
+                {/* Editing Tab Pane (50% when preview open) */}
+                <div className={cn("w-full transition-all pb-24", isPreviewOpen ? "lg:w-1/2 min-w-0" : activeTab === "emails" ? "w-full min-w-0" : "max-w-5xl mx-auto")}>
+                  {activeTab === "guida" && <GuidaTab onNavigateTab={(tab) => setActiveTab(tab)} />}
                   {activeTab === "site" && <SiteTab />}
                   {activeTab === "navigation" && <NavigationTab />}
                   {activeTab === "home" && <HomeTab />}
@@ -178,12 +196,12 @@ function AdminContent() {
                   )}
                   {activeTab === "parlano_di_noi" && <PressTab />}
                   {activeTab === "contatti" && <ContactTab />}
-                  {activeTab === "json" && <JsonTab />}
+                  {activeTab === "json" && <JsonTab onNavigateTab={(tab) => setActiveTab(tab)} />}
                 </div>
 
-                {/* Live Preview Side-by-Side Pane (Desktop) */}
+                {/* Live Preview Side-by-Side Sticky Pane (50% on Desktop/Laptop) */}
                 {isPreviewOpen && (
-                  <div className="hidden xl:block xl:w-1/2 min-w-0 sticky top-[5rem]">
+                  <div className="hidden lg:block lg:w-1/2 min-w-0 sticky top-[5rem] self-start z-30">
                     <AdminPreviewPane
                       currentRoute={previewRoute}
                       content={content}
@@ -199,12 +217,13 @@ function AdminContent() {
                 )}
               </div>
 
-              {/* Mobile/Tablet Preview Overlay */}
+              {/* Mobile/Tablet Preview Overlay (Only on small screens < lg) */}
               {isPreviewOpen && (
-                <div className="xl:hidden fixed inset-3 z-50 shadow-2xl">
+                <div className="lg:hidden fixed inset-3 z-50 shadow-2xl">
                   <AdminPreviewPane
                     currentRoute={previewRoute}
                     content={content}
+                    className="h-full"
                     onClose={() => setIsPreviewOpen(false)}
                     onNavigateRoute={(route) => {
                       if (route.startsWith("/landing/")) {

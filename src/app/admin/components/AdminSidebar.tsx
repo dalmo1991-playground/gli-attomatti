@@ -20,7 +20,8 @@ import {
   MapPin,
   PanelLeftClose,
   PanelLeftOpen,
-  Send
+  Send,
+  BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,12 @@ interface AdminSidebarProps {
 }
 
 const navSections = [
+  {
+    category: "Guida & Supporto",
+    items: [
+      { id: "guida", label: "Guida & Manuale", icon: BookOpen }
+    ]
+  },
   {
     category: "Configurazione & Media",
     items: [

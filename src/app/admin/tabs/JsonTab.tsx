@@ -18,7 +18,8 @@ import {
   FileJson,
   Hash,
   HelpCircle,
-  X
+  X,
+  BookOpen
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
@@ -52,7 +53,11 @@ const QUICK_SECTIONS: QuickSection[] = [
   { id: "ui", label: "Interfaccia UI", icon: "🎨", pattern: '"ui":' }
 ];
 
-export function JsonTab() {
+interface JsonTabProps {
+  onNavigateTab?: (tab: string) => void;
+}
+
+export function JsonTab({ onNavigateTab }: JsonTabProps = {}) {
   const { content, setContent } = useAdmin();
   const [jsonText, setJsonText] = useState(() => JSON.stringify(content, null, 2));
   const [error, setError] = useState<string | null>(null);
@@ -422,6 +427,25 @@ export function JsonTab() {
           </div>
         }
       >
+        {/* Guida Rapida Tip Banner */}
+        <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-foreground/80">
+            <BookOpen size={16} className="text-primary shrink-0" />
+            <span>
+              <strong>Hai dubbi sul JSON?</strong> Ricorda di non lasciare virgole sull&apos;ultimo elemento e usa <code className="bg-background px-1.5 py-0.5 rounded font-mono font-bold text-amber-300">null</code> per nascondere del tutto i blocchi.
+            </span>
+          </div>
+          {onNavigateTab && (
+            <button
+              type="button"
+              onClick={() => onNavigateTab("guida")}
+              className="text-primary font-bold hover:underline shrink-0 flex items-center gap-1"
+            >
+              <span>Leggi la Guida al JSON →</span>
+            </button>
+          )}
+        </div>
+
         {/* Normal In-Page View */}
         <div className="h-[750px]">{editorContent}</div>
       </AdminSection>
