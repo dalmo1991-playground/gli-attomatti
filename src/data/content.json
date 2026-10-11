@@ -1973,6 +1973,7 @@
     },
     "lightbox": {
       "close_aria_label": "Chiudi galleria",
+      "download_aria_label": "Scarica immagine",
       "prev_aria_label": "Foto precedente",
       "next_aria_label": "Foto successiva",
       "default_alt": "Foto"

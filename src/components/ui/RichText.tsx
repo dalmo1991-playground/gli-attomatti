@@ -29,6 +29,8 @@ const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i;
  * Allow-list HTML sanitizer.
  * - Drops dangerous elements together with their content (script, style, iframe, svg...).
  * - Keeps only a small set of formatting tags.
+ * - Preserves safe alignment (left, center, right, justify) on block tags (p, div, h2, h3, h4, blockquote)
+ * - Preserves safe text-lg class on <span> for enlarged text.
  * - Strips EVERY attribute except a safe `href` on <a> (http/https/mailto/tel/relative/#),
  *   and forces target/rel on links.
  */
@@ -53,6 +55,31 @@ function sanitizeHtml(dirtyHtml: string): string {
         return external
           ? `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`
           : `<a href="${safeHref}">`;
+      }
+
+      // Check text alignment for block elements
+      if (tag === "p" || tag === "div" || tag === "blockquote" || /^h[1-6]$/.test(tag)) {
+        let align: string | null = null;
+        const alignMatch = attrs.match(/\balign\s*=\s*(?:"(left|center|right|justify)"|'(left|center|right|justify)'|(left|center|right|justify))/i);
+        if (alignMatch) {
+          align = (alignMatch[1] || alignMatch[2] || alignMatch[3]).toLowerCase();
+        } else {
+          const styleAlignMatch = attrs.match(/\btext-align\s*:\s*(left|center|right|justify)/i);
+          if (styleAlignMatch) {
+            align = styleAlignMatch[1].toLowerCase();
+          }
+        }
+
+        if (align) {
+          return `<${tag} style="text-align: ${align};">`;
+        }
+      }
+
+      // Preserve large text span (<span class="text-lg"> or data-size="large")
+      if (tag === "span") {
+        if (/text-lg|large/i.test(attrs)) {
+          return '<span class="text-lg">';
+        }
       }
 
       return tag === "br" ? "<br>" : `<${tag}>`;
@@ -104,15 +131,21 @@ export function RichText({
         className={cn(
           "leading-relaxed",
           "[&_p]:mb-4 sm:[&_p]:mb-4.5 [&_p:last-child]:mb-0 [&_p:empty]:hidden",
-          "[&_strong]:font-bold [&_strong]:text-foreground",
+          "[&_strong]:font-bold [&_strong]:text-foreground [&_mark_strong]:text-inherit [&_mark_b]:text-inherit",
           "[&_b]:font-bold [&_b]:text-foreground",
-          "[&_em]:font-serif [&_em]:italic [&_em]:font-normal [&_em]:text-foreground/95 [&_em]:tracking-normal",
+          "[&_em]:font-serif [&_em]:italic [&_em]:font-normal [&_em]:text-foreground/95 [&_em]:tracking-normal [&_mark_em]:text-inherit [&_mark_i]:text-inherit",
           "[&_i]:font-serif [&_i]:italic [&_i]:font-normal [&_i]:text-foreground/95 [&_i]:tracking-normal",
-          "[&_mark]:bg-transparent [&_mark]:text-primary [&_mark]:font-bold",
-          "[&_em_mark]:font-serif [&_em_mark]:italic [&_em_mark]:text-primary [&_em_mark]:font-bold",
-          "[&_i_mark]:font-serif [&_i_mark]:italic [&_i_mark]:text-primary [&_i_mark]:font-bold",
-          "[&_mark_em]:font-serif [&_mark_em]:italic [&_mark_em]:text-primary [&_mark_em]:font-bold",
-          "[&_mark_i]:font-serif [&_mark_i]:italic [&_mark_i]:text-primary [&_mark_i]:font-bold",
+          "[&_mark]:bg-transparent [&_mark]:text-primary [&_mark]:font-inherit",
+          "[&_mark_*]:text-inherit",
+          "[&_em_mark]:font-serif [&_em_mark]:italic [&_em_mark]:text-primary",
+          "[&_i_mark]:font-serif [&_i_mark]:italic [&_i_mark]:text-primary",
+          "[&_mark_em]:font-serif [&_mark_em]:italic [&_mark_em]:text-primary",
+          "[&_mark_i]:font-serif [&_mark_i]:italic [&_mark_i]:text-primary",
+          "[&_strong_mark]:font-bold [&_mark_strong]:font-bold [&_mark_strong]:text-primary",
+          "[&_b_mark]:font-bold [&_mark_b]:font-bold [&_mark_b]:text-primary",
+          "[&_mark_b_i]:text-primary [&_mark_i_b]:text-primary [&_i_mark_b]:text-primary [&_b_mark_i]:text-primary",
+          "[&_small]:text-[0.85em] [&_small]:opacity-80 [&_small]:leading-normal",
+          "[&_.text-lg]:text-[1.18em] [&_.text-lg]:leading-snug",
           "[&_q]:italic [&_q]:font-medium [&_q]:text-foreground",
           "[&_a]:text-primary [&_a]:underline hover:[&_a]:text-primary/80 [&_a]:font-bold [&_a]:transition-colors",
           "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-4 sm:[&_ul]:my-4.5 [&_ul]:space-y-1.5 [&_ul:last-child]:mb-0",
