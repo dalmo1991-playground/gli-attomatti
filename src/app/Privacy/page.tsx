@@ -179,6 +179,18 @@ export default async function PrivacyPage() {
                             </td>
                           </tr>
                         )}
+                        {cookieRows.newsletter_popup && (
+                          <tr>
+                            <td className="py-2.5 pr-4 font-mono font-bold text-foreground">
+                              {defaultText(cookieRows.newsletter_popup.name)}
+                            </td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.newsletter_popup.provider)}</td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.newsletter_popup.duration)}</td>
+                            <td className="py-2.5 text-foreground/70">
+                              {defaultText(cookieRows.newsletter_popup.purpose)}
+                            </td>
+                          </tr>
+                        )}
                         {isEventfrogActive && cookieRows.eventfrog && (
                           <tr>
                             <td className="py-2.5 pr-4 font-mono font-bold text-foreground">

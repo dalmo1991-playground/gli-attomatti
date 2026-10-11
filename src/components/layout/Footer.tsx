@@ -8,7 +8,7 @@ import { trackContact, trackSocialClick } from "@/lib/tracking";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { defaultText } from "@/lib/utils";
 import { ShareButton } from "@/components/ui/ShareButton";
-
+import { isNewsletterActive, NEWSLETTER_PATH } from "@/lib/newsletter";
 
 export function Footer({ content }: { content: any }) {
   const contatti = content?.pages?.contatti || { email: "", socials: [] };
@@ -17,6 +17,7 @@ export function Footer({ content }: { content: any }) {
   const navigation = rawNavigation.filter((link: any) => link && link.label !== null);
   const site = content?.site || { name: "Gli Attomatti", description: "" };
   const uiFooter = content?.ui?.footer || {};
+  const hasNewsletter = isNewsletterActive(content);
 
   const siteName = defaultText(site.name, "Gli Attomatti");
   const siteDesc = defaultText(site.description);
@@ -137,6 +138,18 @@ export function Footer({ content }: { content: any }) {
                     </li>
                   );
                 })}
+                {hasNewsletter && (
+                  <li>
+                    <Link
+                      href={NEWSLETTER_PATH}
+                      prefetch={false}
+                      className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
+                    >
+                      Newsletter
+                      <ArrowUpRight size={14} className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           )}

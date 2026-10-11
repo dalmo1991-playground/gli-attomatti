@@ -11,6 +11,7 @@ import { DevAccessGate } from "@/components/dev/DevAccessGate";
 import { LivePreviewProvider, useLiveContent } from "@/components/dev/LivePreviewContext";
 import { PreviewBanner } from "@/components/dev/PreviewBanner";
 import { EmailActionModal } from "@/components/ui/EmailActionModal";
+import { NewsletterPopup } from "@/components/ui/NewsletterPopup";
 
 import { DeploymentDetector } from "@/components/layout/DeploymentDetector";
 
@@ -79,6 +80,7 @@ function LayoutInner({
       />
 
       <EmailActionModal />
+      <NewsletterPopup content={liveContent} />
 
       <DeploymentDetector serverVersion={serverVersion || "initial"} />
 

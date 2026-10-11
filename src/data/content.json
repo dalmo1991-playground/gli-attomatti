@@ -1830,6 +1830,12 @@
             "duration": "1 anno",
             "purpose": "Tecnico essenziale: memorizza le scelte di consenso privacy espresse nel banner."
           },
+          "newsletter_popup": {
+            "name": "attomatti_newsletter_popup",
+            "provider": "Sito proprio (Locale)",
+            "duration": "7 giorni (chiusura) / Permanente (iscrizione)",
+            "purpose": "Tecnico funzionale: memorizza lo stato di chiusura o clic del popup newsletter per non riproporre l'avviso in modo molesto."
+          },
           "eventfrog": {
             "name": "eventfrog.ch (iframe)",
             "provider": "Eventfrog AG (Svizzera)",

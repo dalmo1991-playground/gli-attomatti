@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Share2, Mail, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
@@ -12,6 +12,7 @@ import { Section } from "@/components/ui/Section";
 import { ShareModal } from "@/components/ui/ShareModal";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { defaultText } from "@/lib/utils";
+import { isNewsletterActive, NEWSLETTER_PATH } from "@/lib/newsletter";
 
 export default function ArticoloClient({
   content: initialContent,
@@ -71,6 +72,37 @@ export default function ArticoloClient({
         }}
         compact
       />
+
+      {/* Newsletter CTA Top Banner (only if newsletter is defined) */}
+      {isNewsletterActive(content) && (
+        <section aria-label="Iscriviti alla newsletter" className="bg-background pt-8 pb-4 px-6 border-b border-foreground/5">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/10 via-accent/5 to-primary/5 border border-primary/20 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-wider text-primary">
+                    Newsletter Teatrale
+                  </div>
+                  <p className="text-sm sm:text-base font-bold text-foreground">
+                    Ti piace quello che facciamo? Resta in contatto con le nostre produzioni.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={NEWSLETTER_PATH}
+                prefetch={false}
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary hover:bg-primary/90 text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all hover:scale-105 shadow-sm shrink-0 group/cta"
+              >
+                <span>Iscriviti alla newsletter</span>
+                <ArrowRight size={14} className="group-cta:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Modular Content Sections (Identical structure to Chi Siamo chapters) */}
       {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => {
