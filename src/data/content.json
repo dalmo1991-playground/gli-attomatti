@@ -330,12 +330,18 @@
             },
             {
               "type": "text",
-              "text": "<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>La storia degli Attomatti è solo agli inizi. Scopri i prossimi capitoli nel <a href=\"/Chi_Siamo/Blog\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">blog</a>!</i></mark></span></div>"
+              "text": "<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>La storia degli Attomatti è solo agli inizi. Scriviamo assieme i prossimi capitoli. Segui la nostra storia <a href=\"/Chi_Siamo/Blog\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">qui</a>!</i></mark></span></div>"
             }
           ]
         }
       ],
       "navigation_links": [
+        {
+          "label": "Storie & Notizie",
+          "href": "/Chi_Siamo/Blog",
+          "icon": "newspaper",
+          "visible": true
+        },
         {
           "label": "Le Persone",
           "href": "/Chi_Siamo/Attori",
@@ -346,12 +352,6 @@
           "label": "Dicono di Noi",
           "href": "/Chi_Siamo/Parlano_di_noi",
           "icon": "message-square",
-          "visible": true
-        },
-        {
-          "label": "Storie & Notizie",
-          "href": "/Chi_Siamo/Blog",
-          "icon": "newspaper",
           "visible": true
         }
       ],
@@ -747,40 +747,7 @@
       "archive_href": "/Chi_Siamo/Blog",
       "empty_message": "Nessun articolo pubblicato al momento.",
       "not_found_title": "Articolo non trovato",
-      "articles": [
-        {
-          "slug": "dietro-le-quinte-del-debutto",
-          "title": "Dietro le quinte del nostro debutto",
-          "year": "2025",
-          "date": "Maggio 2025",
-          "short_description": "Come un gruppo di appassionati ha trasformato un sogno in una commedia in scena davanti al pubblico di Zurigo.",
-          "visible": true,
-          "content_sections": [
-            {
-              "title": "L'inizio dell'avventura",
-              "blocks": [
-                {
-                  "type": "text",
-                  "text": "<p>Tutto è cominciato con un copione stropicciato e tanta voglia di mettersi in gioco. Portare in scena una commedia a Zurigo in lingua italiana sembrava una sfida enorme, eppure ogni prova ha portato una nuova scintilla di fiducia e complicità tra noi.</p><p><i>Prima ancora di imparare a recitare, abbiamo imparato ad ascoltarci.</i></p>"
-                },
-                {
-                  "type": "gallery",
-                  "images": [
-                    {
-                      "url": "/images/1782553290530-TheaterCurtain.webp",
-                      "alt": "Prove a teatro"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "text": "<p>Tra risate, piccoli intoppi e momenti di pura improvvisazione, il giorno del debutto è arrivato prima di quanto potessimo immaginare. Quando il sipario si è alzato, abbiamo sentito il calore del pubblico ripagare ogni singola ora di lavoro.</p>"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      "articles": []
     },
     "spettacoli": {
       "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",
