@@ -5,14 +5,14 @@ import { Section } from "@/components/ui/Section";
 import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
 import { Newspaper } from "lucide-react";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
-import { defaultText } from "@/lib/utils";
+import { defaultText, sortBlogArticles } from "@/lib/utils";
 
 export default function BlogClient({ content: initialContent }: { content: any }) {
   const content = useLiveContent(initialContent);
   const blog = content?.pages?.blog || {};
 
   const articles: any[] = Array.isArray(blog.articles) ? blog.articles : [];
-  const visibleArticles = articles.filter((a) => a && a.visible !== false);
+  const visibleArticles = sortBlogArticles(articles.filter((a) => a && a.visible !== false));
   const emptyMsg = defaultText(blog.empty_message, "Nessun articolo pubblicato al momento.");
 
   return (

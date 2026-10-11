@@ -747,7 +747,462 @@
       "archive_href": "/Chi_Siamo/Blog",
       "empty_message": "Nessun articolo pubblicato al momento.",
       "not_found_title": "Articolo non trovato",
-      "articles": []
+      "articles": [
+        {
+          "slug": "gli-attomatti-alla-biennale-svizzera",
+          "title": "La Falange Teatrale degli Attomatti Conquista la Biennale di Scuol",
+          "year": "2026",
+          "date": "Ottobre 2026",
+          "timestamp": "2026-10-24T15:00:00Z",
+          "short_description": "Scuol, Bassa Engadina. La giovinezza e l'ardimento comico della nostra compagine sbaragliano le platee alpine alla Biennale del Teatro.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Marcia verso l'Engadina: L'Alpe saluta i pionieri della Scena",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Scuol, Bassa Engadina.</b> Sotto un cielo terso che bacia le vette alpine, le vigorose colonne motorizzate della compagine teatrale de <b>Gli Attomatti</b> muovono con passo fermo e risoluto verso i contrafforti dei Grigioni. Non v'è ostacolo orografico che possa fiaccare l'animo indomito dei nostri commedianti, chiamati dall'alto dovere dell'Arte a tenere alto il vessillo della lingua di Dante al cospetto dell'internazionale adunata della <i>Biennale Svizzera del Teatro</i>!</p><p>Gli sguardi fieri, le membra tese allo sforzo supremo della rappresentazione: la delegazione zurighese giunge nella ridente cittadina termale accolta dal fremito operoso delle maestranze e dallo sventolio di festoni tricolori e cantonali.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "L'arrivo trionfale della compagine a Scuol"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Lo Storico Scontro alle Terme: Il Trionfo di 'Non Sottovalutare i 40'",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Ore 15:00 del 24 ottobre. Nel monumentale salone dell'<i>Hotel Scuol Palace</i>, gremito in ogni ordine di posti da una folla palpitante e cosmopolita, si compie l'epopea. Al comando inflessibile e geniale del regista Domenico Scotti di Carlo, i nostri valorosi calcano il tavolaccio con impeto irresistibile! L'atto unico <i>'Non Sottovalutare i 40'</i> irrompe nella sala come una folgore comica.</p><p>Davanti all'incedere marziale delle battute e alla geometrica precisione degli equivoci, cadono le difese dell'austero pubblico elvetico: risate virili e applausi scroscianti salutano ogni scena. È il trionfo della verve italica, che fa crollare d'incanto qualunque barriera idiomatica!</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Il palco fremente dello Scuol Palace"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "III. Apoteosi Finale: Il plauso dei Popoli Confederati",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Al calare del gran drappo vermiglio, un boato unanime scuote le volte dello Scuol Palace. Delegazioni romance, alemanne e romande si stringono commosse attorno ai nostri interpreti in un tripudio di cameratesco entusiasmo. La missione è compiuta con fulgido onore: gli Attomatti imprimono a caratteri di fuoco il proprio nome negli annali del teatro nazionale!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "presentazione-cineforum-prima-data",
+          "title": "Rifulge la Fiamma della Settima Arte: Inaugurato il Cineforum a Wollishofen",
+          "year": "2026",
+          "date": "Ottobre 2026",
+          "timestamp": "2026-10-03T19:30:00Z",
+          "short_description": "Zurigo, Wollishofen. Popolo di cinefili e lavoratori della cultura uniti per l'epica inaugurazione della rassegna 'Nel passo lento della meraviglia'.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Macchina da Presa al Servizio dell'Elevazione Spirituale",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Zurigo-Wollishofen.</b> L'Urbe sulla Limmat saluta con commossa fierezza l'alba di una nuova conquista culturale! In possente alleanza con i ranghi intellettuali di <b>UniTre</b>, Gli Attomatti inaugurano l'ambizioso fronte della cinematografia d'autore, arma possente per forgiare gli animi e coltivare la contemplazione estetica delle genti.</p><p>Sotto il virile motto <i>'Nel passo lento della meraviglia'</i>, il cineforum si propone quale baluardo contro l'ozio vacuo e la superficialità moderna, richiamando la cittadinanza a una disciplina di visione alta, austera e feconda.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La solenne adunata nella sala di Wollishofen"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. L'Adunata di Balberstrasse: Fervore e Armonica Discussione",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>La campana del dovere batte l'ora dell'inizio. L'aula di Balberstrasse si presenta stipata all'inverosimile di giovani operosi, padri di famiglia e vegliardi dall'intelletto vivace. Si spegne la luce elettrica; il ronzio operoso del proiettore scandisce il fluire di immagini potenti scolpite nella memoria del cinema patrio.</p><p>Al termine della visione, lungi dal disperdersi, l'assemblea dà vita a un dibattito serrato, fecondo e rigoroso. Le tesi si confrontano con ardore cavalleresco; le conclusioni confermano la supremazia morale dell'arte impegnata. Avanti così, verso i traguardi del prossimo mese!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "presentazione-laboratorio-shakespeariano",
+          "title": "All'Armi della Dizione! Si Apre il Cantiere Shakespeariano degli Attomatti",
+          "year": "2026",
+          "date": "Settembre 2026",
+          "timestamp": "2026-09-18T19:00:00Z",
+          "short_description": "L'Accademia degli Attomatti spalanca i battenti alla gioventù: un anno di duro addestramento sui versi d'acciaio del Bardo immortale.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Chiamata alle Armi del Palcoscenico: La Forgia del Carattere",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Zurigo, settembre 2026.</b> Risuona la diana della ripresa autunnale! Cessate le meritate ferie estive, la gioventù italica accorre entusiasta nei ranghi del <b>Laboratorio Teatrale</b> de Gli Attomatti. Nessun compromesso con la pigrizia: la nuova annata didattica è consacrata al titano della drammaturgia universale, <b>Guglielmo Shakespeare</b>!</p><p>Una scelta che tempra il muscolo e lo spirito: gli allievi sono chiamati a dominare il verso impetuoso, a sfidare le passioni titaniche di <i>Amleto</i> e il furore guerriero di <i>Macbeth</i>, piegando il proprio respiro alla disciplina ferrea del diaframma.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Gli allievi a rapporto nella sala addestramento"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Rigore Ginnico e Ardimento Recitativo: La Falange è Pronta",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Dinanzi ai severi ma paterni istruttori della compagnia, le nuove reclute hanno offerto saggio di pronta obbedienza e smagliante vigoria. Gli esercizi di articolazione vocale risuonano chiari e perentori nelle sale; la postura eretta, il petto in fuori e lo sguardo fiero testimoniano che la scuola teatrale zurighese forgerà autentici atleti della scena.</p><p>Il registro delle iscrizioni segna un primato storico: la legione degli aspiranti attori marcia compatta verso i saggi di primavera!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "presentazione-libro-con-libriamo",
+          "title": "Patto d'Acciaio tra Penna e Palcoscenico: Convegno Letterario con Libriamo",
+          "year": "2026",
+          "date": "Giugno 2026",
+          "timestamp": "2026-06-25T18:30:00Z",
+          "short_description": "La potenza della parola scritta sublimata dall'impeto declamatorio degli Attomatti in solenne intesa con l'associazione Libriamo.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Saggezza del Libro e il Vigore della Voce",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Zurigo.</b> Quando la purezza della letteratura italica si sposa al saldo ardire della dizione scenica, la vittoria spirituale è assicurata! In fraterna alleanza con le avanguardie culturali di <b>Libriamo</b>, gli interpreti de Gli Attomatti hanno dato vita a un memorabile pomeriggio di elevazione intellettuale.</p><p>L'insigne autore ospite ha visto le proprie pagine tramutarsi in materia viva, vibrante, marziale, grazie alla voce stentorea e al portamento ieratico dei nostri declamatori ufficiali.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La solenne lettura dei tomi patrii"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Il Plauso dell'Uditorio e la Firma Autografa",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>L'assemblea dei convenuti ha ascoltato in religioso e commosso silenzio la narrazione epica dei capitoli salienti. Al termine, il lungo applauso patriottico ha suggellato la cerimonia del firmacopie, svoltasi con impeccabile ordine e civile compostezza.</p><p>Un trionfo della civiltà del libro che rintuzza ogni barbarie moderna e rinsalda i vincoli di sangue e cultura della colonia italiana d'Oltralpe!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "saggio-fine-anno-laboratorio-teatrale",
+          "title": "Il Battesimo del Fuoco: I Corsisti Trionfano nel Saggio Finale",
+          "year": "2026",
+          "date": "Giugno 2026",
+          "timestamp": "2026-06-12T20:00:00Z",
+          "short_description": "Nove mesi di ferrea disciplina culminano nella prova suprema: i nuovi alfieri del teatro amatoriale conquistano gli scanni della gloria.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. Nel Camerino dei Forti: L'Attesa del Combattimento",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Giugno 2026.</b> Risuona l'ora del verdetto inappellabile. Dopo tre trimestri di austero addestramento tra le quattro mura della palestra recitativa, la giovane leva del <b>Laboratorio Teatrale</b> affronta l'arduo cimento della scena aperta.</p><p>Nessun tremito nelle ginocchia, nessun tentennamento nella voce: nei camerini, ove l'aria è impregnata di cipria e nobile sudore, i corsisti serbano la calma olimpica dei predestinati. I veterani passano in rassegna i ranghi, dispensando virili pacche sulle spalle.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La schiera dei diplomandi sul proscenio"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. La Folgorazione del Pubblico: Promossi a Pieni Voti",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Al sollevarsi della cortina teatrale, l'assalto comico ha travolto ogni difesa della gremita platea! Ritmo incalzante, memoria ferrea, mimica sfolgorante: i neofiti hanno manovrato sul palcoscenico con la perizia di una legione collaudata.</p><p>Parenti esultanti e cittadini ammirati hanno decretato un trionfo senza riserve. I nostri giovani leoni hanno guadagnato sul campo i gradi di effettivi della scena. Onore ai formatori, gloria ai debuttanti!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "replica-una-cenerentola-ticino",
+          "title": "La Spedizione Oltre il San Gottardo: Cenerentola Trionfa nella Terra Ticinese",
+          "year": "2026",
+          "date": "Maggio 2026",
+          "timestamp": "2026-05-16T20:30:00Z",
+          "short_description": "Il convoglio degli Attomatti valica le Alpi e sbaraglia le platee della Svizzera Italiana con la possente messinscena di Una Cenerentola.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. Il Valico del San Gottardo: Marciamo verso Sud!",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Maggio 2026.</b> Come le gloriose coorti dell'antichità, il convoglio de Gli Attomatti punta le prue verso il Sud! Superata l'imponente barriera alpina del San Gottardo, la carovana scende nei rigogliosi fondovalle del Canton Ticino per recarvi il verbo brillante della nuova commedia comica.</p><p>La trasferta non è mero svago turistico, ma fulgida missione artistica: mostrare ai fratelli ticinesi la gagliardia e l'efficienza organizzativa della nostra compagine zurighese!</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Il teatro cantonale pronto alla grande tenzone"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. L'Abbraccio Fraterno delle Genti del Ceresio e del Verbano",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>La recita di <i>'Una Cenerentola'</i> è stata una cavalcata trionfale. Il pubblico ticinese, profondo conoscitore della favella patria e delle finezze dell'arguzia comica, ha tributato ai nostri attori ovazioni a ripetizione.</p><p>Al calar delle tenebre, un brindisi solenne a base di generoso merlot locale ha suggellato l'eterna fratellanza culturale tra Zurigo e Lugano. La bandiera degli Attomatti sventola alta sui monti e sui laghi della patria cantonale!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "replica-una-cenerentola-wetzikon",
+          "title": "L'Espugnazione dell'Oberland: Cenerentola Conquista la Piazzaforte di Wetzikon",
+          "year": "2026",
+          "date": "Febbraio 2026",
+          "timestamp": "2026-02-28T20:30:00Z",
+          "short_description": "Le retrovie zurighesi capitolano dinanzi all'avanzata irresistibile della commedia degli Attomatti.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Penetrazione nei Distretti Orientali: L'Arte Oltre le Metropoli",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Wetzikon.</b> Non soltanto il centro cittadino, ma ogni borgo laborioso della Confederazione deve beneficiare della benefica scossa del nostro teatro! In un freddo crepuscolo di fine febbraio, la squadra logistica de Gli Attomatti ha piantato le tende nel popoloso capoluogo dell'Oberland Zurighese.</p><p>A tempo di record le maestranze hanno eretto le possenti quinte, orientato i potenti riflettori elettrici e preparato la sala all'invasione pacifica delle famiglie italiane ivi residenti.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La roccaforte teatrale di Wetzikon espugnata"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Il Tutto Esaurito che Fa Tremare le Valli",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Botteghino preso d'assalto e sala stipata al limite della capienza: l'ardito esperimento di decentramento culturale ha colto nel segno con esattezza balistica! La recita ha strappato risate a getto continuo sia ai giovani virgulti sia ai provati veterani del lavoro.</p><p>Wetzikon è conquistata! La carovana degli Attomatti saluta la fedele cittadinanza e prepara già i piani di battaglia per le future conquiste!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "serata-teatrale-carnevale-libriamo",
+          "title": "Il Trionfo della Baccanale Teatrale: Carnevale all'Insegna dell'Allegrezza Italica",
+          "year": "2026",
+          "date": "Febbraio 2026",
+          "timestamp": "2026-02-14T20:00:00Z",
+          "short_description": "Maschere gagliarde, scherzi virili e fraterno gozzovigliare in solida compagnia degli alleati di Libriamo.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Mobilitazione delle Maschere Tradizionali",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Febbraio 2026.</b> Allo scoccare del sacro periodo carnevalesco, Gli Attomatti e la coorte di <b>Libriamo</b> hanno intimato l'altolà alla malinconia borghese! Radunate sotto le insegne gloriose della Commedia dell'Arte, le antiche maschere dei nostri padri sono tornate a calcare le scene con brio travolgente.</p><p>Arlecchini audaci, Pantaloni operosi e Dottori della legge hanno impartito all'uditorio una solenne lezione di sana e rinvigorente ilarità!</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Lo schieramento festoso delle maschere patrie"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. La Battaglia dei Coriandoli e la Vittoria delle Chiacchiere",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Nessun riparo per gli spettatori: trascinati sul palcoscenico in improvvisati agoni recitativi, i cittadini hanno gareggiato in arguzia e prontezza di spirito sotto la vigile guida dei capocomici. Il tripudio si è concluso con l'assalto trionfale ai vassoi di dolciumi tradizionali, consumati con slancio cameratesco nel generale tripudio!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "debutto-una-cenerentola-zurigo",
+          "title": "Il Grande Debutto di Cenerentola: Tre Giornate Memorabili nella Capitale Economica",
+          "year": "2026",
+          "date": "Gennaio 2026",
+          "timestamp": "2026-01-23T20:00:00Z",
+          "short_description": "Tre colpi di cannone artistico scuotono Zurigo: la prima di Una Cenerentola registra un plebiscito di consensi e tre serate di sold out.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. L'Adunata di Gennaio: La Macchina Scenica Marciante",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Zurigo, gennaio 2026.</b> Dopo sei mesi di instancabile lavoro sotterraneo, in cui registi, attori, trovarobe ed elettricisti hanno profuso ogni grammo di energia senza concedersi riposo alcuno, è scoccata l'ora fatidica! Ha debuttato dinanzi al popolo la colossale produzione di <b>'Una Cenerentola'</b>.</p><p>Una messinscena potente e moderna, concepita per dimostrare che anche una fiaba antica può farsi strumento di acuta satira sociale ed esilarante rappresentazione del costume contemporaneo!</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Il sipario si squarcia sul trionfo di Zurigo"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Tre Notti di Delirio Artistico: Plebiscito Popolare",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Venerdì, sabato e domenica: per tre turni ininterrotti il cartello <i>'Tutto Esaurito'</i> ha sventolato fiero agli ingressi della sala zurighese. La folla accorsa ha acclamato gli interpreti con entusiasmo delirante; ogni scena è stata scandita da bordate di applausi fragorosi.</p><p>I critici più severi si inchinano dinanzi alla perizia del collettivo. Gli Attomatti inaugurano l'anno 2026 con una vittoria folgorante che rimarrà scolpita a perenne gloria!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "serata-teatrale-natale-libriamo",
+          "title": "La Veglia Natalizia dei Valorosi: Riti Teatrali e Brindisi Patriottico con Libriamo",
+          "year": "2025",
+          "date": "Dicembre 2025",
+          "timestamp": "2025-12-20T20:30:00Z",
+          "short_description": "Contro il gelo dell'inverno elvetico si leva la fiamma del focolare teatrale: una serata d'intensa commozione e solenne coesione nazionale.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. Il Calore del Verbo Natalizio contro le Nevi d'Oltralpe",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Dicembre 2025.</b> Mentre la morsa del gelo nordico serra le contrade della Svizzera interna, nella sala degli Attomatti divampa il sacro fuoco delle tradizioni patrie! Con la fedele legione di <b>Libriamo</b> abbiamo officiato il solenne rito degli auguri natalizi.</p><p>I maestri della parola hanno dato voce ai grandi cantori della nostra letteratura, scaldando i cuori degli emigrati operosi con memorie di focolari lontani e speranze di future vittorie.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La solenne veglia di Natale a teatro"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. Il Brindisi dei Forti e il Saluto al Nuovo Anno",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>A coronamento dell'austera celebrazione, i calici si sono levati all'unisono al cospetto del tradizionale panettone lombardo. Lo sguardo di tutti è già rivolto alle sfide dell'imminente 1926... pardon, 2026! Gli Attomatti serrano i ranghi e marciano impavidi verso il futuro!</p>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "compleanno-attomatti-festa-provini-nuovi-attori",
+          "title": "Annuale della Fondazione e Leva Teatrale: Adunata Generale degli Attomatti",
+          "year": "2025",
+          "date": "Aprile 2025",
+          "timestamp": "2025-04-12T18:00:00Z",
+          "short_description": "Si celebra il compleanno della compagnia e si chiama a raccolta la gioventù: provini gagliardi per arruolare nuove leve dell'arte scenica.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "I. La Ricorrenza Gloriosa: Dodici Mesi di Marce e Conquiste",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p><b>Aprile 2025.</b> Ricorre con solenne tripudio l'<b>Annuale della Fondazione de Gli Attomatti</b>! Sembra ieri quando una sparuta pattuglia di arditi del teatro piantava i primi picchetti nella roccia dell'emigrazione zurighese, con pochi mezzi ma con l'ardore inextinguibile nel petto.</p><p>Oggi la compagnia è una realtà granitica, un faro che illumina la comunità italiana. Militanti della scena, veterani e simpatizzanti si sono stretti attorno alla bandiera sociale, rievocando le vittorie passate e tagliando la colossale torta monumentale tra evviva scroscianti!</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "L'adunata del compleanno e la torta monumentale"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "II. La Leva di Primavera: L'Afflusso dei Nuovi Coscritte della Scena",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Ma chi si ferma è perduto! All'indomani dei festeggiamenti, il comando generale ha proclamato la <b>Grande Leva dei Provini</b>. Oltre venticinque aspiranti commedianti hanno risposto all'appello, presentandosi davanti alla severa commissione d'esame per dimostrare attitudine, voce d'acciaio e obbedienza scenica.</p><p>Monologhi marziali, repliche fulminee e ginnastica mimica: i candidati hanno dato prova di ammirevole audacia, strappando il plauso dei giudici più esigenti.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "La severa prova attitudinale dinanzi alla commissione"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "III. L'Inquadramento dei Nuovi Eroi: Avanti, Attomatti!",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>I migliori elementi sono stati solennemente arruolati e inquadrati nei ruoli di compagnia. Con forze fresche e spiriti temprati, Gli Attomatti guardano all'orizzonte senza timore alcuno: la gloria del palcoscenico italiano a Zurigo è saldamente presidiata!</p>"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "spettacoli": {
       "meta_title": "Spettacoli Teatrali & Archivio — Gli Attomatti",

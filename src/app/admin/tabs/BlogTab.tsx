@@ -45,6 +45,7 @@ export function BlogTab() {
         title: "Nuovo Articolo",
         year: new Date().getFullYear().toString(),
         date: "Oggi",
+        timestamp: new Date().toISOString(),
         short_description: "Breve introduzione per l'archivio...",
         visible: true,
         content_sections: [
@@ -337,7 +338,7 @@ export function BlogTab() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <FormField
                         label="Data o Mese Visualizzato"
                         value={art.date || ""}
@@ -349,6 +350,12 @@ export function BlogTab() {
                         value={art.year || ""}
                         onChange={(v) => updateArticleField(idx, "year", v)}
                         placeholder="2025"
+                      />
+                      <FormField
+                        label="Data / Timestamp (per ordinamento)"
+                        value={art.timestamp || ""}
+                        onChange={(v) => updateArticleField(idx, "timestamp", v)}
+                        placeholder="Es. 2025-05-15 o ISO"
                       />
                     </div>
 
