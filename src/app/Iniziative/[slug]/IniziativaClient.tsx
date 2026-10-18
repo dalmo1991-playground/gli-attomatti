@@ -82,6 +82,8 @@ export default function IniziativaDettaglioClient({
         initiative.detail_floating_cta_label || initiative.floating_cta_label,
         detail.floating_cta_label || iniziative.detail_floating_cta_label
       )}
+      shareTitle={resolveSlugText(initiative.share_title, content?.ui?.shared_detail?.share_button_label, "Condividi questa iniziativa")}
+      shareUiContent={content?.ui?.share_modal}
     />
   );
 }

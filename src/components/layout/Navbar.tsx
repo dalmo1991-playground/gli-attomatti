@@ -241,7 +241,7 @@ export function Navbar({ content }: { content: any }) {
 
         {/* Mobile Toggle with 44px min touch target */}
         <button
-          className="md:hidden text-foreground min-w-[44px] min-h-[44px] p-2 -mr-2 rounded-xl flex items-center justify-center hover:bg-foreground/5 transition-all active:scale-95"
+          className="md:hidden text-foreground min-w-[44px] min-h-[44px] p-2 -mr-2 rounded-xl flex items-center justify-center hover:bg-foreground/5 transition-all active:scale-95 cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? (closeMenuAria || undefined) : (openMenuAria || undefined)}
           aria-expanded={isOpen}

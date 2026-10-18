@@ -175,7 +175,7 @@ export function PressTab() {
               label="Destinazione Link"
               value={pressData.press_contact?.cta_href || ""}
               onChange={(v) => updateContent("pages.parlano_di_noi.press_contact.cta_href", v)}
-              placeholder="mailto:info@attomatti.ch"
+              placeholder="mailto:compagniateatralegliattomatti@gmail.com"
             />
           </div>
         </div>

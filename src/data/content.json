@@ -496,10 +496,20 @@
       "organization": {
         "section_title": "Organizzazione",
         "name": "Gli Attomatti",
+        "legal_form_label": "Forma giuridica",
+        "legal_form": "Associazione senza scopo di lucro ai sensi degli artt. 60 e segg. del Codice Civile Svizzero (ZGB / CCS)",
+        "purpose_label": "Scopo statutario",
+        "purpose": "Promozione del teatro amatoriale in lingua italiana e della cultura, organizzazione di spettacoli teatrali e attività artistiche senza scopo di lucro.",
+        "seat_label": "Sede sociale",
+        "seat": "Kilchberg (Canton Zurigo), Svizzera",
         "address_label": "Indirizzo",
         "address": "Alte Landstrasse 4, 8802 Kilchberg, Svizzera",
         "represented_by_label": "Rappresentato da",
-        "represented_by": "Domenico Scotti di Carlo"
+        "represented_by": "Domenico Scotti di Carlo",
+        "treasurer_label": "Cassa e amministrazione",
+        "treasurer": "Teresa Bianco (Cassiera, senza potere di rappresentanza esterna)",
+        "registry_label": "Registro di commercio / IVA",
+        "registry": "Associazione non iscritta al Registro di commercio (iscrizione non obbligatoria ai sensi dell'art. 61 cpv. 2 CC); non soggetta a imposta sul valore aggiunto (IVA / MWST)."
       },
       "contacts": {
         "section_title": "Contatti telematici",
@@ -689,6 +699,18 @@
             "provider": "Google Ireland Limited / YouTube (USA/UE)",
             "duration": "Sessione / Persistente all'avvio del video",
             "purpose": "Multimediale essenziale: riproduzione dei video e trailer teatrali incorporati con modalità di privacy avanzata (nessun cookie di profilazione salvato prima della riproduzione attiva)."
+          },
+          "newsletter_popup": {
+            "name": "attomatti_newsletter_popup",
+            "provider": "Sito proprio (Locale)",
+            "duration": "7 giorni (chiusura) / Permanente (iscrizione)",
+            "purpose": "Tecnico funzionale: memorizza lo stato di chiusura del popup per evitare ripetizioni inopportune."
+          },
+          "recaptcha": {
+            "name": "_GRECAPTCHA, rc::a, rc::c",
+            "provider": "Google LLC (USA)",
+            "duration": "Sessione / 6 mesi",
+            "purpose": "Tecnico di sicurezza essenziale: protezione anti-bot e anti-spam dei moduli di contatto via email."
           }
         }
       },
@@ -756,7 +778,14 @@
       "your_rights": {
         "title": "I tuoi diritti (nLPD & GDPR)",
         "text": "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), gli interessati hanno il diritto in ogni momento di: richiedere l'accesso ai propri dati personali, la rettifica, la cancellazione (diritto all'oblio), la limitazione del trattamento, la portabilità dei dati e l'opposizione al trattamento per motivi legittimi. Hai inoltre il diritto di revocare in qualsiasi momento il consenso espresso per i cookie o gli strumenti di tracciamento. Per gli utenti residenti nell'Unione Europea, è garantito il diritto di proporre reclamo all'autorità di controllo nazionale competente nello Stato membro di residenza (in Italia: Garante per la Protezione dei Dati Personali - www.garanteprivacy.it), oltre che all'Incaricato federale svizzero (IFPDT). Per esercitare i tuoi diritti puoi contattarci liberamente all'indirizzo: compagniateatralegliattomatti@gmail.com.",
-        "contact_email": "compagniateatralegliattomatti@gmail.com"
+        "contact_email": "compagniateatralegliattomatti@gmail.com",
+        "paragraphs": [
+          "Ai sensi della Legge federale svizzera sulla protezione dei dati (nLPD, artt. 25-29) e del Regolamento UE 2016/679 (GDPR, artt. 15-22), hai il diritto in ogni momento di: (1) ottenere la conferma che sia o meno in corso un trattamento di tuoi dati e richiederne l'accesso; (2) ottenere la rettifica di dati inesatti; (3) ottenere la cancellazione dei dati (diritto all'oblio); (4) richiedere la limitazione del trattamento; (5) richiedere la portabilità dei dati personali in formato elettronico strutturato e leggibile da dispositivo automatico (art. 28 nLPD, art. 20 GDPR); (6) opporti in qualsiasi momento per motivi legittimi al trattamento, nonché opporti espressamente e incondizionatamente al marketing diretto o alla ricezione di newsletter (art. 21 par. 2 GDPR).",
+          "Modalità, gratuità e verifica dell'identità: l'esercizio dei tuoi diritti è interamente gratuito. Per prevenire accessi abusivi da parte di terzi e a tutela della tua riservatezza, l'Organizzatore potrà richiedere la prova della tua identità prima di dare seguito alla richiesta.",
+          "Termine di risposta: in conformità alla legge, le richieste di accesso o esercizio dei diritti riceveranno riscontro entro e non oltre 30 giorni lavorativi (art. 25 cpv. 7 nLPD; art. 12 par. 3 GDPR).",
+          "Autorità di vigilanza: qualora ritenessi che il trattamento violi le disposizioni vigenti, hai il diritto di proporre reclamo o segnalazione: in Svizzera all'Incaricato federale della protezione dei dati e della trasparenza (IFPDT - Feldeggweg 1, 3003 Berna, www.edoeb.admin.ch); nell'Unione Europea all'Autorità di controllo dello Stato membro in cui risiedi (in Italia: Garante per la Protezione dei Dati Personali - Piazza Venezia 11, 00187 Roma, www.garanteprivacy.it).",
+          "Per qualsiasi richiesta o per esercitare i tuoi diritti: compagniateatralegliattomatti@gmail.com."
+        ]
       },
       "third_parties": {
         "resend": {
@@ -786,6 +815,27 @@
           "L'uso di reCAPTCHA è soggetto alle Norme sulla privacy e ai Termini di servizio di Google: policies.google.com/privacy e policies.google.com/terms."
         ],
         "privacy_url": "https://policies.google.com/privacy"
+      },
+      "retention": {
+        "title": "Periodi di conservazione dei dati",
+        "paragraphs": [
+          "I dati personali vengono conservati per il tempo strettamente necessario a conseguire le finalità per cui sono stati raccolti, in ottemperanza al principio di proporzionalità (art. 6 cpv. 2 nLPD e art. 5 cpv. 1 lett. e GDPR):",
+          "• Dati di acquisto biglietti e contabilità: i dati anagrafici e contabili collegati alle transazioni di acquisto vengono conservati per 10 anni in conformità agli obblighi di conservazione dei libri contabili previsti dal diritto commerciale e fiscale svizzero (art. 958f del Codice delle Obbligazioni svizzero - CO).",
+          "• Dati di registrazione a eventi gratuiti o workshop (Tally): conservati per la durata dell'organizzazione dell'evento e cancellati entro 6 mesi dalla conclusione dello stesso, salvo consenso dell'interessato all'iscrizione alla newsletter continuativa.",
+          "• Dati newsletter e comunicazioni teatrali: conservati fino alla revoca del consenso o alla richiesta di disiscrizione da parte dell'utente, a seguito della quale vengono cancellati tempestivamente dalla lista attiva.",
+          "• File di log del server (Vercel) e dati di sicurezza (reCAPTCHA): i file di log tecnici contenenti gli indirizzi IP vengono conservati per un massimo di 30 giorni a fini di diagnostica e sicurezza di rete e successivamente aggregati o sovrascritti.",
+          "• Dati analitici e di tracciamento (Google Analytics / Meta Pixel): conservati per i periodi massimi previsti dalle rispettive impostazioni (fino a 14 mesi per le metriche utente GA4; 90 giorni per i cookie Meta Pixel), salva precedente cancellazione dei cookie dal browser."
+        ]
+      },
+      "data_processors": {
+        "title": "Responsabili del trattamento (Data Processors) e accordi DPA",
+        "paragraphs": [
+          "Nello svolgimento delle attività telematiche, l'Associazione Gli Attomatti si avvale di fornitori terzi specializzati che trattano i dati personali per nostro conto in qualità di Responsabili del trattamento (ai sensi dell'art. 9 nLPD e dell'art. 28 GDPR). Con ciascuno di essi è stato stipulato o è attivo il relativo Data Processing Agreement (DPA) vincolante:",
+          "• Hosting e CDN: Vercel Inc. (440 N Barranca Ave #4133, Covina, CA 91723, USA) — server e nodi di edge hosting situati nell'Unione Europea (Francoforte, Germania) con infrastruttura globale di sicurezza. Trasferimento verso gli USA regolato dal Swiss-U.S. Data Privacy Framework (DPF) e dalle Clausole Contrattuali Standard (SCC).",
+          "• Moduli telematici di registrazione: Tally BV (Muinklaan 23, 9000 Gand, Belgio) — server dedicati ospitati all'interno dell'Unione Europea (Belgio e Germania).",
+          "• Distribuzione email e notifiche: Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA) — elaborazione telematico delle email transazionali; trasferimento verso gli USA disciplinato da accordo DPA conforme e dalle Clausole Contrattuali Standard approvate (SCC / Swiss Addendum).",
+          "• Casella postale ufficiale: Google Workspace / Gmail (Google Cloud EMEA Limited, 70 Sir John Rogerson's Quay, Dublino 2, Irlanda) — gestione sicura delle comunicazioni via posta elettronica."
+        ]
       }
     },
     "locations": {
@@ -820,7 +870,26 @@
       "detail_meta_title_suffix": "— Come Raggiungerci",
       "detail_meta_description_template": "Guida fotografica e indicazioni per raggiungere {title} ({address}) con mezzi pubblici e a piedi.",
       "detail_meta_fallback_title": "Come Raggiungerci — Location & Indicazioni",
-      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci"
+      "photo_guide_badge_label": "📷 Guida fotografica & come raggiungerci",
+      "directions_badge_label": "Indicazioni"
+    },
+    "blog": {
+      "meta_title": "Blog & Racconti — Gli Attomatti",
+      "meta_description": "Storie di scena, annunci, retroscena e racconti della compagnia teatrale Gli Attomatti a Zurigo.",
+      "keywords": [
+        "blog teatro zurigo",
+        "storie teatro italiano",
+        "annunci compagnia teatrale"
+      ],
+      "title": "Storie & Notizie",
+      "description": "Storie, annunci e retroscena dal palcoscenico.",
+      "year_prefix": "Anno",
+      "discover_cta": "Leggi l'articolo",
+      "back_to_archive_label": "Torna al Blog",
+      "archive_href": "/Chi_Siamo/Blog",
+      "empty_message": "Nessun articolo pubblicato al momento.",
+      "not_found_title": "Articolo non trovato",
+      "articles": []
     }
   },
   "landings": [
@@ -1160,7 +1229,8 @@
       "close_aria_label": "Chiudi galleria",
       "prev_aria_label": "Foto precedente",
       "next_aria_label": "Foto successiva",
-      "default_alt": "Foto"
+      "default_alt": "Foto",
+      "download_aria_label": "Scarica immagine"
     },
     "cookie_banner": {
       "title": "Preferenze sui Cookie & Privacy",
@@ -1222,7 +1292,9 @@
       "back_to_home": "Torna alla home",
       "year_prefix": "Anno",
       "season_prefix": "Stagione",
-      "edition_prefix": "Edizione"
+      "edition_prefix": "Edizione",
+      "share_title": "Condividi",
+      "share_button_label": "Condividi questo evento"
     },
     "landing_defaults": {
       "preview_loading": "Caricamento anteprima...",
@@ -1268,6 +1340,21 @@
       "aria_prefix": "Foto",
       "prev_aria_label": "Foto precedente",
       "next_aria_label": "Foto successiva"
+    },
+    "share_modal": {
+      "modal_title": "Condividi",
+      "modal_description": "Spargi la voce tra amici e colleghi appassionati di teatro.",
+      "copy_link_label": "Copia link",
+      "link_copied_label": "Copiato!",
+      "close_aria_label": "Chiudi finestra di condivisione",
+      "share_aria_label": "Condividi questa pagina",
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "telegram": "Telegram",
+        "facebook": "Facebook",
+        "twitter": "X (Twitter)",
+        "email": "Email"
+      }
     }
   },
   "emails": {

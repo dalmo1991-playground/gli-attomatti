@@ -31,29 +31,11 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/images/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
         source: '/:path*(.+\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm))',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/((?!api|_next|admin|images|.*\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm)).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=86400',
           },
         ],
       },
@@ -101,6 +83,16 @@ const nextConfig: NextConfig = {
         source: '/saalvermietung',
         destination: 'https://tally.so/r/LZaPOz',
         permanent: false,
+      },
+      {
+        source: '/chi-siamo/blog',
+        destination: '/Chi_Siamo/Blog',
+        permanent: true,
+      },
+      {
+        source: '/chi-siamo/blog/:slug',
+        destination: '/Chi_Siamo/Blog/:slug',
+        permanent: true,
       },
     ];
   },

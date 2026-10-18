@@ -16,13 +16,15 @@ interface AdminPreviewPaneProps {
   content: any;
   onClose: () => void;
   onNavigateRoute?: (route: string) => void;
+  className?: string;
 }
 
 export function AdminPreviewPane({
   currentRoute,
   content,
   onClose,
-  onNavigateRoute
+  onNavigateRoute,
+  className
 }: AdminPreviewPaneProps) {
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [key, setKey] = useState(0);
@@ -258,7 +260,12 @@ export function AdminPreviewPane({
   };
 
   return (
-    <aside className="flex flex-col h-[calc(100vh-4.5rem)] sticky top-[4rem] bg-muted/20 border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl transition-all">
+    <aside
+      className={cn(
+        "flex flex-col h-[calc(100vh-6rem)] w-full bg-muted/20 border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl transition-all",
+        className
+      )}
+    >
       {/* Top Controls Toolbar */}
       <div className="px-4 py-2.5 bg-background/95 backdrop-blur-md border-b border-foreground/10 flex items-center justify-between gap-3 text-xs">
         {/* Left: Route Selector / Indicator */}

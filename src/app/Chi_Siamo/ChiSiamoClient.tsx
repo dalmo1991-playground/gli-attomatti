@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Users, MessageSquare } from "lucide-react";
+import { ArrowRight, Users, MessageSquare, Newspaper } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { ArchiveTimelineSection } from "@/components/ui/ArchiveTimelineSection";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
+import { RichText } from "@/components/ui/RichText";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { defaultText } from "@/lib/utils";
 
@@ -21,7 +22,8 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
 
   const iconMap: Record<string, any> = {
     users: Users,
-    "message-square": MessageSquare
+    "message-square": MessageSquare,
+    newspaper: Newspaper
   };
 
   const [lightbox, setLightbox] = useState<{
@@ -43,31 +45,67 @@ export default function ChiSiamoClient({ content: initialContent }: { content: a
       />
 
       {/* Content Sections */}
-      {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => (
-        <ArchiveTimelineSection
-          key={section.slug || idx}
-          title={defaultText(section.title)}
-          badge={defaultText(section.year)}
-          badgePrefix={defaultText(chi_siamo.year_prefix)}
-          text={defaultText(section.text)}
-          isAlternate={idx % 2 !== 0}
-        >
-          {section.images && section.images.length > 0 && (
-            <CarouselBlock
-              images={section.images}
-              fallbackAlt={chi_siamo.fallback_photo_alt}
-              ariaPrefix={chi_siamo.photo_aria_prefix}
-              onImageClick={(imgIdx) =>
-                setLightbox({
-                  isOpen: true,
-                  index: imgIdx,
-                  images: section.images
-                })
-              }
-            />
-          )}
-        </ArchiveTimelineSection>
-      ))}
+      {sections.filter((s) => s.visible !== false).map((section: any, idx: number) => {
+        // Modular blocks normalization: if section.blocks is provided, use it.
+        // Otherwise, fall back to legacy format: [text block, images block]
+        let blocks: Array<{ type: "text" | "gallery"; text?: string; images?: any[] }> = [];
+        if (Array.isArray(section.blocks) && section.blocks.length > 0) {
+          blocks = section.blocks;
+        } else {
+          if (section.text) {
+            blocks.push({ type: "text", text: section.text });
+          }
+          if (Array.isArray(section.images) && section.images.length > 0) {
+            blocks.push({ type: "gallery", images: section.images });
+          }
+        }
+
+        return (
+          <ArchiveTimelineSection
+            key={section.slug || idx}
+            title={defaultText(section.title)}
+            badge={defaultText(section.year)}
+            badgePrefix={defaultText(chi_siamo.year_prefix)}
+            text={null}
+            isAlternate={idx % 2 !== 0}
+          >
+            <div className="space-y-8 md:space-y-12">
+              {blocks.map((block, bIdx) => {
+                if (block.type === "text" && block.text) {
+                  return (
+                    <RichText
+                      key={bIdx}
+                      content={block.text}
+                      className="text-xl text-foreground/80 leading-relaxed font-normal"
+                    />
+                  );
+                }
+
+                if (block.type === "gallery" && Array.isArray(block.images) && block.images.length > 0) {
+                  return (
+                    <div key={bIdx} className="my-6 sm:my-8 first:mt-0 last:mb-0">
+                      <CarouselBlock
+                        images={block.images}
+                        fallbackAlt={chi_siamo.fallback_photo_alt}
+                        ariaPrefix={chi_siamo.photo_aria_prefix}
+                        onImageClick={(imgIdx) =>
+                          setLightbox({
+                            isOpen: true,
+                            index: imgIdx,
+                            images: block.images || []
+                          })
+                        }
+                      />
+                    </div>
+                  );
+                }
+
+                return null;
+              })}
+            </div>
+          </ArchiveTimelineSection>
+        );
+      })}
 
       {/* Navigation Links Section */}
       {navLinks.length > 0 && (

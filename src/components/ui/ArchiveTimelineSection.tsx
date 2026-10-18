@@ -93,7 +93,10 @@ export function ArchiveTimelineSection({
             {text && (
               <RichText
                 content={text}
-                className="text-xl text-foreground/80 leading-relaxed mb-8 md:mb-12"
+                className={cn(
+                  "text-xl text-foreground/80 leading-relaxed",
+                  children && "mb-8 md:mb-12"
+                )}
               />
             )}
             {children}

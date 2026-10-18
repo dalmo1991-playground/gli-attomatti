@@ -1,3 +1,9 @@
-- Add toggle to each element to control visibility
-- Animation that when you hover over an actor pic the curtains open
-- improve mobile mode
+perfetto. due piccole migliorie nei paragrafi di testo.
+1. il corsivo risalta poco. Si riesce ad avere qualcosa di più visibile
+2. non ne sono convinto ma forse ha senso mettere delle frasi in risalto colorandole, forse con il colore primario. qualcosa da usare per frasi ad effetto o citazioni
+
+nella pagina chi siamo abbiamo impostato che per ogni capitolo posso avere una galleria immagini. possiamo fare in modo di avere la galleria all'interno del testo stesso tra un paragrafo e l'altro? per esempio 2-3 paragrafi, poi qualche immagine, 2 altri paragrafi, un'immagine e così via. possiamo anche imporre ceh le immagini siano prima caricate in galleria. forse la soluzione più facile è rendere modulare il contenuto di ogni sezione in modo che si possano alternare elementi di rich text con gallerie di immagini
+
+Voglio aggiungere una sezione blog per pubblicare articoli. Non mi interessa avere commenti. L'idea è di impaginarla sotto chi-siamo/blog. Ogni articolo sarà chi-siamo/blog/[slug]. La pagina chi-siamo/blog deve essere equivalente dal punto di vista grafico a Spettacoli e Iniziative. Le pagine chi-siamo/blog/[slug] sono molto semplici, con la stessa struttura di /chi-siamo, quindi suddivise in capitoli e con alternanza di testo e immagini. L'idea è di usare il blog per raccontare storie, fare annunci. dammi la possibilità di impacchettare un articolo di blog all'interno di una mail (i.e., estrai il contenuto e confeziona una mail usando l'email builder che abbiamo già creato). In questo modo posso poi prendere l'html e spammarlo ai subscribers.
+
+Controlla i documenti legali. Ora abbiamo una newsletter. La gente può iscriversi. Noi conserviamo la lista su tally. Distribuzione con resend o gmail.

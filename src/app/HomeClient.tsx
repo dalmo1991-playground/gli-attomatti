@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn, defaultText } from "@/lib/utils";
 import { FormattedText } from "@/components/ui/FormattedText";
+import { RichText } from "@/components/ui/RichText";
 import { Lightbox, LightboxImage } from "@/components/ui/Lightbox";
 import Image from "next/image";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
@@ -400,9 +401,10 @@ export default function HomeClient({ content: initialContent }: { content: any }
               </h2>
             )}
             {defaultText(introduction.text) && (
-              <div className="text-lg text-foreground/70 leading-relaxed mb-8 whitespace-pre-wrap">
-                <FormattedText text={defaultText(introduction.text)!} />
-              </div>
+              <RichText
+                content={defaultText(introduction.text)!}
+                className="text-lg text-foreground/70 leading-relaxed mb-8"
+              />
             )}
             {defaultText(introduction.story_button_label) && (
               <Link

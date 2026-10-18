@@ -12,7 +12,8 @@ import {
   Check,
   Loader2,
   Eye,
-  PanelLeft
+  PanelLeft,
+  BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../context/AdminContext";
@@ -25,6 +26,7 @@ interface AdminNavbarProps {
   onToggleCollapse?: () => void;
   isPreviewOpen?: boolean;
   onTogglePreview?: () => void;
+  onSelectTab?: (tab: string) => void;
 }
 
 export function AdminNavbar({
@@ -32,7 +34,8 @@ export function AdminNavbar({
   isSidebarCollapsed = false,
   onToggleCollapse,
   isPreviewOpen,
-  onTogglePreview
+  onTogglePreview,
+  onSelectTab
 }: AdminNavbarProps) {
   const {
     adminSecret,
@@ -131,6 +134,19 @@ export function AdminNavbar({
             <span>Vedi Sito</span>
             <ExternalLink size={12} />
           </Link>
+
+          {/* Guida & Manuale Button */}
+          {onSelectTab && (
+            <button
+              type="button"
+              onClick={() => onSelectTab("guida")}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-foreground/70 hover:text-foreground bg-muted/40 hover:bg-muted transition-colors border border-foreground/10 hover:border-foreground/20"
+              title="Apri Manuale e Guida al Sito"
+            >
+              <BookOpen size={13} className="text-primary" />
+              <span className="hidden sm:inline">Guida</span>
+            </button>
+          )}
 
           {/* Password Manager Popover */}
           <div className="relative">

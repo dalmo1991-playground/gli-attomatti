@@ -90,7 +90,7 @@ function InstagramEmbedCard({
   // 2-Click Solution: If consent is NOT yet granted, show compliant privacy placeholder
   if (!isConsentGiven) {
     return (
-      <div className="snap-start shrink-0 w-[326px] sm:w-[340px] md:w-[350px] h-[630px] rounded-none overflow-hidden bg-slate-900 border border-foreground/10 flex flex-col justify-between p-6 text-center shadow-2xl relative">
+      <div className="snap-start shrink-0 w-[326px] sm:w-[340px] md:w-[350px] h-[630px] rounded-none overflow-hidden bg-background/80 border border-foreground/10 flex flex-col justify-between p-6 text-center shadow-2xl relative">
         <div className="space-y-4 pt-4">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
             <InstagramIcon size={28} />

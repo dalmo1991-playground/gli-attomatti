@@ -206,6 +206,19 @@ export async function enqueueFailedEmail(
 
   if (isBlobStorageAvailable()) {
     try {
+      const token = getBlobToken();
+      // Enforce 1000 items cap to prevent storage exhaustion
+      try {
+        const { blobs } = await list({ prefix: "email-dlq/", limit: 1000, token });
+        if (blobs.length >= 1000) {
+          console.warn(`[DLQ] Storage cap reached (${blobs.length}/1000 items). Pruning oldest items.`);
+          const oldest = blobs.sort((a, b) => new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime()).slice(0, 50);
+          await del(oldest.map(b => b.url), { token });
+        }
+      } catch (capErr) {
+        console.warn("[DLQ] Could not verify DLQ cap:", capErr);
+      }
+
       await putToBlob(`email-dlq/${id}.json`, JSON.stringify(record, null, 2));
       return record;
     } catch (blobErr: any) {
@@ -215,6 +228,10 @@ export async function enqueueFailedEmail(
 
   // Local/memory fallback
   const records = readLocalQueue();
+  // Enforce 1000 cap locally
+  if (records.length >= 1000) {
+    records.splice(999);
+  }
   records.unshift(record);
   writeLocalQueue(records);
 
@@ -262,6 +279,11 @@ export async function getFailedEmail(id: string): Promise<FailedEmailRecord | nu
   if (isBlobStorageAvailable()) {
     try {
       const token = getBlobToken();
+      // Direct get without list operation
+      const res = await readFromBlob({ pathname: `email-dlq/${id}.json`, url: "" });
+      if (res) return res;
+
+      // Fallback list if deterministic get didn't find it (e.g. legacy blobs)
       const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
       if (blobs.length > 0) {
         return await readFromBlob(blobs[0]);
@@ -285,13 +307,21 @@ export async function removeFailedEmail(id: string): Promise<boolean> {
   if (isBlobStorageAvailable()) {
     try {
       const token = getBlobToken();
-      const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
-      if (blobs.length > 0) {
-        await del(blobs.map((b) => b.url), { token });
-        removedFromBlob = true;
-      }
+      // Deterministic delete directly by pathname
+      await del(`email-dlq/${id}.json`, { token });
+      removedFromBlob = true;
     } catch (err: any) {
-      console.warn(`[DLQ] Error deleting ${id} from Blob:`, err?.message || err);
+      // Fallback: search via list if direct delete by key failed
+      try {
+        const token = getBlobToken();
+        const { blobs } = await list({ prefix: `email-dlq/${id}.json`, token });
+        if (blobs.length > 0) {
+          await del(blobs.map((b) => b.url), { token });
+          removedFromBlob = true;
+        }
+      } catch (listErr: any) {
+        console.warn(`[DLQ] Error deleting ${id} from Blob:`, listErr?.message || listErr);
+      }
     }
   }
 

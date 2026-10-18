@@ -76,31 +76,20 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [recoverableDraft, setRecoverableDraft] = useState<RecoverableDraft | null>(null);
   const [lastDraftSavedAt, setLastDraftSavedAt] = useState<string | null>(null);
 
-  // Load saved secret from sessionStorage / localStorage
+  // The admin secret is kept ONLY in memory: it is never persisted, so it is
+  // requested again at every page load. Remove any legacy stored copy.
   useEffect(() => {
     try {
-      const savedSecret = sessionStorage.getItem("attomatti_admin_secret") || localStorage.getItem("attomatti_admin_secret");
-      if (savedSecret) {
-        setAdminSecretState(savedSecret);
-      }
-    } catch (e) {
-      console.warn("Storage access error:", e);
-    }
+      sessionStorage.removeItem("attomatti_admin_secret");
+      localStorage.removeItem("attomatti_admin_secret");
+    } catch {}
   }, []);
 
   const setAdminSecret = (secret: string) => {
     setAdminSecretState(secret);
-    try {
-      if (secret) {
-        sessionStorage.setItem("attomatti_admin_secret", secret);
-        // Clean up from persistent localStorage to prevent long-term credential leakage
-        localStorage.removeItem("attomatti_admin_secret");
-      } else {
-        sessionStorage.removeItem("attomatti_admin_secret");
-        localStorage.removeItem("attomatti_admin_secret");
-      }
-    } catch (e) {
-      console.warn("Storage save error:", e);
+    // In-memory flag used by DeploymentDetector to know an admin session is active
+    if (typeof window !== "undefined") {
+      (window as any).__attomattiAdminActive = Boolean(secret);
     }
   };
 

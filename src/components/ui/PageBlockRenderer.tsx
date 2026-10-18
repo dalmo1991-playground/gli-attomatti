@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn, stripHtml, defaultText } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
+import { RichText } from "./RichText";
 import { CarouselBlock } from "./CarouselBlock";
 import { ArchiveTimelineSection } from "./ArchiveTimelineSection";
 import { CatalogCard, CatalogGrid } from "./CatalogCard";
@@ -866,9 +867,10 @@ export function PageBlockRenderer({
                       {block.title}
                     </h2>
                   )}
-                  <div className="text-foreground/80 text-base sm:text-lg leading-relaxed whitespace-pre-wrap font-medium">
-                    <FormattedText text={block.content || ""} />
-                  </div>
+                  <RichText
+                    content={block.content || ""}
+                    className="text-foreground/80 text-base sm:text-lg leading-relaxed font-medium"
+                  />
                 </div>
               </section>
             );

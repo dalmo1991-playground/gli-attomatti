@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Play, Download } from "lucide-react";
 import { isYouTubeUrl, getYouTubeEmbedUrl } from "@/lib/youtube";
 import { defaultText } from "@/lib/utils";
 
@@ -20,6 +20,7 @@ interface LightboxProps {
   onClose: () => void;
   uiContent?: {
     close_aria_label?: string;
+    download_aria_label?: string;
     prev_aria_label?: string;
     next_aria_label?: string;
     default_alt?: string;
@@ -86,6 +87,40 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
     setTouchStartX(null);
   };
 
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentMediaUrl || isCurrentVideo || downloading) return;
+    try {
+      setDownloading(true);
+      const res = await fetch(currentMediaUrl);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      // Derive nice file name from URL or alt
+      const urlFileName = currentMediaUrl.split("/").pop()?.split("?")[0] || "foto.webp";
+      a.download = urlFileName.includes(".") ? urlFileName : `${urlFileName}.webp`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback: direct download link click
+      const a = document.createElement("a");
+      a.href = currentMediaUrl;
+      a.download = currentMediaUrl.split("/").pop()?.split("?")[0] || "foto.webp";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (!mounted) return null;
 
   const currentItem = images[currentIndex];
@@ -104,14 +139,31 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Close button with safe-area support */}
-          <button
-            onClick={onClose}
-            aria-label={defaultText(ui.close_aria_label, "Chiudi galleria") || undefined}
-            className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-50 p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90"
-          >
-            <X size={26} />
-          </button>
+          {/* Top-Right Action Controls (Download & Close) with safe-area support */}
+          <div className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-50 flex items-center gap-2">
+            {!isCurrentVideo && currentMediaUrl && (
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={downloading}
+                title={defaultText(ui.download_aria_label, "Scarica immagine") || "Scarica immagine"}
+                aria-label={defaultText(ui.download_aria_label, "Scarica immagine") || "Scarica immagine"}
+                className="p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90 hover:scale-105 backdrop-blur-sm border border-white/10 shadow-lg disabled:opacity-50"
+              >
+                <Download size={22} className={downloading ? "animate-pulse" : ""} />
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              title={defaultText(ui.close_aria_label, "Chiudi galleria") || "Chiudi galleria"}
+              aria-label={defaultText(ui.close_aria_label, "Chiudi galleria") || "Chiudi galleria"}
+              className="p-3 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-all active:scale-90 hover:scale-105 backdrop-blur-sm border border-white/10 shadow-lg"
+            >
+              <X size={24} />
+            </button>
+          </div>
 
           {images.length > 1 && (
             <>

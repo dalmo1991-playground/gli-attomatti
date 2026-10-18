@@ -13,14 +13,14 @@ export interface FormattedTextProps {
 }
 
 interface TextToken {
-  type: "text" | "link" | "bold" | "italic" | "br";
+  type: "text" | "link" | "bold" | "italic" | "highlight" | "br";
   text?: string;
   href?: string;
   value?: string;
 }
 
 /**
- * Tokenizes a string detecting markdown links, HTML links, raw URLs, bold, italic, and line breaks.
+ * Tokenizes a string detecting markdown links, HTML links, raw URLs, bold, italic, highlights, and line breaks.
  */
 export function parseFormattedTokens(text: string): TextToken[] {
   if (!text || typeof text !== "string") return [];
@@ -30,9 +30,10 @@ export function parseFormattedTokens(text: string): TextToken[] {
   // 2. HTML link: <a ... href="..." ...>text</a>
   // 3. Bold: **text** or <b>text</b> or <strong>text</strong>
   // 4. Italic: *text* or <i>text</i> or <em>text</em>
-  // 5. Raw URL: https://... or http://...
-  // 6. Line breaks: <br> or \n
-  const tokenRegex = /(?:\[([^\]]+)\]\(([^)]+)\))|(?:<a\b[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>)|(?:\*\*([^*]+)\*\*|<strong>(.*?)<\/strong>|<b>(.*?)<\/b>)|(?:\*([^*]+)\*|<em>(.*?)<\/em>|<i>(.*?)<\/i>)|(https?:\/\/[^\s<)\]]+)|(?:<br\s*\/?>|\n)/gi;
+  // 5. Highlight: ==text== or <mark>text</mark>
+  // 6. Raw URL: https://... or http://...
+  // 7. Line breaks: <br> or \n
+  const tokenRegex = /(?:\[([^\]]+)\]\(([^)]+)\))|(?:<a\b[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>)|(?:\*\*([^*]+)\*\*|<strong>(.*?)<\/strong>|<b>(.*?)<\/b>)|(?:\*([^*]+)\*|<em>(.*?)<\/em>|<i>(.*?)<\/i>)|(?:\=\=([^=]+)\=\=|<mark>(.*?)<\/mark>)|(https?:\/\/[^\s<)\]]+)|(?:<br\s*\/?>|\n)/gi;
 
   const tokens: TextToken[] = [];
   let lastIndex = 0;
@@ -57,9 +58,13 @@ export function parseFormattedTokens(text: string): TextToken[] {
       // Italic
       const italicText = match[8] || match[9] || match[10] || "";
       tokens.push({ type: "italic", text: italicText });
-    } else if (match[11] !== undefined) {
+    } else if (match[11] !== undefined || match[12] !== undefined) {
+      // Highlight: ==text== or <mark>text</mark>
+      const highlightText = match[11] || match[12] || "";
+      tokens.push({ type: "highlight", text: highlightText });
+    } else if (match[13] !== undefined) {
       // Raw URL
-      const rawUrl = match[11];
+      const rawUrl = match[13];
       const cleanHref = rawUrl.replace(/[.,;:!?]+$/, "");
       const trailingPunct = rawUrl.slice(cleanHref.length);
       tokens.push({ type: "link", text: cleanHref, href: cleanHref });
@@ -143,7 +148,7 @@ export function renderFormattedContent(
 
     if (token.type === "bold") {
       return (
-        <strong key={idx} className="font-bold">
+        <strong key={idx} className="font-bold text-foreground">
           {token.text}
         </strong>
       );
@@ -151,9 +156,17 @@ export function renderFormattedContent(
 
     if (token.type === "italic") {
       return (
-        <em key={idx} className="italic">
+        <em key={idx} className="font-serif italic font-normal text-foreground/95 tracking-normal">
           {token.text}
         </em>
+      );
+    }
+
+    if (token.type === "highlight") {
+      return (
+        <mark key={idx} className="bg-transparent text-primary font-bold">
+          {token.text}
+        </mark>
       );
     }
 

@@ -69,7 +69,7 @@ export function ContactTab() {
             label="Email Principale di Contatto"
             value={c.email || ""}
             onChange={(v) => updateContent("pages.contatti.email", v)}
-            placeholder="info@attomatti.ch"
+            placeholder="compagniateatralegliattomatti@gmail.com"
             type="email"
           />
           <FormField

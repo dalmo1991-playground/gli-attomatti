@@ -2,6 +2,10 @@ import { getContent } from "@/lib/data";
 import { redirect } from "next/navigation";
 import CheckoutClient from "./CheckoutClient";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/seo";
+
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const pages: any[] = content?.ticketing_pages || [];
@@ -37,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${page.title} — Biglietti & Prevendita`,
       description: page.description || `Acquisto biglietti per ${page.title} a Zurigo.`,
-      url: `https://gliattomatti.ch/Biglietti/${slug}`,
+      url: `${SITE_URL}/Biglietti/${slug}`,
       type: "website",
     },
   };

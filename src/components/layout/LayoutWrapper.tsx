@@ -11,6 +11,7 @@ import { DevAccessGate } from "@/components/dev/DevAccessGate";
 import { LivePreviewProvider, useLiveContent } from "@/components/dev/LivePreviewContext";
 import { PreviewBanner } from "@/components/dev/PreviewBanner";
 import { EmailActionModal } from "@/components/ui/EmailActionModal";
+import { NewsletterPopup } from "@/components/ui/NewsletterPopup";
 
 import { DeploymentDetector } from "@/components/layout/DeploymentDetector";
 
@@ -79,8 +80,7 @@ function LayoutInner({
       />
 
       <EmailActionModal />
-
-      <DeploymentDetector serverVersion={serverVersion || "initial"} />
+      <NewsletterPopup content={liveContent} />
 
       {isDev && (
         <>
@@ -106,7 +106,10 @@ export function LayoutWrapper({
   return (
     <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess} devGateContent={content?.ui?.dev_gate}>
       {isAdmin ? (
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen">
+          <DeploymentDetector serverVersion={serverVersion || "initial"} />
+          {children}
+        </main>
       ) : (
         <LivePreviewProvider initialContent={content}>
           <LayoutInner content={content} isLanding={isLanding} isDev={isDev} serverVersion={serverVersion}>

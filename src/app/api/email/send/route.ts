@@ -18,6 +18,7 @@ import {
   resolveRecipientName
 } from "@/lib/email/jsonPath";
 import { enqueueFailedEmail } from "@/lib/email/dlq";
+import { checkUntrustedDailyIpLimit } from "@/lib/untrustedRateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -51,11 +52,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Parse Body Payload
+    // 2. Parse Body Payload (keep the RAW text: Tally signs the exact bytes it sent)
     let body: any = {};
+    let rawBodyText = "";
     try {
-      body = await req.json();
+      rawBodyText = await req.text();
+      body = rawBodyText ? JSON.parse(rawBodyText) : {};
     } catch {
+      body = {};
+    }
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
       body = {};
     }
 
@@ -90,7 +96,6 @@ export async function POST(req: NextRequest) {
     // B. Check Tally Webhook cryptographic signature (if tally-signature header is present)
     const tallySignature = req.headers.get("tally-signature");
     if (!isSecretAuthorized && tallySignature && configuredApiSecret) {
-      const rawBodyText = JSON.stringify(body);
       const tallySigningSecret = process.env.TALLY_SIGNING_SECRET?.trim() || configuredApiSecret;
       if (verifyTallySignature(rawBodyText, tallySignature, tallySigningSecret)) {
         isSecretAuthorized = true;
@@ -140,14 +145,24 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // 3. Verify anti-bot reCAPTCHA token
+      // 3. Verify anti-bot reCAPTCHA token with Soft Mode (never blocks immediately)
       const recaptchaToken = body.recaptchaToken || body.captcha_token;
       const captchaResult = await verifyRecaptchaToken(recaptchaToken);
-      if (!captchaResult.success) {
-        return NextResponse.json(
-          { error: captchaResult.error || "Verifica di sicurezza anti-bot reCAPTCHA non superata." },
-          { status: 403 }
-        );
+
+      // If reCAPTCHA reported a suspicious score (< 0.5) or failed:
+      // Allow only 1 submission per 24 hours per IP (persisted across Vercel instances).
+      if (captchaResult.isSuspicious) {
+        const untrustedCheck = await checkUntrustedDailyIpLimit(clientIp);
+        if (!untrustedCheck.allowed) {
+          return NextResponse.json(
+            {
+              error:
+                `Hai già effettuato una richiesta oggi da questa connessione. ` +
+                `Per invii aggiuntivi riprova tra qualche ora o contattaci direttamente.`
+            },
+            { status: 429 }
+          );
+        }
       }
 
       // 4. CRITICAL DEFENSE: Public submissions CANNOT send custom ad-hoc blocks or spoof sender headers!
@@ -233,7 +248,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4b. Respect the enabled flag: a disabled template never sends
+    // 4b. Restrict unauthenticated callers:
+    // Unauthenticated requests (e.g. public contact modal) can only trigger templates specifically permitted for public form use
+    if (!isSecretAuthorized) {
+      const isPublicPermitted =
+        selectedTemplate.id === "newsletter_welcome" ||
+        selectedTemplate.id === "contact_confirm" ||
+        selectedTemplate.id === "default-fallback" ||
+        (selectedTemplate as any).is_public === true ||
+        (selectedTemplate as any).allow_public === true;
+
+      if (!isPublicPermitted) {
+        return NextResponse.json(
+          {
+            error:
+              "Questo template richiede autenticazione tramite chiave segreta API (?secret=...). " +
+              "Solo i webhook autorizzati o gli amministratori possono attivarlo."
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 4c. Respect the enabled flag: a disabled template never sends
     if (selectedTemplate.enabled === false) {
       return NextResponse.json({
         success: false,
@@ -253,8 +290,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Resolve Recipient Email & Name strictly (no fuzzy guessing)
-    const emailJsonPath = toPathQuery || selectedTemplate?.field_mapping?.recipient_email_path;
-    const nameJsonPath = namePathQuery || selectedTemplate?.field_mapping?.recipient_name_path;
+    // Public (browser) callers can NOT choose where the recipient is read from
+    const emailJsonPath =
+      (isSecretAuthorized ? toPathQuery : null) || selectedTemplate?.field_mapping?.recipient_email_path;
+    const nameJsonPath =
+      (isSecretAuthorized ? namePathQuery : null) || selectedTemplate?.field_mapping?.recipient_name_path;
 
     const recipientEmail = resolveRecipientEmail(body, emailJsonPath);
 
@@ -269,6 +309,18 @@ export async function POST(req: NextRequest) {
     }
 
     const recipientName = resolveRecipientName(body, nameJsonPath);
+
+    // Anti-abuse for public submissions: max 15 emails per recipient address per hour
+    // (generous threshold allowing registration for multiple shows/dates)
+    if (!isSecretAuthorized) {
+      const perRecipient = checkRateLimit(`email-recipient:${recipientEmail.toLowerCase()}`, 15, 3_600_000);
+      if (!perRecipient.allowed) {
+        return NextResponse.json(
+          { error: "Hai già inviato diverse richieste a questo indirizzo. Riprova più tardi." },
+          { status: 429 }
+        );
+      }
+    }
 
     // 6. Build Variables Record (Flattened JSON + Webhook Headers + Mapped Fields + Subcase)
     const payloadContext = {
@@ -301,12 +353,14 @@ export async function POST(req: NextRequest) {
       ...(body.event_url || body.eventUrl ? { event_url: body.event_url || body.eventUrl } : {}),
       ...customMappedVars,
       ...(activeSubcase?.custom_fields || {}),
-      ...(body.variables || {})
+      // Only secret-authorized callers (webhooks/admin) may provide arbitrary variables overrides
+      ...(isSecretAuthorized && body.variables && typeof body.variables === "object" ? body.variables : {})
     };
 
     // 7. Resolve Theme & Render Email
-    const chosenTheme = themeQuery || body.theme || selectedTemplate.theme || "default";
-    const customColors = body.customColors || selectedTemplate.customColors;
+    const chosenTheme =
+      (isSecretAuthorized ? themeQuery || body.theme : null) || selectedTemplate.theme || "default";
+    const customColors = (isSecretAuthorized ? body.customColors : null) || selectedTemplate.customColors;
     const themeColors = resolveEmailTheme(chosenTheme, content?.landings || [], customColors);
 
     const baseUrl =
@@ -331,7 +385,9 @@ export async function POST(req: NextRequest) {
       baseUrl
     });
 
-    const subjectTemplate = body.subject || selectedTemplate.subject || "Notifica da Gli Attomatti";
+    // Only authorized (secret) callers may override the subject; public form uses the template subject
+    const subjectTemplate =
+      (isSecretAuthorized ? body.subject : null) || selectedTemplate.subject || "Notifica da Gli Attomatti";
     const resolvedSubject = replaceVariables(subjectTemplate, variables);
 
     // If dry run, return rendered preview without sending

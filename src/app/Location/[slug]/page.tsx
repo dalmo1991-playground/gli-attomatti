@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 import LocationClient from "./LocationClient";
 import type { Metadata } from "next";
 import { LocationItem } from "@/lib/locationTypes";
+import { SITE_URL } from "@/lib/seo";
+
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const locations: LocationItem[] = content?.locations || [];
@@ -52,7 +56,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://gliattomatti.ch/Location/${slug}`,
+      url: `${SITE_URL}/Location/${slug}`,
       type: "website",
       images: location.hero_image ? [{ url: location.hero_image }] : undefined,
     },

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
-import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail, Video } from "lucide-react";
+import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail, Video, Database, FileCheck, Lock } from "lucide-react";
 import { defaultText } from "@/lib/utils";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 import { LegalDocLayout } from "@/components/ui/LegalDocLayout";
@@ -74,7 +74,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-2 text-foreground/80 font-medium">
+              <div className="space-y-2 text-foreground/80 font-medium text-sm">
                 {defaultText(p.data_controller.name) && (
                   <p className="font-bold text-foreground text-lg">{defaultText(p.data_controller.name)}</p>
                 )}
@@ -98,15 +98,64 @@ export default async function PrivacyPage() {
           {p?.general_processing && (
             <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
               {defaultText(p.general_processing.title) && (
-                <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
-                  {defaultText(p.general_processing.title)}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Scale size={20} />
+                  </div>
+                  <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                    {defaultText(p.general_processing.title)}
+                  </h2>
+                </div>
               )}
               {defaultText(p.general_processing.text) && (
-                <p className="text-foreground/80 leading-relaxed font-medium">
+                <p className="text-foreground/80 leading-relaxed font-medium text-sm">
                   <FormattedText text={p.general_processing.text} />
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Periodi di conservazione dei dati */}
+          {p?.retention && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              {defaultText(p.retention.title) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                    <Database size={20} />
+                  </div>
+                  <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                    {defaultText(p.retention.title)}
+                  </h2>
+                </div>
+              )}
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.retention.paragraphs?.map((para: string, idx: number) => {
+                  const val = defaultText(para);
+                  return val ? <p key={idx}><FormattedText text={val} /></p> : null;
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Responsabili del trattamento (Data Processors) e DPA */}
+          {p?.data_processors && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              {defaultText(p.data_processors.title) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                    <FileCheck size={20} />
+                  </div>
+                  <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                    {defaultText(p.data_processors.title)}
+                  </h2>
+                </div>
+              )}
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.data_processors.paragraphs?.map((para: string, idx: number) => {
+                  const val = defaultText(para);
+                  return val ? <p key={idx}><FormattedText text={val} /></p> : null;
+                })}
+              </div>
             </div>
           )}
 
@@ -124,7 +173,7 @@ export default async function PrivacyPage() {
                 </div>
               )}
               {defaultText(p.server_logs.text) && (
-                <p className="text-foreground/80 leading-relaxed font-medium">
+                <p className="text-foreground/80 leading-relaxed font-medium text-sm">
                   <FormattedText text={p.server_logs.text} />
                 </p>
               )}
@@ -179,6 +228,18 @@ export default async function PrivacyPage() {
                             </td>
                           </tr>
                         )}
+                        {cookieRows.newsletter_popup && (
+                          <tr>
+                            <td className="py-2.5 pr-4 font-mono font-bold text-foreground">
+                              {defaultText(cookieRows.newsletter_popup.name)}
+                            </td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.newsletter_popup.provider)}</td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.newsletter_popup.duration)}</td>
+                            <td className="py-2.5 text-foreground/70">
+                              {defaultText(cookieRows.newsletter_popup.purpose)}
+                            </td>
+                          </tr>
+                        )}
                         {isEventfrogActive && cookieRows.eventfrog && (
                           <tr>
                             <td className="py-2.5 pr-4 font-mono font-bold text-foreground">
@@ -200,6 +261,18 @@ export default async function PrivacyPage() {
                             <td className="py-2.5 pr-4">{defaultText(cookieRows.tally.duration)}</td>
                             <td className="py-2.5 text-foreground/70">
                               {defaultText(cookieRows.tally.purpose)}
+                            </td>
+                          </tr>
+                        )}
+                        {cookieRows.recaptcha && (
+                          <tr>
+                            <td className="py-2.5 pr-4 font-mono font-bold text-foreground">
+                              {defaultText(cookieRows.recaptcha.name)}
+                            </td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.recaptcha.provider)}</td>
+                            <td className="py-2.5 pr-4">{defaultText(cookieRows.recaptcha.duration)}</td>
+                            <td className="py-2.5 text-foreground/70">
+                              {defaultText(cookieRows.recaptcha.purpose)}
                             </td>
                           </tr>
                         )}
@@ -266,7 +339,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.google_analytics.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -288,7 +361,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.meta_pixel.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -322,7 +395,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.youtube.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}>{val}</p> : null;
@@ -356,7 +429,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.eventfrog.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -390,7 +463,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.tally.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -424,7 +497,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.resend.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -458,7 +531,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.recaptcha.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -532,7 +605,7 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
                 {p.photo_rights.paragraphs?.map((para: string, idx: number) => {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
@@ -554,11 +627,16 @@ export default async function PrivacyPage() {
                   </h2>
                 </div>
               )}
-              {defaultText(p.your_rights.text) && (
-                <p className="text-foreground/80 leading-relaxed font-medium">
-                  <FormattedText text={p.your_rights.text} />
-                </p>
-              )}
+              <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.your_rights.paragraphs ? (
+                  p.your_rights.paragraphs.map((para: string, idx: number) => {
+                    const val = defaultText(para);
+                    return val ? <p key={idx}><FormattedText text={val} /></p> : null;
+                  })
+                ) : p.your_rights.text ? (
+                  <p><FormattedText text={p.your_rights.text} /></p>
+                ) : null}
+              </div>
             </div>
           )}
         </div>

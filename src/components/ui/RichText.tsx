@@ -15,30 +15,82 @@ interface RichTextProps {
  * Checks whether a string contains HTML formatting tags
  */
 function isHtml(str: string): boolean {
-  return /<(?:p|strong|b|em|i|u|a|ul|ol|li|br|span|div)\b[^>]*>/i.test(str);
+  return /<(?:p|strong|b|em|i|u|a|ul|ol|li|br|span|div|mark|q|blockquote)\b[^>]*>/i.test(str);
 }
 
+const ALLOWED_TAGS = new Set([
+  "p", "br", "strong", "b", "em", "i", "u", "a", "ul", "ol", "li",
+  "span", "div", "h2", "h3", "h4", "blockquote", "mark", "q", "small", "s", "del", "sub", "sup"
+]);
+
+const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i;
+
 /**
- * Basic safe sanitizer: strips dangerous tags like script, iframe, object, embed, style,
- * and removes on* attributes (onclick, onerror, etc.) and javascript: URLs.
+ * Allow-list HTML sanitizer.
+ * - Drops dangerous elements together with their content (script, style, iframe, svg...).
+ * - Keeps only a small set of formatting tags.
+ * - Preserves safe alignment (left, center, right, justify) on block tags (p, div, h2, h3, h4, blockquote)
+ * - Preserves safe text-lg class on <span> for enlarged text.
+ * - Strips EVERY attribute except a safe `href` on <a> (http/https/mailto/tel/relative/#),
+ *   and forces target/rel on links.
  */
 function sanitizeHtml(dirtyHtml: string): string {
   if (!dirtyHtml) return "";
-  let clean = dirtyHtml
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
-    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
-    .replace(/<\/?(?:source-footnote|sources-carousel-inline|citation-tag)[^>]*>/gi, "")
-    .replace(/\s*data-path-to-node="[^"]*"/gi, "")
-    .replace(/\s*_ng(?:host|content)[^=]*="[^"]*"/gi, "")
-    .replace(/\s*ng-[^=]*="[^"]*"/gi, "")
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "")
-    .replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
 
-  return clean;
+  const sanitized = dirtyHtml
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<(script|style|iframe|object|embed|noscript|template|svg|math|form|textarea|select)\b[\s\S]*?<\/\1\s*>/gi, "")
+    .replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g, (match, rawTag: string, attrs: string) => {
+      const tag = rawTag.toLowerCase();
+      if (!ALLOWED_TAGS.has(tag)) return "";
+
+      if (match.startsWith("</")) return `</${tag}>`;
+
+      if (tag === "a") {
+        const hrefMatch = attrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+        const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? hrefMatch?.[3] ?? "").trim();
+        if (!href || !SAFE_HREF.test(href)) return "<a>";
+        const external = /^https?:\/\//i.test(href);
+        const safeHref = href.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+        return external
+          ? `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`
+          : `<a href="${safeHref}">`;
+      }
+
+      // Check text alignment for block elements
+      if (tag === "p" || tag === "div" || tag === "blockquote" || /^h[1-6]$/.test(tag)) {
+        let align: string | null = null;
+        const alignMatch = attrs.match(/\balign\s*=\s*(?:"(left|center|right|justify)"|'(left|center|right|justify)'|(left|center|right|justify))/i);
+        if (alignMatch) {
+          align = (alignMatch[1] || alignMatch[2] || alignMatch[3]).toLowerCase();
+        } else {
+          const styleAlignMatch = attrs.match(/\btext-align\s*:\s*(left|center|right|justify)/i);
+          if (styleAlignMatch) {
+            align = styleAlignMatch[1].toLowerCase();
+          }
+        }
+
+        if (align) {
+          return `<${tag} style="text-align: ${align};">`;
+        }
+      }
+
+      // Preserve large text span (<span class="text-lg"> or data-size="large")
+      if (tag === "span") {
+        if (/text-lg|large/i.test(attrs)) {
+          return '<span class="text-lg">';
+        }
+      }
+
+      return tag === "br" ? "<br>" : `<${tag}>`;
+    });
+
+  // Clean up stray/redundant <br> before or after block elements and remove empty paragraphs
+  return sanitized
+    .replace(/<p>\s*(?:<br\s*\/?>|&nbsp;|\s)*<\/p>/gi, "")
+    .replace(/<br\s*\/?>\s*(<\/?(?:ul|ol|li|p|h[1-6]|blockquote)>)/gi, "$1")
+    .replace(/(<\/?(?:ul|ol|li|p|h[1-6]|blockquote)>)\s*<br\s*\/?>/gi, "$1")
+    .replace(/(?:<br\s*\/?>\s*){2,}/gi, "</p><p>");
 }
 
 export function RichText({
@@ -46,16 +98,33 @@ export function RichText({
   className = "",
   as: Component = "div"
 }: RichTextProps) {
-  if (!content || typeof content !== "string" || !content.trim()) {
-    return null;
-  }
+  // Hooks must run before any early return (Rules of Hooks)
+  const safeContent = typeof content === "string" ? content : "";
 
-  // Pre-process markdown links [text](url) -> <a href="url">text</a>
+  // Pre-process markdown links [text](url) -> <a href="url">text</a> and highlights ==text== -> <mark>text</mark>
   const processedContent = useMemo(() => {
-    return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-  }, [content]);
+    return safeContent
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+        const safeUrl = url.trim().replace(/"/g, "%22").replace(/'/g, "%27").replace(/</g, "%3C").replace(/>/g, "%3E");
+        return `<a href="${safeUrl}">${text}</a>`;
+      })
+      .replace(/==([^=]+)==/g, '<mark>$1</mark>');
+  }, [safeContent]);
 
   const hasHtml = useMemo(() => isHtml(processedContent), [processedContent]);
+
+  // Fallback for plain text: split on double newlines to render unified <p> elements
+  const plainParagraphs = useMemo(() => {
+    if (hasHtml || !safeContent.trim()) return [];
+    return safeContent
+      .split(/\n\s*\n+/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+  }, [hasHtml, safeContent]);
+
+  if (!safeContent.trim()) {
+    return null;
+  }
 
   // If HTML is present, render with safe markup and refined typography
   if (hasHtml) {
@@ -64,13 +133,28 @@ export function RichText({
       <Component
         className={cn(
           "leading-relaxed",
-          "[&_p]:mb-3 [&_p:last-child]:mb-0",
-          "[&_strong]:font-bold [&_strong]:text-foreground",
-          "[&_em]:italic",
+          "[&_p]:mb-4 sm:[&_p]:mb-4.5 [&_p:last-child]:mb-0 [&_p:empty]:hidden",
+          "[&_strong]:font-bold [&_strong]:text-foreground [&_mark_strong]:text-inherit [&_mark_b]:text-inherit",
+          "[&_b]:font-bold [&_b]:text-foreground",
+          "[&_em]:font-serif [&_em]:italic [&_em]:font-normal [&_em]:text-foreground/95 [&_em]:tracking-normal [&_mark_em]:text-inherit [&_mark_i]:text-inherit",
+          "[&_i]:font-serif [&_i]:italic [&_i]:font-normal [&_i]:text-foreground/95 [&_i]:tracking-normal",
+          "[&_mark]:bg-transparent [&_mark]:text-primary [&_mark]:font-inherit",
+          "[&_mark_*]:text-inherit",
+          "[&_em_mark]:font-serif [&_em_mark]:italic [&_em_mark]:text-primary",
+          "[&_i_mark]:font-serif [&_i_mark]:italic [&_i_mark]:text-primary",
+          "[&_mark_em]:font-serif [&_mark_em]:italic [&_mark_em]:text-primary",
+          "[&_mark_i]:font-serif [&_mark_i]:italic [&_mark_i]:text-primary",
+          "[&_strong_mark]:font-bold [&_mark_strong]:font-bold [&_mark_strong]:text-primary",
+          "[&_b_mark]:font-bold [&_mark_b]:font-bold [&_mark_b]:text-primary",
+          "[&_mark_b_i]:text-primary [&_mark_i_b]:text-primary [&_i_mark_b]:text-primary [&_b_mark_i]:text-primary",
+          "[&_small]:text-[0.85em] [&_small]:opacity-80 [&_small]:leading-normal",
+          "[&_.text-lg]:text-[1.18em] [&_.text-lg]:leading-snug",
+          "[&_q]:italic [&_q]:font-medium [&_q]:text-foreground",
           "[&_a]:text-primary [&_a]:underline hover:[&_a]:text-primary/80 [&_a]:font-bold [&_a]:transition-colors",
-          "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:space-y-1.5",
-          "[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-3 [&_ol]:space-y-1.5",
+          "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-4 sm:[&_ul]:my-4.5 [&_ul]:space-y-1.5 [&_ul:last-child]:mb-0",
+          "[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-4 sm:[&_ol]:my-4.5 [&_ol]:space-y-1.5 [&_ol:last-child]:mb-0",
           "[&_li]:leading-relaxed",
+          "[&_blockquote]:my-4 sm:[&_blockquote]:my-4.5 [&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-foreground/90 [&_blockquote]:font-medium [&_blockquote]:bg-primary/5 [&_blockquote]:py-2 [&_blockquote]:rounded-r-lg [&_blockquote:last-child]:mb-0",
           className
         )}
         dangerouslySetInnerHTML={{ __html: cleanHtml }}
@@ -79,9 +163,21 @@ export function RichText({
   }
 
   // Fallback for plain text: support markdown links, raw URLs, bold, and line breaks
+  // Each paragraph is rendered as <p className="mb-4 sm:mb-4.5 last:mb-0"> to share the EXACT same visual spacing as HTML
+  const isInline = Component === "span";
+  const OuterComponent = Component === "p" ? "div" : Component;
+  const ParagraphComponent = isInline ? "span" : "p";
+
   return (
-    <Component className={cn("whitespace-pre-line leading-relaxed", className)}>
-      <FormattedText text={content} />
-    </Component>
+    <OuterComponent className={cn("leading-relaxed", className)}>
+      {plainParagraphs.map((para, idx) => (
+        <ParagraphComponent
+          key={idx}
+          className={cn(isInline && "block", "mb-4 sm:mb-4.5 last:mb-0")}
+        >
+          <FormattedText text={para} />
+        </ParagraphComponent>
+      ))}
+    </OuterComponent>
   );
 }

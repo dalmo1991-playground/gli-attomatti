@@ -7,7 +7,8 @@ import Image from "next/image";
 import { trackContact, trackSocialClick } from "@/lib/tracking";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { defaultText } from "@/lib/utils";
-
+import { ShareButton } from "@/components/ui/ShareButton";
+import { isNewsletterActive, NEWSLETTER_PATH } from "@/lib/newsletter";
 
 export function Footer({ content }: { content: any }) {
   const contatti = content?.pages?.contatti || { email: "", socials: [] };
@@ -16,6 +17,7 @@ export function Footer({ content }: { content: any }) {
   const navigation = rawNavigation.filter((link: any) => link && link.label !== null);
   const site = content?.site || { name: "Gli Attomatti", description: "" };
   const uiFooter = content?.ui?.footer || {};
+  const hasNewsletter = isNewsletterActive(content);
 
   const siteName = defaultText(site.name, "Gli Attomatti");
   const siteDesc = defaultText(site.description);
@@ -85,9 +87,9 @@ export function Footer({ content }: { content: any }) {
                 <FormattedText text={siteDesc} />
               </p>
             )}
-            {socials.length > 0 && (
-              <div className="flex gap-4">
-                {socials.filter((s: any) => s && s.visible !== false).map((social: any, idx: number) => {
+            <div className="flex flex-wrap items-center gap-4">
+              {socials.length > 0 &&
+                socials.filter((s: any) => s && s.visible !== false).map((social: any, idx: number) => {
                   return social.href ? (
                     <Link
                       key={idx}
@@ -102,8 +104,14 @@ export function Footer({ content }: { content: any }) {
                     </Link>
                   ) : null;
                 })}
-              </div>
-            )}
+
+              <ShareButton
+                variant="icon"
+                label="Condividi il sito"
+                className="w-12 h-12"
+                uiContent={content?.ui?.share_modal}
+              />
+            </div>
           </div>
 
           {/* Navigation Columns */}
@@ -130,6 +138,18 @@ export function Footer({ content }: { content: any }) {
                     </li>
                   );
                 })}
+                {hasNewsletter && (
+                  <li>
+                    <Link
+                      href={NEWSLETTER_PATH}
+                      prefetch={false}
+                      className="text-lg font-bold text-foreground/70 hover:text-primary transition-colors flex items-center group"
+                    >
+                      Newsletter
+                      <ArrowUpRight size={14} className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           )}
