@@ -292,17 +292,25 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
         }
       });
 
+      // Sanitize linkColor to prevent style injection
+      const safeLinkColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$|^rgba?\([^)]+\)$/.test(linkColor)
+        ? linkColor
+        : "#fb7185";
+
       // 3. Process Markdown formatting for un-tagged markdown text:
       // Markdown bold: **text**
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: inherit; font-weight: 700;">$1</strong>');
       // Markdown italic: *text* (single asterisk, not preceded or followed by another asterisk)
       html = html.replace(/(^|[^*])\*([^*]+)\*([^*]|$)/g, '$1<em style="font-style: italic; font-family: Georgia, \'Times New Roman\', serif; color: inherit;">$2</em>$3');
       // Markdown highlight: ==text==
-      html = html.replace(/==([^=]+)==/g, `<span style="color: ${linkColor}; font-weight: 700;">$1</span>`);
-      // Markdown links: [text](url)
+      html = html.replace(/==([^=]+)==/g, `<span style="color: ${safeLinkColor}; font-weight: 700;">$1</span>`);
+      // Markdown links: [text](url) - strictly sanitize URL against quote breakout
       html = html.replace(
         /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-        `<a href="$2" target="_blank" rel="noopener noreferrer" style="color: ${linkColor}; text-decoration: underline; font-weight: 600;">$1</a>`
+        (match, text, url) => {
+          const safeUrl = url.replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: ${safeLinkColor}; text-decoration: underline; font-weight: 600;">${text}</a>`;
+        }
       );
 
       // 4. Line breaks to <br />

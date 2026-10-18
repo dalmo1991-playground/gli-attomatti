@@ -211,6 +211,12 @@ export async function DELETE(request: Request) {
     const filesToDelete = urls.map((url) => {
       const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
       const subPath = cleanUrl.replace(/^images\//, '');
+
+      // Strict filename regex validation to prevent path traversal or special characters
+      if (!/^[A-Za-z0-9._-]+\.webp$/.test(subPath)) {
+        throw new Error(`Nome file non consentito o non valido: ${url}`);
+      }
+
       const localPath = path.resolve(allowedBaseDir, subPath);
 
       if (!localPath.startsWith(allowedBaseDir + path.sep)) {

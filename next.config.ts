@@ -40,15 +40,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/((?!api|_next|admin|images|.*\\.(?:svg|png|jpg|jpeg|webp|avif|ico|woff2|woff|ttf|mp4|webm)).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=86400',
-          },
-        ],
-      },
-      {
         source: '/(.*)',
         headers: [
           {

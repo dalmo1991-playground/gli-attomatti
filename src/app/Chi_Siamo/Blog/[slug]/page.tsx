@@ -4,6 +4,8 @@ import { createPageMetadata, getBreadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ArticoloClient from "./ArticoloClient";
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const articles = content?.pages?.blog?.articles || [];

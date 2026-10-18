@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getContent } from '@/lib/data';
 
 const BASE_URL = process.env.SITE_URL || 'https://gliattomatti.ch';
+const buildDate = new Date();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const content = await getContent();
@@ -10,19 +11,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/Spettacoli`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/Iniziative`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
@@ -156,16 +157,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   // Dynamic blog articles: /Chi_Siamo/Blog/[slug]
-  const blogArticles: { slug: string; visible?: boolean }[] =
+  const blogArticles: { slug: string; visible?: boolean; date?: string }[] =
     content?.pages?.blog?.articles ?? [];
   const blogRoutes: MetadataRoute.Sitemap = blogArticles
     .filter((a) => a.visible !== false && a.slug)
-    .map((a) => ({
-      url: `${BASE_URL}/Chi_Siamo/Blog/${a.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }));
+    .map((a) => {
+      let articleDate = buildDate;
+      if (a.date) {
+        const parsed = new Date(a.date);
+        if (!isNaN(parsed.getTime())) {
+          articleDate = parsed;
+        }
+      }
+      return {
+        url: `${BASE_URL}/Chi_Siamo/Blog/${a.slug}`,
+        lastModified: articleDate,
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      };
+    });
 
   return [
     ...staticRoutes,

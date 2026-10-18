@@ -125,10 +125,10 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
   if (!landing) {
     if (!mounted) {
       return (
-        <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-4">
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-            <span className="text-xs uppercase tracking-widest text-white/50">
+            <span className="text-xs uppercase tracking-widest text-foreground/50">
               {landingDefaults.preview_loading || "Caricamento anteprima..."}
             </span>
           </div>

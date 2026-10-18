@@ -82,8 +82,6 @@ function LayoutInner({
       <EmailActionModal />
       <NewsletterPopup content={liveContent} />
 
-      <DeploymentDetector serverVersion={serverVersion || "initial"} />
-
       {isDev && (
         <>
           <DynamicDevThemeCustomizer />
@@ -108,7 +106,10 @@ export function LayoutWrapper({
   return (
     <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess} devGateContent={content?.ui?.dev_gate}>
       {isAdmin ? (
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen">
+          <DeploymentDetector serverVersion={serverVersion || "initial"} />
+          {children}
+        </main>
       ) : (
         <LivePreviewProvider initialContent={content}>
           <LayoutInner content={content} isLanding={isLanding} isDev={isDev} serverVersion={serverVersion}>

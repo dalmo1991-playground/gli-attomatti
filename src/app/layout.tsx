@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
-import { getContent } from "@/lib/data";
+import { getContent, getPublicSiteContent } from "@/lib/data";
 import { SITE_URL, DEFAULT_SEO, getOrganizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getSiteVersion } from "@/lib/version";
@@ -153,6 +153,8 @@ export default async function RootLayout({
 
   const siteVersion = getSiteVersion();
 
+  const publicContent = await getPublicSiteContent();
+
   return (
     <html lang={content.site.language} suppressHydrationWarning>
       <head>
@@ -165,7 +167,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} antialiased selection:bg-primary/20 selection:text-primary`}
       >
         <LayoutWrapper
-          content={content}
+          content={publicContent}
           isDev={isDevBuild}
           initialHasAccess={!isDevBuild}
           serverVersion={siteVersion.version}

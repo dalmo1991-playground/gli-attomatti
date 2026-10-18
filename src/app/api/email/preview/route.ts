@@ -1,12 +1,19 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getContent } from "@/lib/data";
 import { renderEmailHtml, resolveEmailTheme, EmailTemplateConfig } from "@/lib/email/template";
 import { flattenJsonToDotNotation } from "@/lib/email/jsonPath";
+import { checkAdminAuth } from "@/lib/adminAuth";
+import { escapeHtml } from "@/lib/email/blocks";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = checkAdminAuth(req);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Non autorizzato." }, { status: auth.status || 401 });
+    }
+
     const url = new URL(req.url);
     let rawTemplateParam = (url.searchParams.get("template") || url.searchParams.get("id") || "").trim();
     let subcaseId = (url.searchParams.get("subcase") || url.searchParams.get("subcase_id") || "").trim();
@@ -83,7 +90,8 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error: any) {
-    return new Response(`<h1>Errore anteprima email</h1><pre>${error?.message || error}</pre>`, {
+    const errorText = error?.message || String(error);
+    return new Response(`<h1>Errore anteprima email</h1><pre>${escapeHtml(errorText)}</pre>`, {
       status: 500,
       headers: { "Content-Type": "text/html; charset=utf-8" }
     });

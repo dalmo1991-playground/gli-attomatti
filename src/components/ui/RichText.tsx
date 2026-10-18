@@ -104,7 +104,10 @@ export function RichText({
   // Pre-process markdown links [text](url) -> <a href="url">text</a> and highlights ==text== -> <mark>text</mark>
   const processedContent = useMemo(() => {
     return safeContent
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+        const safeUrl = url.trim().replace(/"/g, "%22").replace(/'/g, "%27").replace(/</g, "%3C").replace(/>/g, "%3E");
+        return `<a href="${safeUrl}">${text}</a>`;
+      })
       .replace(/==([^=]+)==/g, '<mark>$1</mark>');
   }, [safeContent]);
 

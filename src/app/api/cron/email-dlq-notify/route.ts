@@ -38,14 +38,7 @@ function isCronAuthorized(req: NextRequest): boolean {
     return true;
   }
 
-  // 4. Fallback for Vercel Cron if CRON_SECRET has not been set yet
-  // Rate-limited to max 2 executions per 10 minutes to prevent malicious email flooding
-  if (!cronSecret && req.headers.get("x-vercel-cron") === "1") {
-    const clientIp = getClientIp(req);
-    const cronRate = checkRateLimit(`cron-unauthenticated:${clientIp}`, 2, 600_000);
-    return cronRate.allowed;
-  }
-
+  // 4. In production, authorization must be validated with CRON_SECRET or ADMIN_SECRET
   return false;
 }
 

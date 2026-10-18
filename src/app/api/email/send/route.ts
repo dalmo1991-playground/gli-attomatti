@@ -248,7 +248,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4b. Respect the enabled flag: a disabled template never sends
+    // 4b. Restrict unauthenticated callers:
+    // Unauthenticated requests (e.g. public contact modal) can only trigger templates specifically permitted for public form use
+    if (!isSecretAuthorized) {
+      const isPublicPermitted =
+        selectedTemplate.id === "newsletter_welcome" ||
+        selectedTemplate.id === "contact_confirm" ||
+        selectedTemplate.id === "default-fallback" ||
+        (selectedTemplate as any).is_public === true ||
+        (selectedTemplate as any).allow_public === true;
+
+      if (!isPublicPermitted) {
+        return NextResponse.json(
+          {
+            error:
+              "Questo template richiede autenticazione tramite chiave segreta API (?secret=...). " +
+              "Solo i webhook autorizzati o gli amministratori possono attivarlo."
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 4c. Respect the enabled flag: a disabled template never sends
     if (selectedTemplate.enabled === false) {
       return NextResponse.json({
         success: false,
@@ -331,7 +353,8 @@ export async function POST(req: NextRequest) {
       ...(body.event_url || body.eventUrl ? { event_url: body.event_url || body.eventUrl } : {}),
       ...customMappedVars,
       ...(activeSubcase?.custom_fields || {}),
-      ...(body.variables && typeof body.variables === "object" ? body.variables : {})
+      // Only secret-authorized callers (webhooks/admin) may provide arbitrary variables overrides
+      ...(isSecretAuthorized && body.variables && typeof body.variables === "object" ? body.variables : {})
     };
 
     // 7. Resolve Theme & Render Email

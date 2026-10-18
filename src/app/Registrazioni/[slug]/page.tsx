@@ -2,6 +2,10 @@ import { getContent } from "@/lib/data";
 import { redirect } from "next/navigation";
 import RegistrationClient, { RegistrationPageData } from "./RegistrationClient";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/seo";
+
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const pages: RegistrationPageData[] = content?.registration_pages || [];
@@ -37,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${page.title} — Registrazione Online`,
       description: page.description || `Modulo per ${page.title} a Zurigo.`,
-      url: `https://gliattomatti.ch/Registrazioni/${slug}`,
+      url: `${SITE_URL}/Registrazioni/${slug}`,
       type: "website",
     },
   };

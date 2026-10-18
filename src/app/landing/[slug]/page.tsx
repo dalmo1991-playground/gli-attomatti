@@ -2,6 +2,10 @@ import { getContent } from "@/lib/data";
 import LandingClient from "./LandingClient";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/seo";
+
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const landings = content?.landings || [];
@@ -36,7 +40,7 @@ export async function generateMetadata({
     openGraph: {
       title: landing.title,
       description: heroBlock?.tagline,
-      url: `https://gliattomatti.ch/landing/${slug}`,
+      url: `${SITE_URL}/landing/${slug}`,
       type: "website",
       images: heroBlock?.hero_image ? [heroBlock.hero_image] : undefined
     },

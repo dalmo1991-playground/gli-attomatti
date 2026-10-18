@@ -3,6 +3,9 @@ import { getContent } from "@/lib/data";
 import { createPageMetadata, getBreadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import IniziativaDettaglioClient from "./IniziativaClient";
+
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const list = content?.pages?.iniziative?.archive_sections || [];

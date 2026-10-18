@@ -4,6 +4,8 @@ import { createPageMetadata, getTheaterEventJsonLd, getBreadcrumbJsonLd } from "
 import { getMediaDisplayUrl } from "@/lib/youtube";
 import { JsonLd } from "@/components/seo/JsonLd";
 import SpettacoloDettaglioClient from "./SpettacoloClient";
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const content = await getContent();
   const shows = content?.pages?.spettacoli?.archive_sections || [];
