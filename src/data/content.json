@@ -32,8 +32,14 @@
   },
   "navigation": [
     {
-      "label": "Dicono di noi",
-      "href": "/Chi_Siamo/Parlano_di_noi"
+      "label": "Chi Siamo",
+      "href": "/Chi_Siamo",
+      "sublinks": [
+        {
+          "label": "Dicono di Noi",
+          "href": "/Chi_Siamo/Parlano_di_noi"
+        }
+      ]
     },
     {
       "label": "Spettacoli",
@@ -180,7 +186,7 @@
     },
     "chi_siamo": {
       "title": "Chi Siamo",
-      "description": "La compagnia teatrale Gli Attomatti di Zurigo.",
+      "description": "Una storia che si scrive insieme",
       "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
       "meta_description": "La storia, la missione e la passione della compagnia Gli Attomatti: teatro amatoriale italiano dal vivo a Zurigo, Svizzera.",
       "keywords": [
@@ -193,7 +199,76 @@
       "carousel_photo_aria": "Foto",
       "fallback_photo_alt": "Foto",
       "year_prefix": "Anno ",
-      "content_sections": [],
+      "content_sections": [
+        {
+          "title": "Le origini",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "<p><i>Ci sono storie che nascono da un grande progetto, altre da un sogno custodito per anni.&nbsp;</i></p>\n\n<p>Quella degli Attomatti, invece, nasce da qualcosa di molto più semplice e profondamente umano: il desiderio di trovare degli amici.</p>\n\n<p>È il 2020 quando Domenico Scotti Di Carlo, napoletano di nascita e teatrante per vocazione, arriva a Zurigo. Alle spalle ha anni trascorsi tra palcoscenici, studi ed esperienze in diverse compagnie teatrali, dalla sua Napoli fino a Pavia, dove ha approfondito la propria formazione artistica. Davanti a sé, una nuova città, una nuova lingua e una vita tutta da costruire.</p>\n\n<p>Trasferirsi all’estero, però, non significa soltanto cambiare indirizzo. Significa ricominciare. Cercare nuovi punti di riferimento, nuove abitudini e, soprattutto, nuove persone con cui condividere un pezzo di strada.</p>\n\n<p>Per Domenico, abituato da sempre a vivere il teatro non soltanto come arte, ma anche come occasione di incontro, la soluzione sembrava quasi scontata: cercare una compagnia teatrale italiana a Zurigo.</p>"
+            }
+          ],
+          "text": "<p><i>Ci sono storie che nascono da un grande progetto, altre da un sogno custodito per anni.&nbsp;</i></p>\n\n<p>Quella degli Attomatti, invece, nasce da qualcosa di molto più semplice e profondamente umano: il desiderio di trovare degli amici.</p>\n\n<p>È il 2020 quando Domenico Scotti Di Carlo, napoletano di nascita e teatrante per vocazione, arriva a Zurigo. Alle spalle ha anni trascorsi tra palcoscenici, studi ed esperienze in diverse compagnie teatrali, dalla sua Napoli fino a Pavia, dove ha approfondito la propria formazione artistica. Davanti a sé, una nuova città, una nuova lingua e una vita tutta da costruire.</p>\n\n<p>Trasferirsi all’estero, però, non significa soltanto cambiare indirizzo. Significa ricominciare. Cercare nuovi punti di riferimento, nuove abitudini e, soprattutto, nuove persone con cui condividere un pezzo di strada.</p>\n\n<p>Per Domenico, abituato da sempre a vivere il teatro non soltanto come arte, ma anche come occasione di incontro, la soluzione sembrava quasi scontata: cercare una compagnia teatrale italiana a Zurigo.</p>",
+          "images": [],
+          "visible": true
+        },
+        {
+          "title": "Un’idea nata dagli ostacoli",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "<p><i>Facile a dirsi. Un po’ meno a farsi.</i></p>\n<p>Sono gli anni della pandemia, delle restrizioni, degli incontri rimandati e delle porte che sembrano rimanere ostinatamente chiuse. I tentativi non mancano, ma le possibilità sono poche. Quando finalmente si presenta l’occasione di unirsi a un gruppo teatrale nel Canton Argovia, una nuova ondata di Covid e le difficoltà organizzative finiscono per interrompere anche quell’esperienza.</p>\n<p>Eppure, proprio da quella serie di tentativi andati a vuoto, comincia a prendere forma un’idea.</p>\n<p><i>Se non si riesce a trovare una compagnia teatrale, perché non crearne una?</i></p>\n<p>Non ci sono ancora attori, né un copione, né tantomeno uno spettacolo in programma. Ci sono soltanto alcuni contatti, un po’ di esperienza teatrale e una buona dose di ostinazione.</p>\n<p>Comincia così il passaparola. Qualche messaggio, alcuni annunci, persone che ne invitano altre. L’obiettivo non è necessariamente trovare attori esperti, ma riunire chi abbia voglia di recitare, conoscere nuove persone e condividere un’esperienza. E, un incontro dopo l’altro, quel gruppo comincia davvero a formarsi.</p>"
+            }
+          ],
+          "text": "<p><i>Facile a dirsi. Un po’ meno a farsi.</i></p>\n<p>Sono gli anni della pandemia, delle restrizioni, degli incontri rimandati e delle porte che sembrano rimanere ostinatamente chiuse. I tentativi non mancano, ma le possibilità sono poche. Quando finalmente si presenta l’occasione di unirsi a un gruppo teatrale nel Canton Argovia, una nuova ondata di Covid e le difficoltà organizzative finiscono per interrompere anche quell’esperienza.</p>\n<p>Eppure, proprio da quella serie di tentativi andati a vuoto, comincia a prendere forma un’idea.</p>\n<p><i>Se non si riesce a trovare una compagnia teatrale, perché non crearne una?</i></p>\n<p>Non ci sono ancora attori, né un copione, né tantomeno uno spettacolo in programma. Ci sono soltanto alcuni contatti, un po’ di esperienza teatrale e una buona dose di ostinazione.</p>\n<p>Comincia così il passaparola. Qualche messaggio, alcuni annunci, persone che ne invitano altre. L’obiettivo non è necessariamente trovare attori esperti, ma riunire chi abbia voglia di recitare, conoscere nuove persone e condividere un’esperienza. E, un incontro dopo l’altro, quel gruppo comincia davvero a formarsi.</p>",
+          "images": [],
+          "visible": true
+        },
+        {
+          "title": "La nascita della compagnia",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "<p><i>Nell’estate del 2024 nascono gli Attomatti.</i></p>\n<p>A comporre la prima formazione sono persone diversissime tra loro: studenti e lavoratori, diciottenni e sessantenni, caratteri, professioni e storie di vita che difficilmente si sarebbero incrociati altrove.</p>\n<p>A unirli, almeno inizialmente, non è certo l’esperienza sul palcoscenico. Quella, a dire il vero, scarseggia parecchio.</p>\n<p><i>Ma non manca la voglia di mettersi in gioco.</i></p>\n<p>Il nome della compagnia viene scelto insieme. Tra proposte, idee e confronti, prende vita quello che sembra racchiudere perfettamente lo spirito del gruppo: <i>Gli Attomatti</i>.</p>\n<p>Un nome che lascia intuire una certa predisposizione alla follia. Quella buona, naturalmente. Quella che spinge persone fino a poco prima sconosciute a ritrovarsi in una sala, improvvisare situazioni improbabili e, soprattutto, accettare di mettersi in ridicolo davanti agli altri.</p>\n<p>Il primo ostacolo, però, è evidente: come si porta in scena una commedia con persone che, nella maggior parte dei casi, non hanno mai recitato?</p>\n<p><i>La risposta è semplice: non si comincia dalla commedia.</i></p>\n<p>Le prime prove diventano così una sorta di laboratorio teatrale: esercizi di espressione, improvvisazioni, giochi collettivi, lavoro sul corpo, sulla voce e sull’ascolto. Domenico mette a disposizione del gruppo gli strumenti acquisiti durante il proprio percorso artistico, ma è attraverso il contributo e l’entusiasmo di tutti che il progetto comincia a trovare una propria identità.</p>\n<p><i>Prima ancora di imparare a interpretare un personaggio, bisogna imparare a fidarsi degli altri.</i></p><p>Perché il teatro è anche questo: uno spazio in cui persone differenti imparano a collaborare, ad ascoltarsi, a superare le proprie insicurezze e a scoprire possibilità che forse non sapevano nemmeno di avere.</p>"
+            }
+          ],
+          "text": "<p><i>Nell’estate del 2024 nascono gli Attomatti.</i></p>\n<p>A comporre la prima formazione sono persone diversissime tra loro: studenti e lavoratori, diciottenni e sessantenni, caratteri, professioni e storie di vita che difficilmente si sarebbero incrociati altrove.</p>\n<p>A unirli, almeno inizialmente, non è certo l’esperienza sul palcoscenico. Quella, a dire il vero, scarseggia parecchio.</p>\n<p><i>Ma non manca la voglia di mettersi in gioco.</i></p>\n<p>Il nome della compagnia viene scelto insieme. Tra proposte, idee e confronti, prende vita quello che sembra racchiudere perfettamente lo spirito del gruppo: <i>Gli Attomatti</i>.</p>\n<p>Un nome che lascia intuire una certa predisposizione alla follia. Quella buona, naturalmente. Quella che spinge persone fino a poco prima sconosciute a ritrovarsi in una sala, improvvisare situazioni improbabili e, soprattutto, accettare di mettersi in ridicolo davanti agli altri.</p>\n<p>Il primo ostacolo, però, è evidente: come si porta in scena una commedia con persone che, nella maggior parte dei casi, non hanno mai recitato?</p>\n<p><i>La risposta è semplice: non si comincia dalla commedia.</i></p>\n<p>Le prime prove diventano così una sorta di laboratorio teatrale: esercizi di espressione, improvvisazioni, giochi collettivi, lavoro sul corpo, sulla voce e sull’ascolto. Domenico mette a disposizione del gruppo gli strumenti acquisiti durante il proprio percorso artistico, ma è attraverso il contributo e l’entusiasmo di tutti che il progetto comincia a trovare una propria identità.</p>\n<p><i>Prima ancora di imparare a interpretare un personaggio, bisogna imparare a fidarsi degli altri.</i></p><p>Perché il teatro è anche questo: uno spazio in cui persone differenti imparano a collaborare, ad ascoltarsi, a superare le proprie insicurezze e a scoprire possibilità che forse non sapevano nemmeno di avere.</p>",
+          "images": [],
+          "visible": true
+        },
+        {
+          "title": "Il primo debutto",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "<p>Passano i mesi. Il gruppo cresce, prende confidenza con il palcoscenico e comincia a trovare una propria identità.</p>\n<p><i>Arriva allora il momento di affrontare un vero copione.</i></p>\n<p>La scelta non è immediata. Vengono valutati diversi testi, cercando quello capace di valorizzare le qualità dei partecipanti e di accompagnarli verso il loro primo incontro con il pubblico.</p>\n<p>Alla fine, la scelta ricade su un grande classico del teatro italiano: <i>Ditegli sempre di sì</i>, di Eduardo De Filippo.</p>\n<p>È una commedia che il regista conosce bene, avendola già affrontata nel proprio percorso teatrale. Un testo ricco di equivoci, situazioni comiche e personaggi che richiedono precisione, ascolto e un grande lavoro d’insieme.</p>\n<p>Dall’estate del 2024 alla primavera del 2025 trascorrono mesi di prove, tentativi, difficoltà, risate e piccoli successi.</p>\n<p>Poi arriva finalmente il momento tanto atteso.</p>\n<p>Nella primavera del 2025, gli Attomatti debuttano davanti al pubblico di Zurigo con due rappresentazioni di <i>Ditegli sempre di sì.</i></p>\n<p>Per molti è la prima volta su un palcoscenico. Per tutti è il coronamento di un percorso cominciato quasi per caso, con il desiderio di conoscere nuove persone.</p>\n<p><i>Il primo sipario si alza.&nbsp;</i></p>\n<p>E con esso prende vita qualcosa che, soltanto pochi mesi prima, esisteva unicamente nell’immaginazione di un piccolo gruppo di sconosciuti.</p>"
+            }
+          ],
+          "text": "<p>Passano i mesi. Il gruppo cresce, prende confidenza con il palcoscenico e comincia a trovare una propria identità.</p>\n<p><i>Arriva allora il momento di affrontare un vero copione.</i></p>\n<p>La scelta non è immediata. Vengono valutati diversi testi, cercando quello capace di valorizzare le qualità dei partecipanti e di accompagnarli verso il loro primo incontro con il pubblico.</p>\n<p>Alla fine, la scelta ricade su un grande classico del teatro italiano: <i>Ditegli sempre di sì</i>, di Eduardo De Filippo.</p>\n<p>È una commedia che il regista conosce bene, avendola già affrontata nel proprio percorso teatrale. Un testo ricco di equivoci, situazioni comiche e personaggi che richiedono precisione, ascolto e un grande lavoro d’insieme.</p>\n<p>Dall’estate del 2024 alla primavera del 2025 trascorrono mesi di prove, tentativi, difficoltà, risate e piccoli successi.</p>\n<p>Poi arriva finalmente il momento tanto atteso.</p>\n<p>Nella primavera del 2025, gli Attomatti debuttano davanti al pubblico di Zurigo con due rappresentazioni di <i>Ditegli sempre di sì.</i></p>\n<p>Per molti è la prima volta su un palcoscenico. Per tutti è il coronamento di un percorso cominciato quasi per caso, con il desiderio di conoscere nuove persone.</p>\n<p><i>Il primo sipario si alza.&nbsp;</i></p>\n<p>E con esso prende vita qualcosa che, soltanto pochi mesi prima, esisteva unicamente nell’immaginazione di un piccolo gruppo di sconosciuti.</p>",
+          "images": [],
+          "visible": true
+        },
+        {
+          "title": "Oltre il primo sipario",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "<p><i>Ma il teatro, come la vita, è fatto anche di nuove sfide.</i></p>\n\n<p>Conclusa questa prima esperienza, emerge il desiderio di andare oltre. Il percorso compiuto ha dimostrato quanto il teatro possa unire persone diverse, trasformare le insicurezze in coraggio e dare vita a qualcosa di condiviso. Il regista sente così l’esigenza di ampliare il progetto, coinvolgere nuove energie e aprire le porte della compagnia a chiunque abbia voglia di mettersi in gioco.</p>\n\n<p>Del resto, Zurigo è una città in continuo movimento, abitata da persone che arrivano da Paesi, culture e percorsi differenti. Quante di loro stanno cercando un’occasione per incontrarsi, fare amicizia o semplicemente sentirsi parte di qualcosa?</p>\n\n<p><i>Il teatro potrebbe essere ancora una volta la risposta.</i></p>\n\n<p>Vengono organizzate due giornate di provini, pubblicizzate attraverso i social e il passaparola. La partecipazione è incoraggiante: arrivano soprattutto giovani adulti, molti intorno ai trent’anni, con esperienze diverse ma accomunati dal desiderio di mettersi alla prova.</p>\n\n<p>Sono due giornate intense, ricche di incontri e nuove possibilità.</p>\n\n<p>La compagnia si arricchisce così di nuovi volti, nuove energie e nuove ambizioni. E questa volta c’è già un progetto artistico pronto a prendere vita.</p>\n\n<p>Da qualche tempo, infatti, il regista sta lavorando a una personale rilettura della fiaba di Cenerentola, ispirata alle grandi versioni della tradizione ma destinata a diventare qualcosa di diverso.</p>\n\n<p>Una storia conosciuta da tutti, eppure ancora capace di sorprendere.</p>\n\n<p><i>Nasce così il progetto di Una Cenerentola.</i></p>"
+            },
+            {
+              "type": "text",
+              "text": "<p>Ma questa è un’altra storia. Un nuovo capitolo fatto di personaggi, costumi, prove e palcoscenici che porteranno la compagnia anche oltre i confini di Zurigo.</p>\n<p>Quello che era cominciato come il tentativo di trovare qualche amico si è trasformato, nel frattempo, in un progetto collettivo.</p>\n<p><i>Perché gli Attomatti, prima ancora di essere una compagnia teatrale, sono il risultato di una convinzione semplice: il teatro non è soltanto il luogo in cui si raccontano storie. È anche il luogo in cui le storie delle persone si incontrano.</i></p>\n<p>E quella degli Attomatti, in fondo, è cominciata proprio così.</p>"
+            },
+            {
+              "type": "text",
+              "text": "<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>La storia degli Attomatti è solo agli inizi. Scriviamo assieme i prossimi capitoli.</i></mark></span></div>"
+            }
+          ],
+          "text": "<p><i>Ma il teatro, come la vita, è fatto anche di nuove sfide.</i></p>\n\n<p>Conclusa questa prima esperienza, emerge il desiderio di andare oltre. Il percorso compiuto ha dimostrato quanto il teatro possa unire persone diverse, trasformare le insicurezze in coraggio e dare vita a qualcosa di condiviso. Il regista sente così l’esigenza di ampliare il progetto, coinvolgere nuove energie e aprire le porte della compagnia a chiunque abbia voglia di mettersi in gioco.</p>\n\n<p>Del resto, Zurigo è una città in continuo movimento, abitata da persone che arrivano da Paesi, culture e percorsi differenti. Quante di loro stanno cercando un’occasione per incontrarsi, fare amicizia o semplicemente sentirsi parte di qualcosa?</p>\n\n<p><i>Il teatro potrebbe essere ancora una volta la risposta.</i></p>\n\n<p>Vengono organizzate due giornate di provini, pubblicizzate attraverso i social e il passaparola. La partecipazione è incoraggiante: arrivano soprattutto giovani adulti, molti intorno ai trent’anni, con esperienze diverse ma accomunati dal desiderio di mettersi alla prova.</p>\n\n<p>Sono due giornate intense, ricche di incontri e nuove possibilità.</p>\n\n<p>La compagnia si arricchisce così di nuovi volti, nuove energie e nuove ambizioni. E questa volta c’è già un progetto artistico pronto a prendere vita.</p>\n\n<p>Da qualche tempo, infatti, il regista sta lavorando a una personale rilettura della fiaba di Cenerentola, ispirata alle grandi versioni della tradizione ma destinata a diventare qualcosa di diverso.</p>\n\n<p>Una storia conosciuta da tutti, eppure ancora capace di sorprendere.</p>\n\n<p><i>Nasce così il progetto di Una Cenerentola.</i></p>",
+          "images": [],
+          "visible": true
+        }
+      ],
       "navigation_links": [
         {
           "label": "Home",
