@@ -568,7 +568,7 @@ export function EmailTab() {
     const senderProfile = activeSubcase?.sender_profile || activeTemplate?.sender_profile || {};
     const rawFromName = senderProfile.from_name || settings.from_name || "Gli Attomatti";
     const resolvedFromName = replaceVars(rawFromName, sampleVariables, payload);
-    const resolvedFromEmail = senderProfile.from_email || settings.from_email || "info@gliattomatti.ch";
+    const resolvedFromEmail = senderProfile.from_email || settings.from_email || "no-reply@mail.gliattomatti.ch";
 
     const rawReplyTo = senderProfile.reply_to || settings.reply_to || "";
     const resolvedReplyTo = replaceVars(rawReplyTo, sampleVariables, payload);
@@ -1011,9 +1011,9 @@ export function EmailTab() {
           />
           <FormField
             label="Email Mittente"
-            value={settings.from_email ?? "info@gliattomatti.ch"}
+            value={settings.from_email ?? "no-reply@mail.gliattomatti.ch"}
             onChange={(v) => updateContent("emails.settings.from_email", v)}
-            placeholder="info@gliattomatti.ch"
+            placeholder="no-reply@mail.gliattomatti.ch"
             helpText="Dominio verificato su Resend."
           />
           <FormField

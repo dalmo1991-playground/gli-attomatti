@@ -156,7 +156,7 @@ export function convertArticleToEmailBlocks(article: any, siteBaseUrl: string = 
     id: `ftr-${uid()}`,
     type: "footer",
     enabled: true,
-    custom_text: "Ricevi questa email perché ti sei registrato agli eventi o alle novità de Gli Attomatti. Per non ricevere più queste comunicazioni, invia semplicemente una mail a info@gliattomatti.ch."
+    custom_text: "Ricevi questa email perché ti sei registrato agli eventi o alle novità de Gli Attomatti. Per non ricevere più queste comunicazioni, invia semplicemente una mail a compagniateatralegliattomatti@gmail.com."
   } as EmailBlock);
 
   return blocks;
@@ -191,9 +191,9 @@ export function buildArticleEmailHtml(
     themeColors: options.themeColors || DEFAULT_THEME_PRESET.colors,
     settings: options.settings || {
       from_name: "Gli Attomatti",
-      from_email: "info@gliattomatti.ch",
+      from_email: "no-reply@mail.gliattomatti.ch",
       footer_text: "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
-      privacy_note: "Per disiscriverti rispondi o scrivi a info@gliattomatti.ch."
+      privacy_note: "Per disiscriverti rispondi o scrivi a compagniateatralegliattomatti@gmail.com."
     },
     baseUrl
   });

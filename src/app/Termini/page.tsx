@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera, CalendarX } from "lucide-react";
+import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera, CalendarX, Accessibility, ShieldAlert, MessageSquare } from "lucide-react";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { LegalDocLayout, LegalDocCard } from "@/components/ui/LegalDocLayout";
@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
   const meta = content?.pages?.termini?.meta;
   return {
-    title: defaultText(meta?.title, "Termini di Biglietteria e Iscrizioni") || undefined,
+    title: defaultText(meta?.title, "Termini e Condizioni di Biglietteria e Iscrizioni") || undefined,
     description: defaultText(meta?.description) || undefined,
     alternates: {
       canonical: "/Termini",
@@ -25,7 +25,10 @@ const sectionIcons: Record<string, { icon: React.ElementType; color: string }> =
   hall_access: { icon: Clock, color: "bg-primary/10 text-primary" },
   rules: { icon: Ban, color: "bg-rose-500/10 text-rose-400" },
   photo_policy: { icon: Camera, color: "bg-amber-500/10 text-amber-400" },
+  accessibility: { icon: Accessibility, color: "bg-primary/10 text-primary" },
+  safety: { icon: ShieldAlert, color: "bg-rose-500/10 text-rose-400" },
   third_party: { icon: Laptop, color: "bg-secondary/10 text-secondary" },
+  complaints: { icon: MessageSquare, color: "bg-accent/10 text-accent" },
   jurisdiction: { icon: Scale, color: "bg-emerald-500/10 text-emerald-400" },
 };
 
@@ -53,7 +56,7 @@ export default async function TerminiPage() {
             icon={Icon}
             iconColorClass={iconConfig?.color}
           >
-            <div className="space-y-4 text-foreground/80 leading-relaxed font-medium">
+            <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
               {section.intro && <p><FormattedText text={section.intro} /></p>}
               {section.text && <p><FormattedText text={section.text} /></p>}
 
@@ -74,7 +77,7 @@ export default async function TerminiPage() {
                 ))}
 
               {section.cards && (
-                <div className="space-y-4 pt-2">
+                <div className="space-y-3 pt-2">
                   {section.cards.map((card: any, idx: number) => (
                     <div
                       key={idx}
@@ -86,7 +89,7 @@ export default async function TerminiPage() {
                         )}
                         {card.title}
                       </div>
-                      <p className="text-xs text-foreground/70 leading-relaxed">
+                      <p className="text-sm text-foreground/75 leading-relaxed">
                         <FormattedText text={card.text} />
                       </p>
                     </div>
