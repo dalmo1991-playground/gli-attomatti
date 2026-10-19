@@ -42,16 +42,21 @@ export default function RegistrationClient({ page: initialPage }: RegistrationCl
 
   const rawUrl = page.tally_url?.trim() || "";
 
-  // Normalize Tally URL into an optimized embed format with solid white background
+  // Normalize Tally URL:
+  // - transparentBackground=1: seamless transparent background (styled via Tally form customization)
+  // - dynamicHeight=1: allows Tally's embed.js to auto-resize height dynamically (no internal scrollbars)
+  // - hideTitle=1: avoids duplicate header titles
   const embedUrl = React.useMemo(() => {
     if (!rawUrl) return "";
     try {
       const match = rawUrl.match(/tally\.so\/(?:r|embed)\/([a-zA-Z0-9_-]+)/);
       if (match && match[1]) {
-        return `https://tally.so/embed/${match[1]}?alignLeft=1&transparentBackground=0`;
+        return `https://tally.so/embed/${match[1]}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
       }
       const u = new URL(rawUrl);
       u.protocol = "https:";
+      u.searchParams.set("transparentBackground", "1");
+      u.searchParams.set("dynamicHeight", "1");
       return u.toString();
     } catch {
       return rawUrl;
@@ -113,8 +118,8 @@ export default function RegistrationClient({ page: initialPage }: RegistrationCl
         legalLabel={defaultText(regUi.privacy_link, "Informativa Privacy")}
         iframeTitle={defaultText(page.title, regUi.default_category, "Modulo di Registrazione")}
         dataTallySrc={embedUrl}
-        minHeightClass="min-h-[780px] sm:min-h-[840px]"
-        frameContainerClassName="bg-white border-slate-200 p-2 sm:p-4 md:p-6"
+        minHeightClass="min-h-[250px]"
+        frameContainerClassName="bg-transparent border-0 shadow-none p-0"
         notConfiguredTitle={defaultText(regUi.not_configured_title, "Modulo non ancora configurato")}
         notConfiguredDescription={defaultText(regUi.not_configured_description, "Il modulo di registrazione per questa pagina non è al momento collegato a un form Tally attivo.")}
         fallbackNotice={defaultText(regUi.iframe_trouble_notice, "Difficoltà di compilazione? Puoi aprire il modulo in una nuova finestra:")}

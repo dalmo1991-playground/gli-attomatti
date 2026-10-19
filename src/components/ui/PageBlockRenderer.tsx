@@ -479,10 +479,12 @@ export function PageBlockRenderer({
               try {
                 const match = rawUrl.match(/tally\.so\/(?:r|embed)\/([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
-                  embedUrl = `https://tally.so/embed/${match[1]}?alignLeft=1&transparentBackground=0`;
+                  embedUrl = `https://tally.so/embed/${match[1]}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
                 } else {
                   const u = new URL(rawUrl);
                   u.protocol = "https:";
+                  u.searchParams.set("transparentBackground", "1");
+                  u.searchParams.set("dynamicHeight", "1");
                   embedUrl = u.toString();
                 }
               } catch {
@@ -509,6 +511,8 @@ export function PageBlockRenderer({
                   iframeTitle={tallyTitle || "Modulo Tally"}
                   fallbackButtonLabel={tallyFallbackBtn || undefined}
                   dataTallySrc={embedUrl}
+                  minHeightClass="min-h-[250px]"
+                  frameContainerClassName="bg-transparent border-0 shadow-none p-0"
                   onDirectClick={() => trackContact("tally_landing_external", rawUrl || embedUrl)}
                 />
               </div>
