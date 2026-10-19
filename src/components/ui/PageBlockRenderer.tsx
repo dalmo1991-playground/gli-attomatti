@@ -512,7 +512,7 @@ export function PageBlockRenderer({
                   fallbackButtonLabel={tallyFallbackBtn || undefined}
                   dataTallySrc={embedUrl}
                   minHeightClass="min-h-[250px]"
-                  frameContainerClassName="bg-transparent border-0 shadow-none p-0"
+                  frameContainerClassName="bg-[#0f172a] text-[#f8fafc] border border-white/10 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl"
                   onDirectClick={() => trackContact("tally_landing_external", rawUrl || embedUrl)}
                 />
               </div>
