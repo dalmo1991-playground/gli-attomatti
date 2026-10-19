@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Script from "next/script";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, ShieldCheck, Lock, Info } from "lucide-react";
 import { cn, defaultText } from "@/lib/utils";
@@ -70,6 +71,22 @@ export function EmbeddedFrameView({
 }: EmbeddedFrameViewProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const targetDirectUrl = directUrl || embedUrl;
+  const isTally = Boolean(dataTallySrc || embedUrl?.includes("tally.so"));
+
+  useEffect(() => {
+    if (isTally && typeof window !== "undefined") {
+      const initTally = () => {
+        const tallyObj = (window as any).Tally;
+        if (tallyObj && typeof tallyObj.loadEmbeds === "function") {
+          tallyObj.loadEmbeds();
+        }
+      };
+      // Run immediately and after a tick to ensure iframe DOM is attached
+      initTally();
+      const t = setTimeout(initTally, 100);
+      return () => clearTimeout(t);
+    }
+  }, [isTally, embedUrl]);
 
   return (
     <div className={cn("min-h-screen py-8 sm:py-10 px-4 sm:px-6", className)}>
@@ -130,30 +147,48 @@ export function EmbeddedFrameView({
 
         {/* Main Embed Frame Container */}
         {embedUrl ? (
-          <div className={cn("relative rounded-3xl border border-foreground/10 overflow-hidden shadow-2xl", frameContainerClassName)}>
-            {/* Loading Indicator */}
-            {!iframeLoaded && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/30 z-10 space-y-3 p-6 text-center">
-                <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                <p className="text-xs text-foreground/60 font-semibold uppercase tracking-wider">
-                  Caricamento in corso...
-                </p>
-              </div>
+          <>
+            {isTally && (
+              <Script
+                src="https://tally.so/widgets/embed.js"
+                strategy="afterInteractive"
+                onLoad={() => {
+                  if (typeof window !== "undefined" && (window as any).Tally) {
+                    (window as any).Tally.loadEmbeds();
+                  }
+                }}
+              />
             )}
+            <div className={cn("relative rounded-3xl border border-foreground/10 overflow-hidden shadow-2xl transition-all duration-300", frameContainerClassName)}>
+              {/* Loading Indicator */}
+              {!iframeLoaded && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/30 z-10 space-y-3 p-6 text-center">
+                  <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                  <p className="text-xs text-foreground/60 font-semibold uppercase tracking-wider">
+                    Caricamento in corso...
+                  </p>
+                </div>
+              )}
 
-            <iframe
-              src={embedUrl}
-              data-tally-src={dataTallySrc}
-              title={iframeTitle || undefined}
-              width="100%"
-              className={cn("w-full border-0 block", minHeightClass, iframeClassName)}
-              onLoad={() => setIframeLoaded(true)}
-              allow={allow}
-              sandbox={sandbox}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
-          </div>
+              <iframe
+                src={isTally ? undefined : embedUrl}
+                data-tally-src={isTally ? (dataTallySrc || embedUrl) : undefined}
+                title={iframeTitle || undefined}
+                width="100%"
+                className={cn("w-full border-0 block transition-all duration-300", !isTally && minHeightClass, iframeClassName)}
+                onLoad={() => {
+                  setIframeLoaded(true);
+                  if (isTally && typeof window !== "undefined" && (window as any).Tally) {
+                    (window as any).Tally.loadEmbeds();
+                  }
+                }}
+                allow={allow}
+                sandbox={isTally ? undefined : sandbox}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+          </>
         ) : (
           <div className="p-12 text-center rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
             <Info size={32} className="mx-auto text-accent" />
