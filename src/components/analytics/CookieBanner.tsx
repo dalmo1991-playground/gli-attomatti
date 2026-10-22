@@ -85,6 +85,8 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
       } else {
         // Fully up to date
         setIsOpen(false);
+        setAnalyticsChecked(Boolean(stored.analytics));
+        setMarketingChecked(Boolean(stored.marketing));
         onConsentChange({
           analytics: stored.analytics,
           marketing: stored.marketing,
@@ -98,6 +100,16 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
   // Listener to allow reopening banner from /Privacy page
   useEffect(() => {
     const handleReopen = () => {
+      try {
+        const storedRaw = localStorage.getItem("attomatti_cookie_consent");
+        if (storedRaw) {
+          const stored: StoredConsent = JSON.parse(storedRaw);
+          setAnalyticsChecked(Boolean(stored.analytics));
+          setMarketingChecked(Boolean(stored.marketing));
+        }
+      } catch {
+        // ignore
+      }
       setIsOpen(true);
       setShowDetails(true);
     };
@@ -106,10 +118,41 @@ export function CookieBanner({ integrations, uiContent, onConsentChange }: Cooki
     return () => window.removeEventListener("open-cookie-banner", handleReopen);
   }, []);
 
+  const clearTrackingCookies = (clearAnalytics: boolean, clearMarketing: boolean) => {
+    if (typeof document === "undefined") return;
+    const hostname = window.location.hostname;
+    const parts = hostname.split(".");
+    const rootDomain = parts.length > 2 ? parts.slice(-2).join(".") : hostname;
+    const domainVariants = [
+      "",
+      `; domain=${hostname}`,
+      `; domain=.${hostname}`,
+      `; domain=${rootDomain}`,
+      `; domain=.${rootDomain}`,
+    ];
+
+    const cookies = document.cookie.split(";");
+    for (const rawCookie of cookies) {
+      const name = rawCookie.split("=")[0].trim();
+      const isGa = name === "_ga" || name.startsWith("_ga_") || name.startsWith("_gid") || name.startsWith("_gat");
+      const isMeta = name === "_fbp" || name === "_fbc";
+
+      if ((clearAnalytics && isGa) || (clearMarketing && isMeta)) {
+        for (const dom of domainVariants) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/${dom};`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=;${dom};`;
+        }
+      }
+    }
+  };
+
   const saveConsent = (analytics: boolean, marketing: boolean) => {
     const consentedProviders: string[] = [];
     if (analytics && isGaActive) consentedProviders.push("google_analytics");
     if (marketing && isMetaActive) consentedProviders.push("meta_pixel");
+
+    // Cancella attivamente i cookie se il relativo consenso è revocato / non concesso
+    clearTrackingCookies(!analytics, !marketing);
 
     const newConsent: StoredConsent = {
       version: currentVersion,
