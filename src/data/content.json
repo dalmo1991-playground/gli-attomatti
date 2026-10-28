@@ -518,11 +518,6 @@
           ],
           "images": [
             {
-              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-              "alt": "Locandina",
-              "no_crop": true
-            },
-            {
               "url": "/images/1791099916565-cwdb-P00_7892.webp",
               "alt": "Foto della prima data del 3 ottobre"
             },
@@ -1052,20 +1047,6 @@
           "price": "Offerta Libera",
           "cta_label": "Prenota",
           "cta_href": "#registrazione"
-        },
-        {
-          "id": "b-cineforum-gallery",
-          "type": "gallery",
-          "anchor": "locandina",
-          "title": "La Locandina",
-          "images": [
-            {
-              "url": "/images/1790878889490-csxm-825277077_17935662918388724_6818388735878623004_n.webp",
-              "alt": "Locandina Cineforum Nel passo lento della meraviglia",
-              "caption": "Locandina ufficiale a cura di UNITRE Zurigo e Gli Attomatti Teatro",
-              "no_crop": true
-            }
-          ]
         },
         {
           "id": "b-1791100510424",
