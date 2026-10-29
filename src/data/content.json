@@ -1239,8 +1239,8 @@
             {
               "date": "24 Ottobre 2026, ore 15:00",
               "location": "Hotel Scuol Palace, Scuol",
-              "ticket_label": "Info",
-              "ticket_href": "https://www.volkstheater.ch/biennale-2026-theaterfest-im-unterengadin/",
+              "ticket_label": "",
+              "ticket_href": "",
               "location_href": "/Location/scuol-palace"
             }
           ],
@@ -1258,7 +1258,33 @@
               "value": "Domenico Scotti di Carlo"
             }
           ],
-          "images": [],
+          "images": [
+            {
+              "url": "https://youtu.be/ob69vnkujh0",
+              "alt": "Non sottovalutare i 40",
+              "no_crop": true
+            },
+            {
+              "url": "/images/1793278661269-mdak-dalmolens_155.webp",
+              "alt": "mdak dalmolens 155"
+            },
+            {
+              "url": "/images/1793278664307-uhq1-dalmolens_098.webp",
+              "alt": "uhq1 dalmolens 098"
+            },
+            {
+              "url": "/images/1793278662819-d2hp-dalmolens_083.webp",
+              "alt": "d2hp dalmolens 083"
+            },
+            {
+              "url": "/images/1793278659618-btba-dalmolens_113.webp",
+              "alt": "btba dalmolens 113"
+            },
+            {
+              "url": "/images/1793278657784-3a0x-dalmolens_112.webp",
+              "alt": "3a0x dalmolens 112"
+            }
+          ],
           "hero_image": "/images/1790869266263-non-sottovalutare-40.webp"
         },
         {
