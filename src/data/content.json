@@ -1207,6 +1207,53 @@
               ]
             }
           ]
+        },
+        {
+          "slug": "biennale-2026",
+          "title": "Gli Attomatti alla Biennale di Teatro Amatoriale Svizzero",
+          "year": "2026",
+          "date": "Ottobre 2026",
+          "timestamp": "2026-10-29T13:15:02.135Z",
+          "short_description": "Gli Attomatti hanno avuto l'onore di partecipare alla Biennale di Teatro Amatoriale Svizzero tenutasi a Scuol, in Engadina. Scopri come è andata!",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "Il viaggio",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": ""
+                }
+              ]
+            },
+            {
+              "title": "La biennale",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": ""
+                }
+              ]
+            },
+            {
+              "title": "Il teatro amatoriale svizzero",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": ""
+                }
+              ]
+            },
+            {
+              "title": "Non sottovalutare i 40",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": ""
+                }
+              ]
+            }
+          ]
         }
       ]
     },
