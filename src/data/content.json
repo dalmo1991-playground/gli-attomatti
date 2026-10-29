@@ -1241,7 +1241,8 @@
               "location": "Hotel Scuol Palace, Scuol",
               "ticket_label": "",
               "ticket_href": "",
-              "location_href": "/Location/scuol-palace"
+              "location_href": null,
+              "directions_badge_label": null
             }
           ],
           "details": [
