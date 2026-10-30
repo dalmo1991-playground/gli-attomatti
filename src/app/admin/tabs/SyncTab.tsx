@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import {
   GitCompare,
   ArrowRight,
-  ArrowLeftRight,
   RefreshCw,
   CheckCircle2,
   AlertTriangle,
@@ -20,17 +19,21 @@ import {
   Filter,
   Eye,
   Sliders,
+  ChevronDown,
   ChevronRight,
   Lock,
   Calendar,
   User,
   GitCommit,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Download,
+  UploadCloud,
+  FileEdit
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
-import { PageScope } from "@/lib/contentScopes";
+import { PageScope, applyScopedPromotion } from "@/lib/contentScopes";
 
 // Monaco DiffEditor loaded dynamically (100% client side)
 const DiffEditor = dynamic(
@@ -62,6 +65,8 @@ interface BranchInfo {
 interface ScopedDiffItem {
   scope: PageScope;
   hasDiff: boolean;
+  devValue: any;
+  mainValue: any;
   devImagesCount: number;
   mainImagesCount: number;
   devMissingOnMain: string[];
@@ -69,7 +74,7 @@ interface ScopedDiffItem {
 }
 
 export function SyncTab() {
-  const { adminSecret, activeBranch } = useAdmin();
+  const { adminSecret, activeBranch, content, setContent } = useAdmin();
 
   // REGOLA DI SICUREZZA ASSOLUTA: PULL-ONLY verso l'ambiente in cui ci troviamo!
   // Se sei su 'dev', target è SEMPRE 'dev' e la sorgente da cui importi è 'main'.
@@ -87,18 +92,13 @@ export function SyncTab() {
   const [searchFilter, setSearchFilter] = useState("");
   const [onlyDiffs, setOnlyDiffs] = useState(true);
 
-  // Promote modal / drawer states
-  const [selectedScope, setSelectedScope] = useState<ScopedDiffItem | null>(null);
-  const [isPromoting, setIsPromoting] = useState(false);
-  const [promoteResult, setPromoteResult] = useState<{
-    success: boolean;
-    commitUrl?: string;
-    shortSha?: string;
-    copiedImagesCount?: number;
-    msg?: string;
-  } | null>(null);
+  // Accordion state: which page scopes are expanded to see the diff
+  const [expandedScopeIds, setExpandedScopeIds] = useState<Set<string>>(new Set());
 
-  // Monaco Diff Editor Drawer
+  // Page import success feedback
+  const [importedPageMsg, setImportedPageMsg] = useState<string | null>(null);
+
+  // Monaco Diff Editor Drawer (for global comparison)
   const [isDiffEditorOpen, setIsDiffEditorOpen] = useState(false);
   const [diffEditorTargetCode, setDiffEditorTargetCode] = useState<string>("");
   const diffEditorRef = useRef<any>(null);
@@ -110,7 +110,7 @@ export function SyncTab() {
   const fetchComparison = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    setPromoteResult(null);
+    setImportedPageMsg(null);
 
     try {
       const res = await fetch("/api/admin/compare", {
@@ -141,6 +141,16 @@ export function SyncTab() {
     fetchComparison();
   }, [fetchComparison]);
 
+  // Toggle expand for page scope
+  const toggleExpand = (id: string) => {
+    setExpandedScopeIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   // Filter scopes
   const filteredScopes = useMemo(() => {
     return scopes.filter((item) => {
@@ -159,66 +169,44 @@ export function SyncTab() {
     return scopes.filter((s) => s.hasDiff).length;
   }, [scopes]);
 
-  // Execute single page promotion
-  const handlePromotePage = async (scopeItem: ScopedDiffItem) => {
-    if (!adminSecret) {
-      setError("Inserisci la password di amministrazione (chiave in alto a destra) per eseguire promozioni.");
-      return;
-    }
-
-    setIsPromoting(true);
+  // SAFE PULL / LOCAL UPDATE:
+  // Aggiorna lo stato `content` in memoria nell'admin. NESSUN COMMIT E NESSUN DEPLOY AUTOMATICO.
+  const handleImportPageLocally = (scopeItem: ScopedDiffItem) => {
     setError(null);
-    setPromoteResult(null);
+    setImportedPageMsg(null);
 
     try {
-      const res = await fetch("/api/admin/promote", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-secret": adminSecret
-        },
-        body: JSON.stringify({
-          sourceBranch,
-          targetBranch,
-          mode: "page",
-          jsonPath: scopeItem.scope.jsonPath,
-          pageUrl: scopeItem.scope.url,
-          message: `Promote page ${scopeItem.scope.url} (${sourceBranch} -> ${targetBranch}) via Admin`
-        })
+      // 1. Applica il valore della sorgente (sourceContent) sul content corrente dell'admin
+      const updated = applyScopedPromotion(content, sourceContent, scopeItem.scope.jsonPath);
+
+      // 2. Aggiorna lo stato React dell'admin (attiva 'hasUnsavedChanges' e diff standard)
+      setContent(updated);
+
+      setImportedPageMsg(
+        `Contenuto di "${scopeItem.scope.title}" importato localmente nella bozza corrente! Ora puoi testarlo nell'anteprima e, se soddisfatto, cliccare "Pubblica" in alto a destra.`
+      );
+
+      // Chiudi eventuale accordion
+      setExpandedScopeIds((prev) => {
+        const next = new Set(prev);
+        next.delete(scopeItem.scope.id);
+        return next;
       });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Errore durante la promozione");
-      }
-
-      setPromoteResult({
-        success: true,
-        commitUrl: data.commitUrl,
-        shortSha: data.shortSha,
-        copiedImagesCount: data.copiedImagesCount,
-        msg: `Pagina "${scopeItem.scope.title}" promossa con successo su ${targetBranch}!`
-      });
-
-      setSelectedScope(null);
-      // Refresh comparison
-      await fetchComparison();
     } catch (err: any) {
-      setError(err.message || "Errore durante la promozione");
-    } finally {
-      setIsPromoting(false);
+      console.error("Local import error:", err);
+      setError(`Errore durante l'importazione locale: ${err.message}`);
     }
   };
 
   // Open line-by-line diff editor
   const handleOpenDiffEditor = () => {
-    if (!targetContent) return;
-    setDiffEditorTargetCode(JSON.stringify(targetContent, null, 2));
+    if (!content) return;
+    setDiffEditorTargetCode(JSON.stringify(content, null, 2));
     setIsDiffEditorOpen(true);
   };
 
-  // Promote raw JSON from diff editor
-  const handlePromoteFromDiffEditor = async () => {
+  // Apply diff editor changes LOCALLY into Admin content
+  const handleApplyDiffLocally = () => {
     if (!diffEditorRef.current) return;
     const modifiedModel = diffEditorRef.current.getModifiedEditor().getModel();
     const modifiedValue = modifiedModel.getValue();
@@ -227,50 +215,13 @@ export function SyncTab() {
     try {
       parsed = JSON.parse(modifiedValue);
     } catch (e) {
-      setError("Il JSON nell'editor di destinazione non è valido. Correggi gli errori di sintassi prima di promuovere.");
+      setError("Il JSON nell'editor di destra non è valido. Correggi gli errori di sintassi prima di applicare.");
       return;
     }
 
-    setIsPromoting(true);
-    setError(null);
-    setPromoteResult(null);
-
-    try {
-      const res = await fetch("/api/admin/promote", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-secret": adminSecret || ""
-        },
-        body: JSON.stringify({
-          sourceBranch,
-          targetBranch,
-          mode: "raw_json",
-          customTargetContent: parsed,
-          message: `Apply customized diff promotion (${sourceBranch} -> ${targetBranch}) via Admin`
-        })
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Errore durante la promozione del JSON");
-      }
-
-      setPromoteResult({
-        success: true,
-        commitUrl: data.commitUrl,
-        shortSha: data.shortSha,
-        copiedImagesCount: data.copiedImagesCount,
-        msg: `Modifiche riga per riga applicate con successo su ${targetBranch}!`
-      });
-
-      setIsDiffEditorOpen(false);
-      await fetchComparison();
-    } catch (err: any) {
-      setError(err.message || "Errore durante il salvataggio");
-    } finally {
-      setIsPromoting(false);
-    }
+    setContent(parsed);
+    setImportedPageMsg("Modifiche dell'editor incorporate nella bozza locale corrente! Puoi procedere alla revisione o alla pubblicazione.");
+    setIsDiffEditorOpen(false);
   };
 
   return (
@@ -280,14 +231,15 @@ export function SyncTab() {
         <div>
           <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider mb-1">
             <GitCompare size={15} />
-            <span>Gestione Ambienti & Deployment</span>
+            <span>Gestione Ambienti & Importazione Protetta</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            Sincronizzazione Dev ⇄ Main
+            Confronto & Importazione ({sourceBranch} ➔ {targetBranch})
           </h1>
           <p className="text-sm text-foreground/50 mt-1 max-w-2xl">
-            Confronta i contenuti e le immagini tra il branch di sviluppo (<code className="font-mono text-amber-500">dev</code>)
-            e la produzione (<code className="font-mono text-emerald-500">main</code>). Promuovi modifiche selettivamente per singola pagina o riga per riga.
+            Confronta i contenuti con il branch <code className="font-mono text-primary font-bold">{sourceBranch}</code>.
+            Quando importi una pagina o una modifica, viene caricata <strong>solo localmente nella tua sessione di lavoro</strong>:
+            puoi verificarla nell&apos;anteprima e poi decidere se pubblicarla su <code className="font-mono text-primary font-bold">{targetBranch}</code>.
           </p>
         </div>
 
@@ -305,11 +257,11 @@ export function SyncTab() {
           <button
             type="button"
             onClick={handleOpenDiffEditor}
-            disabled={!contentDev || !contentMain}
+            disabled={!sourceContent}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-muted/60 hover:bg-muted border border-foreground/10 text-xs font-bold text-foreground transition-all shadow-sm"
           >
             <FileCode size={14} className="text-primary" />
-            <span>Confronto Riga per Riga</span>
+            <span>Confronto Globale Riga per Riga</span>
           </button>
         </div>
       </div>
@@ -327,48 +279,32 @@ export function SyncTab() {
         </div>
       )}
 
-      {/* Success alert */}
-      {promoteResult && (
-        <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs space-y-2 animate-fade-in">
+      {/* Success alert / Local draft notification */}
+      {importedPageMsg && (
+        <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-xs space-y-2 animate-fade-in">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-bold">
+            <div className="flex items-center gap-2 font-bold text-primary">
               <CheckCircle2 size={18} />
-              <span>{promoteResult.msg}</span>
+              <span>{importedPageMsg}</span>
             </div>
-            <button onClick={() => setPromoteResult(null)} className="p-1 hover:bg-emerald-500/20 rounded-lg">
+            <button onClick={() => setImportedPageMsg(null)} className="p-1 hover:bg-primary/20 rounded-lg">
               <X size={14} />
             </button>
           </div>
-          <div className="flex flex-wrap items-center gap-4 text-[11px] text-foreground/70 font-mono">
-            {promoteResult.shortSha && (
-              <span>Commit SHA: <strong className="text-foreground">{promoteResult.shortSha}</strong></span>
-            )}
-            {typeof promoteResult.copiedImagesCount === "number" && (
-              <span>Immagini sincronizzate: <strong className="text-foreground">{promoteResult.copiedImagesCount}</strong></span>
-            )}
-            {promoteResult.commitUrl && (
-              <a
-                href={promoteResult.commitUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline font-bold"
-              >
-                <span>Vedi commit su GitHub</span>
-                <ExternalLink size={11} />
-              </a>
-            )}
-          </div>
+          <p className="text-[11px] text-foreground/70">
+            Nessun commit o deploy è stato eseguito su GitHub. Usa il pulsante <strong>&quot;Pubblica su GitHub&quot;</strong> nella barra in alto quando sei pronto.
+          </p>
         </div>
       )}
 
-      {/* Branch overview cards & direction selector */}
+      {/* Branch overview cards (PULL-ONLY representation) */}
       <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
         {/* Source card */}
         <div className="md:col-span-5 p-5 rounded-2xl border border-foreground/10 bg-muted/20 relative overflow-hidden space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className={`w-2.5 h-2.5 rounded-full ${sourceBranch === 'main' ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
-              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/40">Sorgente (Da copiare)</span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/40">Sorgente Remota (Da importare)</span>
             </div>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${sourceBranch === 'main' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
               branch: {sourceBranch}
@@ -394,7 +330,7 @@ export function SyncTab() {
 
         {/* Direction Indicator (Fixed Inward PULL) */}
         <div className="md:col-span-1 flex flex-col items-center justify-center gap-1">
-          <div className="p-2.5 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-sm" title="Solo importazione (PULL) nell'ambiente corrente">
+          <div className="p-2.5 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-sm" title="Solo importazione (PULL) nel tuo ambiente">
             <ArrowRight size={18} className="animate-pulse" />
           </div>
           <span className="text-[9px] font-black uppercase tracking-wider text-primary">PULL</span>
@@ -406,7 +342,7 @@ export function SyncTab() {
             <div className="flex items-center gap-2">
               <div className={`w-2.5 h-2.5 rounded-full ${targetBranch === 'main' ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse`} />
               <span className="text-[11px] font-black uppercase tracking-wider text-primary font-bold">
-                Ambiente Corrente (Destinazione)
+                Tuo Ambiente Corrente (Destinazione)
               </span>
             </div>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${targetBranch === 'main' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
@@ -434,8 +370,8 @@ export function SyncTab() {
 
       {/* Pages filter and list section */}
       <AdminSection
-        title="Pagine del Sito & Differenze Rilevate"
-        description="Seleziona la pagina da promuovere. La promozione sovrascrive a destinazione ESCLUSIVAMENTE la pagina scelta e trasferisce automaticamente le immagini referenziate mancanti."
+        title="Confronto Pagina per Pagina"
+        description="Espandi qualsiasi pagina per esaminare il diff specifico e i valori a confronto. Clicca 'Importa nella bozza' per aggiornare il tuo ambiente locale senza effettuare deploy automatici."
         action={
           <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs">
             {diffCount} {diffCount === 1 ? 'pagina con differenze' : 'pagine con differenze'}
@@ -466,7 +402,7 @@ export function SyncTab() {
           </label>
         </div>
 
-        {/* Scopes table */}
+        {/* Scopes table with expandable diffs */}
         <div className="border border-foreground/10 rounded-2xl overflow-hidden bg-background">
           {isLoading ? (
             <div className="py-16 flex flex-col items-center justify-center gap-3 text-foreground/40 text-xs">
@@ -477,65 +413,151 @@ export function SyncTab() {
             <div className="py-16 text-center text-foreground/40 text-xs space-y-1">
               <CheckCircle2 size={28} className="mx-auto text-emerald-400 mb-2" />
               <p className="font-bold text-foreground">Nessuna differenza da mostrare!</p>
-              <p>Tutte le pagine visualizzate sono perfettamente sincronizzate tra {sourceBranch} e {targetBranch}.</p>
+              <p>Tutte le pagine visualizzate sono perfettamente allineate tra {sourceBranch} e {targetBranch}.</p>
             </div>
           ) : (
             <div className="divide-y divide-foreground/5">
               {filteredScopes.map((item) => {
+                const isExpanded = expandedScopeIds.has(item.scope.id);
+                const sourceVal = sourceBranch === "dev" ? item.devValue : item.mainValue;
+                const targetVal = targetBranch === "dev" ? item.devValue : item.mainValue;
                 const missingImgs = targetBranch === "main" ? item.devMissingOnMain : item.mainMissingOnDev;
 
                 return (
-                  <div
-                    key={item.scope.id}
-                    className="p-4 hover:bg-muted/30 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-                  >
-                    <div className="space-y-1 flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-foreground text-sm truncate">
-                          {item.scope.title}
-                        </span>
-                        <span className="px-2 py-0.5 rounded-md bg-muted text-[10px] font-medium text-foreground/60">
-                          {item.scope.category}
-                        </span>
-                        {item.hasDiff ? (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-bold text-[10px] flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                            Differenze
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium text-[10px]">
-                            Identica
-                          </span>
-                        )}
-                      </div>
+                  <div key={item.scope.id} className="transition-colors">
+                    {/* Row Header */}
+                    <div className="p-4 hover:bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => toggleExpand(item.scope.id)}
+                            className="p-1 rounded-lg hover:bg-muted text-foreground/60 hover:text-foreground transition-transform"
+                            title={isExpanded ? "Comprimi diff" : "Espandi diff specifico"}
+                          >
+                            <ChevronDown
+                              size={16}
+                              className={`transition-transform duration-200 ${isExpanded ? "rotate-180 text-primary" : ""}`}
+                            />
+                          </button>
 
-                      <div className="flex flex-wrap items-center gap-3 text-foreground/40 font-mono text-[11px]">
-                        <span className="text-primary font-semibold">{item.scope.url}</span>
-                        <span>•</span>
-                        <span>Scope: {item.scope.jsonPath}</span>
-                        {missingImgs.length > 0 && (
-                          <>
-                            <span>•</span>
-                            <span className="text-amber-400 font-sans font-medium flex items-center gap-1">
-                              <ImageIcon size={12} />
-                              {missingImgs.length} {missingImgs.length === 1 ? 'nuova immagine' : 'nuove immagini'} da copiare
+                          <span
+                            onClick={() => toggleExpand(item.scope.id)}
+                            className="font-bold text-foreground text-sm truncate cursor-pointer hover:text-primary transition-colors"
+                          >
+                            {item.scope.title}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md bg-muted text-[10px] font-medium text-foreground/60">
+                            {item.scope.category}
+                          </span>
+                          {item.hasDiff ? (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-bold text-[10px] flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              Differenze
                             </span>
-                          </>
-                        )}
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium text-[10px]">
+                              Identica
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-3 text-foreground/40 font-mono text-[11px] pl-6">
+                          <span className="text-primary font-semibold">{item.scope.url}</span>
+                          <span>•</span>
+                          <span>Scope: {item.scope.jsonPath}</span>
+                          {missingImgs.length > 0 && (
+                            <>
+                              <span>•</span>
+                              <span className="text-amber-400 font-sans font-medium flex items-center gap-1">
+                                <ImageIcon size={12} />
+                                {missingImgs.length} {missingImgs.length === 1 ? 'nuova immagine' : 'nuove immagini'}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => toggleExpand(item.scope.id)}
+                          className="px-3 py-1.5 rounded-xl border border-foreground/10 hover:bg-muted text-[11px] font-bold text-foreground/70 transition-all flex items-center gap-1"
+                        >
+                          <Eye size={12} />
+                          <span>{isExpanded ? "Nascondi Diff" : "Vedi Diff"}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleImportPageLocally(item)}
+                          disabled={!item.hasDiff}
+                          className="px-4 py-1.5 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md shadow-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <Download size={13} />
+                          <span>Importa nella Bozza</span>
+                        </button>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedScope(item)}
-                        disabled={!item.hasDiff || isPromoting}
-                        className="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md shadow-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        <span>Promuovi Pagina</span>
-                        <ArrowRight size={13} />
-                      </button>
-                    </div>
+                    {/* Expandable Diff Accordion */}
+                    {isExpanded && (
+                      <div className="px-6 py-4 bg-muted/30 border-t border-foreground/5 space-y-4 animate-fade-in">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-black uppercase tracking-wider text-primary flex items-center gap-1.5">
+                            <FileCode size={13} />
+                            <span>Confronto Valori: {item.scope.title}</span>
+                          </span>
+                          <span className="text-[10px] text-foreground/50 font-mono">
+                            Path: {item.scope.jsonPath}
+                          </span>
+                        </div>
+
+                        {/* Side by side preview */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                          {/* Source View (Remote) */}
+                          <div className="p-3.5 rounded-xl bg-background border border-foreground/10 space-y-2">
+                            <div className="flex items-center justify-between pb-1.5 border-b border-foreground/5">
+                              <span className="font-bold text-amber-400 text-[11px] uppercase tracking-wider">
+                                {sourceBranch} (Sorgente remota)
+                              </span>
+                              <span className="text-[10px] text-foreground/40">Valore disponibile</span>
+                            </div>
+                            <pre className="text-[11px] text-foreground/80 whitespace-pre-wrap break-all max-h-72 overflow-y-auto custom-scrollbar p-1">
+                              {sourceVal ? JSON.stringify(sourceVal, null, 2) : "(Non definito / assente)"}
+                            </pre>
+                          </div>
+
+                          {/* Target View (Local) */}
+                          <div className="p-3.5 rounded-xl bg-background border border-foreground/10 space-y-2">
+                            <div className="flex items-center justify-between pb-1.5 border-b border-foreground/5">
+                              <span className="font-bold text-primary text-[11px] uppercase tracking-wider">
+                                {targetBranch} (Tuo ambiente locale)
+                              </span>
+                              <span className="text-[10px] text-foreground/40">Valore attuale</span>
+                            </div>
+                            <pre className="text-[11px] text-foreground/80 whitespace-pre-wrap break-all max-h-72 overflow-y-auto custom-scrollbar p-1">
+                              {targetVal ? JSON.stringify(targetVal, null, 2) : "(Non definito / assente)"}
+                            </pre>
+                          </div>
+                        </div>
+
+                        {/* Action inside expanded section */}
+                        <div className="flex items-center justify-between pt-2">
+                          <p className="text-[11px] text-foreground/50">
+                            Cliccando su &quot;Importa nella bozza&quot;, il valore di destra verrà aggiornato con quello di sinistra.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => handleImportPageLocally(item)}
+                            className="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md shadow-primary/20"
+                          >
+                            <Download size={13} />
+                            <span>Importa questa pagina nella bozza</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -543,96 +565,6 @@ export function SyncTab() {
           )}
         </div>
       </AdminSection>
-
-      {/* Confirmation Modal for Page Promotion */}
-      {selectedScope && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-background border border-foreground/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-primary">Conferma Promozione Scoped</span>
-                <h3 className="text-lg font-black text-foreground">
-                  {selectedScope.scope.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedScope(null)}
-                className="p-1.5 rounded-xl hover:bg-muted text-foreground/40 hover:text-foreground"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs text-foreground/70">
-              <p>
-                Stai per importare la pagina <strong className="text-foreground">{selectedScope.scope.url}</strong> dal branch{" "}
-                <span className="font-mono text-primary font-bold">{sourceBranch}</span> nel tuo ambiente corrente (branch:{" "}
-                <span className="font-mono text-primary font-bold">{targetBranch}</span>).
-              </p>
-
-              <div className="p-3.5 rounded-2xl bg-muted/40 border border-foreground/5 space-y-1.5 font-mono text-[11px]">
-                <div>URL target: <strong className="text-foreground">{selectedScope.scope.url}</strong></div>
-                <div>Percorso JSON sovrascritto: <strong className="text-foreground">{selectedScope.scope.jsonPath}</strong></div>
-                <div className="text-emerald-400 font-sans font-medium text-xs pt-1">
-                  ✓ Tutto il resto di content.json su {targetBranch} rimarrà inalterato.
-                </div>
-              </div>
-
-              {((targetBranch === "dev" ? selectedScope.mainMissingOnDev : selectedScope.devMissingOnMain).length > 0) && (
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 space-y-2">
-                  <div className="flex items-center gap-1.5 font-bold">
-                    <ImageIcon size={14} />
-                    <span>Sincronizzazione Immagini Automatica</span>
-                  </div>
-                  <p className="text-[11px] text-amber-200/80">
-                    Questa pagina referenzia immagini presenti su {sourceBranch} che non esistono ancora su {targetBranch}. Verranno copiate automaticamente:
-                  </p>
-                  <ul className="list-disc list-inside font-mono text-[10px] space-y-0.5 text-amber-100">
-                    {(targetBranch === "dev" ? selectedScope.mainMissingOnDev : selectedScope.devMissingOnMain).map((img, i) => (
-                      <li key={i} className="truncate">{img}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {targetBranch === "main" && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-[11px] flex items-center gap-2">
-                  <AlertTriangle size={14} className="shrink-0 text-red-400" />
-                  <span>Stai importando modifiche in <strong>PRODUZIONE</strong> (main). Questo innescherà un nuovo deployment su Vercel.</span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setSelectedScope(null)}
-                className="px-4 py-2 rounded-full border border-foreground/10 text-xs font-bold hover:bg-muted"
-              >
-                Annulla
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePromotePage(selectedScope)}
-                disabled={isPromoting}
-                className="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-primary/90 flex items-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
-              >
-                {isPromoting ? (
-                  <>
-                    <RefreshCw size={14} className="animate-spin" />
-                    <span>Importazione in corso...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Importa su {targetBranch}</span>
-                    <ArrowRight size={14} />
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Monaco DiffEditor Drawer / Fullscreen View */}
       {isDiffEditorOpen && (
@@ -646,7 +578,7 @@ export function SyncTab() {
                   Confronto Riga per Riga (Monaco DiffEditor)
                 </h3>
                 <p className="text-[11px] text-foreground/50 font-mono">
-                  Sinistra: <strong>{sourceBranch} (Sorgente)</strong> | Destra: <strong>{targetBranch} (Destinazione - Modificabile)</strong>
+                  Sinistra: <strong>{sourceBranch} (Sorgente remota)</strong> | Destra: <strong>{targetBranch} (Bozza locale modificabile)</strong>
                 </p>
               </div>
             </div>
@@ -661,21 +593,11 @@ export function SyncTab() {
               </button>
               <button
                 type="button"
-                onClick={handlePromoteFromDiffEditor}
-                disabled={isPromoting}
-                className="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wider hover:bg-primary/90 flex items-center gap-2 shadow-md shadow-primary/20 disabled:opacity-50"
+                onClick={handleApplyDiffLocally}
+                className="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-wider hover:bg-primary/90 flex items-center gap-2 shadow-md shadow-primary/20"
               >
-                {isPromoting ? (
-                  <>
-                    <RefreshCw size={13} className="animate-spin" />
-                    <span>Salvataggio...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Salva & Promuovi su {targetBranch}</span>
-                    <ArrowRight size={13} />
-                  </>
-                )}
+                <Download size={13} />
+                <span>Applica Modifiche nella Bozza Locale</span>
               </button>
             </div>
           </div>

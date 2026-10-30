@@ -106,6 +106,8 @@ export async function GET(request: Request) {
       return {
         scope,
         hasDiff,
+        devValue: devVal,
+        mainValue: mainVal,
         devImagesCount: devImages.length,
         mainImagesCount: mainImages.length,
         devMissingOnMain,
