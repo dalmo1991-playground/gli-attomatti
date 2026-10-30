@@ -386,3 +386,145 @@ export async function commitTreeItems({
 
   return commitTree(ctx, treeItems, message);
 }
+
+/**
+ * Fetches raw file content and its commit/blob metadata from a specific branch.
+ */
+export async function fetchFileFromBranch(path: string, branch: string): Promise<{
+  content: string;
+  sha: string;
+} | null> {
+  const { repo, headers } = getGitHubContext(branch);
+  const url = `https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`;
+
+  try {
+    const res = await fetch(url, { cache: 'no-store', headers });
+    if (!res.ok) {
+      if (res.status === 404) return null;
+      throw await githubError(res, `Failed to fetch file ${path} on branch ${branch}`);
+    }
+    const data = await res.json();
+    if (!data.content) return null;
+
+    // GitHub returns base64 content with newlines
+    const buff = Buffer.from(data.content, 'base64');
+    return {
+      content: buff.toString('utf-8'),
+      sha: data.sha
+    };
+  } catch (err) {
+    console.warn(`[GitHub API] fetchFileFromBranch error for ${path} on ${branch}:`, err);
+    throw err;
+  }
+}
+
+/**
+ * Returns recursive tree items (with path and blob sha) for a given branch.
+ */
+export async function getBranchGitTree(branch: string, prefix = 'public/images'): Promise<Array<{ path: string; sha: string; size?: number }>> {
+  const { repo, headers } = getGitHubContext(branch);
+  const api = `https://api.github.com/repos/${repo}/git`;
+
+  try {
+    const refRes = await fetch(`${api}/ref/heads/${branch}`, { cache: 'no-store', headers });
+    if (!refRes.ok) throw await githubError(refRes, `Failed to get branch ref (${branch})`);
+    const commitSha = (await refRes.json()).object?.sha;
+
+    const commitRes = await fetch(`${api}/commits/${commitSha}`, { cache: 'no-store', headers });
+    if (!commitRes.ok) throw await githubError(commitRes, `Failed to get commit (${commitSha})`);
+    const treeSha = (await commitRes.json()).tree?.sha;
+
+    const treeRes = await fetch(`${api}/trees/${treeSha}?recursive=1`, { cache: 'no-store', headers });
+    if (!treeRes.ok) throw await githubError(treeRes, `Failed to fetch git tree for ${branch}`);
+    const treeData = await treeRes.json();
+
+    if (!Array.isArray(treeData.tree)) return [];
+
+    return treeData.tree
+      .filter((item: any) => item.type === 'blob' && (!prefix || item.path.startsWith(prefix)))
+      .map((item: any) => ({
+        path: item.path,
+        sha: item.sha,
+        size: item.size
+      }));
+  } catch (err) {
+    console.warn(`[GitHub API] getBranchGitTree error on ${branch}:`, err);
+    return [];
+  }
+}
+
+/**
+ * Fetches recent commit info for a branch (SHA, author, message, date).
+ */
+export async function getBranchLastCommit(branch: string): Promise<{
+  sha: string;
+  shortSha: string;
+  message: string;
+  author: string;
+  date: string;
+  htmlUrl: string;
+} | null> {
+  const { repo, headers } = getGitHubContext(branch);
+  const url = `https://api.github.com/repos/${repo}/commits?sha=${branch}&per_page=1`;
+
+  try {
+    const res = await fetch(url, { cache: 'no-store', headers });
+    if (!res.ok) return null;
+    const list = await res.json();
+    if (!Array.isArray(list) || list.length === 0) return null;
+    const c = list[0];
+    return {
+      sha: c.sha,
+      shortSha: c.sha.substring(0, 7),
+      message: c.commit?.message || '',
+      author: c.commit?.author?.name || c.author?.login || 'Admin',
+      date: c.commit?.author?.date || '',
+      htmlUrl: c.html_url || `https://github.com/${repo}/commit/${c.sha}`
+    };
+  } catch (err) {
+    console.warn(`[GitHub API] getBranchLastCommit error on ${branch}:`, err);
+    return null;
+  }
+}
+
+/**
+ * Atomically commits an updated content.json AND transfers missing blobs onto targetBranch.
+ */
+export async function commitSyncToBranch({
+  targetBranch,
+  contentJsonString,
+  extraBlobs = [],
+  message
+}: {
+  targetBranch: string;
+  contentJsonString: string;
+  extraBlobs?: Array<{ path: string; sha: string }>;
+  message: string;
+}) {
+  const ctx = getGitHubContext(targetBranch);
+
+  // 1. Create a blob for content.json
+  const contentBlobSha = await createGitHubBlob({
+    content: contentJsonString,
+    isBinary: false
+  });
+
+  // 2. Prepare tree items: content.json + all extra images/blobs
+  const treeItems: Array<{ path: string; mode: '100644'; type: 'blob'; sha: string }> = [
+    {
+      path: 'src/data/content.json',
+      mode: '100644',
+      type: 'blob',
+      sha: contentBlobSha
+    },
+    ...extraBlobs.map((b) => ({
+      path: b.path,
+      mode: '100644' as const,
+      type: 'blob' as const,
+      sha: b.sha
+    }))
+  ];
+
+  return commitTree(ctx, treeItems, message);
+}
+

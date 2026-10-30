@@ -29,9 +29,11 @@ import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { EmailTab } from "./tabs/EmailTab";
 import { JsonTab } from "./tabs/JsonTab";
 import { GuidaTab } from "./tabs/GuidaTab";
+import { SyncTab } from "./tabs/SyncTab";
 
 const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): string => {
   switch (tab) {
+    case "sync":
     case "guida":
     case "home":
     case "site":
@@ -200,6 +202,7 @@ function AdminContent() {
                   {activeTab === "parlano_di_noi" && <PressTab />}
                   {activeTab === "blog" && <BlogTab />}
                   {activeTab === "contatti" && <ContactTab />}
+                  {activeTab === "sync" && <SyncTab />}
                   {activeTab === "json" && <JsonTab onNavigateTab={(tab) => setActiveTab(tab)} />}
                 </div>
 
