@@ -97,17 +97,37 @@
     "home": {
       "meta_title": "Gli Attomatti — Compagnia Teatrale Italiana a Zurigo",
       "meta_description": "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Scopri i nostri spettacoli, le commedie in scena a Zurigo e acquista i biglietti.",
+      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
+      "fallback_show_alt": "Spettacolo",
+      "slide_aria_prefix": "Slide",
+      "discover_story_cta": "Scopri la nostra storia",
       "hero": {
         "title": "",
         "subtitle": "Compagnia teatrale amatoriale di lingua italiana a Zurigo.",
-        "primary_cta_label": "Spettacoli",
-        "primary_cta_href": "/Spettacoli",
-        "secondary_cta_label": "Chi Siamo",
-        "secondary_cta_href": "/Chi_Siamo"
+        "primary_cta_label": "",
+        "primary_cta_href": "",
+        "secondary_cta_label": "",
+        "secondary_cta_href": ""
       },
       "upcoming_shows": [
         {
           "active": true,
+          "title": "Cineforum",
+          "presenter": "Gli Attomatti e UNITRE presentano",
+          "tagline": "Nel passo lento della meraviglia",
+          "date": "Mensilmente, dal 3 ottobre",
+          "location": "Balberstrasse 47, Zurigo (Wollishofen)",
+          "location_href": "/Location/sala-wollishofen",
+          "directions_badge_label": null,
+          "cta": "Info & Prenotazioni",
+          "cta_href": "/Iniziative/cineforum",
+          "secondary_cta": "Offerta Libera",
+          "secondary_cta_href": "",
+          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+          "image_align": "left"
+        },
+        {
+          "active": false,
           "title": "Non Sottovalutare i 40",
           "presenter": "La Biennale Svizzera di Teatro Amatoriale presenta",
           "tagline": "Uno spettacolo degli Attomatti",
@@ -120,33 +140,14 @@
           "secondary_cta": "Scopri lo spettacolo",
           "secondary_cta_href": "/Spettacoli/non-sottovalutare-i-40",
           "image": "/images/1790869266263-non-sottovalutare-40.webp"
-        },
-        {
-          "active": true,
-          "title": "Cineforum",
-          "presenter": "Gli Attomatti ed UniTre Presentano",
-          "tagline": "Nel passo lento della meraviglia",
-          "date": "Mensilmente, dal 3 ottobre",
-          "location": "Balberstrasse 47, Zurich (Wollishofen)",
-          "location_href": "/Location/sala-wollishofen",
-          "directions_badge_label": null,
-          "cta": "Info & Prenotazioni",
-          "cta_href": "/Iniziative/cineforum",
-          "secondary_cta": "Offerta Libera",
-          "secondary_cta_href": "",
-          "image": "/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
-          "image_align": "left"
         }
       ],
-      "fallback_show_alt": "Spettacolo",
-      "curtain_alt": "Sipario teatrale — Compagnia Gli Attomatti Zurigo",
-      "slide_aria_prefix": "Slide",
       "introduction": {
         "title": "Gli Attomatti",
-        "story_button_label": "Scopri la nostra storia",
-        "story_button_href": "/Chi_Siamo",
-        "fallback_alt": "Introduzione",
-        "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e la voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione",
+        "text": "Gli Attomatti sono una giovane compagnia teatrale nata a Zurigo dall'incontro di persone accomunate dalla passione per il teatro, il sociale e la cultura italiana.\n\nLa compagnia nasce con il desiderio di portare momenti di allegria, condivisione, riflessione e spensieratezza, valorizzando l'italianità all'estero attraverso il linguaggio universale del teatro.\n\nLa compagnia spazia da serate di sketch e comicità a commedie d'autore, fino a spettacoli originali e inediti scritti dal proprio regista, con l'obiettivo di proporre un teatro vario, coinvolgente e capace di parlare a pubblici diversi. Attraverso il divertimento, l'ironia e la condivisione, Gli Attomatti desiderano creare occasioni di incontro, socialità e comunità per gli italiani all'estero e per tutti coloro che amano stare insieme.\n\nAccanto agli spettacoli, Gli Attomatti hanno inoltre organizzato corsi e attività teatrali rivolti ad adulti e bambini, promuovendo il teatro come forma di espressione, crescita personale e creatività. La compagnia continuerà a sviluppare nuovi progetti e iniziative aperte a tutti coloro che amano il teatro, l'arte e hanno voglia di mettersi in gioco.\n\nL'obiettivo della compagnia è non solo divertire il pubblico, ma anche creare legami, mantenere viva la cultura italiana e trasformare il teatro in un luogo di aggregazione, amicizia e condivisione.",
+        "story_button_label": null,
+        "story_button_href": null,
+        "fallback_alt": null,
         "images": [
           {
             "url": "/images/1782553648895-DSD00540.webp",
@@ -188,37 +189,15 @@
       },
       "instagram_feed": {
         "enabled": false,
+        "badge": "Social & Backstage",
         "title": "Seguici su Instagram",
         "subtitle": "Dietro le quinte, prove e momenti di scena della nostra compagnia",
         "handle": "@gliattomatti",
         "profile_url": "https://www.instagram.com/gliattomatti/",
-        "cta_label": "Segui @gliattomatti su Instagram",
-        "posts": [
-          {
-            "id": "ig-1790872348856",
-            "url": "https://www.instagram.com/gliattomatti/reel/Ddg97mBISvv/",
-            "title": ""
-          },
-          {
-            "id": "ig-1790872389603",
-            "url": "https://www.instagram.com/gliattomatti/reel/DdQ85ikIh5u/",
-            "title": ""
-          },
-          {
-            "id": "ig-1790872403841",
-            "url": "https://www.instagram.com/gliattomatti/reel/DdJXoSGo-ca/",
-            "title": ""
-          },
-          {
-            "id": "ig-1790872430852",
-            "url": "https://www.instagram.com/gliattomatti/p/DcgCuHCoxwz/",
-            "title": ""
-          }
-        ],
-        "badge": "Social & Backstage",
-        "enable_all_label": "Abilita tutti i post",
+        "cta_label": "Segui @gliattomatti",
         "prev_aria": "Precedente",
         "next_aria": "Successivo",
+        "enable_all_label": "Abilita tutti i post",
         "card": {
           "badge": "Protezione Privacy (2-Click)",
           "default_title": "Post Instagram",
@@ -228,9 +207,9 @@
           "privacy_link": "Informativa Privacy",
           "open_on_instagram": "Apri su Instagram",
           "loading_text": "Caricamento post..."
-        }
-      },
-      "discover_story_cta": "Scopri la nostra storia"
+        },
+        "posts": []
+      }
     },
     "chi_siamo": {
       "meta_title": "Chi Siamo — La Compagnia Teatrale a Zurigo",
