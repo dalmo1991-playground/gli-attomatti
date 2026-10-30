@@ -21,7 +21,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Send,
-  BookOpen
+  BookOpen,
+  GitCompare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +66,7 @@ const navSections = [
   {
     category: "Guida & Strumenti",
     items: [
+      { id: "sync", label: "Sincronizza Ambienti", icon: GitCompare },
       { id: "guida", label: "Guida & Manuale", icon: BookOpen },
       { id: "json", label: "Sorgente JSON", icon: Code }
     ]
