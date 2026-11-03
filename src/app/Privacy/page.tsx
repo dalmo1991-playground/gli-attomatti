@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
-import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail, Video, Database, FileCheck, Lock } from "lucide-react";
+import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Cookie, ClipboardList, Camera, Mail, Video, Database, FileCheck, Lock, Calendar } from "lucide-react";
 import { defaultText } from "@/lib/utils";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 import { LegalDocLayout } from "@/components/ui/LegalDocLayout";
@@ -613,6 +613,26 @@ export default async function PrivacyPage() {
               </div>
             </div>
           )}
+
+          {/* Integrazione Opzionale Google Calendar (Area Riservata Membri) */}
+          <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Calendar size={20} />
+              </div>
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                Integrazione Opzionale Google Calendar (Area Riservata)
+              </h2>
+            </div>
+            <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+              <p>
+                All&apos;interno dell&apos;area riservata del Calendario Assenze, i membri della compagnia hanno la facoltà opzionale di importare le proprie indisponibilità collegando temporaneamente il proprio account Google Calendar tramite OAuth 2.0 (Google Identity Services).
+              </p>
+              <p>
+                <strong>Trattamento esclusivamente locale (client-side):</strong> l&apos;accesso ai dati del calendario avviene in sola lettura e unicamente all&apos;interno del browser dell&apos;utente. Nessun token di accesso, credenziale o dato personale relativo agli impegni privati dell&apos;utente viene memorizzato o trasmesso ai server dell&apos;Associazione. Al momento dell&apos;importazione dell&apos;assenza, i titoli degli eventi privati vengono rimossi e non vengono memorizzati nelle note condivise della compagnia.
+              </p>
+            </div>
+          </div>
 
           {/* I tuoi diritti */}
           {p?.your_rights && (

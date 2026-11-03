@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { AbsenceRecord, SpecialDate } from "@/types/absence";
+import GoogleCalendarImportModal from "./GoogleCalendarImportModal";
 import {
   User,
   Calendar,
@@ -13,7 +14,8 @@ import {
   AlertCircle,
   HelpCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Download
 } from "lucide-react";
 
 interface MyAbsencesTabProps {
@@ -25,6 +27,7 @@ interface MyAbsencesTabProps {
   activeMember: string;
   onSelectMember: (member: string) => void;
   onOpenAddModal: (prefillMember?: string, prefillDate?: string) => void;
+  onBatchAddAbsences?: (records: AbsenceRecord[]) => void;
   onDeleteAbsence: (id: string, memberName: string) => Promise<void>;
   onPrevMonth?: () => void;
   onNextMonth?: () => void;
@@ -45,6 +48,7 @@ export default function MyAbsencesTab({
   specialDates = [],
   activeMember,
   onOpenAddModal,
+  onBatchAddAbsences,
   onDeleteAbsence,
   onPrevMonth,
   onNextMonth,
@@ -52,6 +56,7 @@ export default function MyAbsencesTab({
 }: MyAbsencesTabProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isGCalModalOpen, setIsGCalModalOpen] = useState(false);
 
   const todayStr = useMemo(() => {
     const d = new Date();
@@ -220,12 +225,12 @@ export default function MyAbsencesTab({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {onToday && (
             <button
               type="button"
               onClick={onToday}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors"
+              className="text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-xl bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors"
             >
               Oggi
             </button>
@@ -233,8 +238,19 @@ export default function MyAbsencesTab({
 
           <button
             type="button"
+            onClick={() => setIsGCalModalOpen(true)}
+            className="bg-muted hover:bg-muted-foreground/20 text-foreground font-semibold text-xs sm:text-sm px-2.5 sm:px-3.5 py-2 rounded-xl flex items-center gap-1.5 border border-muted shadow-sm active:scale-95 transition-all shrink-0"
+            title="Importa impegni da Google Calendar"
+          >
+            <Download className="w-3.5 h-3.5 text-primary" />
+            <span className="hidden sm:inline">Importa da GCal</span>
+            <span className="sm:hidden">GCal</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => onOpenAddModal(activeMember)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm px-3.5 sm:px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md shadow-primary/25 active:scale-95 transition-all shrink-0"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md shadow-primary/25 active:scale-95 transition-all shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Nuova Assenza</span>
@@ -597,6 +613,17 @@ export default function MyAbsencesTab({
           </div>
         </div>
       )}
+      {/* Google Calendar Import Modal */}
+      <GoogleCalendarImportModal
+        isOpen={isGCalModalOpen}
+        onClose={() => setIsGCalModalOpen(false)}
+        activeMember={activeMember}
+        onSuccess={(records) => {
+          if (onBatchAddAbsences) {
+            onBatchAddAbsences(records);
+          }
+        }}
+      />
     </div>
   );
 }

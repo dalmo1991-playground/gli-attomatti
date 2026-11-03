@@ -248,6 +248,19 @@ export default function AbsenceCalendar({
     updateDraft(updated);
   };
 
+  // 8b. Add multiple absences to the local draft (from Google Calendar import)
+  const handleBatchAddDraftAbsences = (newRecords: AbsenceRecord[]) => {
+    if (!newRecords || newRecords.length === 0) return;
+    const updated = [...draftAbsences, ...newRecords].sort((a, b) =>
+      a.startDate.localeCompare(b.startDate)
+    );
+    updateDraft(updated);
+    setSaveSuccessMsg(
+      `${newRecords.length} ${newRecords.length === 1 ? "assenza creata" : "assenze create"} in bozza! Premi 'Salva modifiche' per confermare.`
+    );
+    setTimeout(() => setSaveSuccessMsg(""), 5000);
+  };
+
   // 9. Delete an absence from the local draft
   const handleDeleteDraftAbsence = async (id: string, memberName: string) => {
     // If it's the active member, delete from local draft
@@ -679,6 +692,7 @@ export default function AbsenceCalendar({
                 setModalPrefillEndDate(prefillDate || "");
                 setIsModalOpen(true);
               }}
+              onBatchAddAbsences={handleBatchAddDraftAbsences}
               onDeleteAbsence={handleDeleteDraftAbsence}
               onPrevMonth={handlePrevMonth}
               onNextMonth={handleNextMonth}
