@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getContent } from "@/lib/data";
 import { DEFAULT_MEMBERS, SpecialDate } from "@/types/absence";
 import AbsencePinGate from "@/components/assenze/AbsencePinGate";
@@ -22,9 +23,12 @@ export default async function AssenzePage() {
 
   const specialDates: SpecialDate[] = content?.pages?.attori?.special_dates || [];
 
+  const cookieStore = await cookies();
+  const initialIsUnlocked = cookieStore.get("attomatti_assenze_auth")?.value === "1";
+
   return (
     <main className="min-h-screen bg-background text-foreground pb-16 pt-6">
-      <AbsencePinGate>
+      <AbsencePinGate initialIsUnlocked={initialIsUnlocked}>
         <AbsenceCalendar configuredMembers={configuredMembers} specialDates={specialDates} />
       </AbsencePinGate>
     </main>

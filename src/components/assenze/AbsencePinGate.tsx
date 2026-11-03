@@ -2,66 +2,70 @@
 
 import React, { useState, useEffect } from "react";
 import { Lock, KeyRound, AlertCircle, Sparkles } from "lucide-react";
+import { verifyAbsencePin, logoutAbsencePin } from "@/app/actions/absenceAuth";
 
-const STORAGE_KEY = "attomatti_assenze_pin_auth";
-const REQUIRED_PIN = "attomatti";
+const STORAGE_KEY = "attomatti_assenze_auth";
 
 interface AbsencePinGateProps {
   children: React.ReactNode;
+  initialIsUnlocked?: boolean;
 }
 
-export default function AbsencePinGate({ children }: AbsencePinGateProps) {
-  const [isUnlocked, setIsUnlocked] = useState<boolean | null>(null);
+export default function AbsencePinGate({
+  children,
+  initialIsUnlocked = false
+}: AbsencePinGateProps) {
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(initialIsUnlocked);
   const [pinInput, setPinInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === REQUIRED_PIN) {
-        setIsUnlocked(true);
-      } else {
-        setIsUnlocked(false);
-      }
-    } catch {
-      setIsUnlocked(false);
+    // If not unlocked via server cookie on SSR, check localStorage backup
+    if (!initialIsUnlocked) {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored === "1") {
+          setIsUnlocked(true);
+        }
+      } catch {}
     }
-  }, []);
+  }, [initialIsUnlocked]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pinInput.trim()) return;
+
     setIsSubmitting(true);
     setErrorMsg("");
 
-    const clean = pinInput.trim().toLowerCase();
-    if (clean === REQUIRED_PIN) {
-      try {
-        localStorage.setItem(STORAGE_KEY, REQUIRED_PIN);
-      } catch {}
-      setIsUnlocked(true);
-    } else {
-      setErrorMsg("PIN non corretto. Riprova.");
+    try {
+      const res = await verifyAbsencePin(pinInput);
+      if (res.success) {
+        try {
+          localStorage.setItem(STORAGE_KEY, "1");
+        } catch {}
+        setIsUnlocked(true);
+      } else {
+        setErrorMsg(res.error || "PIN non corretto. Riprova.");
+      }
+    } catch {
+      setErrorMsg("Errore di connessione durante la verifica del PIN.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
-  const handleLock = () => {
+  const handleLock = async () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    try {
+      await logoutAbsencePin();
     } catch {}
     setIsUnlocked(false);
     setPinInput("");
   };
-
-  // Initial loading state to prevent flash
-  if (isUnlocked === null) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   if (!isUnlocked) {
     return (
@@ -97,7 +101,7 @@ export default function AbsencePinGate({ children }: AbsencePinGateProps) {
                     setPinInput(e.target.value);
                     if (errorMsg) setErrorMsg("");
                   }}
-                  placeholder="Es. attomatti"
+                  placeholder="Inserisci PIN di compagnia..."
                   className="w-full bg-background/80 border border-muted rounded-xl px-4 py-3 pl-10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
                 <KeyRound className="w-5 h-5 text-muted-foreground/60 absolute left-3 top-3.5" />
@@ -116,13 +120,13 @@ export default function AbsencePinGate({ children }: AbsencePinGateProps) {
               disabled={isSubmitting || !pinInput.trim()}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <span>Accedi al Calendario</span>
+              <span>{isSubmitting ? "Verifica in corso..." : "Accedi al Calendario"}</span>
               <Sparkles className="w-4 h-4" />
             </button>
           </form>
 
           <p className="text-xs text-center text-muted-foreground/70 mt-6">
-            Il PIN viene memorizzato sul tuo smartphone: non dovrai reinserirlo alle prossime visite.
+            Il PIN viene memorizzato sul tuo dispositivo: non dovrai reinserirlo alle prossime visite.
           </p>
         </div>
       </div>
@@ -145,4 +149,3 @@ export default function AbsencePinGate({ children }: AbsencePinGateProps) {
     </div>
   );
 }
-
