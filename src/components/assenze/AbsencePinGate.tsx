@@ -102,7 +102,7 @@ export default function AbsencePinGate({
                     if (errorMsg) setErrorMsg("");
                   }}
                   placeholder="Inserisci PIN di compagnia..."
-                  className="w-full bg-background/80 border border-muted rounded-xl px-4 py-3 pl-10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full bg-background/80 border border-muted rounded-xl px-4 py-3 pl-10 text-base sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
                 <KeyRound className="w-5 h-5 text-muted-foreground/60 absolute left-3 top-3.5" />
               </div>
@@ -126,7 +126,7 @@ export default function AbsencePinGate({
           </form>
 
           <p className="text-xs text-center text-muted-foreground/70 mt-6">
-            Il PIN viene memorizzato sul tuo dispositivo: non dovrai reinserirlo alle prossime visite.
+            L&apos;accesso rimane memorizzato su questo dispositivo per le prossime visite.
           </p>
         </div>
       </div>
@@ -138,11 +138,11 @@ export default function AbsencePinGate({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex justify-end">
         <button
           onClick={handleLock}
-          title="Blocca sessione e richiedi nuovamente il PIN"
+          title="Esci e richiedi nuovamente il PIN"
           className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/40 hover:bg-muted border border-muted/60 transition-colors"
         >
           <Lock className="w-3.5 h-3.5" />
-          <span>Blocca Accesso</span>
+          <span>Esci / Blocca</span>
         </button>
       </div>
       {children}

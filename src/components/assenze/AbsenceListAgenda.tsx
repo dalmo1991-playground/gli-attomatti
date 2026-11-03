@@ -127,7 +127,7 @@ export default function AbsenceListAgenda({
                   : "bg-background/60 border-muted/70"
               }`}
             >
-              <div className="flex items-center justify-between mb-3 border-b border-muted/50 pb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-muted/50 pb-2">
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-9 h-9 rounded-xl flex flex-col items-center justify-center font-bold text-xs ${
@@ -166,7 +166,7 @@ export default function AbsenceListAgenda({
                   <button
                     onClick={() => onAddForDate(d.dateStr)}
                     title="Aggiungi assenza per questa data"
-                    className="p-1.5 rounded-lg bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                    className="w-8 h-8 rounded-lg bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground active:scale-95 flex items-center justify-center transition-all"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -220,9 +220,9 @@ export default function AbsenceListAgenda({
                           onClick={() => handleDelete(rec)}
                           disabled={deletingId === rec.id}
                           title="Elimina la tua assenza"
-                          className="text-muted-foreground hover:text-primary p-1.5 rounded-lg hover:bg-primary/10 transition-colors shrink-0 disabled:opacity-50"
+                          className="text-muted-foreground hover:text-primary w-8 h-8 rounded-lg hover:bg-primary/10 active:scale-95 flex items-center justify-center transition-all shrink-0 disabled:opacity-50"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       ) : (
                         <span className="text-[10px] text-muted-foreground/60 italic shrink-0 px-1">

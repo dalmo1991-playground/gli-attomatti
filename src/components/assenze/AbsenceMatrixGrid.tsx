@@ -242,18 +242,18 @@ export default function AbsenceMatrixGrid({
   };
 
   return (
-    <div className="relative w-full space-y-3">
-      {/* Filter Bar with Multi-Select Persons & Presets */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-muted/40 p-3 rounded-2xl border border-muted">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">
-            Persone visibili:
+    <div className="relative w-full space-y-2.5 sm:space-y-3">
+      {/* Filter Bar with Multi-Select Persons & Presets - Responsive & Compact */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 bg-muted/40 p-2 sm:p-3 rounded-2xl border border-muted">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mr-1 whitespace-nowrap hidden sm:inline">
+            Persone:
           </span>
 
           <button
             type="button"
             onClick={() => setSelectedFilterMembers([])}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
               selectedFilterMembers.length === 0
                 ? "bg-primary text-primary-foreground shadow"
                 : "bg-background/60 text-muted-foreground hover:text-foreground border border-muted"
@@ -266,7 +266,7 @@ export default function AbsenceMatrixGrid({
             <button
               type="button"
               onClick={() => setSelectedFilterMembers([activeMember])}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                 selectedFilterMembers.length === 1 &&
                 selectedFilterMembers[0].toLowerCase() === activeMember.toLowerCase()
                   ? "bg-primary text-primary-foreground shadow"
@@ -281,7 +281,7 @@ export default function AbsenceMatrixGrid({
           <button
             type="button"
             onClick={() => setIsFilterModalOpen(true)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               selectedFilterMembers.length > 0 &&
               !(
                 selectedFilterMembers.length === 1 &&
@@ -298,15 +298,15 @@ export default function AbsenceMatrixGrid({
                 selectedFilterMembers.length === 1 &&
                 selectedFilterMembers[0].toLowerCase() === activeMember.toLowerCase()
               )
-                ? `Filtro Personalizzato (${selectedFilterMembers.length} persone)`
+                ? `Filtro (${selectedFilterMembers.length})`
                 : "Scegli N Persone..."}
             </span>
           </button>
         </div>
 
         {selectedFilterMembers.length > 0 && (
-          <div className="flex items-center gap-2 self-start sm:self-center">
-            <span className="text-xs text-muted-foreground">
+          <div className="flex items-center justify-between sm:justify-start gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-muted/40">
+            <span className="text-[11px] text-muted-foreground">
               Mostrate {visibleMembers.length} di {members.length}
             </span>
             <button
@@ -320,45 +320,47 @@ export default function AbsenceMatrixGrid({
         )}
       </div>
 
-      {/* Floating Guidance Banner during 2-Click Range Selection */}
+      {/* Floating Guidance Banner during 2-Click Range Selection - Compact on mobile */}
       {rangeStart && (
-        <div className="bg-primary/15 border-2 border-primary/50 text-foreground p-3 sm:p-4 rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2.5 text-xs sm:text-sm">
-            <div className="w-3 h-3 rounded-full bg-primary animate-ping shrink-0" />
-            <div>
-              <p className="font-bold text-foreground">
-                Data inizio selezionata: <span className="text-primary underline">{rangeStart}</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                &bull; Clicca di nuovo sul <strong>{rangeStart.split("-")[2]}</strong> per confermare <strong>1 giorno singolo</strong>.<br className="sm:hidden" />
-                &bull; Oppure clicca su una data successiva per selezionare l&apos;<strong>intero intervallo</strong>.
-              </p>
+        <div className="bg-primary/15 border border-primary/40 text-foreground p-2 sm:p-2.5 rounded-xl shadow-md flex items-center justify-between gap-2 text-xs animate-in fade-in">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping shrink-0" />
+            <div className="min-w-0 truncate">
+              <span className="font-bold text-foreground">Inizio: {rangeStart.split("-").reverse().join("/")}</span>
+              <span className="text-muted-foreground ml-1.5 hidden sm:inline">
+                &bull; Tocca di nuovo il {rangeStart.split("-")[2]} per 1 giorno, oppure una data successiva per il periodo.
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setRangeStart(null);
-                setRangeHover(null);
-              }}
-              className="px-3 py-1.5 bg-background text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-colors"
-            >
-              Annulla selezione
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setRangeStart(null);
+              setRangeHover(null);
+            }}
+            className="px-2.5 py-1 bg-background/80 hover:bg-background text-xs font-semibold text-muted-foreground hover:text-foreground rounded-lg border border-muted transition-colors shrink-0"
+          >
+            Annulla
+          </button>
         </div>
       )}
 
+      {/* Mobile swipe prompt */}
+      <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1 sm:hidden">
+        <span className="text-foreground/80 font-medium">👉 Scorri in orizzontale</span>
+        <span>Tocca la cella per registrare</span>
+      </div>
+
       {/* Scrollable table wrapper */}
-      <div className="overflow-x-auto rounded-xl border border-muted bg-background/50 shadow-inner custom-scrollbar pb-3">
+      <div className="overflow-x-auto rounded-xl border border-muted bg-background/50 shadow-inner custom-scrollbar pb-2 touch-pan-x">
         <table className="w-full border-collapse text-xs select-none">
           <thead>
             {/* Row 1: Day numbers & Special events */}
             <tr className="bg-muted/80 backdrop-blur sticky top-0 z-30">
-              <th className="sticky left-0 z-40 bg-muted/95 border-b border-r border-muted/80 px-3 py-2 text-left font-bold text-foreground min-w-[130px] sm:min-w-[150px] shadow-sm">
-                MEMBRI ({visibleMembers.length})
+              <th className="sticky left-0 z-40 bg-muted/95 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-bold text-foreground min-w-[92px] sm:min-w-[140px] max-w-[95px] sm:max-w-[160px] shadow-sm">
+                <span className="hidden sm:inline">MEMBRI ({visibleMembers.length})</span>
+                <span className="sm:hidden text-[11px]">MEMBRI</span>
               </th>
               {daysInMonth.map((d) => {
                 const spec = d.specialEvent;
@@ -385,16 +387,16 @@ export default function AbsenceMatrixGrid({
                     onClick={() => {
                       if (spec) setSelectedSpecialDate(spec);
                     }}
-                    className={`border-b border-r border-muted/60 px-1 py-1 text-center font-bold min-w-[36px] sm:min-w-[40px] transition-all ${headerBg}`}
+                    className={`border-b border-r border-muted/60 px-0.5 py-1 text-center font-bold min-w-[32px] sm:min-w-[38px] w-[32px] sm:w-[38px] transition-all ${headerBg}`}
                     title={
                       spec
                         ? `${spec.title} (${spec.type === "show" ? "Spettacolo" : "Prova"}) — Clicca per dettagli`
                         : undefined
                     }
                   >
-                    <span className="block text-[13px]">{d.dayNumber}</span>
+                    <span className="block text-xs sm:text-[13px]">{d.dayNumber}</span>
                     {spec && (
-                      <span className="block text-[9px] font-black uppercase tracking-tighter truncate max-w-[38px] mx-auto animate-pulse">
+                      <span className="block text-[8px] sm:text-[9px] font-black uppercase tracking-tighter truncate max-w-[34px] sm:max-w-[38px] mx-auto animate-pulse">
                         {spec.type === "show" ? "🎭 Spett" : "🎬 Prova"}
                       </span>
                     )}
@@ -404,8 +406,8 @@ export default function AbsenceMatrixGrid({
             </tr>
 
             {/* Row 2: Day of week letters (L, M, M, G, V, S, D) */}
-            <tr className="bg-muted/70 sticky top-[33px] z-20">
-              <th className="sticky left-0 z-30 bg-muted/90 border-b border-r border-muted/80 px-3 py-1 text-left text-[11px] font-medium text-muted-foreground">
+            <tr className="bg-muted/70 sticky top-[30px] sm:top-[33px] z-20">
+              <th className="sticky left-0 z-30 bg-muted/90 border-b border-r border-muted/80 px-2 sm:px-3 py-0.5 sm:py-1 text-left text-[10px] sm:text-[11px] font-medium text-muted-foreground min-w-[92px] sm:min-w-[140px]">
                 Giorno
               </th>
               {daysInMonth.map((d) => {
@@ -426,7 +428,7 @@ export default function AbsenceMatrixGrid({
                 return (
                   <th
                     key={`day-letter-${d.dateStr}`}
-                    className={`border-b border-r border-muted/60 px-1 py-1 text-center text-[10px] font-semibold ${letterClass}`}
+                    className={`border-b border-r border-muted/60 px-0.5 py-0.5 text-center text-[9px] sm:text-[10px] font-semibold min-w-[32px] sm:min-w-[38px] ${letterClass}`}
                   >
                     {d.dayLetter}
                   </th>
@@ -461,18 +463,18 @@ export default function AbsenceMatrixGrid({
                         : "bg-muted/15"
                     }`}
                   >
-                    {/* Sticky Member Name Column */}
+                    {/* Sticky Member Name Column - Compact & readable on mobile */}
                     <td
-                      className={`sticky left-0 z-10 border-b border-r border-muted/80 px-3 py-2 font-medium text-[12px] truncate max-w-[150px] shadow-sm ${
+                      className={`sticky left-0 z-10 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 font-medium text-[11px] sm:text-xs truncate min-w-[92px] sm:min-w-[140px] max-w-[95px] sm:max-w-[160px] shadow-sm ${
                         isMyRow
                           ? "bg-primary/20 text-primary font-bold"
                           : "bg-background/95 text-foreground"
                       }`}
                     >
-                      <div className="flex items-center gap-1.5 justify-between">
+                      <div className="flex items-center gap-1 justify-between min-w-0">
                         <span className="truncate">{member}</span>
                         {isMyRow && (
-                          <span className="text-[10px] bg-primary text-primary-foreground font-black px-1.5 py-0.5 rounded-full uppercase shrink-0">
+                          <span className="text-[9px] bg-primary text-primary-foreground font-black px-1.5 py-0.2 rounded-full uppercase shrink-0">
                             Tu
                           </span>
                         )}
@@ -560,8 +562,9 @@ export default function AbsenceMatrixGrid({
 
             {/* Bottom Row: Totale Assenti per giorno */}
             <tr className="bg-muted/90 font-bold border-t-2 border-muted sticky bottom-0 z-20">
-              <td className="sticky left-0 z-30 bg-muted border-r border-muted/80 px-3 py-2 text-left text-[11px] text-foreground uppercase tracking-wider shadow-sm">
-                Totale Assenti
+              <td className="sticky left-0 z-30 bg-muted border-r border-muted/80 px-2 sm:px-3 py-1.5 text-left text-[10px] sm:text-[11px] text-foreground uppercase tracking-wider min-w-[92px] sm:min-w-[140px] shadow-sm">
+                <span className="hidden sm:inline">Totale Assenti</span>
+                <span className="sm:hidden font-bold">Totale</span>
               </td>
               {daysInMonth.map((d) => {
                 const stat = dailyAbsenceStats.get(d.dateStr) || { total: 0, certain: 0, maybe: 0 };
@@ -578,7 +581,7 @@ export default function AbsenceMatrixGrid({
                 return (
                   <td
                     key={`total-${d.dateStr}`}
-                    className={`border-r border-muted/60 px-1 py-2 text-center text-[11px] ${badgeClass}`}
+                    className={`border-r border-muted/60 px-0.5 py-1.5 text-center text-[10px] sm:text-[11px] min-w-[32px] sm:min-w-[38px] w-[32px] sm:w-[38px] ${badgeClass}`}
                     title={
                       stat.total > 0
                         ? `Totale: ${stat.total} (${stat.certain} certi, ${stat.maybe} in dubbio)`
@@ -587,7 +590,7 @@ export default function AbsenceMatrixGrid({
                   >
                     <span>{stat.total}</span>
                     {stat.maybe > 0 && (
-                      <span className="text-[9px] text-secondary block font-normal leading-none mt-0.5">
+                      <span className="text-[8px] sm:text-[9px] text-secondary block font-normal leading-none mt-0.5">
                         +{stat.maybe}?
                       </span>
                     )}
@@ -599,35 +602,34 @@ export default function AbsenceMatrixGrid({
         </table>
       </div>
 
-      {/* Legend & quick helper */}
-      <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground mt-3 px-1">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 bg-primary text-primary-foreground font-bold text-[10px] flex items-center justify-center rounded-sm">
+      {/* Legend & quick helper - Compact Chips for Mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-muted-foreground mt-2 px-1">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60">
+            <span className="w-3 h-3 bg-primary text-primary-foreground font-bold text-[9px] flex items-center justify-center rounded-sm">
               ✕
             </span>
-            <span>Assenza Certa</span>
+            <span className="text-[11px]">Certa</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 bg-secondary text-secondary-foreground font-bold text-[10px] flex items-center justify-center rounded-sm">
+          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60">
+            <span className="w-3 h-3 bg-secondary text-secondary-foreground font-bold text-[9px] flex items-center justify-center rounded-sm">
               ?
             </span>
-            <span>Forse Assente (In dubbio)</span>
+            <span className="text-[11px]">Forse</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60">
             <span className="w-2 h-2 rounded-full bg-accent inline-block" />
-            <span>Nota / Orario</span>
+            <span className="text-[11px]">Con nota</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.5 bg-primary/20 text-primary border border-primary/30 rounded text-[10px] font-bold">
+          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60">
+            <span className="text-[10px] font-bold text-primary">
               🎭 Spett / 🎬 Prova
             </span>
-            <span>Data Speciale (clicca intestazione)</span>
           </div>
         </div>
 
-        <p className="italic text-[11px]">
-          Suggerimento selezione rapida: <strong>clicca 2 volte</strong> sulla tua riga (stessa data per 1 giorno, oppure inizio e fine per periodo).
+        <p className="text-[11px] text-muted-foreground/80 hidden sm:block">
+          Registrazione rapida: <strong>clicca 2 volte</strong> sulla tua riga (stessa data = 1 giorno, oppure inizio e fine per periodo).
         </p>
       </div>
 

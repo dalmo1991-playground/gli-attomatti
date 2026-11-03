@@ -167,21 +167,21 @@ export default function SpecialDatesView({
                 </div>
 
                 {/* Counters summary */}
-                <div className="flex items-center gap-2 self-start sm:self-center">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted/60 border border-muted text-xs">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 self-start sm:self-center">
+                  <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-muted/60 border border-muted text-xs">
                     <span className="font-bold text-foreground">{spec.presentCount}</span>
                     <span className="text-muted-foreground">presenti</span>
                   </div>
 
                   {spec.certainAbsents.length > 0 && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/15 border border-primary/30 text-xs text-primary font-bold">
+                    <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-primary/15 border border-primary/30 text-xs text-primary font-bold">
                       <span>{spec.certainAbsents.length}</span>
-                      <span>assenti certi</span>
+                      <span>assenti</span>
                     </div>
                   )}
 
                   {spec.maybeAbsents.length > 0 && (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary/15 border border-secondary/30 text-xs text-secondary font-bold">
+                    <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-secondary/15 border border-secondary/30 text-xs text-secondary font-bold">
                       <span>{spec.maybeAbsents.length}</span>
                       <span>in dubbio</span>
                     </div>

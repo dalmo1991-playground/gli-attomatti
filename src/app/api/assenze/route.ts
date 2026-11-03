@@ -96,7 +96,7 @@ export async function PUT(req: NextRequest) {
   } catch (error: any) {
     console.error("[API Assenze PUT Exception]", error);
     return NextResponse.json(
-      { success: false, error: "Errore durante il salvataggio batch su cloud: " + (error?.message || error) },
+      { success: false, error: "Errore durante il salvataggio: " + (error?.message || error) },
       { status: 500 }
     );
   }

@@ -89,17 +89,20 @@ export default function AbsenceFormModal({
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
       <div
-        className="w-full max-w-lg bg-muted border border-muted-foreground/30 rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-muted border border-muted-foreground/30 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Mobile handle indicator */}
+        <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full mx-auto sm:hidden mb-1" />
+
         <div className="flex items-center justify-between border-b border-muted-foreground/20 pb-3">
-          <div className="flex items-center gap-2 text-foreground font-bold text-lg">
+          <div className="flex items-center gap-2 text-foreground font-bold text-base sm:text-lg">
             <Calendar className="w-5 h-5 text-primary" />
             <span>Registra Nuova Assenza</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors"
+            className="w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-background/50 flex items-center justify-center transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -212,7 +215,7 @@ export default function AbsenceFormModal({
                   setStartDate(e.target.value);
                   if (endDate < e.target.value) setEndDate(e.target.value);
                 }}
-                className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -231,7 +234,7 @@ export default function AbsenceFormModal({
                   min={startDate}
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-base sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             )}
@@ -251,7 +254,7 @@ export default function AbsenceFormModal({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Es. Dalle 20:30, Tutta la sera, Viaggio"
-              className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full bg-background border border-muted rounded-xl px-3 py-2.5 text-base sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
             />
 
             {/* Quick chips */}

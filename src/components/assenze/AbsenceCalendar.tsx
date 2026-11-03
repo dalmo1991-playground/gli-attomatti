@@ -55,7 +55,6 @@ export default function AbsenceCalendar({
 
   // Cloud/all absences
   const [cloudAbsences, setCloudAbsences] = useState<AbsenceRecord[]>([]);
-  const [storageType, setStorageType] = useState<string>("live");
   const [isLoadingAll, setIsLoadingAll] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -102,7 +101,6 @@ export default function AbsenceCalendar({
 
       const allRecords: AbsenceRecord[] = json.absences || [];
       setCloudAbsences(allRecords);
-      setStorageType(json.storage || "live");
     } catch (err: any) {
       setErrorMsg(err?.message || "Errore di connessione.");
     } finally {
@@ -192,7 +190,7 @@ export default function AbsenceCalendar({
 
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Errore durante il salvataggio su Cloud.");
+        throw new Error(json.error || "Errore durante il salvataggio.");
       }
 
       // Mark as synced locally
@@ -207,7 +205,7 @@ export default function AbsenceCalendar({
         ...draftAbsences
       ]);
 
-      setSaveSuccessMsg("Modifiche salvate con successo sul Cloud!");
+      setSaveSuccessMsg("Modifiche salvate con successo!");
       setTimeout(() => setSaveSuccessMsg(""), 4000);
     } catch (err: any) {
       setErrorMsg(err?.message || "Errore durante il salvataggio.");
@@ -218,7 +216,7 @@ export default function AbsenceCalendar({
 
   // 7. Discard local draft and revert to Cloud snapshot
   const handleDiscardChanges = () => {
-    if (!confirm("Vuoi annullare le modifiche locali non salvate e ripristinare i dati del Cloud?")) {
+    if (!confirm("Vuoi annullare tutte le modifiche non ancora salvate?")) {
       return;
     }
     setDraftAbsences(syncedAbsences);
@@ -289,19 +287,19 @@ export default function AbsenceCalendar({
   // Step 1: Member selector screen if no active member selected or changing
   if (!activeMember || isChangingMember) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-12">
-        <div className="bg-muted/70 border border-muted-foreground/30 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
-          <div className="w-14 h-14 bg-primary/20 text-primary border border-primary/30 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
-            <Users className="w-7 h-7" />
+      <div className="max-w-xl mx-auto px-4 py-8 sm:py-12">
+        <div className="bg-muted/70 border border-muted-foreground/30 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur-md space-y-5 sm:space-y-6">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/20 text-primary border border-primary/30 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+            <Users className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
 
-          <div className="text-center space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-primary">
+          <div className="text-center space-y-1.5">
+            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-primary">
               Passo 1 di 2 — Identificazione
             </span>
-            <h2 className="text-2xl font-black text-foreground">Chi sei?</h2>
-            <p className="text-sm text-muted-foreground">
-              Seleziona il tuo nome dalla compagnia per visualizzare e modificare il tuo calendario assenze.
+            <h2 className="text-xl sm:text-2xl font-black text-foreground">Chi sei?</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Seleziona il tuo nome per accedere al tuo calendario assenze e registrare disponibilità.
             </p>
           </div>
 
@@ -320,7 +318,7 @@ export default function AbsenceCalendar({
                     } catch {}
                   }
                 }}
-                className="w-full bg-background border border-muted rounded-2xl px-4 py-4 pl-12 text-foreground font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer shadow-inner"
+                className="w-full bg-background border border-muted rounded-2xl px-4 py-3.5 pl-12 text-foreground font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer shadow-inner"
               >
                 <option value="">-- Seleziona il tuo nome dalla lista --</option>
                 {members.map((m) => (
@@ -329,10 +327,10 @@ export default function AbsenceCalendar({
                   </option>
                 ))}
               </select>
-              <UserIcon className="w-6 h-6 text-muted-foreground absolute left-4 top-4 pointer-events-none" />
+              <UserIcon className="w-5 h-5 text-muted-foreground absolute left-4 top-4 pointer-events-none" />
             </div>
 
-            <p className="text-xs text-muted-foreground/80 text-center">
+            <p className="text-[11px] text-muted-foreground/80 text-center">
               L&apos;elenco dei membri è gestito direttamente dall&apos;amministrazione del sito.
             </p>
           </div>
@@ -342,38 +340,40 @@ export default function AbsenceCalendar({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-28">
-      {/* Top Header & Identity Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-muted/80 pb-5">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-6 space-y-4 sm:space-y-6 pb-28">
+      {/* Top Header & Identity Banner - Compact on mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-muted/80 pb-3 sm:pb-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Gli Attomatti — Calendario Assenze Prove & Spettacoli</span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5 bg-primary/10 border border-primary/25 px-2.5 py-0.5 rounded-full">
+              <Sparkles className="w-3 h-3" />
+              Gli Attomatti
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            Calendario Assenze Compagnia
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
+            Calendario Assenze
           </h1>
-          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            <span className="text-xs sm:text-sm text-muted-foreground">Stai operando come:</span>
-            <span className="inline-flex items-center gap-1.5 bg-primary/20 text-primary border border-primary/30 px-2.5 py-0.5 rounded-full text-xs font-bold">
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-muted-foreground">Accesso:</span>
+            <button
+              type="button"
+              onClick={() => setIsChangingMember(true)}
+              className="inline-flex items-center gap-1.5 bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 px-2.5 py-1 rounded-full text-xs font-bold transition-all active:scale-95"
+              title="Clicca per cambiare persona"
+            >
               <UserIcon className="w-3 h-3" />
               <span>{activeMember}</span>
-            </span>
-            <button
-              onClick={() => setIsChangingMember(true)}
-              className="text-xs text-muted-foreground hover:text-foreground underline transition-colors ml-1"
-            >
-              (Cambia persona)
+              <span className="text-[10px] text-muted-foreground font-normal">(cambia)</span>
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => loadCloudData(true)}
             disabled={isRefreshing}
-            title="Aggiorna dati dal cloud"
-            className="p-3 bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1.5 text-xs font-medium"
+            title="Aggiorna calendario"
+            className="h-10 px-3 bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
             <span className="hidden sm:inline">Aggiorna</span>
@@ -387,28 +387,28 @@ export default function AbsenceCalendar({
               setModalPrefillEndDate("");
               setIsModalOpen(true);
             }}
-            className="flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-5 py-3 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm"
+            className="flex-1 sm:flex-initial h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 sm:px-5 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-xs sm:text-sm"
           >
-            <Plus className="w-4 h-4" />
-            <span>+ Segna Assenza</span>
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>Nuova Assenza</span>
           </button>
         </div>
       </div>
 
       {/* Notifications */}
       {saveSuccessMsg && (
-        <div className="flex items-center gap-3 p-4 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-sm animate-in fade-in">
-          <CheckCircle2 className="w-5 h-5 shrink-0" />
+        <div className="flex items-center gap-2.5 p-3 sm:p-4 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs sm:text-sm animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>{saveSuccessMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="flex items-center gap-3 p-4 bg-primary/10 border border-primary/30 rounded-2xl text-primary text-sm">
-          <AlertCircle className="w-5 h-5 shrink-0" />
+        <div className="flex items-center gap-2.5 p-3 sm:p-4 bg-primary/10 border border-primary/30 rounded-2xl text-primary text-xs sm:text-sm">
+          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold">Errore</p>
-            <p className="text-xs text-primary/80">{errorMsg}</p>
+            <p className="font-semibold text-xs sm:text-sm">Errore</p>
+            <p className="text-[11px] sm:text-xs text-primary/80">{errorMsg}</p>
           </div>
           <button
             onClick={() => loadCloudData(true)}
@@ -419,78 +419,81 @@ export default function AbsenceCalendar({
         </div>
       )}
 
-      {/* Month Navigation & View Mode Controls */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-muted/40 border border-muted p-3 sm:p-4 rounded-2xl">
+      {/* Month Navigation & View Mode Controls - Scrollable and un-clumped on mobile */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-muted/40 border border-muted p-2 sm:p-3 rounded-2xl">
         {/* Month Selector */}
-        <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2">
           <button
             onClick={handlePrevMonth}
-            className="p-2 rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
             title="Mese precedente"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <div className="text-center sm:text-left min-w-[170px]">
-            <span className="block font-black text-base sm:text-lg text-foreground tracking-wide">
+          <div className="text-center min-w-[130px] sm:min-w-[160px]">
+            <span className="block font-black text-sm sm:text-base md:text-lg text-foreground tracking-wide capitalize">
               {MONTH_NAMES[month]} {year}
             </span>
           </div>
 
           <button
             onClick={handleNextMonth}
-            className="p-2 rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
             title="Mese successivo"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
 
           <button
             onClick={handleToday}
-            className="text-xs font-semibold px-3 py-2 rounded-xl bg-background/50 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors ml-1"
+            className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-background/60 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors ml-1"
           >
             Oggi
           </button>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center gap-1 bg-background/60 p-1 rounded-xl border border-muted self-center sm:self-auto">
+        {/* View Mode Toggle - Smooth horizontal scroll on mobile */}
+        <div className="flex items-center gap-1 bg-background/70 p-1 rounded-xl border border-muted overflow-x-auto no-scrollbar scroll-smooth">
           <button
             onClick={() => setViewMode("matrix")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
               viewMode === "matrix"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <TableIcon className="w-3.5 h-3.5" />
-            <span>Griglia Excel</span>
+            <span>Griglia</span>
+            <span className="hidden sm:inline">Mese</span>
           </button>
 
           <button
             onClick={() => setViewMode("agenda")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
               viewMode === "agenda"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <ListIcon className="w-3.5 h-3.5" />
-            <span>Agenda Giorni</span>
+            <span>Agenda</span>
+            <span className="hidden sm:inline">Giorni</span>
           </button>
 
           <button
             onClick={() => setViewMode("special-dates")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
               viewMode === "special-dates"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <Theater className="w-3.5 h-3.5" />
-            <span>Spettacoli & Prove</span>
+            <span>Spettacoli</span>
+            <span className="hidden sm:inline">& Prove</span>
             {specialDates.length > 0 && (
-              <span className="text-[10px] bg-background/50 px-1.5 py-0.2 rounded-full font-bold">
+              <span className="text-[10px] bg-background/50 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
                 {specialDates.length}
               </span>
             )}
@@ -498,14 +501,15 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("my-absences")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
               viewMode === "my-absences"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <UserIcon className="w-3.5 h-3.5" />
-            <span>Le mie assenze</span>
+            <span>Le mie</span>
+            <span className="hidden sm:inline">assenze</span>
             {hasUnsavedChanges && (
               <span className="w-2 h-2 rounded-full bg-accent animate-pulse" title="Modifiche non salvate" />
             )}
@@ -601,40 +605,38 @@ export default function AbsenceCalendar({
 
       {/* Persistent Floating Bottom Bar for Unsaved Changes (LocalStorage -> Cloud Batch Save) */}
       {hasUnsavedChanges && (
-        <div className="fixed bottom-4 left-4 right-4 z-40 max-w-2xl mx-auto animate-in slide-in-from-bottom duration-300">
-          <div className="bg-muted border-2 border-accent rounded-2xl p-4 shadow-2xl backdrop-blur-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-foreground">
-            <div className="flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full bg-accent animate-ping shrink-0" />
-              <div>
-                <p className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                  <span>Modifiche locali non salvate</span>
-                  <span className="text-xs font-normal text-muted-foreground">({activeMember})</span>
+        <div className="fixed bottom-3 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-md z-40 animate-in slide-in-from-bottom duration-300 pb-[env(safe-area-inset-bottom)]">
+          <div className="bg-background/95 border-2 border-accent rounded-2xl p-3 sm:p-4 shadow-2xl backdrop-blur-lg flex items-center justify-between gap-3 text-foreground">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping shrink-0" />
+              <div className="min-w-0">
+                <p className="font-bold text-xs sm:text-sm text-foreground truncate">
+                  Modifiche non salvate
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Le modifiche sono in LocalStorage. Clicca &quot;Salva&quot; per inviarle a Blob.
+                <p className="text-[11px] text-muted-foreground truncate">
+                  Attore: <strong className="text-foreground">{activeMember}</strong>
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 onClick={handleDiscardChanges}
                 disabled={isSavingDraft}
-                className="flex-1 sm:flex-initial text-xs text-muted-foreground hover:text-foreground px-3 py-2 rounded-xl bg-background/50 hover:bg-background border border-muted transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+                className="text-xs text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-xl bg-muted/60 hover:bg-muted border border-muted transition-colors disabled:opacity-50"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Annulla</span>
+                Annulla
               </button>
 
               <button
                 type="button"
                 onClick={handleSaveToCloud}
                 disabled={isSavingDraft}
-                className="flex-1 sm:flex-initial text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 px-4 py-2.5 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 px-3.5 py-2 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center gap-1.5 disabled:opacity-50"
               >
-                <Save className="w-4 h-4" />
-                <span>{isSavingDraft ? "Salvataggio..." : "Salva su Cloud"}</span>
+                <Save className="w-3.5 h-3.5" />
+                <span>{isSavingDraft ? "Salvataggio..." : "Salva modifiche"}</span>
               </button>
             </div>
           </div>
@@ -643,10 +645,10 @@ export default function AbsenceCalendar({
 
       {/* Status Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground/60 border-t border-muted/50 pt-4 gap-2">
-        <span>Gli Attomatti — Sistema Gestione Prove & Assenze</span>
+        <span>Gli Attomatti — Calendario Prove & Assenze</span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Storage Live: {storageType === "vercel-blob" ? "Cloud Blob (1 batch write per save)" : "Locale"}</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span>Sincronizzato</span>
         </span>
       </div>
 

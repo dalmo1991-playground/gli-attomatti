@@ -141,7 +141,7 @@ export default function MyAbsencesTab({
                       disabled={deletingId === rec.id}
                       onClick={() => handleDelete(rec)}
                       title="Elimina assenza"
-                      className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors disabled:opacity-50 shrink-0"
+                      className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl active:scale-95 transition-all disabled:opacity-50 shrink-0"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
