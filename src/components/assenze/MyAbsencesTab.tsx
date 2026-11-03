@@ -390,7 +390,7 @@ export default function MyAbsencesTab({
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs">🎭 / 🎬</span>
-              <span>Spettacolo / Prova</span>
+              <span>Appuntamenti</span>
             </div>
           </div>
 

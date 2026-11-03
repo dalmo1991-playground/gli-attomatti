@@ -565,7 +565,7 @@ export default function AbsenceCalendar({
             }`}
           >
             <Theater className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">Spettacoli</span>
+            <span className="truncate">Appuntamenti</span>
           </button>
 
           <button

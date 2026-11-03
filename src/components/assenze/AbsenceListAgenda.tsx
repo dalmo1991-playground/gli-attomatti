@@ -138,7 +138,7 @@ export default function AbsenceListAgenda({
           }`}
         >
           <Theater className="w-3.5 h-3.5" />
-          <span>Prove & Spettacoli ({specialDatesCount})</span>
+          <span>Appuntamenti ({specialDatesCount})</span>
         </button>
 
         <button
@@ -159,12 +159,12 @@ export default function AbsenceListAgenda({
           <CheckCircle2 className="w-10 h-10 text-secondary mx-auto opacity-80" />
           <h3 className="text-base font-semibold text-foreground">
             {filterMode === "special"
-              ? "Nessuna data speciale questo mese"
+              ? "Nessun appuntamento questo mese"
               : "Tutti Presenti!"}
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground">
             {filterMode === "special"
-              ? `Non ci sono spettacoli o prove programmate in ${MONTH_NAMES[month]} ${year}.`
+              ? `Non ci sono appuntamenti in programma per ${MONTH_NAMES[month]} ${year}.`
               : `Nessuna assenza registrata per ${MONTH_NAMES[month]} ${year}.`}
           </p>
         </div>

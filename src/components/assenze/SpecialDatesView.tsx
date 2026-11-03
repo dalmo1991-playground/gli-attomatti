@@ -83,7 +83,7 @@ export default function SpecialDatesView({
         <div>
           <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span>Spettacoli & Prove Programmate</span>
+            <span>Appuntamenti</span>
           </h2>
           <p className="text-xs text-muted-foreground">
             Panoramica delle presenze e indisponibilità per ciascuna data chiave.
