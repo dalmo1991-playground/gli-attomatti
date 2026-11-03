@@ -190,8 +190,30 @@ export default function MyAbsencesTab({
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
-      {/* Month Navigation Header (Square Calendar Header) */}
-      <div className="bg-muted/40 border border-muted rounded-2xl p-3 sm:p-4 shadow-sm flex items-center justify-between gap-2">
+      {/* Action Buttons: 2-column grid that mathematically never overflows on mobile */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => onOpenAddModal(activeMember)}
+          className="h-10 sm:h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all truncate"
+        >
+          <Plus className="w-4 h-4 shrink-0" />
+          <span className="truncate">Nuova Assenza</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsGCalModalOpen(true)}
+          className="h-10 sm:h-11 bg-muted hover:bg-muted-foreground/20 text-foreground font-semibold text-xs sm:text-sm px-3 rounded-xl flex items-center justify-center gap-1.5 border border-muted shadow-sm active:scale-95 transition-all truncate"
+          title="Importa impegni da Google Calendar"
+        >
+          <Download className="w-4 h-4 text-primary shrink-0" />
+          <span className="truncate">Importa da GCal</span>
+        </button>
+      </div>
+
+      {/* Month Navigation Header (Desktop / Tablet view) */}
+      <div className="bg-muted/30 border border-muted/80 rounded-2xl p-2.5 sm:p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2">
           {onPrevMonth && (
             <button
@@ -204,13 +226,11 @@ export default function MyAbsencesTab({
             </button>
           )}
 
-          <div className="leading-tight px-1 sm:px-2">
-            <h3 className="font-extrabold text-sm sm:text-base md:text-lg capitalize text-foreground">
-              {MONTH_NAMES[month]} {year}
+          <div className="leading-tight px-1">
+            <h3 className="font-extrabold text-sm sm:text-base capitalize text-foreground flex items-center gap-1.5">
+              <Calendar className="w-4 h-4 text-primary shrink-0 hidden sm:inline" />
+              <span>{MONTH_NAMES[month]} {year}</span>
             </h3>
-            <span className="text-[11px] text-muted-foreground hidden sm:inline">
-              Tocca un giorno per registrare o gestire la tua assenza
-            </span>
           </div>
 
           {onNextMonth && (
@@ -225,36 +245,19 @@ export default function MyAbsencesTab({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-2">
           {onToday && (
             <button
               type="button"
               onClick={onToday}
-              className="text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-xl bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-background hover:bg-muted text-muted-foreground hover:text-foreground border border-muted transition-colors active:scale-95"
             >
               Oggi
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={() => setIsGCalModalOpen(true)}
-            className="bg-muted hover:bg-muted-foreground/20 text-foreground font-semibold text-xs sm:text-sm px-2.5 sm:px-3.5 py-2 rounded-xl flex items-center gap-1.5 border border-muted shadow-sm active:scale-95 transition-all shrink-0"
-            title="Importa impegni da Google Calendar"
-          >
-            <Download className="w-3.5 h-3.5 text-primary" />
-            <span className="hidden sm:inline">Importa da GCal</span>
-            <span className="sm:hidden">GCal</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onOpenAddModal(activeMember)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md shadow-primary/25 active:scale-95 transition-all shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nuova Assenza</span>
-          </button>
+          <span className="text-[11px] text-muted-foreground hidden md:inline">
+            Tocca un giorno per segnare la tua assenza
+          </span>
         </div>
       </div>
 

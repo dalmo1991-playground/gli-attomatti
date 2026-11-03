@@ -552,11 +552,11 @@ export default function AbsenceCalendar({
           </button>
         </div>
 
-        {/* View Mode Toggle - 4 clean tabs in requested order: Le mie, Spettacoli, Griglia, Agenda */}
+        {/* View Mode Toggle - 4 clean tabs in requested order: Le mie, Appuntamenti, Griglia, Agenda */}
         <div className="grid grid-cols-4 sm:flex items-center gap-1 bg-background/80 p-1 rounded-xl border border-muted">
           <button
             onClick={() => setViewMode("my-absences")}
-            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "my-absences"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
@@ -571,7 +571,7 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("special-dates")}
-            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "special-dates"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
@@ -583,7 +583,7 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("matrix")}
-            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "matrix"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
@@ -595,7 +595,7 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("agenda")}
-            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "agenda"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
