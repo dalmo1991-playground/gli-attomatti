@@ -64,6 +64,7 @@ async function putBlobFile(
     await put(pathname, content, {
       access: "public",
       addRandomSuffix: false,
+      allowOverwrite: true,
       token
     });
   } catch (err: any) {
@@ -78,6 +79,7 @@ async function putBlobFile(
       await put(pathname, content, {
         access: "private",
         addRandomSuffix: false,
+        allowOverwrite: true,
         token
       });
       return;
@@ -97,7 +99,7 @@ async function getBlobText(pathnameOrUrl: string, token: string): Promise<string
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
-  } catch {}
+  } catch { }
 
   // 2. Try get() with private
   try {
@@ -105,7 +107,7 @@ async function getBlobText(pathnameOrUrl: string, token: string): Promise<string
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
-  } catch {}
+  } catch { }
 
   return null;
 }
@@ -171,7 +173,7 @@ async function syncMemberIntoSnapshot(
     if (text) {
       try {
         snapshotData = JSON.parse(text) as AbsenceResponseData;
-      } catch {}
+      } catch { }
     }
   } else {
     try {
@@ -180,7 +182,7 @@ async function syncMemberIntoSnapshot(
         const text = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
         snapshotData = JSON.parse(text) as AbsenceResponseData;
       }
-    } catch {}
+    } catch { }
   }
 
   // If snapshot does not exist yet, build full snapshot
@@ -217,7 +219,7 @@ async function syncMemberIntoSnapshot(
   try {
     ensureLocalDir();
     fs.writeFileSync(LOCAL_SNAPSHOT_FILE, payload, "utf-8");
-  } catch {}
+  } catch { }
 
   // Update RAM cache
   absencesMemoryCache = {
@@ -378,7 +380,7 @@ export async function rebuildSnapshot(configuredMembers?: string[]): Promise<Abs
   try {
     ensureLocalDir();
     fs.writeFileSync(LOCAL_SNAPSHOT_FILE, payload, "utf-8");
-  } catch {}
+  } catch { }
 
   absencesMemoryCache = {
     data: resultData,
