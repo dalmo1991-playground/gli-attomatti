@@ -93,7 +93,8 @@ export default function AbsenceCalendar({
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/assenze", { cache: "no-store" });
+      const fetchUrl = showSpinner ? `/api/assenze?t=${Date.now()}` : "/api/assenze";
+      const res = await fetch(fetchUrl, { cache: "no-store" });
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json.error || "Impossibile recuperare i dati delle assenze.");

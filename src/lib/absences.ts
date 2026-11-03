@@ -6,6 +6,8 @@ import { AbsenceRecord, MemberAbsenceFile, AbsenceResponseData, DEFAULT_MEMBERS,
 export { DEFAULT_MEMBERS, memberNameToSlug };
 
 const LOCAL_DIR = path.join(process.cwd(), ".data", "assenze");
+const SNAPSHOT_KEY = "assenze/_all.json";
+const LOCAL_SNAPSHOT_FILE = path.join(LOCAL_DIR, "_all.json");
 
 function getBlobToken(): string | undefined {
   const raw = process.env.BLOB_READ_WRITE_TOKEN;
@@ -16,6 +18,18 @@ function getBlobToken(): string | undefined {
 
 export function isBlobStorageAvailable(): boolean {
   return Boolean(getBlobToken());
+}
+
+// In-memory cache for aggregated absences (60 seconds TTL)
+let absencesMemoryCache: {
+  data: AbsenceResponseData;
+  timestamp: number;
+} | null = null;
+
+const CACHE_TTL_MS = 60 * 1000;
+
+export function invalidateAbsencesCache() {
+  absencesMemoryCache = null;
 }
 
 function ensureLocalDir() {
@@ -118,6 +132,8 @@ export async function saveMemberAbsences(
         addRandomSuffix: false,
         token
       });
+      // Rebuild the aggregated snapshot after saving member's file
+      await rebuildSnapshot();
       return;
     } catch (err) {
       console.error(`[Blob Put Error for ${cleanName}]`, err);
@@ -129,6 +145,7 @@ export async function saveMemberAbsences(
   ensureLocalDir();
   const filePath = getLocalFilePath(slug);
   fs.writeFileSync(filePath, payload, "utf-8");
+  await rebuildSnapshot();
 }
 
 /**
@@ -184,10 +201,11 @@ export async function deleteAbsence(id: string, memberName: string): Promise<boo
 }
 
 /**
- * Retrieves all absences and active members list.
- * If configuredMembers is supplied from content.json, uses it as the source of truth for the members list.
+ * Compiles all individual member files into a single snapshot (_all.json).
+ * This ensures that reads are reduced to a single operation while each member's
+ * data remains isolated in their own file.
  */
-export async function getAllAbsences(configuredMembers?: string[]): Promise<AbsenceResponseData> {
+export async function rebuildSnapshot(configuredMembers?: string[]): Promise<AbsenceResponseData> {
   const token = getBlobToken();
   const baseMembers = configuredMembers && configuredMembers.length > 0 ? configuredMembers : DEFAULT_MEMBERS;
   const membersSet = new Set<string>(baseMembers);
@@ -196,7 +214,9 @@ export async function getAllAbsences(configuredMembers?: string[]): Promise<Abse
   if (token) {
     try {
       const blobList = await list({ prefix: "assenze/", token });
-      const jsonBlobs = blobList.blobs.filter((b) => b.pathname.endsWith(".json"));
+      const jsonBlobs = blobList.blobs.filter(
+        (b) => b.pathname.endsWith(".json") && !b.pathname.endsWith("_all.json")
+      );
 
       const promises = jsonBlobs.map(async (blob) => {
         try {
@@ -222,11 +242,29 @@ export async function getAllAbsences(configuredMembers?: string[]): Promise<Abse
         allAbsences.push(...list);
       }
 
-      return {
+      const resultData: AbsenceResponseData = {
         members: Array.from(membersSet).sort((a, b) => a.localeCompare(b, "it")),
         absences: allAbsences.sort((a, b) => a.startDate.localeCompare(b.startDate)),
         storage: "vercel-blob"
       };
+
+      // Write compiled snapshot to blob
+      try {
+        await put(SNAPSHOT_KEY, JSON.stringify(resultData, null, 2), {
+          access: "public",
+          addRandomSuffix: false,
+          token
+        });
+      } catch (err) {
+        console.error("[Blob Snapshot Put Error]", err);
+      }
+
+      absencesMemoryCache = {
+        data: resultData,
+        timestamp: Date.now()
+      };
+
+      return resultData;
     } catch (err) {
       console.error("[Blob List Error]", err);
     }
@@ -235,7 +273,10 @@ export async function getAllAbsences(configuredMembers?: string[]): Promise<Abse
   // Local fallback
   ensureLocalDir();
   try {
-    const files = fs.readdirSync(LOCAL_DIR).filter((f) => f.endsWith(".json"));
+    const files = fs
+      .readdirSync(LOCAL_DIR)
+      .filter((f) => f.endsWith(".json") && f !== "_all.json");
+
     for (const file of files) {
       try {
         const filePath = path.join(LOCAL_DIR, file);
@@ -255,9 +296,95 @@ export async function getAllAbsences(configuredMembers?: string[]): Promise<Abse
     console.error("[Local Dir Read Error]", err);
   }
 
-  return {
+  const localResultData: AbsenceResponseData = {
     members: Array.from(membersSet).sort((a, b) => a.localeCompare(b, "it")),
     absences: allAbsences.sort((a, b) => a.startDate.localeCompare(b.startDate)),
     storage: "local-file"
   };
+
+  try {
+    fs.writeFileSync(LOCAL_SNAPSHOT_FILE, JSON.stringify(localResultData, null, 2), "utf-8");
+  } catch (err) {
+    console.error("[Local Snapshot Write Error]", err);
+  }
+
+  absencesMemoryCache = {
+    data: localResultData,
+    timestamp: Date.now()
+  };
+
+  return localResultData;
+}
+
+/**
+ * Retrieves all absences and active members list.
+ * Priority 1: In-memory cache (60s TTL) unless forceRefresh is true.
+ * Priority 2: Single snapshot file (_all.json) -> 1 single read operation.
+ * Priority 3: Rebuild snapshot from individual files if _all.json doesn't exist yet or forceRefresh.
+ */
+export async function getAllAbsences(
+  configuredMembers?: string[],
+  forceRefresh = false
+): Promise<AbsenceResponseData> {
+  if (!forceRefresh && absencesMemoryCache && Date.now() - absencesMemoryCache.timestamp < CACHE_TTL_MS) {
+    return absencesMemoryCache.data;
+  }
+
+  const token = getBlobToken();
+
+  // Try reading single snapshot file (_all.json) for 1-read efficiency
+  if (!forceRefresh) {
+    if (token) {
+      try {
+        const blobList = await list({ prefix: SNAPSHOT_KEY, token });
+        const snapshotBlob = blobList.blobs.find((b) => b.pathname === SNAPSHOT_KEY);
+
+        if (snapshotBlob) {
+          const fetchUrl = snapshotBlob.downloadUrl || snapshotBlob.url;
+          const res = await fetch(fetchUrl, { cache: "no-store" });
+          if (res.ok) {
+            const data = (await res.json()) as AbsenceResponseData;
+            if (data && Array.isArray(data.absences)) {
+              if (configuredMembers && configuredMembers.length > 0) {
+                data.members = configuredMembers;
+              }
+              data.storage = "vercel-blob";
+              absencesMemoryCache = {
+                data,
+                timestamp: Date.now()
+              };
+              return data;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("[Blob Snapshot Read Error, falling back to rebuild]", err);
+      }
+    } else {
+      // Local snapshot read
+      try {
+        ensureLocalDir();
+        if (fs.existsSync(LOCAL_SNAPSHOT_FILE)) {
+          const content = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
+          const data = JSON.parse(content) as AbsenceResponseData;
+          if (data && Array.isArray(data.absences)) {
+            if (configuredMembers && configuredMembers.length > 0) {
+              data.members = configuredMembers;
+            }
+            data.storage = "local-file";
+            absencesMemoryCache = {
+              data,
+              timestamp: Date.now()
+            };
+            return data;
+          }
+        }
+      } catch (err) {
+        console.error("[Local Snapshot Read Error, falling back to rebuild]", err);
+      }
+    }
+  }
+
+  // Fallback: rebuild snapshot from all individual files
+  return rebuildSnapshot(configuredMembers);
 }

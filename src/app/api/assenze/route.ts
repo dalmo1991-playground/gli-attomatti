@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAllAbsences, addAbsence, deleteAbsence, getMemberAbsences, saveMemberAbsences } from "@/lib/absences";
 
 export const dynamic = "force-dynamic";
@@ -6,11 +7,13 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/assenze
  * Returns all recorded absences or single member's absences if ?member=... is provided.
+ * Uses 60s Edge & Memory cache unless ?refresh=true or ?t=... is passed.
  */
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const member = url.searchParams.get("member");
+    const bypassCache = url.searchParams.has("refresh") || url.searchParams.has("t");
 
     if (member) {
       const absences = await getMemberAbsences(member);
@@ -21,11 +24,18 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const data = await getAllAbsences();
-    return NextResponse.json({
-      success: true,
-      ...data
-    });
+    const data = await getAllAbsences(undefined, bypassCache);
+    return NextResponse.json(
+      {
+        success: true,
+        ...data
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, must-revalidate"
+        }
+      }
+    );
   } catch (error: any) {
     console.error("[API Assenze GET Exception]", error);
     return NextResponse.json(
@@ -38,6 +48,7 @@ export async function GET(req: NextRequest) {
 /**
  * PUT /api/assenze
  * Batch saves the entire updated absences array for a single member in 1 write operation.
+ * Invalidates Edge & memory cache immediately.
  * Body: { memberName: string, absences: AbsenceRecord[] }
  */
 export async function PUT(req: NextRequest) {
@@ -60,6 +71,12 @@ export async function PUT(req: NextRequest) {
     }
 
     await saveMemberAbsences(memberName.trim(), absences);
+
+    // Invalidate edge caches
+    try {
+      revalidatePath("/api/assenze");
+      revalidatePath("/assenze");
+    } catch {}
 
     return NextResponse.json({
       success: true,
@@ -170,6 +187,11 @@ export async function DELETE(req: NextRequest) {
         { status: 404 }
       );
     }
+
+    try {
+      revalidatePath("/api/assenze");
+      revalidatePath("/assenze");
+    } catch {}
 
     return NextResponse.json({
       success: true,
