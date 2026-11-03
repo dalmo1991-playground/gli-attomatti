@@ -715,6 +715,24 @@
           "date": "2026-12-12",
           "title": "Cena di Natale",
           "type": "event"
+        },
+        {
+          "id": "spec_1793704216160_rh6e",
+          "date": "2027-04-11",
+          "title": "Giulietta & Saverio",
+          "type": "show"
+        },
+        {
+          "id": "spec_1793704239251_6nqz",
+          "date": "2027-05-22",
+          "title": "Una Cenerentola",
+          "type": "show"
+        },
+        {
+          "id": "spec_1793704203288_4ko3",
+          "date": "2027-11-10",
+          "title": "Giulietta & Saverio",
+          "type": "show"
         }
       ],
       "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
