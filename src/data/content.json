@@ -693,7 +693,25 @@
       ],
       "special_dates": [
         {
-          "id": "spec_1793698851326_zmqg",
+          "id": "spec_1793700165321_v5sr",
+          "date": "2026-11-15",
+          "title": "Lettura copione",
+          "type": "rehearsal"
+        },
+        {
+          "id": "spec_1793700202454_crfu",
+          "date": "2026-12-05",
+          "title": "Viaggio mercatini",
+          "type": "event"
+        },
+        {
+          "id": "spec_1793700218877_8sow",
+          "date": "2026-12-06",
+          "title": "Viaggio mercatini",
+          "type": "event"
+        },
+        {
+          "id": "spec_1793700242543_7ikv",
           "date": "2026-12-12",
           "title": "Cena di Natale",
           "type": "event"
