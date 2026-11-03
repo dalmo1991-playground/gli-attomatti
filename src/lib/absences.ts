@@ -17,9 +17,7 @@ const LOCAL_DIR = isVercel
   : path.join(process.cwd(), ".data", "assenze");
 
 const SNAPSHOT_KEY = "assenze/all.json";
-const LEGACY_SNAPSHOT_KEY = "assenze/_all.json";
 const LOCAL_SNAPSHOT_FILE = path.join(LOCAL_DIR, "all.json");
-const LOCAL_LEGACY_SNAPSHOT_FILE = path.join(LOCAL_DIR, "_all.json");
 
 function getBlobToken(): string | undefined {
   const raw = process.env.BLOB_READ_WRITE_TOKEN;
@@ -152,7 +150,7 @@ export async function getMemberAbsences(memberName: string): Promise<AbsenceReco
 }
 
 /**
- * Synchronously and deterministically updates the snapshot (_all.json)
+ * Synchronously and deterministically updates the snapshot (all.json)
  * with a member's newly saved absences without relying on list() eventual consistency.
  */
 async function syncMemberIntoSnapshot(
@@ -167,12 +165,9 @@ async function syncMemberIntoSnapshot(
 
   let snapshotData: AbsenceResponseData | null = null;
 
-  // Try reading current snapshot directly (checking both all.json and legacy _all.json)
+  // Try reading current snapshot directly
   if (token) {
-    let text = await getBlobText(SNAPSHOT_KEY, token);
-    if (!text) {
-      text = await getBlobText(LEGACY_SNAPSHOT_KEY, token);
-    }
+    const text = await getBlobText(SNAPSHOT_KEY, token);
     if (text) {
       try {
         snapshotData = JSON.parse(text) as AbsenceResponseData;
@@ -183,9 +178,6 @@ async function syncMemberIntoSnapshot(
       ensureLocalDir();
       if (fs.existsSync(LOCAL_SNAPSHOT_FILE)) {
         const text = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
-        snapshotData = JSON.parse(text) as AbsenceResponseData;
-      } else if (fs.existsSync(LOCAL_LEGACY_SNAPSHOT_FILE)) {
-        const text = fs.readFileSync(LOCAL_LEGACY_SNAPSHOT_FILE, "utf-8");
         snapshotData = JSON.parse(text) as AbsenceResponseData;
       }
     } catch {}
@@ -237,7 +229,7 @@ async function syncMemberIntoSnapshot(
 /**
  * Saves absences for a specific member.
  * Operates strictly on assenze/[slug].json, avoiding race conditions between members,
- * and immediately updates the unified snapshot (_all.json).
+ * and immediately updates the unified snapshot (all.json).
  */
 export async function saveMemberAbsences(
   memberName: string,
@@ -340,7 +332,7 @@ export async function deleteAbsence(id: string, memberName: string): Promise<boo
 }
 
 /**
- * Compiles all individual member files into a single snapshot (_all.json).
+ * Compiles all individual member files into a single snapshot (all.json).
  * Reads directly from each member's individual file without depending on list() latency.
  */
 export async function rebuildSnapshot(configuredMembers?: string[]): Promise<AbsenceResponseData> {
@@ -399,8 +391,8 @@ export async function rebuildSnapshot(configuredMembers?: string[]): Promise<Abs
 /**
  * Retrieves all absences and active members list.
  * Priority 1: In-memory cache (60s TTL) unless bypassMemoryCache is true.
- * Priority 2: Direct read from single snapshot file (_all.json) -> EXACTLY 1 read.
- * Priority 3: If _all.json does not exist, rebuildSnapshot from individual files.
+ * Priority 2: Direct read from single snapshot file (all.json) -> EXACTLY 1 read.
+ * Priority 3: If all.json does not exist, rebuildSnapshot from individual files.
  */
 export async function getAllAbsences(
   configuredMembers?: string[],
@@ -418,10 +410,7 @@ export async function getAllAbsences(
   // 2. Read directly from the single snapshot file (all.json) in 1 operation
   if (token) {
     try {
-      let text = await getBlobText(SNAPSHOT_KEY, token);
-      if (!text) {
-        text = await getBlobText(LEGACY_SNAPSHOT_KEY, token);
-      }
+      const text = await getBlobText(SNAPSHOT_KEY, token);
       if (text) {
         const data = JSON.parse(text) as AbsenceResponseData;
         if (data && Array.isArray(data.absences)) {
@@ -441,14 +430,8 @@ export async function getAllAbsences(
     // Local snapshot read
     try {
       ensureLocalDir();
-      const localFile = fs.existsSync(LOCAL_SNAPSHOT_FILE)
-        ? LOCAL_SNAPSHOT_FILE
-        : fs.existsSync(LOCAL_LEGACY_SNAPSHOT_FILE)
-        ? LOCAL_LEGACY_SNAPSHOT_FILE
-        : null;
-
-      if (localFile) {
-        const content = fs.readFileSync(localFile, "utf-8");
+      if (fs.existsSync(LOCAL_SNAPSHOT_FILE)) {
+        const content = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
         const data = JSON.parse(content) as AbsenceResponseData;
         if (data && Array.isArray(data.absences)) {
           data.members = baseMembers;
@@ -465,6 +448,6 @@ export async function getAllAbsences(
     }
   }
 
-  // 3. Fallback only if _all.json doesn't exist yet: rebuild snapshot from individual files
+  // 3. Fallback only if all.json doesn't exist yet: rebuild snapshot from individual files
   return rebuildSnapshot(configuredMembers);
 }
