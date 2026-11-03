@@ -16,8 +16,10 @@ const LOCAL_DIR = isVercel
   ? path.join("/tmp", ".data", "assenze")
   : path.join(process.cwd(), ".data", "assenze");
 
-const SNAPSHOT_KEY = "assenze/_all.json";
-const LOCAL_SNAPSHOT_FILE = path.join(LOCAL_DIR, "_all.json");
+const SNAPSHOT_KEY = "assenze/all.json";
+const LEGACY_SNAPSHOT_KEY = "assenze/_all.json";
+const LOCAL_SNAPSHOT_FILE = path.join(LOCAL_DIR, "all.json");
+const LOCAL_LEGACY_SNAPSHOT_FILE = path.join(LOCAL_DIR, "_all.json");
 
 function getBlobToken(): string | undefined {
   const raw = process.env.BLOB_READ_WRITE_TOKEN;
@@ -87,15 +89,13 @@ async function putBlobFile(
 }
 
 /**
- * Reads a blob's content, supporting both public and private stores and direct fetch fallback.
+ * Reads directly from a Vercel Blob pathname or URL.
+ * Strongly consistent: does not rely on list().
  */
-async function readBlobContent(
-  blob: { pathname: string; url: string; downloadUrl?: string },
-  token: string
-): Promise<string | null> {
+async function getBlobText(pathnameOrUrl: string, token: string): Promise<string | null> {
   // 1. Try get() with public
   try {
-    const res = await get(blob.url || blob.pathname, { access: "public", token, useCache: false });
+    const res = await get(pathnameOrUrl, { access: "public", token, useCache: false });
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
@@ -103,22 +103,11 @@ async function readBlobContent(
 
   // 2. Try get() with private
   try {
-    const res = await get(blob.url || blob.pathname, { access: "private", token, useCache: false });
+    const res = await get(pathnameOrUrl, { access: "private", token, useCache: false });
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
   } catch {}
-
-  // 3. Try direct fetch fallback
-  const fetchUrl = blob.downloadUrl || blob.url;
-  if (fetchUrl) {
-    try {
-      const res = await fetch(fetchUrl, { cache: "no-store" });
-      if (res.ok) {
-        return await res.text();
-      }
-    } catch {}
-  }
 
   return null;
 }
@@ -135,15 +124,10 @@ export async function getMemberAbsences(memberName: string): Promise<AbsenceReco
   if (token) {
     try {
       const pathname = `assenze/${slug}.json`;
-      const blobList = await list({ prefix: pathname, token });
-      const matched = blobList.blobs.find((b) => b.pathname === pathname);
-
-      if (matched) {
-        const text = await readBlobContent(matched, token);
-        if (text) {
-          const data = JSON.parse(text) as MemberAbsenceFile;
-          return data?.absences || [];
-        }
+      const text = await getBlobText(pathname, token);
+      if (text) {
+        const data = JSON.parse(text) as MemberAbsenceFile;
+        return data?.absences || [];
       }
       return [];
     } catch (err) {
@@ -168,8 +152,92 @@ export async function getMemberAbsences(memberName: string): Promise<AbsenceReco
 }
 
 /**
+ * Synchronously and deterministically updates the snapshot (_all.json)
+ * with a member's newly saved absences without relying on list() eventual consistency.
+ */
+async function syncMemberIntoSnapshot(
+  memberName: string,
+  newAbsences: AbsenceRecord[],
+  configuredMembers?: string[]
+): Promise<void> {
+  const cleanName = memberName.trim();
+  const token = getBlobToken();
+  const baseMembers =
+    configuredMembers && configuredMembers.length > 0 ? configuredMembers : DEFAULT_MEMBERS;
+
+  let snapshotData: AbsenceResponseData | null = null;
+
+  // Try reading current snapshot directly (checking both all.json and legacy _all.json)
+  if (token) {
+    let text = await getBlobText(SNAPSHOT_KEY, token);
+    if (!text) {
+      text = await getBlobText(LEGACY_SNAPSHOT_KEY, token);
+    }
+    if (text) {
+      try {
+        snapshotData = JSON.parse(text) as AbsenceResponseData;
+      } catch {}
+    }
+  } else {
+    try {
+      ensureLocalDir();
+      if (fs.existsSync(LOCAL_SNAPSHOT_FILE)) {
+        const text = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
+        snapshotData = JSON.parse(text) as AbsenceResponseData;
+      } else if (fs.existsSync(LOCAL_LEGACY_SNAPSHOT_FILE)) {
+        const text = fs.readFileSync(LOCAL_LEGACY_SNAPSHOT_FILE, "utf-8");
+        snapshotData = JSON.parse(text) as AbsenceResponseData;
+      }
+    } catch {}
+  }
+
+  // If snapshot does not exist yet, build full snapshot
+  if (!snapshotData || !Array.isArray(snapshotData.absences)) {
+    await rebuildSnapshot(configuredMembers);
+    return;
+  }
+
+  // Merge: remove previous absences for this member, add new ones
+  const filtered = snapshotData.absences.filter(
+    (a) => a.memberName.trim().toLowerCase() !== cleanName.toLowerCase()
+  );
+  const merged = [...filtered, ...newAbsences].sort((a, b) =>
+    a.startDate.localeCompare(b.startDate)
+  );
+
+  const membersSet = new Set<string>(snapshotData.members || baseMembers);
+  membersSet.add(cleanName);
+
+  const updatedSnapshot: AbsenceResponseData = {
+    members: Array.from(membersSet).sort((a, b) => a.localeCompare(b, "it")),
+    absences: merged,
+    storage: token ? "vercel-blob" : "local-file"
+  };
+
+  const payload = JSON.stringify(updatedSnapshot, null, 2);
+
+  // Write updated snapshot to cloud
+  if (token) {
+    await putBlobFile(SNAPSHOT_KEY, payload, token);
+  }
+
+  // Also write locally as cache
+  try {
+    ensureLocalDir();
+    fs.writeFileSync(LOCAL_SNAPSHOT_FILE, payload, "utf-8");
+  } catch {}
+
+  // Update RAM cache
+  absencesMemoryCache = {
+    data: updatedSnapshot,
+    timestamp: Date.now()
+  };
+}
+
+/**
  * Saves absences for a specific member.
- * Operates strictly on assenze/[slug].json, avoiding race conditions between members.
+ * Operates strictly on assenze/[slug].json, avoiding race conditions between members,
+ * and immediately updates the unified snapshot (_all.json).
  */
 export async function saveMemberAbsences(
   memberName: string,
@@ -188,27 +256,24 @@ export async function saveMemberAbsences(
   const payload = JSON.stringify(fileData, null, 2);
   const token = getBlobToken();
 
-  // If running in Vercel environment (Production or Preview):
+  // 1. If running in Vercel environment:
   if (isVercel) {
     if (!token) {
       throw new Error(
-        "Storage Vercel Blob non configurato: la variabile BLOB_READ_WRITE_TOKEN non è attiva per l'ambiente Preview su Vercel. Vai nella Dashboard Vercel > Settings > Environment Variables e assicurati che BLOB_READ_WRITE_TOKEN sia abilitata per 'Preview'."
+        "Storage Vercel Blob non configurato: variabile BLOB_READ_WRITE_TOKEN assente per l'ambiente Preview/Production. Vai su Vercel Dashboard > Settings > Environment Variables e abilitala per Preview."
       );
     }
     const pathname = `assenze/${slug}.json`;
     await putBlobFile(pathname, payload, token);
-    // Rebuild the aggregated snapshot after saving member's file
-    await rebuildSnapshot();
+    await syncMemberIntoSnapshot(cleanName, absences);
     return;
   }
 
-  // If local development (macOS/Node):
+  // 2. If local development (macOS/Node):
   if (token) {
     try {
       const pathname = `assenze/${slug}.json`;
       await putBlobFile(pathname, payload, token);
-      await rebuildSnapshot();
-      return;
     } catch (err) {
       console.warn(`[Blob write failed locally, falling back to disk for ${cleanName}]:`, err);
     }
@@ -218,7 +283,7 @@ export async function saveMemberAbsences(
   ensureLocalDir();
   const filePath = getLocalFilePath(slug);
   fs.writeFileSync(filePath, payload, "utf-8");
-  await rebuildSnapshot();
+  await syncMemberIntoSnapshot(cleanName, absences);
 }
 
 /**
@@ -276,187 +341,130 @@ export async function deleteAbsence(id: string, memberName: string): Promise<boo
 
 /**
  * Compiles all individual member files into a single snapshot (_all.json).
- * This ensures that reads are reduced to a single operation while each member's
- * data remains isolated in their own file.
+ * Reads directly from each member's individual file without depending on list() latency.
  */
 export async function rebuildSnapshot(configuredMembers?: string[]): Promise<AbsenceResponseData> {
   const token = getBlobToken();
   const baseMembers =
     configuredMembers && configuredMembers.length > 0 ? configuredMembers : DEFAULT_MEMBERS;
-  const membersSet = new Set<string>(baseMembers);
   const allAbsences: AbsenceRecord[] = [];
 
-  if (token) {
+  // Parallel fetch directly for each known member's file (Strongly consistent)
+  const promises = baseMembers.map(async (memberName) => {
     try {
-      const blobList = await list({ prefix: "assenze/", token });
-      const jsonBlobs = blobList.blobs.filter(
-        (b) => b.pathname.endsWith(".json") && !b.pathname.endsWith("_all.json")
-      );
-
-      const promises = jsonBlobs.map(async (blob) => {
-        try {
-          const text = await readBlobContent(blob, token);
-          if (text) {
-            const data = JSON.parse(text) as MemberAbsenceFile;
-            if (data?.memberName && !configuredMembers?.length) {
-              membersSet.add(data.memberName);
-            }
-            if (Array.isArray(data?.absences)) {
-              return data.absences;
-            }
-          }
-        } catch (e) {
-          console.error(`[Error reading blob ${blob.pathname}]`, e);
-        }
-        return [];
-      });
-
-      const results = await Promise.all(promises);
-      for (const list of results) {
-        allAbsences.push(...list);
-      }
-
-      const resultData: AbsenceResponseData = {
-        members: Array.from(membersSet).sort((a, b) => a.localeCompare(b, "it")),
-        absences: allAbsences.sort((a, b) => a.startDate.localeCompare(b.startDate)),
-        storage: "vercel-blob"
-      };
-
-      // Write compiled snapshot to blob
-      try {
-        await putBlobFile(SNAPSHOT_KEY, JSON.stringify(resultData, null, 2), token);
-      } catch (err) {
-        console.error("[Blob Snapshot Put Error]", err);
-      }
-
-      absencesMemoryCache = {
-        data: resultData,
-        timestamp: Date.now()
-      };
-
-      return resultData;
-    } catch (err) {
-      console.error("[Blob List Error]", err);
-      if (isVercel) {
-        throw err;
-      }
+      const absences = await getMemberAbsences(memberName);
+      return absences;
+    } catch {
+      return [];
     }
+  });
+
+  const results = await Promise.all(promises);
+  for (const list of results) {
+    allAbsences.push(...list);
   }
 
-  // Local fallback (macOS or serverless /tmp)
-  ensureLocalDir();
-  try {
-    const files = fs
-      .readdirSync(LOCAL_DIR)
-      .filter((f) => f.endsWith(".json") && f !== "_all.json");
-
-    for (const file of files) {
-      try {
-        const filePath = path.join(LOCAL_DIR, file);
-        const content = fs.readFileSync(filePath, "utf-8");
-        const data = JSON.parse(content) as MemberAbsenceFile;
-        if (data?.memberName && !configuredMembers?.length) {
-          membersSet.add(data.memberName);
-        }
-        if (Array.isArray(data?.absences)) {
-          allAbsences.push(...data.absences);
-        }
-      } catch (e) {
-        console.error(`[Error reading local file ${file}]`, e);
-      }
-    }
-  } catch (err) {
-    console.error("[Local Dir Read Error]", err);
-  }
-
-  const localResultData: AbsenceResponseData = {
-    members: Array.from(membersSet).sort((a, b) => a.localeCompare(b, "it")),
+  const resultData: AbsenceResponseData = {
+    members: baseMembers,
     absences: allAbsences.sort((a, b) => a.startDate.localeCompare(b.startDate)),
-    storage: "local-file"
+    storage: token ? "vercel-blob" : "local-file"
   };
 
-  try {
-    fs.writeFileSync(LOCAL_SNAPSHOT_FILE, JSON.stringify(localResultData, null, 2), "utf-8");
-  } catch (err) {
-    console.error("[Local Snapshot Write Error]", err);
+  const payload = JSON.stringify(resultData, null, 2);
+
+  // Write compiled snapshot to blob
+  if (token) {
+    try {
+      await putBlobFile(SNAPSHOT_KEY, payload, token);
+    } catch (err) {
+      console.error("[Blob Snapshot Put Error]", err);
+      if (isVercel) throw err;
+    }
   }
 
+  // Local fallback / cache
+  try {
+    ensureLocalDir();
+    fs.writeFileSync(LOCAL_SNAPSHOT_FILE, payload, "utf-8");
+  } catch {}
+
   absencesMemoryCache = {
-    data: localResultData,
+    data: resultData,
     timestamp: Date.now()
   };
 
-  return localResultData;
+  return resultData;
 }
 
 /**
  * Retrieves all absences and active members list.
- * Priority 1: In-memory cache (60s TTL) unless forceRefresh is true.
- * Priority 2: Single snapshot file (_all.json) -> 1 single read operation.
- * Priority 3: Rebuild snapshot from individual files if _all.json doesn't exist yet or forceRefresh.
+ * Priority 1: In-memory cache (60s TTL) unless bypassMemoryCache is true.
+ * Priority 2: Direct read from single snapshot file (_all.json) -> EXACTLY 1 read.
+ * Priority 3: If _all.json does not exist, rebuildSnapshot from individual files.
  */
 export async function getAllAbsences(
   configuredMembers?: string[],
-  forceRefresh = false
+  bypassMemoryCache = false
 ): Promise<AbsenceResponseData> {
-  if (!forceRefresh && absencesMemoryCache && Date.now() - absencesMemoryCache.timestamp < CACHE_TTL_MS) {
+  // 1. Check in-memory cache if not bypassing
+  if (!bypassMemoryCache && absencesMemoryCache && Date.now() - absencesMemoryCache.timestamp < CACHE_TTL_MS) {
     return absencesMemoryCache.data;
   }
 
   const token = getBlobToken();
+  const baseMembers =
+    configuredMembers && configuredMembers.length > 0 ? configuredMembers : DEFAULT_MEMBERS;
 
-  // Try reading single snapshot file (_all.json) for 1-read efficiency
-  if (!forceRefresh) {
-    if (token) {
-      try {
-        const blobList = await list({ prefix: SNAPSHOT_KEY, token });
-        const snapshotBlob = blobList.blobs.find((b) => b.pathname === SNAPSHOT_KEY);
+  // 2. Read directly from the single snapshot file (all.json) in 1 operation
+  if (token) {
+    try {
+      let text = await getBlobText(SNAPSHOT_KEY, token);
+      if (!text) {
+        text = await getBlobText(LEGACY_SNAPSHOT_KEY, token);
+      }
+      if (text) {
+        const data = JSON.parse(text) as AbsenceResponseData;
+        if (data && Array.isArray(data.absences)) {
+          data.members = baseMembers;
+          data.storage = "vercel-blob";
+          absencesMemoryCache = {
+            data,
+            timestamp: Date.now()
+          };
+          return data;
+        }
+      }
+    } catch (err) {
+      console.error("[Blob Snapshot Read Error, falling back to rebuild]", err);
+    }
+  } else {
+    // Local snapshot read
+    try {
+      ensureLocalDir();
+      const localFile = fs.existsSync(LOCAL_SNAPSHOT_FILE)
+        ? LOCAL_SNAPSHOT_FILE
+        : fs.existsSync(LOCAL_LEGACY_SNAPSHOT_FILE)
+        ? LOCAL_LEGACY_SNAPSHOT_FILE
+        : null;
 
-        if (snapshotBlob) {
-          const text = await readBlobContent(snapshotBlob, token);
-          if (text) {
-            const data = JSON.parse(text) as AbsenceResponseData;
-            if (data && Array.isArray(data.absences)) {
-              if (configuredMembers && configuredMembers.length > 0) {
-                data.members = configuredMembers;
-              }
-              data.storage = "vercel-blob";
-              absencesMemoryCache = {
-                data,
-                timestamp: Date.now()
-              };
-              return data;
-            }
-          }
+      if (localFile) {
+        const content = fs.readFileSync(localFile, "utf-8");
+        const data = JSON.parse(content) as AbsenceResponseData;
+        if (data && Array.isArray(data.absences)) {
+          data.members = baseMembers;
+          data.storage = "local-file";
+          absencesMemoryCache = {
+            data,
+            timestamp: Date.now()
+          };
+          return data;
         }
-      } catch (err) {
-        console.error("[Blob Snapshot Read Error, falling back to rebuild]", err);
       }
-    } else {
-      // Local snapshot read
-      try {
-        ensureLocalDir();
-        if (fs.existsSync(LOCAL_SNAPSHOT_FILE)) {
-          const content = fs.readFileSync(LOCAL_SNAPSHOT_FILE, "utf-8");
-          const data = JSON.parse(content) as AbsenceResponseData;
-          if (data && Array.isArray(data.absences)) {
-            if (configuredMembers && configuredMembers.length > 0) {
-              data.members = configuredMembers;
-            }
-            data.storage = "local-file";
-            absencesMemoryCache = {
-              data,
-              timestamp: Date.now()
-            };
-            return data;
-          }
-        }
-      } catch (err) {
-        console.error("[Local Snapshot Read Error, falling back to rebuild]", err);
-      }
+    } catch (err) {
+      console.error("[Local Snapshot Read Error, falling back to rebuild]", err);
     }
   }
 
-  // Fallback: rebuild snapshot from all individual files
+  // 3. Fallback only if _all.json doesn't exist yet: rebuild snapshot from individual files
   return rebuildSnapshot(configuredMembers);
 }

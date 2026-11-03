@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { getAllAbsences, addAbsence, deleteAbsence, getMemberAbsences, saveMemberAbsences } from "@/lib/absences";
+import {
+  getAllAbsences,
+  rebuildSnapshot,
+  addAbsence,
+  deleteAbsence,
+  getMemberAbsences,
+  saveMemberAbsences
+} from "@/lib/absences";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +31,10 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const data = await getAllAbsences(undefined, bypassCache);
+    const forceRebuild = url.searchParams.has("rebuild");
+    const data = forceRebuild
+      ? await rebuildSnapshot()
+      : await getAllAbsences(undefined, bypassCache);
     return NextResponse.json(
       {
         success: true,
