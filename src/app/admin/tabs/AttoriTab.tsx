@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Users, Search, Theater, Trash2 } from "lucide-react";
+import { Plus, Users, Search, Theater, Trash2, Calendar, X, RefreshCw, UserCheck, Star, Sparkles, Clock } from "lucide-react";
+import { SpecialDate } from "@/types/absence";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -17,7 +18,74 @@ export function AttoriTab() {
   };
 
   const list = attori.list || [];
+  const assenzeMembers: string[] = attori.assenze_members || [];
+  const specialDates: SpecialDate[] = attori.special_dates || [];
   const [search, setSearch] = useState("");
+  const [newAssenzaMember, setNewAssenzaMember] = useState("");
+
+  // State for new special date
+  const [newSpecDate, setNewSpecDate] = useState("");
+  const [newSpecTitle, setNewSpecTitle] = useState("");
+  const [newSpecType, setNewSpecType] = useState<"show" | "rehearsal" | "event">("show");
+  const [newSpecNote, setNewSpecNote] = useState("");
+
+  const handleAddSpecialDate = () => {
+    if (!newSpecDate) {
+      alert("Seleziona una data per l'evento speciale.");
+      return;
+    }
+    if (!newSpecTitle.trim()) {
+      alert("Inserisci un titolo per l'evento speciale (es. Spettacolo Zurigo).");
+      return;
+    }
+
+    const newItem: SpecialDate = {
+      id: `spec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      date: newSpecDate,
+      title: newSpecTitle.trim(),
+      type: newSpecType,
+      note: newSpecNote.trim() || undefined
+    };
+
+    const updated = [...specialDates, newItem].sort((a, b) => a.date.localeCompare(b.date));
+    updateContent("pages.attori.special_dates", updated);
+    setNewSpecDate("");
+    setNewSpecTitle("");
+    setNewSpecNote("");
+  };
+
+  const handleRemoveSpecialDate = (id: string) => {
+    const updated = specialDates.filter((s) => s.id !== id);
+    updateContent("pages.attori.special_dates", updated);
+  };
+
+  const handleAddAssenzaMember = () => {
+    const clean = newAssenzaMember.trim();
+    if (!clean) return;
+    if (assenzeMembers.some((m) => m.toLowerCase() === clean.toLowerCase())) {
+      alert("Questo membro è già presente nell'elenco assenze.");
+      return;
+    }
+    const updated = [...assenzeMembers, clean].sort((a, b) => a.localeCompare(b, "it"));
+    updateContent("pages.attori.assenze_members", updated);
+    setNewAssenzaMember("");
+  };
+
+  const handleRemoveAssenzaMember = (memberName: string) => {
+    const updated = assenzeMembers.filter((m) => m !== memberName);
+    updateContent("pages.attori.assenze_members", updated);
+  };
+
+  const handleImportAllFromCast = () => {
+    const set = new Set(assenzeMembers);
+    for (const actor of list) {
+      if (actor.name && actor.name.trim()) {
+        set.add(actor.name.trim());
+      }
+    }
+    const updated = Array.from(set).sort((a, b) => a.localeCompare(b, "it"));
+    updateContent("pages.attori.assenze_members", updated);
+  };
 
   const addPerson = () => {
     updateContent("pages.attori.list", [
@@ -281,6 +349,217 @@ export function AttoriTab() {
               </AccordionCard>
             );
           })}
+        </div>
+      </AdminSection>
+
+      {/* Calendario Assenze: Membri della Compagnia */}
+      <AdminSection
+        title="Membri per Calendario Assenze"
+        description="Gestisci i membri della compagnia che compaiono nel menu a tendina della pagina riservata /assenze per segnare le proprie disponibilità."
+      >
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={newAssenzaMember}
+              onChange={(e) => setNewAssenzaMember(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddAssenzaMember();
+                }
+              }}
+              placeholder="Nome del membro (es. Roberta, Matteo...)"
+              className="flex-1 bg-background border border-muted rounded-xl px-4 py-2.5 text-foreground placeholder:text-muted-foreground/60 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <button
+              type="button"
+              onClick={handleAddAssenzaMember}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition-all shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Aggiungi Membro</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleImportAllFromCast}
+              title="Aggiunge tutti gli attori della lista Cast qui sopra che non sono ancora presenti"
+              className="bg-muted hover:bg-muted/80 text-foreground border border-muted-foreground/30 font-medium px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5 transition-all"
+            >
+              <UserCheck className="w-4 h-4 text-secondary" />
+              <span>Importa dal Cast</span>
+            </button>
+          </div>
+
+          <div className="p-4 bg-background/50 border border-muted rounded-xl space-y-2">
+            <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Membri attivi nel calendario assenze ({assenzeMembers.length}):
+            </span>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {assenzeMembers.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic">Nessun membro configurato.</p>
+              ) : (
+                assenzeMembers.map((member) => (
+                  <span
+                    key={member}
+                    className="inline-flex items-center gap-1.5 bg-muted text-foreground border border-muted-foreground/20 px-3 py-1.5 rounded-xl text-xs font-medium shadow-sm hover:border-primary/50 transition-colors"
+                  >
+                    <span>{member}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveAssenzaMember(member)}
+                      title={`Rimuovi ${member}`}
+                      className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </AdminSection>
+
+      {/* Date Speciali (Spettacoli & Prove) */}
+      <AdminSection
+        title="Date Speciali: Spettacoli & Prove"
+        description="Inserisci date chiave (spettacoli, prove generali, prove serali) che verranno evidenziate nell'intestazione del calendario assenze e consultabili in una vista dedicata."
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-background/50 border border-muted p-4 rounded-xl">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Data Evento
+              </label>
+              <input
+                type="date"
+                value={newSpecDate}
+                onChange={(e) => setNewSpecDate(e.target.value)}
+                className="w-full bg-background border border-muted rounded-xl px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Titolo / Evento
+              </label>
+              <input
+                type="text"
+                value={newSpecTitle}
+                onChange={(e) => setNewSpecTitle(e.target.value)}
+                placeholder="Es. Spettacolo Scuol"
+                className="w-full bg-background border border-muted rounded-xl px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Tipologia
+              </label>
+              <select
+                value={newSpecType}
+                onChange={(e) => setNewSpecType(e.target.value as any)}
+                className="w-full bg-background border border-muted rounded-xl px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="show">🎭 Spettacolo (Priorità Alta)</option>
+                <option value="rehearsal">🎬 Prova / Prova Generale</option>
+                <option value="event">📌 Evento / Altro</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Note / Orari (Opz.)
+              </label>
+              <input
+                type="text"
+                value={newSpecNote}
+                onChange={(e) => setNewSpecNote(e.target.value)}
+                placeholder="Es. Convocazione ore 18"
+                className="w-full bg-background border border-muted rounded-xl px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleAddSpecialDate}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl text-sm flex items-center gap-1.5 transition-all shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Aggiungi Data Speciale</span>
+            </button>
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Date speciali programmate ({specialDates.length}):
+            </span>
+
+            {specialDates.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic p-4 bg-muted/20 border border-muted rounded-xl text-center">
+                Nessuna data speciale inserita. Aggiungi qui gli spettacoli o le prove da evidenziare.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                {specialDates.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 p-3 bg-muted/30 border border-muted rounded-xl"
+                  >
+                    <div className="min-w-0 flex items-center gap-2.5">
+                      <div
+                        className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                          item.type === "show"
+                            ? "bg-primary animate-pulse"
+                            : item.type === "rehearsal"
+                            ? "bg-secondary"
+                            : "bg-accent"
+                        }`}
+                      />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-foreground text-sm truncate">
+                            {item.title}
+                          </span>
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                              item.type === "show"
+                                ? "bg-primary/20 text-primary"
+                                : item.type === "rehearsal"
+                                ? "bg-secondary/20 text-secondary"
+                                : "bg-accent/20 text-accent"
+                            }`}
+                          >
+                            {item.type === "show"
+                              ? "Spettacolo"
+                              : item.type === "rehearsal"
+                              ? "Prova"
+                              : "Evento"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                          <span className="font-semibold">{item.date}</span>
+                          {item.note && <span className="truncate">({item.note})</span>}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSpecialDate(item.id)}
+                      title="Rimuovi data speciale"
+                      className="text-muted-foreground hover:text-primary p-1.5 rounded-lg hover:bg-primary/10 transition-colors shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </AdminSection>
 

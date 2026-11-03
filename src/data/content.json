@@ -672,6 +672,33 @@
         "cta_label": "Diventa un Attomatto",
         "cta_href": "/Contatti"
       },
+      "assenze_members": [
+        "Andrea",
+        "Ausilia",
+        "Carla",
+        "Delia",
+        "Domenico",
+        "Florinda",
+        "Gerardo",
+        "Lucrezia",
+        "Ludovica",
+        "Marco",
+        "Margherita",
+        "Matteo",
+        "Mauro",
+        "Michele",
+        "Monica",
+        "Roberto",
+        "Teresa"
+      ],
+      "special_dates": [
+        {
+          "id": "spec_1793698851326_zmqg",
+          "date": "2026-12-12",
+          "title": "Cena di Natale",
+          "type": "event"
+        }
+      ],
       "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
       "back_link_label": "Torna a Chi Siamo",
       "empty_list": "Nessun membro attualmente inserito.",

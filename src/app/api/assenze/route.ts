@@ -1,0 +1,186 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getAllAbsences, addAbsence, deleteAbsence, getMemberAbsences, saveMemberAbsences } from "@/lib/absences";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * GET /api/assenze
+ * Returns all recorded absences or single member's absences if ?member=... is provided.
+ */
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const member = url.searchParams.get("member");
+
+    if (member) {
+      const absences = await getMemberAbsences(member);
+      return NextResponse.json({
+        success: true,
+        memberName: member,
+        absences
+      });
+    }
+
+    const data = await getAllAbsences();
+    return NextResponse.json({
+      success: true,
+      ...data
+    });
+  } catch (error: any) {
+    console.error("[API Assenze GET Exception]", error);
+    return NextResponse.json(
+      { success: false, error: "Errore durante il recupero delle assenze: " + (error?.message || error) },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PUT /api/assenze
+ * Batch saves the entire updated absences array for a single member in 1 write operation.
+ * Body: { memberName: string, absences: AbsenceRecord[] }
+ */
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { memberName, absences } = body || {};
+
+    if (!memberName || typeof memberName !== "string" || !memberName.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Il nome del membro è obbligatorio." },
+        { status: 400 }
+      );
+    }
+
+    if (!Array.isArray(absences)) {
+      return NextResponse.json(
+        { success: false, error: "L'elenco assenze deve essere un array." },
+        { status: 400 }
+      );
+    }
+
+    await saveMemberAbsences(memberName.trim(), absences);
+
+    return NextResponse.json({
+      success: true,
+      memberName: memberName.trim(),
+      count: absences.length
+    });
+  } catch (error: any) {
+    console.error("[API Assenze PUT Exception]", error);
+    return NextResponse.json(
+      { success: false, error: "Errore durante il salvataggio batch su cloud: " + (error?.message || error) },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/assenze
+ * Registers a new absence.
+ * Body: { memberName: string, startDate: string, endDate?: string, note?: string }
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { memberName, startDate, endDate, note } = body || {};
+
+    if (!memberName || typeof memberName !== "string" || !memberName.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Il nome del membro è obbligatorio." },
+        { status: 400 }
+      );
+    }
+
+    if (!startDate || typeof startDate !== "string") {
+      return NextResponse.json(
+        { success: false, error: "La data di inizio è obbligatoria." },
+        { status: 400 }
+      );
+    }
+
+    // Basic date validation YYYY-MM-DD
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate)) {
+      return NextResponse.json(
+        { success: false, error: "Formato data non valido (richiesto AAAA-MM-GG)." },
+        { status: 400 }
+      );
+    }
+
+    const finalEndDate = endDate && dateRegex.test(endDate) ? endDate : startDate;
+    if (finalEndDate < startDate) {
+      return NextResponse.json(
+        { success: false, error: "La data di fine non può essere precedente a quella di inizio." },
+        { status: 400 }
+      );
+    }
+
+    const record = await addAbsence({
+      memberName: memberName.trim(),
+      startDate,
+      endDate: finalEndDate,
+      note: typeof note === "string" ? note.trim() : undefined
+    });
+
+    return NextResponse.json({
+      success: true,
+      record
+    });
+  } catch (error: any) {
+    console.error("[API Assenze POST Exception]", error);
+    return NextResponse.json(
+      { success: false, error: "Errore durante il salvataggio dell'assenza: " + (error?.message || error) },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/assenze
+ * Query params or body: { id: string, memberName: string }
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    let id = url.searchParams.get("id");
+    let memberName = url.searchParams.get("memberName");
+
+    if (!id || !memberName) {
+      try {
+        const body = await req.json();
+        id = id || body?.id;
+        memberName = memberName || body?.memberName;
+      } catch {
+        // Ignored if body is empty
+      }
+    }
+
+    if (!id || !memberName) {
+      return NextResponse.json(
+        { success: false, error: "Parametri 'id' e 'memberName' obbligatori." },
+        { status: 400 }
+      );
+    }
+
+    const deleted = await deleteAbsence(id, memberName);
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: "Assenza non trovata o già rimossa." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      id
+    });
+  } catch (error: any) {
+    console.error("[API Assenze DELETE Exception]", error);
+    return NextResponse.json(
+      { success: false, error: "Errore durante l'eliminazione dell'assenza: " + (error?.message || error) },
+      { status: 500 }
+    );
+  }
+}
+
