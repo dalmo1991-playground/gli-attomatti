@@ -357,125 +357,48 @@ export default function AbsenceCalendar({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-6 space-y-2.5 sm:space-y-6 pb-24">
-      {/* MOBILE HEADER (Under 640px): Single clean native bar */}
-      <div className="sm:hidden space-y-2">
-        <div className="flex items-center justify-between gap-1.5 bg-muted/40 border border-muted/80 p-2 rounded-2xl">
-          {/* Month Stepper */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={handlePrevMonth}
-              className="w-8 h-8 rounded-lg bg-background hover:bg-background/80 text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
-              title="Mese precedente"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="font-extrabold text-xs capitalize text-foreground px-1 text-center min-w-[95px] truncate">
-              {MONTH_NAMES[month]} {year}
-            </span>
-            <button
-              onClick={handleNextMonth}
-              className="w-8 h-8 rounded-lg bg-background hover:bg-background/80 text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
-              title="Mese successivo"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-6 space-y-3 sm:space-y-5 pb-24">
+      {/* UNIFIED TOP BAR: Responsive on both Mobile & Desktop */}
+      <div className="bg-muted/30 border border-muted/80 rounded-2xl p-2.5 sm:p-4 shadow-sm flex items-center justify-between gap-2">
+        {/* Left: Branding & Active User */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full shrink-0">
+                <Sparkles className="w-2.5 h-2.5" />
+                Gli Attomatti
+              </span>
+              <h1 className="text-sm sm:text-lg md:text-xl font-black text-foreground tracking-tight truncate hidden xs:inline">
+                Assenze
+              </h1>
+            </div>
 
-          {/* Quick Actions */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => loadCloudData(true)}
-              title="Aggiorna calendario"
-              className="w-8 h-8 rounded-lg bg-background text-muted-foreground hover:text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setModalPrefillMember(activeMember);
-                setModalPrefillDate("");
-                setModalPrefillEndDate("");
-                setIsModalOpen(true);
-              }}
-              className="h-8 px-2.5 rounded-lg bg-primary text-primary-foreground font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-transform"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Assenza</span>
-            </button>
-
-            <button
-              onClick={logout}
-              title="Esci dal calendario"
-              className="w-8 h-8 rounded-lg bg-background text-muted-foreground hover:text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
-            >
-              <Lock className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-1.5 mt-1 min-w-0">
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">Tu:</span>
+              <button
+                type="button"
+                onClick={() => setIsChangingMember(true)}
+                className="inline-flex items-center gap-1 bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-bold transition-all active:scale-95 truncate max-w-[140px] sm:max-w-none"
+                title="Clicca per cambiare membro"
+              >
+                <UserIcon className="w-3 h-3 shrink-0" />
+                <span className="truncate">{activeMember}</span>
+                <span className="text-[9px] sm:text-[10px] text-muted-foreground font-normal">(cambia)</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Member indicator & Today shortcut */}
-        <div className="flex items-center justify-between px-1.5 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground text-[11px]">Tu:</span>
-            <button
-              type="button"
-              onClick={() => setIsChangingMember(true)}
-              className="font-bold text-primary inline-flex items-center gap-1 bg-primary/10 border border-primary/25 px-2 py-0.5 rounded-full text-xs active:scale-95 transition-transform"
-            >
-              <UserIcon className="w-3 h-3" />
-              <span>{activeMember}</span>
-              <span className="text-[10px] text-muted-foreground font-normal">(cambia)</span>
-            </button>
-          </div>
-
-          <button
-            onClick={handleToday}
-            className="text-[11px] font-semibold text-muted-foreground hover:text-foreground underline"
-          >
-            Oggi
-          </button>
-        </div>
-      </div>
-
-      {/* DESKTOP HEADER (640px and up): Spacious & refined */}
-      <div className="hidden sm:flex sm:flex-row sm:items-center justify-between gap-3 border-b border-muted/80 pb-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5 bg-primary/10 border border-primary/25 px-2.5 py-0.5 rounded-full">
-              <Sparkles className="w-3 h-3" />
-              Gli Attomatti
-            </span>
-          </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
-            Calendario Assenze
-          </h1>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-muted-foreground">Accesso:</span>
-            <button
-              type="button"
-              onClick={() => setIsChangingMember(true)}
-              className="inline-flex items-center gap-1.5 bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 px-2.5 py-1 rounded-full text-xs font-bold transition-all active:scale-95"
-              title="Clicca per cambiare persona"
-            >
-              <UserIcon className="w-3 h-3" />
-              <span>{activeMember}</span>
-              <span className="text-[10px] text-muted-foreground font-normal">(cambia)</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
+        {/* Right: Primary Actions (Refresh, Add Absence, Logout) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             onClick={() => loadCloudData(true)}
             disabled={isRefreshing}
             title="Aggiorna calendario"
-            className="h-10 px-3 bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
+            className="w-8 h-8 sm:w-auto sm:h-9 sm:px-3 bg-background hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs font-semibold"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
-            <span>Aggiorna</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
+            <span className="hidden sm:inline">Aggiorna</span>
           </button>
 
           <button
@@ -486,25 +409,34 @@ export default function AbsenceCalendar({
               setModalPrefillEndDate("");
               setIsModalOpen(true);
             }}
-            className="h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-5 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-sm"
+            className="h-8 sm:h-9 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-2.5 sm:px-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1 text-xs sm:text-sm"
           >
-            <Plus className="w-4 h-4 shrink-0" />
-            <span>Nuova Assenza</span>
+            <Plus className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden xs:inline">Nuova Assenza</span>
+            <span className="xs:hidden">Assenza</span>
+          </button>
+
+          <button
+            onClick={logout}
+            title="Esci dal calendario"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-background hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
+          >
+            <Lock className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Notifications */}
       {saveSuccessMsg && (
-        <div className="flex items-center gap-2.5 p-3 sm:p-4 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs sm:text-sm animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+        <div className="flex items-center gap-2.5 p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs sm:text-sm animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>{saveSuccessMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="flex items-center gap-2.5 p-3 sm:p-4 bg-primary/10 border border-primary/30 rounded-2xl text-primary text-xs sm:text-sm">
-          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+        <div className="flex items-center gap-2.5 p-3 bg-primary/10 border border-primary/30 rounded-2xl text-primary text-xs sm:text-sm">
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <div className="flex-1">
             <p className="font-semibold text-xs sm:text-sm">Errore</p>
             <p className="text-[11px] sm:text-xs text-primary/80">{errorMsg}</p>
@@ -518,48 +450,16 @@ export default function AbsenceCalendar({
         </div>
       )}
 
-      {/* Month Navigation (Desktop) & View Mode Selector (Mobile + Desktop) */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 bg-muted/30 border border-muted p-1.5 sm:p-3 rounded-2xl">
-        {/* Desktop Month Selector */}
-        <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={handlePrevMonth}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background hover:bg-muted text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
-            title="Mese precedente"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div className="text-center min-w-[150px]">
-            <span className="block font-black text-base md:text-lg text-foreground tracking-wide capitalize">
-              {MONTH_NAMES[month]} {year}
-            </span>
-          </div>
-
-          <button
-            onClick={handleNextMonth}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background hover:bg-muted text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
-            title="Mese successivo"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={handleToday}
-            className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-background/60 hover:bg-background text-muted-foreground hover:text-foreground border border-muted transition-colors ml-1"
-          >
-            Oggi
-          </button>
-        </div>
-
-        {/* View Mode Toggle - 4 clean tabs in requested order: Le mie, Appuntamenti, Griglia, Agenda */}
-        <div className="grid grid-cols-4 sm:flex items-center gap-1 bg-background/80 p-1 rounded-xl border border-muted">
+      {/* UNIFIED CONTROLS: Segmented Tabs & Month Navigation */}
+      <div className="space-y-2">
+        {/* Row 1: The 4 View Mode Tabs */}
+        <div className="grid grid-cols-4 sm:flex items-center gap-1 bg-muted/40 border border-muted p-1 rounded-2xl">
           <button
             onClick={() => setViewMode("my-absences")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-1 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "my-absences"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40"
             }`}
           >
             <UserIcon className="w-3.5 h-3.5 shrink-0" />
@@ -571,10 +471,10 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("special-dates")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-1 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "special-dates"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40"
             }`}
           >
             <Theater className="w-3.5 h-3.5 shrink-0" />
@@ -583,10 +483,10 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("matrix")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-1 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "matrix"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40"
             }`}
           >
             <TableIcon className="w-3.5 h-3.5 shrink-0" />
@@ -595,16 +495,52 @@ export default function AbsenceCalendar({
 
           <button
             onClick={() => setViewMode("agenda")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-1 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all ${
               viewMode === "agenda"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/40"
             }`}
           >
             <ListIcon className="w-3.5 h-3.5 shrink-0" />
             <span>Agenda</span>
           </button>
         </div>
+
+        {/* Row 2: Month Stepper (ONLY in month-based tabs: Le mie, Griglia, Agenda) */}
+        {viewMode !== "special-dates" && (
+          <div className="flex items-center justify-between gap-2 bg-background/80 border border-muted px-3 py-2 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button
+                onClick={handlePrevMonth}
+                className="w-8 h-8 rounded-xl bg-muted/60 hover:bg-muted text-foreground flex items-center justify-center border border-muted active:scale-95 transition-all"
+                title="Mese precedente"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <span className="font-extrabold text-xs sm:text-base capitalize text-foreground px-2 text-center min-w-[110px] sm:min-w-[140px]">
+                {MONTH_NAMES[month]} {year}
+              </span>
+
+              <button
+                onClick={handleNextMonth}
+                className="w-8 h-8 rounded-xl bg-muted/60 hover:bg-muted text-foreground flex items-center justify-center border border-muted active:scale-95 transition-all"
+                title="Mese successivo"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleToday}
+                className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-muted/60 hover:bg-muted text-foreground border border-muted transition-colors active:scale-95"
+              >
+                Oggi
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main Content Area */}

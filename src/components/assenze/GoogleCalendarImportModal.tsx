@@ -209,14 +209,11 @@ export default function GoogleCalendarImportModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
       <div
-        className="w-full max-w-2xl bg-muted border border-muted-foreground/30 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[92vh] flex flex-col"
+        className="w-full max-w-2xl bg-muted border border-muted-foreground/30 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Mobile drag handle */}
-        <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full mx-auto sm:hidden mb-0.5" />
-
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-muted-foreground/20 pb-3">
           <div className="flex items-center gap-2 text-foreground font-bold text-base sm:text-lg">
