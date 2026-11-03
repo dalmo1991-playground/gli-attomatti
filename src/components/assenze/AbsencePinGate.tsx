@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { Lock, KeyRound, AlertCircle, Sparkles } from "lucide-react";
 import { verifyAbsencePin, logoutAbsencePin } from "@/app/actions/absenceAuth";
+
+export const AbsenceAuthContext = createContext<{ logout: () => void }>({ logout: () => {} });
+export const useAbsenceAuth = () => useContext(AbsenceAuthContext);
 
 const STORAGE_KEY = "attomatti_assenze_auth";
 
@@ -134,18 +137,20 @@ export default function AbsencePinGate({
   }
 
   return (
-    <div className="relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex justify-end">
-        <button
-          onClick={handleLock}
-          title="Esci e richiedi nuovamente il PIN"
-          className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/40 hover:bg-muted border border-muted/60 transition-colors"
-        >
-          <Lock className="w-3.5 h-3.5" />
-          <span>Esci / Blocca</span>
-        </button>
+    <AbsenceAuthContext.Provider value={{ logout: handleLock }}>
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3 hidden sm:flex justify-end">
+          <button
+            onClick={handleLock}
+            title="Esci e richiedi nuovamente il PIN"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/40 hover:bg-muted border border-muted/60 transition-colors"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Esci / Blocca</span>
+          </button>
+        </div>
+        {children}
       </div>
-      {children}
-    </div>
+    </AbsenceAuthContext.Provider>
   );
 }

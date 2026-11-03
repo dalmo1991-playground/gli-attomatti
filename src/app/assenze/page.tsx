@@ -27,7 +27,7 @@ export default async function AssenzePage() {
   const initialIsUnlocked = cookieStore.get("attomatti_assenze_auth")?.value === "1";
 
   return (
-    <main className="min-h-screen bg-background text-foreground pb-16 pt-6">
+    <main className="min-h-screen bg-background text-foreground pb-12 pt-1 sm:pt-6">
       <AbsencePinGate initialIsUnlocked={initialIsUnlocked}>
         <AbsenceCalendar configuredMembers={configuredMembers} specialDates={specialDates} />
       </AbsencePinGate>

@@ -243,17 +243,13 @@ export default function AbsenceMatrixGrid({
 
   return (
     <div className="relative w-full space-y-2.5 sm:space-y-3">
-      {/* Filter Bar with Multi-Select Persons & Presets - Responsive & Compact */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 bg-muted/40 p-2 sm:p-3 rounded-2xl border border-muted">
+      {/* Filter Bar with Multi-Select Persons & Presets */}
+      <div className="flex items-center justify-between gap-2 bg-muted/30 p-2 sm:p-2.5 rounded-2xl border border-muted">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mr-1 whitespace-nowrap hidden sm:inline">
-            Persone:
-          </span>
-
           <button
             type="button"
             onClick={() => setSelectedFilterMembers([])}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
               selectedFilterMembers.length === 0
                 ? "bg-primary text-primary-foreground shadow"
                 : "bg-background/60 text-muted-foreground hover:text-foreground border border-muted"
@@ -266,7 +262,7 @@ export default function AbsenceMatrixGrid({
             <button
               type="button"
               onClick={() => setSelectedFilterMembers([activeMember])}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap shrink-0 active:scale-95 ${
                 selectedFilterMembers.length === 1 &&
                 selectedFilterMembers[0].toLowerCase() === activeMember.toLowerCase()
                   ? "bg-primary text-primary-foreground shadow"
@@ -274,14 +270,14 @@ export default function AbsenceMatrixGrid({
               }`}
             >
               <User className="w-3.5 h-3.5" />
-              <span>Solo la mia riga</span>
+              <span>Solo tu</span>
             </button>
           )}
 
           <button
             type="button"
             onClick={() => setIsFilterModalOpen(true)}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap shrink-0 active:scale-95 ${
               selectedFilterMembers.length > 0 &&
               !(
                 selectedFilterMembers.length === 1 &&
@@ -299,24 +295,19 @@ export default function AbsenceMatrixGrid({
                 selectedFilterMembers[0].toLowerCase() === activeMember.toLowerCase()
               )
                 ? `Filtro (${selectedFilterMembers.length})`
-                : "Scegli N Persone..."}
+                : "Filtra cast..."}
             </span>
           </button>
         </div>
 
         {selectedFilterMembers.length > 0 && (
-          <div className="flex items-center justify-between sm:justify-start gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-muted/40">
-            <span className="text-[11px] text-muted-foreground">
-              Mostrate {visibleMembers.length} di {members.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setSelectedFilterMembers([])}
-              className="text-xs text-primary hover:underline font-semibold"
-            >
-              Mostra tutti
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setSelectedFilterMembers([])}
+            className="text-xs text-primary hover:underline font-semibold shrink-0"
+          >
+            Reset
+          </button>
         )}
       </div>
 
@@ -358,9 +349,9 @@ export default function AbsenceMatrixGrid({
           <thead>
             {/* Row 1: Day numbers & Special events */}
             <tr className="bg-muted/80 backdrop-blur sticky top-0 z-30">
-              <th className="sticky left-0 z-40 bg-muted/95 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-bold text-foreground min-w-[92px] sm:min-w-[140px] max-w-[95px] sm:max-w-[160px] shadow-sm">
+              <th className="sticky left-0 z-40 bg-muted/95 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-bold text-foreground min-w-[86px] sm:min-w-[140px] max-w-[88px] sm:max-w-[160px] shadow-sm">
                 <span className="hidden sm:inline">MEMBRI ({visibleMembers.length})</span>
-                <span className="sm:hidden text-[11px]">MEMBRI</span>
+                <span className="sm:hidden text-[10px]">MEMBRI</span>
               </th>
               {daysInMonth.map((d) => {
                 const spec = d.specialEvent;
@@ -407,7 +398,7 @@ export default function AbsenceMatrixGrid({
 
             {/* Row 2: Day of week letters (L, M, M, G, V, S, D) */}
             <tr className="bg-muted/70 sticky top-[30px] sm:top-[33px] z-20">
-              <th className="sticky left-0 z-30 bg-muted/90 border-b border-r border-muted/80 px-2 sm:px-3 py-0.5 sm:py-1 text-left text-[10px] sm:text-[11px] font-medium text-muted-foreground min-w-[92px] sm:min-w-[140px]">
+              <th className="sticky left-0 z-30 bg-muted/90 border-b border-r border-muted/80 px-2 sm:px-3 py-0.5 sm:py-1 text-left text-[10px] sm:text-[11px] font-medium text-muted-foreground min-w-[86px] sm:min-w-[140px] max-w-[88px] sm:max-w-[160px]">
                 Giorno
               </th>
               {daysInMonth.map((d) => {
@@ -465,7 +456,7 @@ export default function AbsenceMatrixGrid({
                   >
                     {/* Sticky Member Name Column - Compact & readable on mobile */}
                     <td
-                      className={`sticky left-0 z-10 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 font-medium text-[11px] sm:text-xs truncate min-w-[92px] sm:min-w-[140px] max-w-[95px] sm:max-w-[160px] shadow-sm ${
+                      className={`sticky left-0 z-10 border-b border-r border-muted/80 px-2 sm:px-3 py-1.5 font-medium text-[11px] sm:text-xs truncate min-w-[86px] sm:min-w-[140px] max-w-[88px] sm:max-w-[160px] shadow-sm ${
                         isMyRow
                           ? "bg-primary/20 text-primary font-bold"
                           : "bg-background/95 text-foreground"
@@ -562,7 +553,7 @@ export default function AbsenceMatrixGrid({
 
             {/* Bottom Row: Totale Assenti per giorno */}
             <tr className="bg-muted/90 font-bold border-t-2 border-muted sticky bottom-0 z-20">
-              <td className="sticky left-0 z-30 bg-muted border-r border-muted/80 px-2 sm:px-3 py-1.5 text-left text-[10px] sm:text-[11px] text-foreground uppercase tracking-wider min-w-[92px] sm:min-w-[140px] shadow-sm">
+              <td className="sticky left-0 z-30 bg-muted border-r border-muted/80 px-2 sm:px-3 py-1.5 text-left text-[10px] sm:text-[11px] text-foreground uppercase tracking-wider min-w-[86px] sm:min-w-[140px] max-w-[88px] sm:max-w-[160px] shadow-sm">
                 <span className="hidden sm:inline">Totale Assenti</span>
                 <span className="sm:hidden font-bold">Totale</span>
               </td>

@@ -7,6 +7,7 @@ import AbsenceListAgenda from "./AbsenceListAgenda";
 import SpecialDatesView from "./SpecialDatesView";
 import MyAbsencesTab from "./MyAbsencesTab";
 import AbsenceFormModal from "./AbsenceFormModal";
+import { useAbsenceAuth } from "./AbsencePinGate";
 import {
   Calendar as CalendarIcon,
   Table as TableIcon,
@@ -22,7 +23,8 @@ import {
   RotateCcw,
   CheckCircle2,
   Users,
-  Theater
+  Theater,
+  Lock
 } from "lucide-react";
 
 const MONTH_NAMES = [
@@ -41,8 +43,10 @@ export default function AbsenceCalendar({
   configuredMembers = [],
   specialDates = []
 }: AbsenceCalendarProps) {
+  const { logout } = useAbsenceAuth();
   const [currentDate, setCurrentDate] = useState(() => new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>("matrix");
+  // "Le mie assenze" is the primary default view
+  const [viewMode, setViewMode] = useState<ViewMode>("my-absences");
 
   // Members list (from content.json, fallback to default)
   const members = useMemo(() => {
@@ -340,17 +344,99 @@ export default function AbsenceCalendar({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-6 space-y-4 sm:space-y-6 pb-28">
-      {/* Top Header & Identity Banner - Compact on mobile */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-muted/80 pb-3 sm:pb-4">
+    <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-6 space-y-2.5 sm:space-y-6 pb-24">
+      {/* MOBILE HEADER (Under 640px): Single clean native bar */}
+      <div className="sm:hidden space-y-2">
+        <div className="flex items-center justify-between gap-1.5 bg-muted/40 border border-muted/80 p-2 rounded-2xl">
+          {/* Month Stepper */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handlePrevMonth}
+              className="w-8 h-8 rounded-lg bg-background hover:bg-background/80 text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
+              title="Mese precedente"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="font-extrabold text-xs capitalize text-foreground px-1 text-center min-w-[95px] truncate">
+              {MONTH_NAMES[month]} {year}
+            </span>
+            <button
+              onClick={handleNextMonth}
+              className="w-8 h-8 rounded-lg bg-background hover:bg-background/80 text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
+              title="Mese successivo"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => loadCloudData(true)}
+              title="Aggiorna calendario"
+              className="w-8 h-8 rounded-lg bg-background text-muted-foreground hover:text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setModalPrefillMember(activeMember);
+                setModalPrefillDate("");
+                setModalPrefillEndDate("");
+                setIsModalOpen(true);
+              }}
+              className="h-8 px-2.5 rounded-lg bg-primary text-primary-foreground font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-transform"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Assenza</span>
+            </button>
+
+            <button
+              onClick={logout}
+              title="Esci dal calendario"
+              className="w-8 h-8 rounded-lg bg-background text-muted-foreground hover:text-foreground flex items-center justify-center border border-muted active:scale-95 transition-transform"
+            >
+              <Lock className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Member indicator & Today shortcut */}
+        <div className="flex items-center justify-between px-1.5 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="text-muted-foreground text-[11px]">Tu:</span>
+            <button
+              type="button"
+              onClick={() => setIsChangingMember(true)}
+              className="font-bold text-primary inline-flex items-center gap-1 bg-primary/10 border border-primary/25 px-2 py-0.5 rounded-full text-xs active:scale-95 transition-transform"
+            >
+              <UserIcon className="w-3 h-3" />
+              <span>{activeMember}</span>
+              <span className="text-[10px] text-muted-foreground font-normal">(cambia)</span>
+            </button>
+          </div>
+
+          <button
+            onClick={handleToday}
+            className="text-[11px] font-semibold text-muted-foreground hover:text-foreground underline"
+          >
+            Oggi
+          </button>
+        </div>
+      </div>
+
+      {/* DESKTOP HEADER (640px and up): Spacious & refined */}
+      <div className="hidden sm:flex sm:flex-row sm:items-center justify-between gap-3 border-b border-muted/80 pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5 bg-primary/10 border border-primary/25 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5 bg-primary/10 border border-primary/25 px-2.5 py-0.5 rounded-full">
               <Sparkles className="w-3 h-3" />
               Gli Attomatti
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
             Calendario Assenze
           </h1>
           <div className="flex items-center gap-2 mt-1">
@@ -368,7 +454,7 @@ export default function AbsenceCalendar({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => loadCloudData(true)}
             disabled={isRefreshing}
@@ -376,7 +462,7 @@ export default function AbsenceCalendar({
             className="h-10 px-3 bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl border border-muted transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
-            <span className="hidden sm:inline">Aggiorna</span>
+            <span>Aggiorna</span>
           </button>
 
           <button
@@ -387,7 +473,7 @@ export default function AbsenceCalendar({
               setModalPrefillEndDate("");
               setIsModalOpen(true);
             }}
-            className="flex-1 sm:flex-initial h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 sm:px-5 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-xs sm:text-sm"
+            className="h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-5 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 text-sm"
           >
             <Plus className="w-4 h-4 shrink-0" />
             <span>Nuova Assenza</span>
@@ -419,27 +505,27 @@ export default function AbsenceCalendar({
         </div>
       )}
 
-      {/* Month Navigation & View Mode Controls - Scrollable and un-clumped on mobile */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-muted/40 border border-muted p-2 sm:p-3 rounded-2xl">
-        {/* Month Selector */}
-        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2">
+      {/* Month Navigation (Desktop) & View Mode Selector (Mobile + Desktop) */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 bg-muted/30 border border-muted p-1.5 sm:p-3 rounded-2xl">
+        {/* Desktop Month Selector */}
+        <div className="hidden sm:flex items-center gap-2">
           <button
             onClick={handlePrevMonth}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background hover:bg-muted text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
             title="Mese precedente"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <div className="text-center min-w-[130px] sm:min-w-[160px]">
-            <span className="block font-black text-sm sm:text-base md:text-lg text-foreground tracking-wide capitalize">
+          <div className="text-center min-w-[150px]">
+            <span className="block font-black text-base md:text-lg text-foreground tracking-wide capitalize">
               {MONTH_NAMES[month]} {year}
             </span>
           </div>
 
           <button
             onClick={handleNextMonth}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background/80 hover:bg-background text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-background hover:bg-muted text-foreground border border-muted shadow-sm transition-all active:scale-95 shrink-0"
             title="Mese successivo"
           >
             <ChevronRight className="w-4 h-4" />
@@ -453,66 +539,57 @@ export default function AbsenceCalendar({
           </button>
         </div>
 
-        {/* View Mode Toggle - Smooth horizontal scroll on mobile */}
-        <div className="flex items-center gap-1 bg-background/70 p-1 rounded-xl border border-muted overflow-x-auto no-scrollbar scroll-smooth">
-          <button
-            onClick={() => setViewMode("matrix")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
-              viewMode === "matrix"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <TableIcon className="w-3.5 h-3.5" />
-            <span>Griglia</span>
-            <span className="hidden sm:inline">Mese</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode("agenda")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
-              viewMode === "agenda"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <ListIcon className="w-3.5 h-3.5" />
-            <span>Agenda</span>
-            <span className="hidden sm:inline">Giorni</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode("special-dates")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
-              viewMode === "special-dates"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Theater className="w-3.5 h-3.5" />
-            <span>Spettacoli</span>
-            <span className="hidden sm:inline">& Prove</span>
-            {specialDates.length > 0 && (
-              <span className="text-[10px] bg-background/50 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
-                {specialDates.length}
-              </span>
-            )}
-          </button>
-
+        {/* View Mode Toggle - 4 clean tabs in requested order: Le mie, Spettacoli, Griglia, Agenda */}
+        <div className="grid grid-cols-4 sm:flex items-center gap-1 bg-background/80 p-1 rounded-xl border border-muted">
           <button
             onClick={() => setViewMode("my-absences")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               viewMode === "my-absences"
                 ? "bg-primary text-primary-foreground shadow"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <UserIcon className="w-3.5 h-3.5" />
-            <span>Le mie</span>
-            <span className="hidden sm:inline">assenze</span>
+            <UserIcon className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Le mie</span>
             {hasUnsavedChanges && (
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" title="Modifiche non salvate" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             )}
+          </button>
+
+          <button
+            onClick={() => setViewMode("special-dates")}
+            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              viewMode === "special-dates"
+                ? "bg-primary text-primary-foreground shadow"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Theater className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Spettacoli</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode("matrix")}
+            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              viewMode === "matrix"
+                ? "bg-primary text-primary-foreground shadow"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <TableIcon className="w-3.5 h-3.5 shrink-0" />
+            <span>Griglia</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode("agenda")}
+            className={`flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              viewMode === "agenda"
+                ? "bg-primary text-primary-foreground shadow"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <ListIcon className="w-3.5 h-3.5 shrink-0" />
+            <span>Agenda</span>
           </button>
         </div>
       </div>
@@ -556,6 +633,7 @@ export default function AbsenceCalendar({
               members={members}
               activeMember={activeMember}
               absences={displayAbsences}
+              specialDates={specialDates}
               onAddForDate={(dateStr) => {
                 setModalPrefillMember(activeMember);
                 setModalPrefillDate(dateStr);
@@ -583,8 +661,11 @@ export default function AbsenceCalendar({
 
           {viewMode === "my-absences" && (
             <MyAbsencesTab
+              year={year}
+              month={month}
               members={members}
               absences={displayAbsences}
+              specialDates={specialDates}
               activeMember={activeMember}
               onSelectMember={(mem) => {
                 setActiveMember(mem);
@@ -592,12 +673,16 @@ export default function AbsenceCalendar({
                   localStorage.setItem("attomatti_active_member", mem);
                 } catch {}
               }}
-              onOpenAddModal={(prefill) => {
-                setModalPrefillMember(prefill || activeMember);
-                setModalPrefillDate("");
+              onOpenAddModal={(prefillMember, prefillDate) => {
+                setModalPrefillMember(prefillMember || activeMember);
+                setModalPrefillDate(prefillDate || "");
+                setModalPrefillEndDate(prefillDate || "");
                 setIsModalOpen(true);
               }}
               onDeleteAbsence={handleDeleteDraftAbsence}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              onToday={handleToday}
             />
           )}
         </div>
