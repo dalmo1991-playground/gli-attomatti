@@ -146,7 +146,7 @@ export default function AddToCalendarButton({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-56 bg-muted/95 border border-muted-foreground/20 rounded-2xl p-1.5 shadow-2xl backdrop-blur-md z-40 space-y-1 animate-in fade-in zoom-in-95">
+        <div className="absolute right-0 mt-1.5 w-56 bg-muted/95 border border-muted-foreground/20 rounded-2xl p-1.5 shadow-2xl backdrop-blur-md z-50 space-y-1 animate-in fade-in zoom-in-95">
           <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-muted-foreground/10 mb-1">
             Scegli il tuo calendario
           </div>

@@ -200,7 +200,7 @@ export default function AreaRiservataHomeClient({
 
       {/* Highlight Widget: Next Upcoming Event */}
       {nextEvent && (
-        <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border border-primary/20 rounded-3xl p-5 sm:p-6 shadow-sm">
+        <div className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/10 border border-primary/20 rounded-3xl p-5 sm:p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
