@@ -91,6 +91,10 @@
     {
       "label": "Contatti",
       "href": "/Contatti"
+    },
+    {
+      "label": "Area Riservata",
+      "href": "/area-riservata"
     }
   ],
   "pages": {
