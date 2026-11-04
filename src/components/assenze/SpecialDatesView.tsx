@@ -2,7 +2,8 @@
 
 import React, { useMemo } from "react";
 import { SpecialDate, AbsenceRecord } from "@/types/absence";
-import { Calendar, Clock, AlertCircle, CheckCircle2, Theater, Sparkles } from "lucide-react";
+import { Calendar, Clock, AlertCircle, CheckCircle2, Theater, Sparkles, MapPin } from "lucide-react";
+import AddToCalendarButton from "./AddToCalendarButton";
 
 interface SpecialDatesViewProps {
   specialDates: SpecialDate[];
@@ -154,38 +155,64 @@ export default function SpecialDatesView({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                      <span className="font-semibold">{spec.date}</span>
-                      {spec.note && (
-                        <span className="flex items-center gap-1 text-foreground/80">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
+                      <span className="font-semibold text-foreground">{spec.date}</span>
+
+                      {spec.startTime ? (
+                        <span className="flex items-center gap-1 text-foreground/90 font-medium">
                           <Clock className="w-3.5 h-3.5 text-accent" />
-                          <span>{spec.note}</span>
+                          <span>
+                            Ore {spec.startTime}
+                            {spec.endTime ? ` - ${spec.endTime}` : ""}
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5 text-accent/70" />
+                          <span>Giorno intero</span>
+                        </span>
+                      )}
+
+                      {spec.location && (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <MapPin className="w-3.5 h-3.5 text-secondary" />
+                          <span className="truncate max-w-[200px] sm:max-w-xs">{spec.location}</span>
+                        </span>
+                      )}
+
+                      {spec.note && (
+                        <span className="italic text-foreground/75 truncate max-w-[200px] sm:max-w-xs">
+                          {spec.note}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Counters summary */}
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 self-start sm:self-center">
-                  <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-muted/60 border border-muted text-xs">
-                    <span className="font-bold text-foreground">{spec.presentCount}</span>
-                    <span className="text-muted-foreground">presenti</span>
+                {/* Counters summary & Add to calendar button */}
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-muted/60 border border-muted text-xs">
+                      <span className="font-bold text-foreground">{spec.presentCount}</span>
+                      <span className="text-muted-foreground">presenti</span>
+                    </div>
+
+                    {spec.certainAbsents.length > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-primary/15 border border-primary/30 text-xs text-primary font-bold">
+                        <span>{spec.certainAbsents.length}</span>
+                        <span>assenti</span>
+                      </div>
+                    )}
+
+                    {spec.maybeAbsents.length > 0 && (
+                      <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-secondary/15 border border-secondary/30 text-xs text-secondary font-bold">
+                        <span>{spec.maybeAbsents.length}</span>
+                        <span>in dubbio</span>
+                      </div>
+                    )}
                   </div>
 
-                  {spec.certainAbsents.length > 0 && (
-                    <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-primary/15 border border-primary/30 text-xs text-primary font-bold">
-                      <span>{spec.certainAbsents.length}</span>
-                      <span>assenti</span>
-                    </div>
-                  )}
-
-                  {spec.maybeAbsents.length > 0 && (
-                    <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-secondary/15 border border-secondary/30 text-xs text-secondary font-bold">
-                      <span>{spec.maybeAbsents.length}</span>
-                      <span>in dubbio</span>
-                    </div>
-                  )}
+                  <AddToCalendarButton event={spec} />
                 </div>
               </div>
 

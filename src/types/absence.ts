@@ -14,6 +14,10 @@ export interface SpecialDate {
   title: string; // es. "Spettacolo Scuol", "Prova Generale"
   type: "show" | "rehearsal" | "event"; // Tipo evento
   note?: string;
+  isAllDay?: boolean; // true se giorno intero, false se ad orario specifico
+  startTime?: string; // HH:mm (es. "20:00")
+  endTime?: string; // HH:mm (es. "22:30")
+  location?: string; // Luogo opzionale (es. "Missione Cattolica, Zurigo")
 }
 
 export interface MemberAbsenceFile {

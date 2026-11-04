@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { AbsenceRecord, SpecialDate } from "@/types/absence";
+import AddToCalendarButton from "./AddToCalendarButton";
 import {
   Info,
   X,
@@ -339,7 +340,10 @@ export default function AbsenceMatrixGrid({
 
       {/* Mobile swipe prompt */}
       <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1 sm:hidden">
-        <span className="text-foreground/80 font-medium">👉 Scorri in orizzontale</span>
+        <span className="text-foreground/80 font-medium flex items-center gap-1">
+          <ArrowRight className="w-3.5 h-3.5 text-primary" />
+          <span>Scorri in orizzontale</span>
+        </span>
         <span>Tocca la cella per registrare</span>
       </div>
 
@@ -387,8 +391,8 @@ export default function AbsenceMatrixGrid({
                   >
                     <span className="block text-xs sm:text-[13px]">{d.dayNumber}</span>
                     {spec && (
-                      <span className="block text-[8px] sm:text-[9px] font-black uppercase tracking-tighter truncate max-w-[34px] sm:max-w-[38px] mx-auto animate-pulse">
-                        {spec.type === "show" ? "🎭 Spett" : "🎬 Prova"}
+                      <span className="block text-[8px] sm:text-[9px] font-black uppercase tracking-tighter truncate max-w-[34px] sm:max-w-[38px] mx-auto">
+                        {spec.type === "show" ? "Spett" : spec.type === "rehearsal" ? "Prova" : "Evento"}
                       </span>
                     )}
                   </th>
@@ -612,10 +616,9 @@ export default function AbsenceMatrixGrid({
             <span className="w-2 h-2 rounded-full bg-accent inline-block" />
             <span className="text-[11px]">Con nota</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60">
-            <span className="text-[10px] font-bold text-primary">
-              🎭 Spett / 🎬 Prova
-            </span>
+          <div className="flex items-center gap-1.5 bg-muted/40 px-2 py-1 rounded-lg border border-muted/60 text-[10px] font-bold text-foreground">
+            <Theater className="w-3 h-3 text-primary" />
+            <span>Spettacolo / Prova</span>
           </div>
         </div>
 
@@ -848,11 +851,26 @@ export default function AbsenceMatrixGrid({
                   ? "Prova Generale"
                   : "Evento"}
               </p>
+              <p>
+                <strong className="text-foreground">Orario:</strong>{" "}
+                {selectedSpecialDate.startTime
+                  ? `Dalle ${selectedSpecialDate.startTime}${selectedSpecialDate.endTime ? ` alle ${selectedSpecialDate.endTime}` : ""}`
+                  : "Giorno intero"}
+              </p>
+              {selectedSpecialDate.location && (
+                <p>
+                  <strong className="text-foreground">Luogo:</strong> {selectedSpecialDate.location}
+                </p>
+              )}
               {selectedSpecialDate.note && (
                 <div className="p-2.5 bg-background/60 rounded-xl border border-muted text-foreground">
                   {selectedSpecialDate.note}
                 </div>
               )}
+            </div>
+
+            <div className="pt-2 border-t border-muted flex justify-end">
+              <AddToCalendarButton event={selectedSpecialDate} />
             </div>
           </div>
         </div>

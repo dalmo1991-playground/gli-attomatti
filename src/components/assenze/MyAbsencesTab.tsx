@@ -351,10 +351,16 @@ export default function MyAbsencesTab({
 
                   {specialEvent && (
                     <span
-                      className="text-[10px] sm:text-xs leading-none shrink-0"
+                      className="leading-none shrink-0"
                       title={specialEvent.title}
                     >
-                      {specialEvent.type === "show" ? "🎭" : "🎬"}
+                      <Theater
+                        className={`w-3 h-3 ${
+                          specialEvent.type === "show"
+                            ? "text-primary"
+                            : "text-secondary"
+                        }`}
+                      />
                     </span>
                   )}
                 </div>
@@ -408,7 +414,7 @@ export default function MyAbsencesTab({
               <span>Forse assente</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs">🎭 / 🎬</span>
+              <Theater className="w-3.5 h-3.5 text-foreground/80" />
               <span>Appuntamenti</span>
             </div>
           </div>
@@ -621,6 +627,8 @@ export default function MyAbsencesTab({
         isOpen={isGCalModalOpen}
         onClose={() => setIsGCalModalOpen(false)}
         activeMember={activeMember}
+        existingAbsences={myAbsences}
+        onDeleteAbsence={onDeleteAbsence}
         onSuccess={(records) => {
           if (onBatchAddAbsences) {
             onBatchAddAbsences(records);

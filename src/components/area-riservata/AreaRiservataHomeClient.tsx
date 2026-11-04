@@ -12,11 +12,11 @@ import {
   Clock,
   MapPin,
   Calendar,
-  BookOpen,
   ChevronRight
 } from "lucide-react";
 import { SpecialDate, DEFAULT_MEMBERS } from "@/types/absence";
 import { logoutAreaRiservata } from "@/app/actions/areaRiservataAuth";
+import AddToCalendarButton from "@/components/assenze/AddToCalendarButton";
 
 interface AreaRiservataHomeClientProps {
   configuredMembers: string[];
@@ -233,13 +233,16 @@ export default function AreaRiservataHomeClient({
               </div>
             </div>
 
-            <Link
-              href="/area-riservata/appuntamenti"
-              className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-bold px-4 py-2.5 rounded-xl shadow-md hover:bg-primary/90 active:scale-95 transition-all text-xs sm:text-sm shrink-0 self-start sm:self-auto"
-            >
-              <span>Vedi Appuntamenti</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start sm:self-auto">
+              <AddToCalendarButton event={nextEvent} />
+              <Link
+                href="/area-riservata/appuntamenti"
+                className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-bold px-4 py-2.5 rounded-xl shadow-md hover:bg-primary/90 active:scale-95 transition-all text-xs sm:text-sm shrink-0"
+              >
+                <span>Vedi Appuntamenti</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -309,30 +312,6 @@ export default function AreaRiservataHomeClient({
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
-
-          {/* Miniapp 3: Placeholder future utilities */}
-          <div className="relative bg-muted/20 border border-dashed border-muted rounded-3xl p-6 flex flex-col justify-between opacity-80">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-muted text-muted-foreground flex items-center justify-center">
-                  <BookOpen className="w-6 h-6" />
-                </div>
-                <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-                  Prossimamente
-                </span>
-              </div>
-              <h3 className="text-xl font-bold text-foreground">
-                Copioni & Materiali
-              </h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Archivio digitale di compagnia per testi teatrali, canovacci, schede personaggi e materiali di scena condivisi.
-              </p>
-            </div>
-
-            <div className="pt-6 mt-2 border-t border-muted/40 text-xs text-muted-foreground font-medium">
-              In preparazione per le prossime produzioni
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { AbsenceRecord, SpecialDate, memberNameToSlug } from "@/types/absence";
 import AbsenceMatrixGrid from "./AbsenceMatrixGrid";
-import AbsenceListAgenda from "./AbsenceListAgenda";
 import SpecialDatesView from "./SpecialDatesView";
 import MyAbsencesTab from "./MyAbsencesTab";
 import AbsenceFormModal from "./AbsenceFormModal";
@@ -12,7 +11,6 @@ import { logoutAreaRiservata } from "@/app/actions/areaRiservataAuth";
 import {
   Calendar as CalendarIcon,
   Table as TableIcon,
-  List as ListIcon,
   User as UserIcon,
   ChevronLeft,
   ChevronRight,
@@ -34,7 +32,7 @@ const MONTH_NAMES = [
   "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
 ];
 
-type ViewMode = "matrix" | "agenda" | "special-dates" | "my-absences";
+type ViewMode = "matrix" | "special-dates" | "my-absences";
 
 interface AbsenceCalendarProps {
   configuredMembers: string[];
@@ -621,18 +619,6 @@ export default function AbsenceCalendar({
             <TableIcon className="w-3.5 h-3.5 shrink-0" />
             <span>Griglia</span>
           </button>
-
-          <button
-            onClick={() => setViewMode("agenda")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 px-1 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all ${
-              viewMode === "agenda"
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <ListIcon className="w-3.5 h-3.5 shrink-0" />
-            <span>Agenda</span>
-          </button>
         </div>
       </div>
 
@@ -660,24 +646,6 @@ export default function AbsenceCalendar({
               }}
               onAddForCell={(mem, dateStr) => {
                 setModalPrefillMember(mem);
-                setModalPrefillDate(dateStr);
-                setModalPrefillEndDate(dateStr);
-                setIsModalOpen(true);
-              }}
-              onDeleteAbsence={handleDeleteDraftAbsence}
-            />
-          )}
-
-          {viewMode === "agenda" && (
-            <AbsenceListAgenda
-              year={year}
-              month={month}
-              members={members}
-              activeMember={activeMember}
-              absences={displayAbsences}
-              specialDates={specialDates}
-              onAddForDate={(dateStr) => {
-                setModalPrefillMember(activeMember);
                 setModalPrefillDate(dateStr);
                 setModalPrefillEndDate(dateStr);
                 setIsModalOpen(true);
