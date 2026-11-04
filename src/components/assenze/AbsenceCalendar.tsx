@@ -8,7 +8,6 @@ import AbsenceListAgenda from "./AbsenceListAgenda";
 import SpecialDatesView from "./SpecialDatesView";
 import MyAbsencesTab from "./MyAbsencesTab";
 import AbsenceFormModal from "./AbsenceFormModal";
-import { useAbsenceAuth } from "./AbsencePinGate";
 import { logoutAreaRiservata } from "@/app/actions/areaRiservataAuth";
 import {
   Calendar as CalendarIcon,
@@ -46,12 +45,7 @@ export default function AbsenceCalendar({
   configuredMembers = [],
   specialDates = []
 }: AbsenceCalendarProps) {
-  const { logout } = useAbsenceAuth();
-
   const handleLogout = async () => {
-    try {
-      if (logout) logout();
-    } catch {}
     try {
       await logoutAreaRiservata();
       window.location.reload();

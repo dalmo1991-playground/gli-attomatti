@@ -1,54 +1,22 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { constantTimeCompare } from "@/lib/security";
-
-const COOKIE_NAME = "attomatti_assenze_auth";
+import { verifyAreaRiservataPin, logoutAreaRiservata } from "./areaRiservataAuth";
 
 /**
- * Verifies the PIN entered by the user against the server environment variable ASSENZE_PIN.
- * Uses constant-time comparison to prevent timing side-channel attacks.
+ * @deprecated Usa verifyAreaRiservataPin da "@/app/actions/areaRiservataAuth".
+ * Reindirizzato alla nuova autenticazione sicura con cookie HttpOnly e HMAC SHA-256.
  */
 export async function verifyAbsencePin(
   pin: string
 ): Promise<{ success: boolean; error?: string }> {
-  const configuredPin =
-    process.env.ASSENZE_PIN ||
-    process.env.CALENDARIO_ASSENZE_PIN ||
-    (process.env.NODE_ENV === "development" ? "attomatti" : "");
-
-  if (!configuredPin) {
-    return {
-      success: false,
-      error: "PIN non configurato sul server. Imposta la variabile d'ambiente ASSENZE_PIN."
-    };
-  }
-
-  const cleanInput = (pin || "").trim().toLowerCase();
-  const cleanConfig = configuredPin.trim().toLowerCase();
-
-  if (constantTimeCompare(cleanInput, cleanConfig)) {
-    const cookieStore = await cookies();
-    cookieStore.set(COOKIE_NAME, "1", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365, // 1 year persistence
-      sameSite: "lax",
-      httpOnly: false
-    });
-    return { success: true };
-  }
-
-  return { success: false, error: "PIN non corretto. Riprova." };
+  return verifyAreaRiservataPin(pin);
 }
 
 /**
- * Clears the session cookie when the user manually locks the page.
+ * @deprecated Usa logoutAreaRiservata da "@/app/actions/areaRiservataAuth".
  */
 export async function logoutAbsencePin(): Promise<{ success: boolean }> {
-  try {
-    const cookieStore = await cookies();
-    cookieStore.delete(COOKIE_NAME);
-  } catch {}
-  return { success: true };
+  return logoutAreaRiservata();
 }
+
 

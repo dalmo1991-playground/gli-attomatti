@@ -39,6 +39,8 @@ export async function verifyAreaRiservataPin(
   const configuredPin = getConfiguredPin();
 
   if (!configuredPin) {
+    // Artificial delay to prevent timing analysis and brute force
+    await new Promise((resolve) => setTimeout(resolve, 600));
     return {
       success: false,
       error: "PIN non configurato sul server. Imposta la variabile d'ambiente AREA_RISERVATA_PIN."
@@ -63,6 +65,9 @@ export async function verifyAreaRiservataPin(
 
     return { success: true };
   }
+
+  // Rate limiting / brute-force protection: controlled delay on incorrect PIN attempts
+  await new Promise((resolve) => setTimeout(resolve, 600));
 
   return { success: false, error: "PIN non corretto. Riprova." };
 }

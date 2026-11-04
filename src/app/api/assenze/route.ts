@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { isAreaRiservataAuthenticated } from "@/app/actions/areaRiservataAuth";
 import {
   getAllAbsences,
   rebuildSnapshot,
@@ -11,13 +12,30 @@ import {
 
 export const dynamic = "force-dynamic";
 
+function revalidateAllAbsencePaths() {
+  try {
+    revalidatePath("/api/assenze");
+    revalidatePath("/assenze");
+    revalidatePath("/area-riservata");
+    revalidatePath("/area-riservata/assenze");
+    revalidatePath("/area-riservata/appuntamenti");
+  } catch {}
+}
+
 /**
  * GET /api/assenze
  * Returns all recorded absences or single member's absences if ?member=... is provided.
- * Uses 60s Edge & Memory cache unless ?refresh=true or ?t=... is passed.
+ * Protected by Area Riservata session authentication.
  */
 export async function GET(req: NextRequest) {
   try {
+    if (!(await isAreaRiservataAuthenticated())) {
+      return NextResponse.json(
+        { success: false, error: "Accesso non autorizzato. Autenticazione all'Area Riservata richiesta." },
+        { status: 401 }
+      );
+    }
+
     const url = new URL(req.url);
     const member = url.searchParams.get("member");
     const bypassCache = url.searchParams.has("refresh") || url.searchParams.has("t");
@@ -58,11 +76,18 @@ export async function GET(req: NextRequest) {
 /**
  * PUT /api/assenze
  * Batch saves the entire updated absences array for a single member in 1 write operation.
- * Invalidates Edge & memory cache immediately.
+ * Protected by Area Riservata session authentication.
  * Body: { memberName: string, absences: AbsenceRecord[] }
  */
 export async function PUT(req: NextRequest) {
   try {
+    if (!(await isAreaRiservataAuthenticated())) {
+      return NextResponse.json(
+        { success: false, error: "Accesso non autorizzato. Autenticazione all'Area Riservata richiesta." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { memberName, absences } = body || {};
 
@@ -82,11 +107,8 @@ export async function PUT(req: NextRequest) {
 
     await saveMemberAbsences(memberName.trim(), absences);
 
-    // Invalidate edge caches
-    try {
-      revalidatePath("/api/assenze");
-      revalidatePath("/assenze");
-    } catch {}
+    // Invalidate caches
+    revalidateAllAbsencePaths();
 
     return NextResponse.json({
       success: true,
@@ -105,10 +127,18 @@ export async function PUT(req: NextRequest) {
 /**
  * POST /api/assenze
  * Registers a new absence.
+ * Protected by Area Riservata session authentication.
  * Body: { memberName: string, startDate: string, endDate?: string, note?: string }
  */
 export async function POST(req: NextRequest) {
   try {
+    if (!(await isAreaRiservataAuthenticated())) {
+      return NextResponse.json(
+        { success: false, error: "Accesso non autorizzato. Autenticazione all'Area Riservata richiesta." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { memberName, startDate, endDate, note } = body || {};
 
@@ -150,6 +180,8 @@ export async function POST(req: NextRequest) {
       note: typeof note === "string" ? note.trim() : undefined
     });
 
+    revalidateAllAbsencePaths();
+
     return NextResponse.json({
       success: true,
       record
@@ -165,10 +197,18 @@ export async function POST(req: NextRequest) {
 
 /**
  * DELETE /api/assenze
+ * Protected by Area Riservata session authentication.
  * Query params or body: { id: string, memberName: string }
  */
 export async function DELETE(req: NextRequest) {
   try {
+    if (!(await isAreaRiservataAuthenticated())) {
+      return NextResponse.json(
+        { success: false, error: "Accesso non autorizzato. Autenticazione all'Area Riservata richiesta." },
+        { status: 401 }
+      );
+    }
+
     const url = new URL(req.url);
     let id = url.searchParams.get("id");
     let memberName = url.searchParams.get("memberName");
@@ -198,10 +238,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    try {
-      revalidatePath("/api/assenze");
-      revalidatePath("/assenze");
-    } catch {}
+    revalidateAllAbsencePaths();
 
     return NextResponse.json({
       success: true,
