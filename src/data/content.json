@@ -697,46 +697,78 @@
       ],
       "special_dates": [
         {
+          "id": "spec_1793815243944_6ixe",
+          "date": "2026-11-14",
+          "title": "Cineforum",
+          "type": "event",
+          "isAllDay": false,
+          "startTime": "18:00",
+          "endTime": "21:00",
+          "location": "Balberstrasse 47, 8038 Zürich"
+        },
+        {
+          "id": "spec_1793815243944_6ixe",
+          "date": "2027-01-16",
+          "title": "Cineforum",
+          "type": "event",
+          "isAllDay": false,
+          "startTime": "18:00",
+          "endTime": "21:00",
+          "location": "Balberstrasse 47, 8038 Zürich"
+        },
+        {
+          "id": "spec_1793815243944_6ixe",
+          "date": "2027-02-20",
+          "title": "Cineforum",
+          "type": "event",
+          "isAllDay": false,
+          "startTime": "18:00",
+          "endTime": "21:00",
+          "location": "Balberstrasse 47, 8038 Zürich"
+        },
+        {
+          "id": "spec_1793815243944_6ixe",
+          "date": "2026-03-20",
+          "title": "Cineforum",
+          "type": "event",
+          "isAllDay": false,
+          "startTime": "18:00",
+          "endTime": "21:00",
+          "location": "Balberstrasse 47, 8038 Zürich"
+        },
+        {
           "id": "spec_1793700165321_v5sr",
           "date": "2026-11-15",
           "title": "Lettura copione",
-          "type": "rehearsal"
-        },
-        {
-          "id": "spec_1793700202454_crfu",
-          "date": "2026-12-05",
-          "title": "Viaggio mercatini",
-          "type": "event"
-        },
-        {
-          "id": "spec_1793700218877_8sow",
-          "date": "2026-12-06",
-          "title": "Viaggio mercatini",
-          "type": "event"
-        },
-        {
-          "id": "spec_1793700242543_7ikv",
-          "date": "2026-12-12",
-          "title": "Cena di Natale",
-          "type": "event"
-        },
-        {
-          "id": "spec_1793704216160_rh6e",
-          "date": "2027-04-11",
-          "title": "Giulietta & Saverio",
-          "type": "show"
-        },
-        {
-          "id": "spec_1793704239251_6nqz",
-          "date": "2027-05-22",
-          "title": "Una Cenerentola",
-          "type": "show"
+          "type": "rehearsal",
+          "isAllDay": false,
+          "startTime": "16:00",
+          "endTime": "22:00",
+          "location": "Zürichstrasse 71, 8134 Adliswil"
         },
         {
           "id": "spec_1793704203288_4ko3",
           "date": "2027-04-10",
           "title": "Giulietta & Saverio",
-          "type": "show"
+          "type": "show",
+          "isAllDay": true,
+          "location": "Bruder Klaus"
+        },
+        {
+          "id": "spec_1793704216160_rh6e",
+          "date": "2027-04-11",
+          "title": "Giulietta & Saverio",
+          "type": "show",
+          "isAllDay": true,
+          "location": "Bruder Klaus"
+        },
+        {
+          "id": "spec_1793704239251_6nqz",
+          "date": "2027-05-22",
+          "title": "Una Cenerentola",
+          "type": "show",
+          "isAllDay": true,
+          "location": "Avellino"
         }
       ],
       "subtitle": "Le persone che rendono possibile la magia del teatro Attomatti.",
