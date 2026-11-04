@@ -355,7 +355,7 @@ export function AttoriTab() {
       {/* Calendario Assenze: Membri della Compagnia */}
       <AdminSection
         title="Membri per Calendario Assenze"
-        description="Gestisci i membri della compagnia che compaiono nel menu a tendina della pagina riservata /assenze per segnare le proprie disponibilità."
+        description="Gestisci i membri della compagnia che compaiono nel menu a tendina dell'area riservata (/area-riservata) per segnare le proprie disponibilità."
       >
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-2">

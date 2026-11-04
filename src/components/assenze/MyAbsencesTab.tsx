@@ -190,23 +190,75 @@ export default function MyAbsencesTab({
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
-      {/* Subheader: Quick Tip & GCal Import */}
-      <div className="flex items-center justify-between gap-2 px-1">
-        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-          <Calendar className="w-4 h-4 text-primary shrink-0" />
-          <span>Tocca un giorno sul calendario per segnare o rimuovere la tua assenza</span>
-        </p>
+      {/* Action Buttons: 2-column grid that mathematically never overflows on mobile */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => onOpenAddModal(activeMember)}
+          className="h-10 sm:h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all truncate"
+        >
+          <Plus className="w-4 h-4 shrink-0" />
+          <span className="truncate">Nuova Assenza</span>
+        </button>
 
         <button
           type="button"
           onClick={() => setIsGCalModalOpen(true)}
-          className="h-8 sm:h-9 bg-muted hover:bg-muted-foreground/20 text-foreground font-semibold text-xs px-2.5 sm:px-3 rounded-xl flex items-center gap-1.5 border border-muted shadow-sm active:scale-95 transition-all shrink-0"
+          className="h-10 sm:h-11 bg-muted hover:bg-muted-foreground/20 text-foreground font-semibold text-xs sm:text-sm px-3 rounded-xl flex items-center justify-center gap-1.5 border border-muted shadow-sm active:scale-95 transition-all truncate"
           title="Importa impegni da Google Calendar"
         >
-          <Download className="w-3.5 h-3.5 text-primary shrink-0" />
-          <span className="hidden sm:inline">Importa da GCal</span>
-          <span className="sm:hidden">GCal</span>
+          <Download className="w-4 h-4 text-primary shrink-0" />
+          <span className="truncate">Importa da GCal</span>
         </button>
+      </div>
+
+      {/* Month Navigation Header (Desktop / Tablet view) */}
+      <div className="bg-muted/30 border border-muted/80 rounded-2xl p-2.5 sm:p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {onPrevMonth && (
+            <button
+              type="button"
+              onClick={onPrevMonth}
+              className="w-8 h-8 rounded-xl bg-background hover:bg-muted text-foreground flex items-center justify-center border border-muted active:scale-95 transition-all"
+              title="Mese precedente"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
+
+          <div className="leading-tight px-1">
+            <h3 className="font-extrabold text-sm sm:text-base capitalize text-foreground flex items-center gap-1.5">
+              <Calendar className="w-4 h-4 text-primary shrink-0 hidden sm:inline" />
+              <span>{MONTH_NAMES[month]} {year}</span>
+            </h3>
+          </div>
+
+          {onNextMonth && (
+            <button
+              type="button"
+              onClick={onNextMonth}
+              className="w-8 h-8 rounded-xl bg-background hover:bg-muted text-foreground flex items-center justify-center border border-muted active:scale-95 transition-all"
+              title="Mese successivo"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {onToday && (
+            <button
+              type="button"
+              onClick={onToday}
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-background hover:bg-muted text-muted-foreground hover:text-foreground border border-muted transition-colors active:scale-95"
+            >
+              Oggi
+            </button>
+          )}
+          <span className="text-[11px] text-muted-foreground hidden md:inline">
+            Tocca un giorno per segnare la tua assenza
+          </span>
+        </div>
       </div>
 
       {/* SQUARE MONTH CALENDAR (7 * num_settimane) */}
