@@ -12,7 +12,8 @@ import {
   Clock,
   MapPin,
   Calendar,
-  ChevronRight
+  ChevronRight,
+  Shield
 } from "lucide-react";
 import { SpecialDate, DEFAULT_MEMBERS } from "@/types/absence";
 import { logoutAreaRiservata } from "@/app/actions/areaRiservataAuth";
@@ -43,14 +44,14 @@ export default function AreaRiservataHomeClient({
       if (saved && members.includes(saved)) {
         setActiveMember(saved);
       }
-    } catch {}
+    } catch { }
   }, [members]);
 
   const handleSelectMember = (name: string) => {
     setActiveMember(name);
     try {
       localStorage.setItem("attomatti_active_member", name);
-    } catch {}
+    } catch { }
     setIsChangingMember(false);
   };
 
@@ -136,15 +137,25 @@ export default function AreaRiservataHomeClient({
           )}
         </div>
 
-        <button
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          title="Esci dall'Area Riservata"
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl bg-muted/40 hover:bg-muted border border-muted/70 transition-all active:scale-95 disabled:opacity-50"
-        >
-          <Lock className="w-3.5 h-3.5" />
-          <span>{isLoggingOut ? "Uscita..." : "Esci / Blocca"}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin"
+            title="Pannello di Amministrazione"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl bg-muted/40 hover:bg-muted border border-muted/70 transition-all active:scale-95"
+          >
+            <Shield className="w-3.5 h-3.5 text-primary" />
+            <span>Admin</span>
+          </Link>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            title="Esci dall'Area Riservata"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl bg-muted/40 hover:bg-muted border border-muted/70 transition-all active:scale-95 disabled:opacity-50"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>{isLoggingOut ? "Uscita..." : "Esci / Blocca"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Member Selection Modal */}
@@ -169,11 +180,10 @@ export default function AreaRiservataHomeClient({
                   key={mem}
                   type="button"
                   onClick={() => handleSelectMember(mem)}
-                  className={`p-2.5 rounded-xl text-xs font-semibold border transition-all text-left flex items-center justify-between ${
-                    activeMember === mem
+                  className={`p-2.5 rounded-xl text-xs font-semibold border transition-all text-left flex items-center justify-between ${activeMember === mem
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
                       : "bg-background/80 hover:bg-background text-foreground border-muted"
-                  }`}
+                    }`}
                 >
                   <span className="truncate">{mem}</span>
                   {activeMember === mem && <Sparkles className="w-3 h-3 shrink-0" />}
@@ -212,8 +222,8 @@ export default function AreaRiservataHomeClient({
                     {daysUntilNext === 0
                       ? "Oggi!"
                       : daysUntilNext === 1
-                      ? "Domani"
-                      : `Tra ${daysUntilNext} giorni`}
+                        ? "Domani"
+                        : `Tra ${daysUntilNext} giorni`}
                   </span>
                 )}
               </div>
