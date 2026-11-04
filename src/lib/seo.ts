@@ -15,7 +15,7 @@ export const DEFAULT_SEO = {
     siteSeo.default_description ||
     (localContent as any)?.site?.description ||
     "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
-  defaultImage: siteSeo.default_image || "/images/1782553290530-TheaterCurtain.webp",
+  defaultImage: siteSeo.default_image || "/images/og-image.webp",
   locale: siteSeo.locale || "it_CH",
   keywords: Array.isArray(siteSeo.keywords) ? siteSeo.keywords : [],
   socials: Array.isArray(siteSeo.socials) ? siteSeo.socials : []
