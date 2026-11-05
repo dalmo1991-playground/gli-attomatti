@@ -998,8 +998,8 @@
       "theme_color": "gold",
       "header": {
         "logo_text": "UNITRE & Gli Attomatti",
-        "cta_label": "Prenota",
-        "cta_href": "#registrazione",
+        "cta_label": "",
+        "cta_href": "",
         "nav_links": [],
         "subtitle": "Cinema a Zurigo",
         "logo_image": ""
