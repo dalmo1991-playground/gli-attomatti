@@ -1939,6 +1939,16 @@
     ],
     "links": [
       {
+        "id": "link-1794154045659",
+        "title": "Iscriviti alla newsletter",
+        "subtitle": "",
+        "url": "/Registrazioni/newsletter",
+        "icon": "Mail",
+        "featured": false,
+        "visible": true,
+        "section_id": ""
+      },
+      {
         "id": "link-1794153144161",
         "title": "Si alzi il sipario: ecco gli Attomatti",
         "subtitle": "Articolo su laRegione.ch",
