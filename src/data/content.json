@@ -312,7 +312,9 @@
         "text": "Siamo sempre alla ricerca di nuovi talenti, appassionati e volontari per salire sul palco o aiutarci dietro le quinte.",
         "cta_label": "Contattaci",
         "cta_href": "/Contatti"
-      }
+      },
+      "assenze_members": [],
+      "special_dates": []
     },
     "parlano_di_noi": {
       "title": "Dicono di Noi",
@@ -1880,5 +1882,30 @@
       "badge": "",
       "category_badge": ""
     }
-  ]
+  ],
+  "linktree": {
+    "enabled": true,
+    "slug": "links",
+    "meta_title": "Gli Attomatti — Link Ufficiali",
+    "meta_description": "Tutti i link della compagnia teatrale Gli Attomatti di Zurigo: spettacoli, corsi, prenotazioni e social.",
+    "profile": {
+      "avatar": "",
+      "title": "Gli Attomatti",
+      "bio": "",
+      "badge": "",
+      "show_verified": true
+    },
+    "theme": {
+      "preset": "dark",
+      "button_style": "rounded",
+      "button_variant": "filled",
+      "font_style": "sans",
+      "animation_speed": "normal",
+      "glow_featured": true
+    },
+    "social_links": [],
+    "sections": [],
+    "links": [],
+    "footer_text": "Gli Attomatti • Compagnia Teatrale Zurigo"
+  }
 }

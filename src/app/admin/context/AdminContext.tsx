@@ -7,7 +7,7 @@ import { PublishStatus, DiffEntry, RecoverableDraft } from "../types";
 interface AdminContextType {
   content: any;
   setContent: (content: any) => void;
-  updateContent: (path: string, value: any) => void;
+  updateContent: (pathOrObject: string | Record<string, any>, value?: any) => void;
   adminSecret: string;
   setAdminSecret: (secret: string) => void;
   isPublishing: boolean;
@@ -144,19 +144,33 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     fetchLiveContent();
   }, []);
 
-  const updateContent = useCallback((path: string, value: any) => {
+  const updateContent = useCallback((pathOrObject: string | Record<string, any>, value?: any) => {
     setContent((prevContent: any) => {
       const newContent = JSON.parse(JSON.stringify(prevContent));
-      const keys = path.split(".");
-      let current = newContent;
-      for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i];
-        if (current[key] === undefined || current[key] === null) {
-          current[key] = isNaN(Number(keys[i + 1])) ? {} : [];
-        }
-        current = current[key];
+
+      // Support passing an object patch directly e.g. updateContent({ linktree: { ... } })
+      if (typeof pathOrObject === "object" && pathOrObject !== null) {
+        return {
+          ...newContent,
+          ...pathOrObject,
+        };
       }
-      current[keys[keys.length - 1]] = value;
+
+      // Support string dot-notation path e.g. updateContent("pages.home.title", val)
+      if (typeof pathOrObject === "string") {
+        const keys = pathOrObject.split(".");
+        let current = newContent;
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (current[key] === undefined || current[key] === null) {
+            current[key] = isNaN(Number(keys[i + 1])) ? {} : [];
+          }
+          current = current[key];
+        }
+        current[keys[keys.length - 1]] = value;
+        return newContent;
+      }
+
       return newContent;
     });
   }, []);

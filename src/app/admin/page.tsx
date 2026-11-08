@@ -24,6 +24,7 @@ import { PressTab } from "./tabs/PressTab";
 import { BlogTab } from "./tabs/BlogTab";
 import { ContactTab } from "./tabs/ContactTab";
 import { LandingTab } from "./tabs/LandingTab";
+import { LinktreeTab } from "./tabs/LinktreeTab";
 import { GalleryTab } from "./tabs/GalleryTab";
 import { IntegrationsTab } from "./tabs/IntegrationsTab";
 import { EmailTab } from "./tabs/EmailTab";
@@ -64,6 +65,8 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
     }
     case "contatti":
       return "/Contatti";
+    case "linktree":
+      return "/links";
     case "landing": {
       if (activeLandingSlug) {
         return `/landing/${activeLandingSlug}`;
@@ -199,6 +202,7 @@ function AdminContent() {
                       }}
                     />
                   )}
+                  {activeTab === "linktree" && <LinktreeTab />}
                   {activeTab === "parlano_di_noi" && <PressTab />}
                   {activeTab === "blog" && <BlogTab />}
                   {activeTab === "contatti" && <ContactTab />}

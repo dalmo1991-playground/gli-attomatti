@@ -44,8 +44,15 @@ import {
   Database,
   Bell,
   Clock,
-  KeyRound
+  KeyRound,
+  Upload,
+  Users,
+  Play,
+  CheckCircle,
+  XCircle,
+  AlertTriangle
 } from "lucide-react";
+import { parseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -161,13 +168,29 @@ export function EmailTab() {
   const activeTemplate = templates[selectedIndex] || templates[0] || null;
 
   // View state
-  const [activeTabSection, setActiveTabSection] = useState<"theme" | "details" | "builder" | "personalization" | "api" | "preview" | "queue">("theme");
+  const [activeTabSection, setActiveTabSection] = useState<"theme" | "details" | "builder" | "personalization" | "api" | "preview" | "mass" | "queue">("theme");
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile" | "fluid">("desktop");
   const [isPreviewJsonOpen, setIsPreviewJsonOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const [copiedCustomSnippet, setCopiedCustomSnippet] = useState(false);
   const [copiedSubcaseSnippet, setCopiedSubcaseSnippet] = useState<string | null>(null);
+
+  // Mass Send CSV state
+  const [csvRawText, setCsvRawText] = useState<string>("");
+  const [parsedCsvData, setParsedCsvData] = useState<ParsedCsvResult | null>(null);
+  const [selectedEmailCol, setSelectedEmailCol] = useState<string>("");
+  const [massPreviewRowIndex, setMassPreviewRowIndex] = useState<number>(0);
+  const [isDryRunningMass, setIsDryRunningMass] = useState<boolean>(false);
+  const [isSendingMass, setIsSendingMass] = useState<boolean>(false);
+  const [massSendReport, setMassSendReport] = useState<{
+    dryRun: boolean;
+    total: number;
+    sent: number;
+    failed: number;
+    results: Array<{ to: string; success: boolean; id?: string; error?: string; simulated?: boolean }>;
+  } | null>(null);
+  const [showMassConfirmModal, setShowMassConfirmModal] = useState<boolean>(false);
 
   // DLQ (Dead Letter Queue) state
   const [queueItems, setQueueItems] = useState<FailedEmailRecord[]>([]);
@@ -956,6 +979,124 @@ export function EmailTab() {
     window.open(url, "_blank");
   };
 
+  // Parsing del file o testo CSV
+  const handleProcessCsvText = (text: string) => {
+    setCsvRawText(text);
+    if (!text.trim()) {
+      setParsedCsvData(null);
+      setSelectedEmailCol("");
+      setMassSendReport(null);
+      return;
+    }
+    const res = parseCsv(text);
+    setParsedCsvData(res);
+    if (res.detectedEmailField) {
+      setSelectedEmailCol(res.detectedEmailField);
+    } else if (res.headers.length > 0) {
+      setSelectedEmailCol(res.headers[0]);
+    }
+    setMassPreviewRowIndex(0);
+    setMassSendReport(null);
+  };
+
+  // Lettura file CSV caricato dall'utente
+  const handleCsvFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (typeof content === "string") {
+        handleProcessCsvText(content);
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+  };
+
+  // Calcolo delle variabili attuali per la riga selezionata nel CSV
+  const currentMassSelectedRow = useMemo(() => {
+    if (!parsedCsvData || !parsedCsvData.rows.length) return null;
+    const index = Math.max(0, Math.min(massPreviewRowIndex, parsedCsvData.rows.length - 1));
+    return parsedCsvData.rows[index];
+  }, [parsedCsvData, massPreviewRowIndex]);
+
+  // Anteprima live specifica per la riga CSV selezionata
+  const massLivePreviewHtml = useMemo(() => {
+    if (!activeTemplate || !currentMassSelectedRow) return "";
+    const tplWithBlocks: EmailTemplateConfig = {
+      ...activeTemplate,
+      blocks: activeBlocks
+    };
+    const rowRecipientEmail = selectedEmailCol ? currentMassSelectedRow[selectedEmailCol] || "" : "";
+    const rowVariables: Record<string, string> = {
+      ...currentMassSelectedRow,
+      email: rowRecipientEmail
+    };
+
+    return renderEmailHtml({
+      template: tplWithBlocks,
+      variables: rowVariables,
+      themeColors: resolvedColors,
+      settings,
+      baseUrl: siteBaseUrl
+    });
+  }, [activeTemplate, activeBlocks, currentMassSelectedRow, selectedEmailCol, resolvedColors, settings, siteBaseUrl]);
+
+  // Esecuzione del test (Dry-Run o Invio Reale)
+  const handleExecuteMassSend = async (isDryRun: boolean) => {
+    if (!activeTemplate || !parsedCsvData || !parsedCsvData.rows.length) return;
+    if (!selectedEmailCol) {
+      alert("Seleziona la colonna che contiene l'indirizzo email.");
+      return;
+    }
+
+    if (isDryRun) {
+      setIsDryRunningMass(true);
+    } else {
+      setIsSendingMass(true);
+      setShowMassConfirmModal(false);
+    }
+    setMassSendReport(null);
+    const secret = ensureAdminSecret();
+
+    try {
+      const recipientsPayload = parsedCsvData.rows.map((row) => ({
+        to: row[selectedEmailCol]?.trim() || "",
+        variables: row
+      }));
+
+      const templatePayload: EmailTemplateConfig = {
+        ...activeTemplate,
+        blocks: activeBlocks
+      };
+
+      const res = await fetch("/api/email/mass-send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": secret || ""
+        },
+        body: JSON.stringify({
+          template: templatePayload,
+          recipients: recipientsPayload,
+          isDryRun
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        alert("Errore durante l'operazione massiva: " + (data.error || "errore sconosciuto"));
+      } else {
+        setMassSendReport(data);
+      }
+    } catch (err: any) {
+      alert("Errore di connessione: " + (err?.message || "errore sconosciuto"));
+    } finally {
+      setIsDryRunningMass(false);
+      setIsSendingMass(false);
+    }
+  };
+
   return (
     <div className="space-y-8 w-full max-w-[1850px] pb-24">
       {/* Header Overview Banner */}
@@ -1128,7 +1269,23 @@ export function EmailTab() {
                   <Code size={15} /> Integrazione (API & Trigger)
                 </button>
 
-                {/* 6. Anteprima */}
+                {/* 6. Invio Massivo (CSV) */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTabSection("mass")}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTabSection === "mass" ? "border-primary text-primary font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
+                  }`}
+                >
+                  <Users size={15} /> Invio Massivo (CSV)
+                  {parsedCsvData && parsedCsvData.totalRows > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 text-[10px] font-black">
+                      {parsedCsvData.totalRows}
+                    </span>
+                  )}
+                </button>
+
+                {/* 7. Anteprima */}
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("preview")}
@@ -1139,7 +1296,7 @@ export function EmailTab() {
                   <Eye size={15} /> Anteprima Tutta Pagina
                 </button>
 
-                {/* 7. Coda Errori (DLQ) */}
+                {/* 8. Coda Errori (DLQ) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -3698,7 +3855,260 @@ export function EmailTab() {
                 </div>
               </div>
 
-              {/* Live Preview Container */}
+              {/* SECTION: INVIO MASSIVO (CSV / NEWSLETTER) */}
+              {activeTabSection === "mass" && (
+                <div className="space-y-6">
+                  {/* Card 1: Caricamento File CSV & Configurazione Colonne */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                      <div>
+                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                          <Users size={18} className="text-primary" />
+                          Invio Massivo Newsletter & Comunicazioni Commerciali
+                        </h4>
+                        <p className="text-xs text-foreground/60 mt-0.5">
+                          Invia questo template ad una lista di contatti da file CSV. Le colonne del file possono essere usate come variabili personalizzate (es. &#123;&#123;nome&#125;&#125;).
+                        </p>
+                      </div>
+
+                      {parsedCsvData && parsedCsvData.totalRows > 0 && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+                          <CheckCircle2 size={14} />
+                          <span>{parsedCsvData.totalRows} contatti caricati</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Caricamento File o Incolla */}
+                      <div className="space-y-4">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                          1. Carica File CSV o Incolla Dati
+                        </label>
+
+                        <div className="flex items-center gap-3">
+                          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all">
+                            <Upload size={14} />
+                            <span>Scegli File CSV</span>
+                            <input
+                              type="file"
+                              accept=".csv,text/csv,text/plain"
+                              onChange={handleCsvFileUpload}
+                              className="hidden"
+                            />
+                          </label>
+                          <span className="text-xs text-foreground/40">oppure incolla qui sotto:</span>
+                        </div>
+
+                        <textarea
+                          value={csvRawText}
+                          onChange={(e) => handleProcessCsvText(e.target.value)}
+                          placeholder={"Email,Nome,Posto,Citta\nmario.rossi@example.com,Mario,Fila 3,Zurigo\nlaura.bianchi@example.com,Laura,Fila 4,Berna"}
+                          rows={6}
+                          className="w-full px-3 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground font-mono text-xs focus:outline-none focus:border-primary resize-y"
+                        />
+
+                        {parsedCsvData?.errors && parsedCsvData.errors.length > 0 && (
+                          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-1">
+                            {parsedCsvData.errors.map((err, i) => (
+                              <div key={i} className="flex items-center gap-2">
+                                <AlertTriangle size={13} className="shrink-0" />
+                                <span>{err}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Configurazione Mappatura Colonne */}
+                      <div className="space-y-4">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                          2. Mappatura & Variabili Rilevate
+                        </label>
+
+                        {parsedCsvData && parsedCsvData.headers.length > 0 ? (
+                          <div className="space-y-4 p-4 rounded-2xl bg-background/40 border border-foreground/10">
+                            <div>
+                              <span className="block text-xs font-semibold text-foreground/80 mb-1">
+                                Colonna Indirizzo Email (Destinatario):
+                              </span>
+                              <select
+                                value={selectedEmailCol}
+                                onChange={(e) => setSelectedEmailCol(e.target.value)}
+                                className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                              >
+                                {parsedCsvData.headers.map((h) => (
+                                  <option key={h} value={h}>
+                                    {h}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div>
+                              <span className="block text-xs font-semibold text-foreground/80 mb-1.5">
+                                Variabili disponibili per i blocchi dell&apos;email:
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {parsedCsvData.headers.map((h) => (
+                                  <button
+                                    key={h}
+                                    type="button"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(`{{${h}}}`);
+                                      alert(`Copiato: {{${h}}}`);
+                                    }}
+                                    className="px-2 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-primary font-mono text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer"
+                                    title="Clicca per copiare la variabile"
+                                  >
+                                    <span>&#123;&#123;{h}&#125;&#125;</span>
+                                    <Copy size={10} className="text-foreground/40" />
+                                  </button>
+                                ))}
+                              </div>
+                              <p className="text-[11px] text-foreground/50 mt-1.5">
+                                Inserisci queste variabili nel testo o nell&apos;oggetto del template per personalizzare ogni messaggio.
+                              </p>
+                            </div>
+
+                            <div className="pt-2 border-t border-foreground/5 flex items-center justify-between text-xs text-foreground/60">
+                              <span>Privacy & Sicurezza:</span>
+                              <span className="text-emerald-400 font-bold">Nessun dato salvato sul server</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-6 rounded-2xl bg-background/20 border border-dashed border-foreground/15 text-center text-xs text-foreground/50">
+                            Carica un file CSV per visualizzare le colonne e le variabili.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Azioni di Invio / Test */}
+                    {parsedCsvData && parsedCsvData.rows.length > 0 && (
+                      <div className="pt-4 border-t border-foreground/10 flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            disabled={isDryRunningMass || isSendingMass}
+                            onClick={() => handleExecuteMassSend(true)}
+                            className="px-4 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 border border-foreground/10"
+                          >
+                            <Play size={13} />
+                            <span>{isDryRunningMass ? "Verifica in corso..." : "Simulazione (Dry-Run)"}</span>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            disabled={isDryRunningMass || isSendingMass}
+                            onClick={() => setShowMassConfirmModal(true)}
+                            className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-lg hover:opacity-90 transition-all cursor-pointer flex items-center gap-2"
+                          >
+                            <Send size={14} />
+                            <span>
+                              {isSendingMass
+                                ? "Invio in corso..."
+                                : `Invia Email a ${parsedCsvData.rows.length} Destinatari`}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Report Risultati Invio o Dry-Run */}
+                  {massSendReport && (
+                    <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                      <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
+                        <div className="flex items-center gap-2">
+                          {massSendReport.failed === 0 ? (
+                            <CheckCircle size={18} className="text-emerald-400" />
+                          ) : (
+                            <AlertCircle size={18} className="text-amber-400" />
+                          )}
+                          <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
+                            {massSendReport.dryRun ? "Esito Simulazione (Dry-Run)" : "Riepilogo Invio Massivo"}
+                          </h4>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs font-bold">
+                          <span className="text-emerald-400">Riuscite: {massSendReport.sent}</span>
+                          <span className={massSendReport.failed > 0 ? "text-rose-400" : "text-foreground/40"}>
+                            Fallite: {massSendReport.failed}
+                          </span>
+                          <span className="text-foreground/60">Totali: {massSendReport.total}</span>
+                        </div>
+                      </div>
+
+                      <div className="max-h-60 overflow-y-auto space-y-1.5 p-1 font-mono text-xs">
+                        {massSendReport.results.map((r, i) => (
+                          <div
+                            key={i}
+                            className={`p-2 rounded-xl flex items-center justify-between border ${
+                              r.success
+                                ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
+                                : "bg-rose-500/5 border-rose-500/20 text-rose-400"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 truncate">
+                              {r.success ? <CheckCircle size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
+                              <span className="truncate">{r.to || "(senza email)"}</span>
+                              {r.simulated && <span className="text-[10px] opacity-60 uppercase font-sans font-bold">[Simulata]</span>}
+                            </div>
+                            <span className="text-[11px] truncate max-w-xs font-sans">
+                              {r.error || (r.id ? `ID: ${r.id}` : "OK")}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Card 2: Anteprima Live Controllata da Record CSV */}
+                  {parsedCsvData && parsedCsvData.rows.length > 0 && (
+                    <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground/10 pb-3">
+                        <div className="flex items-center gap-3">
+                          <Eye size={18} className="text-primary" />
+                          <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
+                            Anteprima Live Personalizzata
+                          </h4>
+                        </div>
+
+                        {/* Selettore Riga CSV per Anteprima */}
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className="text-foreground/60">Destinatario in anteprima:</span>
+                          <select
+                            value={massPreviewRowIndex}
+                            onChange={(e) => setMassPreviewRowIndex(Number(e.target.value))}
+                            className="px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                          >
+                            {parsedCsvData.rows.map((row, idx) => (
+                              <option key={idx} value={idx}>
+                                Riga {idx + 1}: {selectedEmailCol && row[selectedEmailCol] ? row[selectedEmailCol] : `Record #${idx + 1}`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Frame Anteprima */}
+                      <div className="w-full flex justify-center bg-black/40 p-2 sm:p-4 rounded-2xl border border-foreground/5 overflow-hidden">
+                        <div className="w-full max-w-[650px] shadow-2xl rounded-xl border border-foreground/10 overflow-hidden">
+                          <iframe
+                            title="Mass Email Preview"
+                            srcDoc={massLivePreviewHtml}
+                            className="w-full h-[650px] bg-slate-900 border-0"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SECTION: ANTEPRIMA TUTTA PAGINA */}
               <div className="p-4 sm:p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-foreground/70">
@@ -3901,6 +4311,57 @@ export function EmailTab() {
         }}
         multiple={false}
       />
+
+      {/* CONFIRMATION MODAL FOR MASS SEND */}
+      {showMassConfirmModal && parsedCsvData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
+          <div className="w-full max-w-md rounded-3xl bg-muted/95 border border-foreground/15 p-6 shadow-2xl space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <AlertTriangle size={20} />
+              </div>
+              <div>
+                <h4 className="text-base font-black uppercase tracking-tight text-foreground">
+                  Conferma Invio Massivo
+                </h4>
+                <p className="text-xs text-foreground/60">
+                  Operazione reale di spedizione email
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 text-xs text-foreground/80 space-y-2">
+              <p>
+                Stai per inviare l&apos;email a <strong>{parsedCsvData.rows.length} destinatari</strong> dal file CSV caricato.
+              </p>
+              <p>
+                Template in uso: <strong className="text-primary">{activeTemplate?.name || activeTemplate?.id}</strong>.
+              </p>
+              <p className="text-[11px] text-foreground/50">
+                L&apos;invio verrà eseguito a ritmo controllato per rispettare i limiti di invio del server. La lista di distribuzione non verrà salvata su alcun database.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowMassConfirmModal(false)}
+                className="px-4 py-2 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold transition-all cursor-pointer"
+              >
+                Annulla
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExecuteMassSend(false)}
+                className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-lg hover:opacity-90 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <Send size={13} />
+                <span>Conferma e Invia</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
