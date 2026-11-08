@@ -1930,6 +1930,11 @@
         "id": "sec-1794153028242",
         "title": "Dicono di noi",
         "visible": true
+      },
+      {
+        "id": "sec-1794153425923",
+        "title": "Come trovarci",
+        "visible": true
       }
     ],
     "links": [
@@ -1938,6 +1943,16 @@
         "title": "Si alzi il sipario: ecco gli Attomatti",
         "subtitle": "Articolo su laRegione.ch",
         "url": "https://www.laregione.ch/ticino7/ticino7/1960559",
+        "icon": "Globe",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153028242"
+      },
+      {
+        "id": "link-1794153533363",
+        "title": "RSI - laboratorio teatrale 2025-26",
+        "subtitle": "Servizio della RSI sul corso di teatro dedicato a Dario Fo",
+        "url": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
         "icon": "Globe",
         "featured": false,
         "visible": true,
@@ -1953,6 +1968,16 @@
         "visible": true,
         "section_id": "sec-1794153013590",
         "thumbnail": ""
+      },
+      {
+        "id": "link-1794153440029",
+        "title": "ABZ-Gemeinschaftsraum di Wollishofen",
+        "subtitle": "",
+        "url": "/Location/sala-wollishofen",
+        "icon": "MapPin",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153425923"
       }
     ],
     "footer_text": "Gli Attomatti"
