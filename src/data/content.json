@@ -330,6 +330,13 @@
       "year_prefix": "Anno ",
       "press": [
         {
+          "source": "laRegione.ch",
+          "quote": "Si alzi il sipario: ecco gli Attomatti",
+          "date": "2026",
+          "source_href": "https://www.laregione.ch/ticino7/ticino7/1960559/attomatti-scena-teatro-zurigo-quando-cenerentola-carlo-scotti-sipario",
+          "badge_label": "Articolo di giornale"
+        },
+        {
           "source": "RSI",
           "source_href": "https://www.rsi.ch/play/tv/telegiornale/video/zurigo-un-corso-di-teatro-ispirato-a-dario-fo?urn=urn:rsi:video:3592947",
           "quote": "Servizio della RSI sul corso di teatro condotto dagli Attomatti e dedicato a Dario Fo, nel centenario della sua nascita.",
