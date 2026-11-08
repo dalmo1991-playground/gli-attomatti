@@ -1889,11 +1889,11 @@
     "meta_title": "Gli Attomatti — Link Ufficiali",
     "meta_description": "Tutti i link della compagnia teatrale Gli Attomatti di Zurigo: spettacoli, corsi, prenotazioni e social.",
     "profile": {
-      "avatar": "",
+      "avatar": "/images/og-image.webp",
       "title": "Gli Attomatti",
-      "bio": "",
+      "bio": "Compagnia teatrale amatoriale \ndi lingua italiana a Zurigo.",
       "badge": "",
-      "show_verified": true
+      "show_verified": false
     },
     "theme": {
       "preset": "dark",
@@ -1903,9 +1903,58 @@
       "animation_speed": "normal",
       "glow_featured": true
     },
-    "social_links": [],
-    "sections": [],
-    "links": [],
-    "footer_text": "Gli Attomatti • Compagnia Teatrale Zurigo"
+    "social_links": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/gliattomatti/",
+        "visible": true
+      },
+      {
+        "platform": "Facebook",
+        "url": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
+        "visible": true
+      },
+      {
+        "platform": "Email",
+        "url": "mailto:compagniateatralegliattomatti@gmail.com",
+        "visible": true
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec-1794153013590",
+        "title": "Al momento",
+        "visible": true
+      },
+      {
+        "id": "sec-1794153028242",
+        "title": "Dicono di noi",
+        "visible": true
+      }
+    ],
+    "links": [
+      {
+        "id": "link-1794153144161",
+        "title": "Si alzi il sipario: ecco gli Attomatti",
+        "subtitle": "Articolo su laRegione.ch",
+        "url": "https://www.laregione.ch/ticino7/ticino7/1960559",
+        "icon": "Globe",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153028242"
+      },
+      {
+        "id": "link-1794153042463",
+        "title": "Cineforum",
+        "subtitle": "",
+        "url": "/landing/cineforum",
+        "icon": "Ticket",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153013590",
+        "thumbnail": ""
+      }
+    ],
+    "footer_text": "Gli Attomatti"
   }
 }
