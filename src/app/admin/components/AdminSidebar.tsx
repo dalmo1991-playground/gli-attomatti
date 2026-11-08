@@ -22,7 +22,8 @@ import {
   PanelLeftOpen,
   Send,
   BookOpen,
-  GitCompare
+  GitCompare,
+  Link2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,7 @@ const navSections = [
       { id: "registrations", label: "Registrazioni & Moduli", icon: ClipboardList },
       { id: "locations", label: "Teatri & Location", icon: MapPin },
       { id: "landing", label: "Landing Pages", icon: Rocket },
+      { id: "linktree", label: "Linktree (Bio IG)", icon: Link2 },
       { id: "contatti", label: "Contatti & Social", icon: Mail }
     ]
   },

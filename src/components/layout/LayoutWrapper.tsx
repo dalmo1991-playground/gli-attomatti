@@ -101,7 +101,7 @@ export function LayoutWrapper({
 }: LayoutWrapperProps) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
-  const isLanding = pathname?.startsWith("/landing");
+  const isLanding = pathname?.startsWith("/landing") || pathname?.startsWith("/links") || pathname?.startsWith("/linktree");
 
   return (
     <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess} devGateContent={content?.ui?.dev_gate}>

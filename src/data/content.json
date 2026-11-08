@@ -3258,5 +3258,113 @@
       "badge": "",
       "category_badge": ""
     }
-  ]
+  ],
+  "linktree": {
+    "enabled": true,
+    "slug": "links",
+    "meta_title": "Gli Attomatti — Link Ufficiali",
+    "meta_description": "Tutti i link della compagnia teatrale Gli Attomatti di Zurigo: spettacoli, corsi, prenotazioni e social.",
+    "profile": {
+      "avatar": "/images/1791558797773-9tke-SalaWolli1.webp",
+      "title": "Gli Attomatti",
+      "bio": "🎭 Compagnia Teatrale Italiana a Zurigo\nSpettacoli, improvvisazione ed eventi.",
+      "badge": "Compagnia Teatrale",
+      "show_verified": true
+    },
+    "theme": {
+      "preset": "dark",
+      "button_style": "rounded",
+      "button_variant": "filled",
+      "font_style": "sans",
+      "animation_speed": "normal",
+      "glow_featured": true
+    },
+    "social_links": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/gliattomatti/",
+        "visible": true
+      },
+      {
+        "platform": "Facebook",
+        "url": "https://www.facebook.com/p/Gli-Attomatti-61572328015344/",
+        "visible": true
+      },
+      {
+        "platform": "Email",
+        "url": "mailto:info@gliattomatti.ch",
+        "visible": true
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec-featured",
+        "title": "In Primo Piano",
+        "visible": true
+      },
+      {
+        "id": "sec-activities",
+        "title": "Attività & Iscrizioni",
+        "visible": true
+      },
+      {
+        "id": "sec-explore",
+        "title": "Scopri di Più",
+        "visible": true
+      }
+    ],
+    "links": [
+      {
+        "id": "link-1",
+        "title": "🎭 Spettacolo: Non Sottovalutare i 40",
+        "subtitle": "Biennale 2026 Volkstheater — Info e dettagli",
+        "url": "/landing/non-sottovalutare-i-40",
+        "icon": "Sparkles",
+        "featured": true,
+        "visible": true,
+        "section_id": "sec-featured"
+      },
+      {
+        "id": "link-2",
+        "title": "🎟️ Corsi & Iscrizioni Aperte",
+        "subtitle": "Scopri i workshop e iscriviti ai corsi attivi",
+        "url": "/Registrazioni",
+        "icon": "Ticket",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-activities"
+      },
+      {
+        "id": "link-3",
+        "title": "📰 Newsletter Attomatta",
+        "subtitle": "Rimani aggiornato su tutte le prossime date",
+        "url": "/Registrazioni/newsletter-attomatta",
+        "icon": "Mail",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-activities"
+      },
+      {
+        "id": "link-4",
+        "title": "🌐 Sito Web Ufficiale",
+        "subtitle": "Visita il sito completo della compagnia",
+        "url": "/",
+        "icon": "Globe",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-explore"
+      },
+      {
+        "id": "link-5",
+        "title": "📍 Le Nostre Location",
+        "subtitle": "Come raggiungere i teatri delle nostre rappresentazioni",
+        "url": "/Location",
+        "icon": "MapPin",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-explore"
+      }
+    ],
+    "footer_text": "Gli Attomatti • Compagnia Teatrale Zurigo"
+  }
 }
