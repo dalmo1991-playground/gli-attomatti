@@ -1719,6 +1719,133 @@
           "from_email": "newsletter@mail.gliattomatti.ch",
           "reply_to": "compagniateatralegliattomatti@gmail.com"
         }
+      },
+      {
+        "id": "newsletter-gli-attomatti-la-regione-2026",
+        "name": "Newsletter laRegione 11.2026",
+        "enabled": true,
+        "subject": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «la Regione»",
+        "preheader": "Nuovo articolo sul nostro blog.",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "hdr-q512unx",
+            "type": "header",
+            "enabled": true,
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1794223135039",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "hdg-1qpvv6g",
+            "type": "heading",
+            "enabled": true,
+            "text": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «la Regione»",
+            "level": "h1",
+            "align": "center"
+          },
+          {
+            "id": "block-1794223861956",
+            "type": "divider",
+            "style": "spacer",
+            "spacing": "md"
+          },
+          {
+            "id": "desc-5u2yvvx",
+            "type": "text",
+            "enabled": true,
+            "content": "**Dalla formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».**",
+            "align": "center"
+          },
+          {
+            "id": "div-xovk1z3",
+            "type": "divider",
+            "enabled": true
+          },
+          {
+            "id": "txt-vwvrn3v",
+            "type": "text",
+            "enabled": true,
+            "content": "Ciao {{name}},\n\nVedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. \n\nIl giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. \n\nUna chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.",
+            "align": "left"
+          },
+          {
+            "id": "btn-71oe3w2",
+            "type": "button",
+            "enabled": true,
+            "label": "Leggi l'articolo completo",
+            "url": "https://gliattomatti.ch/Chi_Siamo/Blog/gli-attomatti-la-regione-2026",
+            "align": "center",
+            "style": "pill"
+          },
+          {
+            "id": "block-1794223674878",
+            "type": "text",
+            "content": "Ti auguriamo una buona lettura.\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "block-1794224476623",
+            "type": "divider",
+            "style": "solid",
+            "spacing": "md"
+          },
+          {
+            "id": "block-1794224551079",
+            "type": "heading",
+            "text": "Cosa è successo nel frattempo? ",
+            "level": "h3",
+            "align": "left"
+          },
+          {
+            "id": "block-1794224487991",
+            "type": "two_column",
+            "col1_title": "Cineforum",
+            "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti",
+            "col2_title": "Non sottovalutare il 40",
+            "col2_text": "Ci siamo esibiti alla Biennale di teatro amatoriale svizzero. Guarda il video dell'esibizione",
+            "col1_url": "/Iniziative/cineforum",
+            "col2_url": "/Spettacoli/non-sottovalutare-i-40"
+          },
+          {
+            "id": "div-foot-lng0bec",
+            "type": "divider",
+            "enabled": true,
+            "style": "gradient"
+          },
+          {
+            "id": "soc-wj7853b",
+            "type": "social_links",
+            "enabled": true,
+            "show_instagram": true,
+            "instagram_url": "https://www.instagram.com/gliattomatti/",
+            "show_website": true,
+            "website_url": "https://gliattomatti.ch"
+          },
+          {
+            "id": "ftr-7b41kg7",
+            "type": "footer",
+            "enabled": true,
+            "custom_text": "Ricevi questa email perché ti sei registrato agli eventi o alle novità de Gli Attomatti. Per non ricevere più queste comunicazioni, invia semplicemente una mail a compagniateatralegliattomatti@gmail.com.",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti",
+            "privacy_note": "Ricevi questa email in seguito alla tua registrazione alla nostra newsletter. Per disiscriverti, rispondi a questa email o scrivici a compagniateatralegliattomatti@gmail.com"
+          }
+        ],
+        "field_mapping": {
+          "recipient_email_path": "{{email}}",
+          "recipient_name_path": "{{name}}"
+        },
+        "sender_profile": {
+          "reply_to": "compagniateatralegliattomatti@gmail.com",
+          "from_name": "Gli Attomatti",
+          "from_email": "newsletter@mail.gliattomatti.ch"
+        }
       }
     ]
   },
