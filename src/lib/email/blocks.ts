@@ -919,46 +919,28 @@ export function renderEmailBlocksHtml({
           return `
             <tr>
               <td style="padding: 8px 32px ${pb} 32px;" class="stack-col-wrap">
-                <!--[if mso]>
-                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                <td width="258" valign="top">
-                <![endif]-->
-                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="left" width="258" class="stack-col" style="width: 258px; max-width: 100%; border-collapse: separate;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="two-col-table" style="table-layout: fixed; width: 100%;">
                   <tr>
-                    <td valign="top" bgcolor="${cardBg}" class="stack-col-card" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
-                      ${c1Url ? `<a href="${escapeHtml(c1Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
+                    <!-- Colonna 1: altezza 100% ancorata alla riga della tabella -->
+                    <td width="48%" valign="top" bgcolor="${cardBg}" class="two-col-cell stack-col-card" style="width: 48%; background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px; box-sizing: border-box;">
+                      ${c1Url ? `<a href="${escapeHtml(c1Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block; height: 100%;">` : ""}
                         ${c1Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c1Title)}</div>` : ""}
                         <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c1Text)}</div>
                       ${c1Url ? `</a>` : ""}
                     </td>
-                  </tr>
-                </table>
 
-                <!--[if mso]>
-                </td>
-                <td width="20" style="font-size: 0; line-height: 0;">&nbsp;</td>
-                <td width="258" valign="top">
-                <![endif]-->
+                    <!-- Gap orizzontale su desktop / Gap verticale su mobile -->
+                    <td width="4%" class="two-col-gap" style="width: 4%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
 
-                <!-- Spaziatore verticale quando incolonnate su mobile -->
-                <div class="stack-col-spacer" style="display: none; height: 12px; line-height: 12px; font-size: 0; mso-hide: all;">&nbsp;</div>
-
-                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="right" width="258" class="stack-col" style="width: 258px; max-width: 100%; border-collapse: separate;">
-                  <tr>
-                    <td valign="top" bgcolor="${cardBg}" class="stack-col-card" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
-                      ${c2Url ? `<a href="${escapeHtml(c2Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
+                    <!-- Colonna 2: altezza 100% ancorata alla riga della tabella -->
+                    <td width="48%" valign="top" bgcolor="${cardBg}" class="two-col-cell stack-col-card" style="width: 48%; background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px; box-sizing: border-box;">
+                      ${c2Url ? `<a href="${escapeHtml(c2Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block; height: 100%;">` : ""}
                         ${c2Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c2Title)}</div>` : ""}
                         <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c2Text)}</div>
                       ${c2Url ? `</a>` : ""}
                     </td>
                   </tr>
                 </table>
-                <!--[if mso]>
-                </td>
-                </tr>
-                </table>
-                <![endif]-->
               </td>
             </tr>
           `;
@@ -1077,20 +1059,27 @@ export function renderEmailBlocksHtml({
   <![endif]-->
   <style type="text/css">
     @media only screen and (max-width: 600px) {
-      .stack-col {
-        width: 100% !important;
-        max-width: 100% !important;
+      .two-col-table,
+      .two-col-table tbody,
+      .two-col-table tr {
         display: block !important;
-        float: none !important;
+        width: 100% !important;
+      }
+      .two-col-cell {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .two-col-gap {
+        display: block !important;
+        width: 100% !important;
+        height: 12px !important;
+        line-height: 12px !important;
+        font-size: 0 !important;
       }
       .stack-col-card {
         background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.08)"} !important;
         border-color: ${isDarkCard ? "rgba(255, 255, 255, 0.22)" : "rgba(15, 23, 42, 0.18)"} !important;
-      }
-      .stack-col-spacer {
-        display: block !important;
-        height: 12px !important;
-        line-height: 12px !important;
       }
       .stack-col-wrap {
         padding-left: 20px !important;
