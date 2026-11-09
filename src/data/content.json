@@ -38,6 +38,13 @@
         "path": "/Iniziative/laboratorio-teatrale",
         "token": "laboratorio-shakespeare",
         "enabled": true
+      },
+      {
+        "id": "rule-1794222859123",
+        "label": "Nuova anteprima riservata",
+        "path": "/Chi_Siamo/Blog/gli-attomatti-la-regione-2026",
+        "token": "anteprima-blog",
+        "enabled": true
       }
     ]
   },
