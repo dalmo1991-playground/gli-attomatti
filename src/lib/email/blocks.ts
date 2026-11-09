@@ -29,6 +29,8 @@ export interface BaseEmailBlock {
   id: string;
   type: EmailBlockType;
   enabled?: boolean;
+  starred?: boolean;
+  custom_name?: string;
 }
 
 export interface HeaderBlock extends BaseEmailBlock {
@@ -108,8 +110,10 @@ export interface TwoColumnBlock extends BaseEmailBlock {
   type: "two_column";
   col1_title?: string;
   col1_text?: string;
+  col1_url?: string;
   col2_title?: string;
   col2_text?: string;
+  col2_url?: string;
 }
 
 export interface DividerBlock extends BaseEmailBlock {
@@ -227,6 +231,36 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
       p = p.replace(/^<p[^>]*>/i, "").replace(/<\/p>$/i, "").trim();
       if (!p) return "";
 
+      const safeLinkColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$|^rgba?\([^)]+\)$/.test(linkColor)
+        ? linkColor
+        : "#fb7185";
+
+      // Process inline markdown before HTML tag tokenization so links and styles render reliably
+      // Markdown links: [text](url) - supports https, http, mailto, tel, relative paths /...
+      p = p.replace(
+        /\[([^\]]+)\]\(([^)\s]+)\)/g,
+        (match, linkText, url) => {
+          const trimmedUrl = url.trim();
+          if (
+            !trimmedUrl.startsWith("http://") &&
+            !trimmedUrl.startsWith("https://") &&
+            !trimmedUrl.startsWith("mailto:") &&
+            !trimmedUrl.startsWith("tel:") &&
+            !trimmedUrl.startsWith("/") &&
+            !trimmedUrl.startsWith("#")
+          ) {
+            return match;
+          }
+          const safeUrl = trimmedUrl.replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: ${safeLinkColor}; text-decoration: underline; font-weight: 600;">${linkText}</a>`;
+        }
+      );
+
+      // Markdown bold: **text**
+      p = p.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: inherit; font-weight: 700;">$1</strong>');
+      // Markdown highlight: ==text==
+      p = p.replace(/==([^=]+)==/g, `<span style="color: ${safeLinkColor}; font-weight: 700;">$1</span>`);
+
       // 2. Tokenize or preserve safe tags, sanitize unsafe tags & attributes
       // Match all HTML tags <...>
       let html = p.replace(/<\/?([a-zA-Z0-9]+)\b([^>]*)>/g, (match, rawTagName: string, rawAttrs: string) => {
@@ -256,7 +290,7 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
             // Email clients often do not render <mark> properly, use inline styled span
             return isClosing
               ? "</span>"
-              : `<span style="color: ${linkColor}; font-weight: 700;">`;
+              : `<span style="color: ${safeLinkColor}; font-weight: 700;">`;
 
           case "u":
             return isClosing
@@ -273,11 +307,11 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
             if (isClosing) return "</a>";
             const hrefMatch = rawAttrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
             const href = (hrefMatch?.[1] ?? hrefMatch?.[2] ?? hrefMatch?.[3] ?? "").trim();
-            if (!href || !/^(https?:\/\/|mailto:|tel:)/i.test(href)) {
+            if (!href || !/^(https?:\/\/|mailto:|tel:|\/|#)/i.test(href)) {
               return '<span style="text-decoration: underline;">';
             }
             const safeHref = href.replace(/"/g, "&quot;").replace(/</g, "&lt;");
-            return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="color: ${linkColor}; text-decoration: underline; font-weight: 600;">`;
+            return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" style="color: ${safeLinkColor}; text-decoration: underline; font-weight: 600;">`;
           }
 
           case "br":
@@ -292,26 +326,9 @@ export function formatMarkdown(text: string = "", linkColor: string = "#fb7185")
         }
       });
 
-      // Sanitize linkColor to prevent style injection
-      const safeLinkColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$|^rgba?\([^)]+\)$/.test(linkColor)
-        ? linkColor
-        : "#fb7185";
-
-      // 3. Process Markdown formatting for un-tagged markdown text:
-      // Markdown bold: **text**
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: inherit; font-weight: 700;">$1</strong>');
-      // Markdown italic: *text* (single asterisk, not preceded or followed by another asterisk)
+      // 3. Process remaining Markdown formatting on text that didn't conflict with HTML:
+      // Markdown italic: *text* (single asterisk, not inside words or tags)
       html = html.replace(/(^|[^*])\*([^*]+)\*([^*]|$)/g, '$1<em style="font-style: italic; font-family: Georgia, \'Times New Roman\', serif; color: inherit;">$2</em>$3');
-      // Markdown highlight: ==text==
-      html = html.replace(/==([^=]+)==/g, `<span style="color: ${safeLinkColor}; font-weight: 700;">$1</span>`);
-      // Markdown links: [text](url) - strictly sanitize URL against quote breakout
-      html = html.replace(
-        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-        (match, text, url) => {
-          const safeUrl = url.replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-          return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: ${safeLinkColor}; text-decoration: underline; font-weight: 600;">${text}</a>`;
-        }
-      );
 
       // 4. Line breaks to <br />
       html = html.replace(/\n/g, "<br />");
@@ -514,7 +531,8 @@ export function renderEmailBlocksHtml({
   const bubbleRgb = isDarkCard ? "255, 255, 255" : (hexToRgb(textColor) || "15, 23, 42");
   const bubbleBg = `rgba(${bubbleRgb}, ${isDarkCard ? "0.04" : "0.035"})`;
   const bubbleBorder = `1px solid rgba(${bubbleRgb}, ${isDarkCard ? "0.08" : "0.1"})`;
-  const dividerColor = `rgba(${bubbleRgb}, ${isDarkCard ? "0.1" : "0.12"})`;
+  // Opaque solid hex for dividers to ensure robust rendering on all mobile clients (including Gmail Android/iOS dark mode)
+  const dividerColor = isDarkCard ? "#334155" : "#cbd5e1";
 
   // Dynamic card container border & shadow
   const cardBorderRgb = isDarkCanvas ? "255, 255, 255" : "15, 23, 42";
@@ -674,13 +692,13 @@ export function renderEmailBlocksHtml({
                   <tr>
                     <td style="padding: 14px 18px;">
                       ${evaluatedItems
-                        .map((item, idx) => `
+              .map((item, idx) => `
                           <div style="font-size: 13px; margin-bottom: ${idx < evaluatedItems.length - 1 ? "10px" : "0"};">
                             <span style="display: inline-block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: ${accentColor}; font-size: 11px;">${escapeHtml(item.label)}:</span>
                             <div style="font-size: 15px; font-weight: 600; color: ${textColor}; margin-top: 2px;">${escapeHtml(item.value)}</div>
                           </div>
                         `)
-                        .join("")}
+              .join("")}
                     </td>
                   </tr>
                 </table>
@@ -718,7 +736,7 @@ export function renderEmailBlocksHtml({
 
           const sParts = getZurichDateParts(parsedStart);
           const eParts = getZurichDateParts(parsedEnd);
-          
+
           const monthShort = monthShortNames[sParts.month] || "EVENTO";
           const dayNum = String(sParts.day).padStart(2, "0");
           const dayName = dayNames[sParts.dayOfWeek] || "";
@@ -890,26 +908,46 @@ export function renderEmailBlocksHtml({
         case "two_column": {
           const c1Title = r(block.col1_title);
           const c1Text = r(block.col1_text);
+          const c1Url = block.col1_url ? toAbsoluteEmailUrl(r(block.col1_url), baseUrl) : "";
+
           const c2Title = r(block.col2_title);
           const c2Text = r(block.col2_text);
+          const c2Url = block.col2_url ? toAbsoluteEmailUrl(r(block.col2_url), baseUrl) : "";
+
           const pb = isLast ? "36px" : "20px";
 
           return `
             <tr>
               <td style="padding: 8px 32px ${pb} 32px;">
+                <!--[if mso]>
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                <td width="260" valign="top">
+                <![endif]-->
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
                   <tr>
-                    <td width="48%" valign="top" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 14px 16px;">
-                      ${c1Title ? `<div style="font-size: 13px; font-weight: 700; color: ${accentColor}; margin-bottom: 4px;">${escapeHtml(c1Title)}</div>` : ""}
-                      <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c1Text)}</div>
+                    <td width="48%" valign="top" bgcolor="${cardBg}" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
+                      ${c1Url ? `<a href="${escapeHtml(c1Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
+                        ${c1Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c1Title)}</div>` : ""}
+                        <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c1Text)}</div>
+                      ${c1Url ? `</a>` : ""}
                     </td>
-                    <td width="4%">&nbsp;</td>
-                    <td width="48%" valign="top" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 14px 16px;">
-                      ${c2Title ? `<div style="font-size: 13px; font-weight: 700; color: ${accentColor}; margin-bottom: 4px;">${escapeHtml(c2Title)}</div>` : ""}
-                      <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c2Text)}</div>
+
+                    <td width="4%" style="padding: 0;">&nbsp;</td>
+
+                    <td width="48%" valign="top" bgcolor="${cardBg}" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
+                      ${c2Url ? `<a href="${escapeHtml(c2Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
+                        ${c2Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c2Title)}</div>` : ""}
+                        <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c2Text)}</div>
+                      ${c2Url ? `</a>` : ""}
                     </td>
                   </tr>
                 </table>
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
               </td>
             </tr>
           `;
@@ -926,19 +964,20 @@ export function renderEmailBlocksHtml({
                 <td style="padding: ${spacingPx} 32px;">
                   <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                      <td height="2" style="background: linear-gradient(90deg, transparent, ${primaryColor}, ${accentColor}, transparent);"></td>
+                      <td height="2" style="background: linear-gradient(90deg, transparent, ${primaryColor}, ${accentColor}, transparent); line-height: 2px; font-size: 0;">&nbsp;</td>
                     </tr>
                   </table>
                 </td>
               </tr>
             `;
           }
+          // Solid line: use border-top on <td> + min-height and clear font-size/line-height for Gmail mobile compatibility
           return `
             <tr>
               <td style="padding: ${spacingPx} 32px;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td height="1" style="background-color: ${dividerColor};"></td>
+                    <td height="1" style="border-top: 1px solid ${dividerColor}; height: 1px; line-height: 1px; font-size: 0; mso-line-height-rule: exactly;">&nbsp;</td>
                   </tr>
                 </table>
               </td>
@@ -1184,9 +1223,13 @@ export function renderEmailBlocksText({
         }
         case "two_column": {
           if (block.col1_title) out += `${r(block.col1_title)}: `;
-          out += `${r(block.col1_text)}\n`;
+          out += `${r(block.col1_text)}`;
+          if (block.col1_url) out += ` (${toAbsoluteEmailUrl(r(block.col1_url), baseUrl)})`;
+          out += `\n`;
           if (block.col2_title) out += `${r(block.col2_title)}: `;
-          out += `${r(block.col2_text)}\n\n`;
+          out += `${r(block.col2_text)}`;
+          if (block.col2_url) out += ` (${toAbsoluteEmailUrl(r(block.col2_url), baseUrl)})`;
+          out += `\n\n`;
           break;
         }
         case "footer": {

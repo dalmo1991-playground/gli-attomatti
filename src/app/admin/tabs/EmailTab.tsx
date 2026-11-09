@@ -50,7 +50,10 @@ import {
   Play,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  Star,
+  Edit2,
+  Bookmark
 } from "lucide-react";
 import { parseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
 import { useAdmin } from "../context/AdminContext";
@@ -163,8 +166,10 @@ export function EmailTab() {
     return "";
   };
 
-  // Selected template index
+  // Selected template index and search filter
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [templateSearchQuery, setTemplateSearchQuery] = useState<string>("");
+  const [isTemplateDropdownOpen, setIsTemplateDropdownOpen] = useState<boolean>(false);
   const activeTemplate = templates[selectedIndex] || templates[0] || null;
 
   // View state
@@ -732,6 +737,39 @@ export function EmailTab() {
     handleUpdateBlocks(updated);
   };
 
+  const handleToggleStarBlock = (index: number) => {
+    const block = activeBlocks[index];
+    if (!block) return;
+    const isNowStarred = !block.starred;
+
+    if (isNowStarred) {
+      const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
+      const suggestedName = block.custom_name || (
+        block.type === "heading" ? (block.text || def.label) :
+        block.type === "button" ? (block.label || def.label) :
+        block.type === "badge" ? (block.text || def.label) :
+        block.type === "two_column" ? (`${block.col1_title || "Col 1"} & ${block.col2_title || "Col 2"}`) :
+        def.label
+      );
+
+      const entered = window.prompt("Nome identificativo per questa componente nella libreria:", suggestedName);
+      if (entered === null) {
+        // User cancelled prompt
+        return;
+      }
+      const cleanName = entered.trim() || def.label;
+      const updated = activeBlocks.map((b, i) =>
+        i === index ? ({ ...b, starred: true, custom_name: cleanName } as EmailBlock) : b
+      );
+      handleUpdateBlocks(updated);
+    } else {
+      const updated = activeBlocks.map((b, i) =>
+        i === index ? ({ ...b, starred: false } as EmailBlock) : b
+      );
+      handleUpdateBlocks(updated);
+    }
+  };
+
   const handleMoveBlock = (index: number, direction: "up" | "down") => {
     const targetIndex = direction === "up" ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= activeBlocks.length) return;
@@ -756,6 +794,35 @@ export function EmailTab() {
     const updated = [...activeBlocks];
     updated.splice(index + 1, 0, duplicated);
     handleUpdateBlocks(updated);
+  };
+
+  const handleInsertStarredBlock = (sourceBlock: EmailBlock) => {
+    const newId = `block-${Date.now()}`;
+    // Clone without preserving the original block id, keeping the block config intact
+    const clonedBlock: EmailBlock = {
+      ...JSON.parse(JSON.stringify(sourceBlock)),
+      id: newId,
+      starred: true
+    };
+
+    const targetId = expandedBlockId || lastExpandedBlockId;
+    const targetIndex = targetId ? activeBlocks.findIndex((b) => b.id === targetId) : -1;
+
+    let updated: EmailBlock[];
+    if (targetIndex !== -1) {
+      updated = [
+        ...activeBlocks.slice(0, targetIndex + 1),
+        clonedBlock,
+        ...activeBlocks.slice(targetIndex + 1)
+      ];
+    } else {
+      updated = [...activeBlocks, clonedBlock];
+    }
+
+    handleUpdateBlocks(updated);
+    setExpandedBlockId(newId);
+    setLastExpandedBlockId(newId);
+    setIsAddBlockOpen(false);
   };
 
   const handleAddBlock = (type: EmailBlockType) => {
@@ -1176,33 +1243,149 @@ export function EmailTab() {
 
       {/* Main Studio Area */}
       <div className="space-y-6">
-        {/* Template Selector Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-muted/30 border border-foreground/5">
-            {templates.map((tpl, idx) => {
-              const isSelected = idx === selectedIndex;
-              return (
-                <div
-                  key={tpl.id || idx}
-                  onClick={() => setSelectedIndex(idx)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
-                    isSelected
-                      ? "bg-foreground text-background shadow-xs"
-                      : "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
-                  }`}
+        {/* Template Selector Bar (Searchable Dropdown + Quick Add) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-muted/20 border border-foreground/5 shadow-xs">
+          <div className="flex-1 min-w-0 max-w-xl relative">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-black uppercase tracking-wider text-foreground/50 shrink-0 flex items-center gap-1.5">
+                <Mail size={14} className="text-primary" /> Template Email:
+              </span>
+
+              {/* Dropdown Trigger */}
+              <div className="relative flex-1">
+                <button
+                  type="button"
+                  onClick={() => setIsTemplateDropdownOpen((prev) => !prev)}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-background border border-foreground/10 hover:border-primary/50 text-left transition-all shadow-xs cursor-pointer"
                 >
-                  <span className={`w-2 h-2 rounded-full ${tpl.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"}`} />
-                  <span>{tpl.name || `Template ${idx + 1}`}</span>
-                </div>
-              );
-            })}
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                        activeTemplate?.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
+                      }`}
+                    />
+                    <span className="text-sm font-bold text-foreground truncate">
+                      {activeTemplate?.name || "Seleziona Template..."}
+                    </span>
+                    {activeTemplate?.id && (
+                      <span className="text-[11px] font-mono text-foreground/40 shrink-0 hidden md:inline">
+                        ({activeTemplate.id})
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-foreground/40 shrink-0">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-muted text-foreground/60">
+                      {selectedIndex + 1}/{templates.length}
+                    </span>
+                    <ChevronDown size={16} className={`transition-transform duration-200 ${isTemplateDropdownOpen ? "rotate-180" : ""}`} />
+                  </div>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isTemplateDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => {
+                        setIsTemplateDropdownOpen(false);
+                        setTemplateSearchQuery("");
+                      }}
+                    />
+                    <div className="absolute top-full left-0 right-0 mt-2 z-50 bg-background border border-foreground/15 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl animate-fade-in">
+                      {/* Search Input */}
+                      <div className="p-3 border-b border-foreground/10 bg-muted/30">
+                        <div className="relative">
+                          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+                          <input
+                            type="text"
+                            value={templateSearchQuery}
+                            onChange={(e) => setTemplateSearchQuery(e.target.value)}
+                            placeholder="Cerca tra le email (nome, oggetto, id)..."
+                            autoFocus
+                            className="w-full pl-9 pr-4 py-2 rounded-xl bg-background border border-foreground/10 text-xs font-medium text-foreground focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Templates List */}
+                      <div className="max-h-72 overflow-y-auto custom-scrollbar p-1.5 space-y-1">
+                        {templates
+                          .map((tpl, idx) => ({ tpl, idx }))
+                          .filter(({ tpl }) => {
+                            if (!templateSearchQuery.trim()) return true;
+                            const q = templateSearchQuery.toLowerCase();
+                            return (
+                              (tpl.name && tpl.name.toLowerCase().includes(q)) ||
+                              (tpl.id && tpl.id.toLowerCase().includes(q)) ||
+                              (tpl.subject && tpl.subject.toLowerCase().includes(q))
+                            );
+                          })
+                          .map(({ tpl, idx }) => {
+                            const isSelected = idx === selectedIndex;
+                            return (
+                              <button
+                                key={tpl.id || idx}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedIndex(idx);
+                                  setIsTemplateDropdownOpen(false);
+                                  setTemplateSearchQuery("");
+                                }}
+                                className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
+                                  isSelected
+                                    ? "bg-primary/10 text-primary font-bold"
+                                    : "text-foreground hover:bg-foreground/5 font-medium"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <span
+                                    className={`w-2 h-2 rounded-full shrink-0 ${
+                                      tpl.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
+                                    }`}
+                                  />
+                                  <div className="min-w-0">
+                                    <div className="text-xs truncate">{tpl.name || `Template ${idx + 1}`}</div>
+                                    {tpl.subject && (
+                                      <div className="text-[10px] text-foreground/40 truncate">
+                                        {tpl.subject}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span className="text-[10px] font-mono opacity-40">{tpl.id}</span>
+                                  {isSelected && <Check size={14} className="text-primary" />}
+                                </div>
+                              </button>
+                            );
+                          })}
+
+                        {templates.filter((tpl) => {
+                          if (!templateSearchQuery.trim()) return true;
+                          const q = templateSearchQuery.toLowerCase();
+                          return (
+                            (tpl.name && tpl.name.toLowerCase().includes(q)) ||
+                            (tpl.id && tpl.id.toLowerCase().includes(q)) ||
+                            (tpl.subject && tpl.subject.toLowerCase().includes(q))
+                          );
+                        }).length === 0 && (
+                          <div className="p-4 text-center text-xs text-foreground/50">
+                            Nessun template corrispondente a &quot;{templateSearchQuery}&quot;
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={handleAddTemplate}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer shadow-md"
             >
               <Plus size={16} /> Nuovo Template
             </button>
@@ -2502,18 +2685,40 @@ export function EmailTab() {
                               <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-primary shrink-0">
                                 <Icon size={16} />
                               </div>
-                              <div>
-                                <span className="font-bold text-xs text-foreground block">
-                                  {def.label}
-                                </span>
-                                <span className="text-[10px] text-foreground/50 block">
-                                  {def.desc}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-xs text-foreground truncate block">
+                                    {block.custom_name || def.label}
+                                  </span>
+                                  {block.starred && (
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-400/10 text-amber-400 text-[10px] font-bold">
+                                      <Star size={10} className="fill-amber-400" /> Starred
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[10px] text-foreground/50 block truncate">
+                                  {block.custom_name ? `${def.label} • ${def.desc}` : def.desc}
                                 </span>
                               </div>
                             </div>
 
                             {/* Block Action Controls */}
                             <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleStarBlock(idx);
+                                }}
+                                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                  block.starred
+                                    ? "text-amber-400 bg-amber-400/10 hover:bg-amber-400/20"
+                                    : "text-foreground/30 hover:text-amber-400 hover:bg-foreground/5"
+                                }`}
+                                title={block.starred ? "Rimuovi dai blocchi preferiti (Star)" : "Aggiungi ai blocchi preferiti (Star)"}
+                              >
+                                <Star size={14} className={block.starred ? "fill-amber-400 text-amber-400" : ""} />
+                              </button>
                               <button
                                 type="button"
                                 disabled={idx === 0}
@@ -2561,6 +2766,27 @@ export function EmailTab() {
                           {/* Block Inspector (Expanded properties) */}
                           {isExpanded && (
                             <div className="p-5 border-t border-foreground/5 space-y-4 bg-background/30">
+                              {/* Custom Name / Library Label Field */}
+                              <div className="p-3 rounded-xl bg-background/50 border border-foreground/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="space-y-0.5">
+                                  <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 flex items-center gap-1.5">
+                                    <Bookmark size={13} className="text-primary" />
+                                    Nome Identificativo nella Libreria:
+                                  </label>
+                                  <p className="text-[10px] text-foreground/50">
+                                    Dai un titolo riconoscibile a questa componente (es. &quot;Scheda Cineforum&quot;, &quot;Pulsante Iscrizione&quot;).
+                                  </p>
+                                </div>
+                                <div className="w-full sm:w-64">
+                                  <input
+                                    type="text"
+                                    value={block.custom_name || ""}
+                                    onChange={(e) => handleUpdateSingleBlock(block.id, { custom_name: e.target.value })}
+                                    placeholder={def.label}
+                                    className="w-full px-3 py-1.5 rounded-lg bg-background border border-foreground/15 text-xs font-medium text-foreground focus:outline-none focus:border-primary"
+                                  />
+                                </div>
+                              </div>
                               
                               {/* Header Block Properties */}
                               {block.type === "header" && (
@@ -2936,38 +3162,62 @@ export function EmailTab() {
 
                               {/* Two Column Properties */}
                               {block.type === "two_column" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <div className="space-y-3">
-                                    <FormField
-                                      label="Titolo Colonna 1"
-                                      value={block.col1_title || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Testo Colonna 1"
-                                      value={block.col1_text || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
-                                      type="textarea"
-                                      rows={3}
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
-                                  <div className="space-y-3">
-                                    <FormField
-                                      label="Titolo Colonna 2"
-                                      value={block.col2_title || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Testo Colonna 2"
-                                      value={block.col2_text || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
-                                      type="textarea"
-                                      rows={3}
-                                      autocompleteTags={allAvailableTags}
-                                    />
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
+                                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
+                                        Colonna 1 (Sinistra)
+                                      </span>
+                                      <FormField
+                                        label="Titolo Colonna 1"
+                                        value={block.col1_title || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Testo Colonna 1"
+                                        value={block.col1_text || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
+                                        type="textarea"
+                                        rows={3}
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Link Scheda 1 (Opzionale)"
+                                        value={block.col1_url || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_url: v })}
+                                        placeholder="https://... o /Spettacoli/..."
+                                        helpText="Se inserito, l'intera scheda diventa cliccabile come card."
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                    </div>
+                                    <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
+                                      <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
+                                        Colonna 2 (Destra)
+                                      </span>
+                                      <FormField
+                                        label="Titolo Colonna 2"
+                                        value={block.col2_title || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Testo Colonna 2"
+                                        value={block.col2_text || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
+                                        type="textarea"
+                                        rows={3}
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Link Scheda 2 (Opzionale)"
+                                        value={block.col2_url || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_url: v })}
+                                        placeholder="https://... o /Location/..."
+                                        helpText="Se inserito, l'intera scheda diventa cliccabile come card."
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               )}
@@ -4265,30 +4515,151 @@ export function EmailTab() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[60vh] overflow-y-auto p-1">
-              {BLOCK_DEFINITIONS.map((def) => {
-                const Icon = def.icon;
+            <div className="max-h-[68vh] overflow-y-auto p-1 space-y-6 custom-scrollbar">
+              {/* Standard Component Types */}
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-foreground/40 block mb-2 px-1">
+                  Nuovo Blocco Base
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {BLOCK_DEFINITIONS.map((def) => {
+                    const Icon = def.icon;
+                    return (
+                      <button
+                        key={def.type}
+                        type="button"
+                        onClick={() => handleAddBlock(def.type)}
+                        className="p-3.5 rounded-2xl bg-foreground/[0.03] hover:bg-primary/10 hover:border-primary/30 border border-foreground/5 text-left transition-all cursor-pointer flex items-start gap-3 group"
+                      >
+                        <div className="w-8 h-8 rounded-xl bg-foreground/5 group-hover:bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                          <Icon size={16} />
+                        </div>
+                        <div>
+                          <span className="font-bold text-xs text-foreground block group-hover:text-primary transition-colors">
+                            {def.label}
+                          </span>
+                          <span className="text-[10px] text-foreground/50 block">
+                            {def.desc}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Starred Blocks Library Section */}
+              {(() => {
+                const templatesWithStarred = templates
+                  .map((tpl) => {
+                    const blocks = convertLegacyToBlocks(tpl);
+                    const starredBlocks = blocks.filter((b) => b.starred);
+                    return { tpl, starredBlocks };
+                  })
+                  .filter((item) => item.starredBlocks.length > 0);
+
+                const getBlockSummary = (b: EmailBlock): string => {
+                  switch (b.type) {
+                    case "heading":
+                      return b.text || "Titolo";
+                    case "text":
+                      return (b.content || "").replace(/\n/g, " ").slice(0, 75);
+                    case "button":
+                      return `${b.label || "Pulsante"} → ${b.url || ""}`;
+                    case "badge":
+                      return b.text || "Badge";
+                    case "header":
+                      return `${b.brand_name || "Header"} • ${b.tagline || ""}`;
+                    case "info_box":
+                      return `${b.title || "Box Info"}: ${b.items?.map((i) => i.label).join(", ")}`;
+                    case "two_column":
+                      return `${b.col1_title || "Col 1"} | ${b.col2_title || "Col 2"}`;
+                    case "image":
+                      return b.alt || b.caption || b.image_url || "Immagine";
+                    case "calendar":
+                      return b.title || "Promemoria Evento";
+                    default:
+                      return b.type;
+                  }
+                };
+
                 return (
-                  <button
-                    key={def.type}
-                    type="button"
-                    onClick={() => handleAddBlock(def.type)}
-                    className="p-3.5 rounded-2xl bg-foreground/[0.03] hover:bg-primary/10 hover:border-primary/30 border border-foreground/5 text-left transition-all cursor-pointer flex items-start gap-3 group"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-foreground/5 group-hover:bg-primary/20 text-primary flex items-center justify-center shrink-0">
-                      <Icon size={16} />
-                    </div>
-                    <div>
-                      <span className="font-bold text-xs text-foreground block group-hover:text-primary transition-colors">
-                        {def.label}
+                  <div className="border-t border-foreground/10 pt-4 space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                        <Star size={13} className="fill-amber-400" /> Libreria Blocchi Preferiti (Star)
                       </span>
-                      <span className="text-[10px] text-foreground/50 block">
-                        {def.desc}
-                      </span>
+                      {templatesWithStarred.length > 0 && (
+                        <span className="text-[10px] text-foreground/40 font-medium">
+                          Clicca per inserire una copia configurata
+                        </span>
+                      )}
                     </div>
-                  </button>
+
+                    {templatesWithStarred.length === 0 ? (
+                      <div className="p-4 rounded-2xl border border-dashed border-foreground/10 bg-background/30 text-center space-y-1">
+                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-foreground/70">
+                          <Star size={14} className="text-amber-400" /> Nessun blocco contrassegnato con la stella
+                        </div>
+                        <p className="text-[11px] text-foreground/45 max-w-sm mx-auto">
+                          Clicca sull&apos;icona a stella <strong className="text-amber-400">★</strong> accanto a un qualsiasi componente nella schermata <em>Builder Componenti</em> per salvarlo qui e riutilizzarlo in qualsiasi email!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {templatesWithStarred.map(({ tpl, starredBlocks }) => (
+                          <div
+                            key={tpl.id}
+                            className="p-3 rounded-2xl bg-foreground/[0.02] border border-foreground/5 space-y-2"
+                          >
+                            <div className="flex items-center gap-2 px-1">
+                              <span className="text-[11px] font-bold text-foreground/80 flex items-center gap-1.5">
+                                <Mail size={12} className="text-primary" /> {tpl.name || "Email"}
+                              </span>
+                              <span className="text-[10px] font-mono text-foreground/40">({tpl.id})</span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {starredBlocks.map((sBlock) => {
+                                const def = BLOCK_DEFINITIONS.find((d) => d.type === sBlock.type) || BLOCK_DEFINITIONS[0];
+                                const Icon = def.icon;
+                                const summary = getBlockSummary(sBlock);
+
+                                return (
+                                  <button
+                                    key={sBlock.id}
+                                    type="button"
+                                    onClick={() => handleInsertStarredBlock(sBlock)}
+                                    className="p-3 rounded-xl bg-background border border-foreground/10 hover:border-amber-400/50 hover:bg-amber-400/[0.03] text-left transition-all cursor-pointer flex items-start gap-2.5 group shadow-xs"
+                                  >
+                                    <div className="w-7 h-7 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Icon size={14} />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex items-center justify-between gap-1">
+                                        <span className="font-bold text-[11px] text-foreground group-hover:text-amber-400 transition-colors truncate">
+                                          {sBlock.custom_name || def.label}
+                                        </span>
+                                        <Star size={11} className="fill-amber-400 text-amber-400 shrink-0" />
+                                      </div>
+                                      <div className="text-[10px] text-primary/80 font-medium">
+                                        {def.label}
+                                      </div>
+                                      <p className="text-[10px] text-foreground/50 line-clamp-2 mt-0.5 leading-snug">
+                                        {summary}
+                                      </p>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 );
-              })}
+              })()}
             </div>
           </div>
         </div>
