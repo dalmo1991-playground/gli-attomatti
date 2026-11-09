@@ -846,19 +846,39 @@
       "articles": [
         {
           "slug": "gli-attomatti-la-regione-2026",
-          "title": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «laRegione»",
+          "title": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «la Regione»",
           "year": "2026",
           "date": "10 novembre 2026",
           "timestamp": "2026-11-10T09:00:00.000Z",
-          "short_description": "Breve introduzione per l'archivio...",
+          "short_description": "Dalle formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».",
           "visible": true,
           "content_sections": [
             {
-              "title": "Capitolo 1",
+              "title": "",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                  "text": "<p>Vedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. Il giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. Una chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.</p><p>L’articolo ripercorre tutte le tappe di questa avventura corale: il debutto con <i>Eduardo De Filippo</i>&nbsp;nell'opera <i>Ditegli sempre di sì</i>, le repliche e la tournée di <i>Una Cenerentola</i>, la partecipazione alla <i>Biennale del teatro amatoriale svizzero</i> e lo sguardo già rivolto alle trasferte future. Ma c'è spazio soprattutto per il nostro impegno quotidiano nella vita culturale cittadina, tra laboratori teatrali aperti a chiunque voglia salire sul palco e le serate di cineforum in italiano in collaborazione con <i>UNITRE</i>.</p><p>Un grazie di cuore a Moreno Invernizzi per l’attenzione, la curiosità e la cura con cui ha saputo dare voce alla nostra storia e alla nostra passione.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794222467540-0-q8py-ArticoloLaRegione.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Leggi l'articolo completo su <i><a href=\"https://www.laregione.ch/ticino7/ticino7/1960559\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">laRegione</a></i>.</p><div style=\"text-align: center;\"><i>Vuoi scoprire tutta la nostra storia? Leggila <a href=\"/Chi_Siamo\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">qua</a>!</i></div><div style=\"text-align: center;\"><i>Vuoi leggere partecipare ai prossimi capitoli? Iscriviti alla nostra <a href=\"/Registrazioni/newsletter\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">newsletter</a>!</i></div>"
+                }
+              ],
+              "text": "<p>Vedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. Il giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. Una chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.</p><p>L’articolo ripercorre tutte le tappe di questa avventura corale: il debutto con <i>Eduardo De Filippo</i>&nbsp;nell'opera <i>Ditegli sempre di sì</i>, le repliche e la tournée di <i>Una Cenerentola</i>, la partecipazione alla <i>Biennale del teatro amatoriale svizzero</i> e lo sguardo già rivolto alle trasferte future. Ma c'è spazio soprattutto per il nostro impegno quotidiano nella vita culturale cittadina, tra laboratori teatrali aperti a chiunque voglia salire sul palco e le serate di cineforum in italiano in collaborazione con <i>UNITRE</i>.</p><p>Un grazie di cuore a Moreno Invernizzi per l’attenzione, la curiosità e la cura con cui ha saputo dare voce alla nostra storia e alla nostra passione.</p>",
+              "images": [
+                {
+                  "url": "/images/1794222467540-0-q8py-ArticoloLaRegione.webp",
+                  "alt": "Foto articolo"
                 }
               ]
             }
