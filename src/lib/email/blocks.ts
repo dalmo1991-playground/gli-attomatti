@@ -529,8 +529,8 @@ export function renderEmailBlocksHtml({
 
   // Dynamic bubble container styles (info_box, two_column) that adapt to both dark and light card themes
   const bubbleRgb = isDarkCard ? "255, 255, 255" : (hexToRgb(textColor) || "15, 23, 42");
-  const bubbleBg = `rgba(${bubbleRgb}, ${isDarkCard ? "0.04" : "0.035"})`;
-  const bubbleBorder = `1px solid rgba(${bubbleRgb}, ${isDarkCard ? "0.08" : "0.1"})`;
+  const bubbleBg = isDarkCard ? "rgba(255, 255, 255, 0.085)" : "rgba(15, 23, 42, 0.06)";
+  const bubbleBorder = isDarkCard ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(15, 23, 42, 0.14)";
   // Opaque solid hex for dividers to ensure robust rendering on all mobile clients (including Gmail Android/iOS dark mode)
   const dividerColor = isDarkCard ? "#334155" : "#cbd5e1";
 
@@ -918,24 +918,35 @@ export function renderEmailBlocksHtml({
 
           return `
             <tr>
-              <td style="padding: 8px 32px ${pb} 32px;">
+              <td style="padding: 8px 32px ${pb} 32px;" class="stack-col-wrap">
                 <!--[if mso]>
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                <td width="260" valign="top">
+                <td width="258" valign="top">
                 <![endif]-->
-                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="left" width="258" class="stack-col" style="width: 258px; max-width: 100%; border-collapse: separate;">
                   <tr>
-                    <td width="48%" valign="top" bgcolor="${cardBg}" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
+                    <td valign="top" bgcolor="${cardBg}" class="stack-col-card" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
                       ${c1Url ? `<a href="${escapeHtml(c1Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
                         ${c1Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c1Title)}</div>` : ""}
                         <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c1Text)}</div>
                       ${c1Url ? `</a>` : ""}
                     </td>
+                  </tr>
+                </table>
 
-                    <td width="4%" style="padding: 0;">&nbsp;</td>
+                <!--[if mso]>
+                </td>
+                <td width="20" style="font-size: 0; line-height: 0;">&nbsp;</td>
+                <td width="258" valign="top">
+                <![endif]-->
 
-                    <td width="48%" valign="top" bgcolor="${cardBg}" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
+                <!-- Spaziatore verticale quando incolonnate su mobile -->
+                <div class="stack-col-spacer" style="display: none; height: 12px; line-height: 12px; font-size: 0; mso-hide: all;">&nbsp;</div>
+
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="right" width="258" class="stack-col" style="width: 258px; max-width: 100%; border-collapse: separate;">
+                  <tr>
+                    <td valign="top" bgcolor="${cardBg}" class="stack-col-card" style="background-color: ${bubbleBg}; border: ${bubbleBorder}; border-radius: 12px; padding: 16px 18px;">
                       ${c2Url ? `<a href="${escapeHtml(c2Url)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;">` : ""}
                         ${c2Title ? `<div style="font-size: 14px; font-weight: 700; color: ${accentColor}; margin-bottom: 6px;">${escapeHtml(c2Title)}</div>` : ""}
                         <div style="font-size: 13px; line-height: 1.5; color: ${textColor}; opacity: 0.9;">${escapeHtml(c2Text)}</div>
@@ -1064,6 +1075,29 @@ export function renderEmailBlocksHtml({
     body, table, td { font-family: Arial, Helvetica, sans-serif !important; }
   </style>
   <![endif]-->
+  <style type="text/css">
+    @media only screen and (max-width: 600px) {
+      .stack-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        float: none !important;
+      }
+      .stack-col-card {
+        background-color: ${isDarkCard ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.08)"} !important;
+        border-color: ${isDarkCard ? "rgba(255, 255, 255, 0.22)" : "rgba(15, 23, 42, 0.18)"} !important;
+      }
+      .stack-col-spacer {
+        display: block !important;
+        height: 12px !important;
+        line-height: 12px !important;
+      }
+      .stack-col-wrap {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+    }
+  </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: ${bgColor}; color: ${textColor}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
   <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${bgColor};">

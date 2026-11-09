@@ -2,7 +2,7 @@ import { getContent } from "@/lib/data";
 import { redirect } from "next/navigation";
 import RegistrationClient, { RegistrationPageData } from "./RegistrationClient";
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, GLOBAL_OG_IMAGE, GLOBAL_OG_IMAGE_JPG } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -43,6 +43,30 @@ export async function generateMetadata({
       description: page.description || `Modulo per ${page.title} a Zurigo.`,
       url: `${SITE_URL}/Registrazioni/${slug}`,
       type: "website",
+      images: [
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          type: "image/webp",
+          width: 1200,
+          height: 630,
+          alt: `${page.title} — Gli Attomatti`
+        },
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          type: "image/jpeg",
+          width: 1200,
+          height: 630,
+          alt: `${page.title} — Gli Attomatti`
+        }
+      ]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${page.title} — Registrazione Online`,
+      description: page.description || `Modulo per ${page.title} a Zurigo.`,
+      images: [`${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`, `${SITE_URL}${GLOBAL_OG_IMAGE}`]
     },
   };
 }

@@ -4,6 +4,10 @@ import localContent from "@/data/content.json";
 
 export const SITE_URL = process.env.SITE_URL || "https://gliattomatti.ch";
 
+// Default global OpenGraph image for all crawlers (WhatsApp, Facebook, Instagram, Twitter/X, Telegram, LinkedIn)
+export const GLOBAL_OG_IMAGE = "/images/og-image.webp";
+export const GLOBAL_OG_IMAGE_JPG = "/images/og-image.jpg";
+
 const siteSeo = (localContent as any)?.site?.seo || {};
 const siteName = (localContent as any)?.site?.name || "Gli Attomatti";
 
@@ -15,7 +19,7 @@ export const DEFAULT_SEO = {
     siteSeo.default_description ||
     (localContent as any)?.site?.description ||
     "Gli Attomatti: compagnia teatrale amatoriale di lingua italiana a Zurigo. Commedie, spettacoli dal vivo, rassegne ed eventi teatrali in Svizzera.",
-  defaultImage: siteSeo.default_image || "/images/1782553290530-TheaterCurtain.webp",
+  defaultImage: GLOBAL_OG_IMAGE,
   locale: siteSeo.locale || "it_CH",
   keywords: Array.isArray(siteSeo.keywords) ? siteSeo.keywords : [],
   socials: Array.isArray(siteSeo.socials) ? siteSeo.socials : []
@@ -45,10 +49,10 @@ export function createPageMetadata({
 }: CreateMetadataOptions): Metadata {
   const url = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
   const resolvedDescription = description?.trim() || DEFAULT_SEO.defaultDescription;
-  const resolvedImage = image?.trim() || DEFAULT_SEO.defaultImage;
-  const imageUrl = resolvedImage.startsWith("http")
-    ? resolvedImage
-    : `${SITE_URL}${resolvedImage.startsWith("/") ? resolvedImage : `/${resolvedImage}`}`;
+
+  // Per directive utente: l'immagine OpenGraph ovunque è il logo ufficiale Gli Attomatti su sfondo blu
+  const primaryImageUrl = `${SITE_URL}${GLOBAL_OG_IMAGE}`;
+  const fallbackJpgUrl = `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`;
 
   return {
     title,
@@ -66,7 +70,17 @@ export function createPageMetadata({
       type,
       images: [
         {
-          url: imageUrl,
+          url: primaryImageUrl,
+          secureUrl: primaryImageUrl,
+          type: "image/webp",
+          width: 1200,
+          height: 630,
+          alt: `${title} — Gli Attomatti`
+        },
+        {
+          url: fallbackJpgUrl,
+          secureUrl: fallbackJpgUrl,
+          type: "image/jpeg",
           width: 1200,
           height: 630,
           alt: `${title} — Gli Attomatti`
@@ -77,24 +91,24 @@ export function createPageMetadata({
       card: "summary_large_image",
       title,
       description: resolvedDescription,
-      images: [imageUrl]
+      images: [fallbackJpgUrl, primaryImageUrl]
     },
     robots: noIndex
       ? {
-          index: false,
-          follow: false
-        }
+        index: false,
+        follow: false
+      }
       : {
+        index: true,
+        follow: true,
+        googleBot: {
           index: true,
           follow: true,
-          googleBot: {
-            index: true,
-            follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1
-          }
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1
         }
+      }
   };
 }
 
