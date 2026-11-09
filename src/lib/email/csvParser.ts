@@ -161,3 +161,22 @@ export function parseCsv(csvText: string): ParsedCsvResult {
   };
 }
 
+/**
+ * Converte headers e rows in una stringa CSV formattata correttamente con virgolette dove necessario.
+ */
+export function unparseCsv(headers: string[], rows: Record<string, string>[], delimiter = ","): string {
+  const escapeCell = (val: string | undefined | null) => {
+    const str = val === undefined || val === null ? "" : String(val);
+    if (str.includes(delimiter) || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const headerLine = headers.map(escapeCell).join(delimiter);
+  const dataLines = rows.map((row) => headers.map((h) => escapeCell(row[h] || "")).join(delimiter));
+
+  return [headerLine, ...dataLines].join("\n");
+}
+
+
