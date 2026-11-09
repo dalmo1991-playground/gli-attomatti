@@ -2,7 +2,7 @@ import { getContent } from "@/lib/data";
 import LandingClient from "./LandingClient";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, GLOBAL_OG_IMAGE, GLOBAL_OG_IMAGE_JPG } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -42,13 +42,30 @@ export async function generateMetadata({
       description: heroBlock?.tagline,
       url: `${SITE_URL}/landing/${slug}`,
       type: "website",
-      images: heroBlock?.hero_image ? [heroBlock.hero_image] : undefined
+      images: [
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          type: "image/webp",
+          width: 1200,
+          height: 630,
+          alt: `${landing.title} — Gli Attomatti`
+        },
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          type: "image/jpeg",
+          width: 1200,
+          height: 630,
+          alt: `${landing.title} — Gli Attomatti`
+        }
+      ]
     },
     twitter: {
       card: "summary_large_image",
       title: landing.title,
       description: heroBlock?.tagline,
-      images: heroBlock?.hero_image ? [heroBlock.hero_image] : undefined
+      images: [`${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`, `${SITE_URL}${GLOBAL_OG_IMAGE}`]
     }
   };
 }

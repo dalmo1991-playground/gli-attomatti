@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 import { getContent, getPublicSiteContent } from "@/lib/data";
-import { SITE_URL, DEFAULT_SEO, getOrganizationJsonLd } from "@/lib/seo";
+import { SITE_URL, DEFAULT_SEO, getOrganizationJsonLd, GLOBAL_OG_IMAGE, GLOBAL_OG_IMAGE_JPG } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getSiteVersion } from "@/lib/version";
 
@@ -65,7 +65,17 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [
         {
-          url: `${SITE_URL}${DEFAULT_SEO.defaultImage}`,
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          type: "image/webp",
+          width: 1200,
+          height: 630,
+          alt: `${siteName} — Compagnia Teatrale Zurigo`,
+        },
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          type: "image/jpeg",
           width: 1200,
           height: 630,
           alt: `${siteName} — Compagnia Teatrale Zurigo`,
@@ -76,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: DEFAULT_SEO.defaultTitle,
       description,
-      images: [`${SITE_URL}${DEFAULT_SEO.defaultImage}`],
+      images: [`${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`, `${SITE_URL}${GLOBAL_OG_IMAGE}`],
     },
     robots: {
       index: true,

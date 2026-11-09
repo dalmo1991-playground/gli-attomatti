@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import LocationClient from "./LocationClient";
 import type { Metadata } from "next";
 import { LocationItem } from "@/lib/locationTypes";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, GLOBAL_OG_IMAGE, GLOBAL_OG_IMAGE_JPG } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -58,7 +58,30 @@ export async function generateMetadata({
       description,
       url: `${SITE_URL}/Location/${slug}`,
       type: "website",
-      images: location.hero_image ? [{ url: location.hero_image }] : undefined,
+      images: [
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE}`,
+          type: "image/webp",
+          width: 1200,
+          height: 630,
+          alt: `${title} — Gli Attomatti`
+        },
+        {
+          url: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          secureUrl: `${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`,
+          type: "image/jpeg",
+          width: 1200,
+          height: 630,
+          alt: `${title} — Gli Attomatti`
+        }
+      ]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_URL}${GLOBAL_OG_IMAGE_JPG}`, `${SITE_URL}${GLOBAL_OG_IMAGE}`]
     },
   };
 }
