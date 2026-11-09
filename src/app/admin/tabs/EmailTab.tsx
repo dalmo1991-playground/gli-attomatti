@@ -58,6 +58,7 @@ import {
   Link2
 } from "lucide-react";
 import { parseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
+import { CsvTableEditor } from "@/components/admin/email/CsvTableEditor";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -4415,6 +4416,22 @@ export function EmailTab() {
                             )}
                           </div>
                         </div>
+
+                        {/* Editor Tabellare Interattivo */}
+                        {parsedCsvData && parsedCsvData.headers.length > 0 && (
+                          <div className="pt-2 border-t border-foreground/10">
+                            <CsvTableEditor
+                              data={parsedCsvData}
+                              selectedEmailCol={selectedEmailCol}
+                              onSelectEmailCol={(col) => setSelectedEmailCol(col)}
+                              onChangeData={(updatedResult, newCsvText) => {
+                                setParsedCsvData(updatedResult);
+                                setCsvRawText(newCsvText);
+                                setMassSendReport(null);
+                              }}
+                            />
+                          </div>
+                        )}
 
                         {/* Azioni di Invio / Test */}
                         {parsedCsvData && parsedCsvData.rows.length > 0 && (
