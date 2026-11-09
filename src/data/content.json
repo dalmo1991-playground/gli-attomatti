@@ -901,11 +901,123 @@
           "visible": true,
           "content_sections": [
             {
-              "title": "Capitolo 1",
+              "title": "La preparazione ed il viaggio",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                  "text": "<p>Partecipare alla Biennale di Scuol ha rappresentato per noi un traguardo importante e un motivo di autentico orgoglio. Per una realtà giovane come Gli Attomatti, essere selezionati per portare il nostro lavoro in un contesto simile è stato un onore doppio, oltre che il riconoscimento più bello per il percorso costruito insieme fin qui.&nbsp;</p>\n<p>Nelle settimane precedenti ci siamo rimboccati le maniche per preparare la trasferta e curare ogni elemento di scena. In sala prove l'aria era carica di entusiasmo: abbiamo ripassato le battute, ritrovato i tempi comici e condiviso l'attesa con quel pizzico di sana complicità che si crea quando ci si prepara a qualcosa di bello.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Poi è arrivato il momento di partire. Il viaggio da Zurigo verso l’Engadina si è trasformato nel preludio ideale all’evento: tra gli ultimi ripassi del testo a mezza voce e momenti di pura spensieratezza, abbiamo colonizzato una porzione del treno ed il tragitto è volato via in fretta, regalandoci l'opportunità di condividere l'emozione con il sorriso e fare gruppo prima dell'impegno sul palcoscenico.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Partecipare alla Biennale di Scuol ha rappresentato per noi un traguardo importante e un motivo di autentico orgoglio. Per una realtà giovane come Gli Attomatti, essere selezionati per portare il nostro lavoro in un contesto simile è stato un onore doppio, oltre che il riconoscimento più bello per il percorso costruito insieme fin qui.&nbsp;</p>\n<p>Nelle settimane precedenti ci siamo rimboccati le maniche per preparare la trasferta e curare ogni elemento di scena. In sala prove l'aria era carica di entusiasmo: abbiamo ripassato le battute, ritrovato i tempi comici e condiviso l'attesa con quel pizzico di sana complicità che si crea quando ci si prepara a qualcosa di bello.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Un’occasione per connettere",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Arrivare a Scuol e respirare l’atmosfera del festival ha confermato quanto la Biennale sia un’occasione unica per riunire realtà teatrali provenienti da tutta la Svizzera. Incontrare compagnie arrivate da cantoni diversi ha creato un terreno fertile per lo scambio e il confronto artistico.</p>\n<p>Durante le giornate della rassegna è emerso con forza un aspetto fondamentale: il teatro non ha barriere linguistiche. Dal romancio al francese, dallo svizzero-tedesco all’italiano, la forza del corpo, il ritmo scenico e l’espressività hanno permesso a tutti di comprendersi con naturalezza, dimostrando come il linguaggio della recitazione sappia unire persone con background differenti.</p>\n<div style=\"text-align: center;\"><i><mark><span class=\"text-lg\">Perchè il teatro, in fondo, parla una sola ligua!</span></mark></i></div>\n<p>Per valorizzare questo patrimonio di incontri, noi Attomatti abbiamo portato alla Biennale anche un nostro progetto parallelo. Abbiamo infatti raccolto interviste e retroscena con le varie compagnie presenti, materiale che pubblicheremo nei prossimi mesi sui nostri canali social per dare voce alla vitalità e alla varietà della scena teatrale elvetica.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Arrivare a Scuol e respirare l’atmosfera del festival ha confermato quanto la Biennale sia un’occasione unica per riunire realtà teatrali provenienti da tutta la Svizzera. Incontrare compagnie arrivate da cantoni diversi ha creato un terreno fertile per lo scambio e il confronto artistico.</p>\n<p>Durante le giornate della rassegna è emerso con forza un aspetto fondamentale: il teatro non ha barriere linguistiche. Dal romancio al francese, dallo svizzero-tedesco all’italiano, la forza del corpo, il ritmo scenico e l’espressività hanno permesso a tutti di comprendersi con naturalezza, dimostrando come il linguaggio della recitazione sappia unire persone con background differenti.</p>\n<div style=\"text-align: center;\"><i><mark><span class=\"text-lg\">Perchè il teatro, in fondo, parla una sola ligua!</span></mark></i></div>\n<p>Per valorizzare questo patrimonio di incontri, noi Attomatti abbiamo portato alla Biennale anche un nostro progetto parallelo. Abbiamo infatti raccolto interviste e retroscena con le varie compagnie presenti, materiale che pubblicheremo nei prossimi mesi sui nostri canali social per dare voce alla vitalità e alla varietà della scena teatrale elvetica.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Si va in scena: «Non sottovalutare i 40»",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Sabato è stato il nostro turno di salire sul palco con <i>Non sottovalutare i 40</i>, un brillante atto unico scritto da <i>Domenico Scotti di Carlo</i>. La commedia racconta di Dario, un uomo a un passo dal quarantesimo compleanno che preferirebbe dimenticarsi della ricorrenza. La sua famiglia ha però tutt'altri piani e decide di organizzare una sorpresa, riempiendo la giornata di richiami al fatidico numero tra cruciverba, scioglilingua, acquisti improbabili, equivoci e persino una febbre sospetta. Con un ritmo vivace e situazioni paradossali, il testo affronta con leggerezza e complicità il traguardo dei quarant'anni e le dinamiche quotidiane di famiglia.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>La scelta dello spettacolo si è rivelata in perfetta armonia con lo spirito della manifestazione. Il filo conduttore dell'intera rassegna era infatti proprio il numero quaranta, scelto per celebrare i quarant'anni dalla fondazione dell'associazione locale <i>Gruppa da teater Scuol</i>. Portare in scena una commedia incentrata esattamente su questa cifra ha creato un'intesa immediata con la sala, che ha risposto con grande partecipazione e risate sincere per tutta la durata dell'esibizione.</p>"
+                }
+              ],
+              "text": "<p>Sabato è stato il nostro turno di salire sul palco con <i>Non sottovalutare i 40</i>, un brillante atto unico scritto da <i>Domenico Scotti di Carlo</i>. La commedia racconta di Dario, un uomo a un passo dal quarantesimo compleanno che preferirebbe dimenticarsi della ricorrenza. La sua famiglia ha però tutt'altri piani e decide di organizzare una sorpresa, riempiendo la giornata di richiami al fatidico numero tra cruciverba, scioglilingua, acquisti improbabili, equivoci e persino una febbre sospetta. Con un ritmo vivace e situazioni paradossali, il testo affronta con leggerezza e complicità il traguardo dei quarant'anni e le dinamiche quotidiane di famiglia.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Il bilancio",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Torniamo a Zurigo con un bilancio ampiamente positivo e con l'energia di un'esperienza che ha arricchito ciascuno di noi, sia sul piano teatrale che umano. È stata un'iniziativa stimolante, vissuta con grande entusiasmo in ogni suo momento.</p>\n<p>Un ringraziamento sentito va agli organizzatori Anna, Dario, Flurin, Seraina e Urs e alla comunità di Scuol per l'accoglienza calorosa e la cura riservata all'evento. La Biennale guarda già avanti: tra due anni il testimone passerà alla federazione di teatro amatoriale della Svizzera tedesca. L'augurio per Gli Attomatti è di poter essere nuovamente presenti alla prossima edizione, pronti a portare sul palco un nuovo spettacolo e la stessa voglia di condividere emozioni.</p><div style=\"\"><small>I video e le interviste realizzate a Scuol con le altre compagnie saranno condivisi nelle prossime settimane sulla nostra pagina <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a>.</small></div>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Torniamo a Zurigo con un bilancio ampiamente positivo e con l'energia di un'esperienza che ha arricchito ciascuno di noi, sia sul piano teatrale che umano. È stata un'iniziativa stimolante, vissuta con grande entusiasmo in ogni suo momento.</p>\n<p>Un ringraziamento sentito va agli organizzatori Anna, Dario, Flurin, Seraina e Urs e alla comunità di Scuol per l'accoglienza calorosa e la cura riservata all'evento. La Biennale guarda già avanti: tra due anni il testimone passerà alla federazione di teatro amatoriale della Svizzera tedesca. L'augurio per Gli Attomatti è di poter essere nuovamente presenti alla prossima edizione, pronti a portare sul palco un nuovo spettacolo e la stessa voglia di condividere emozioni.</p><div style=\"\"><small>I video e le interviste realizzate a Scuol con le altre compagnie saranno condivisi nelle prossime settimane sulla nostra pagina <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a>.</small></div>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
                 }
               ]
             }
