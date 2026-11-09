@@ -162,11 +162,18 @@ export async function GET(request: Request) {
     return a.name.localeCompare(b.name);
   });
 
-  return NextResponse.json({
-    success: true,
-    total: sortedImages.length,
-    images: sortedImages
-  });
+  return NextResponse.json(
+    {
+      success: true,
+      total: sortedImages.length,
+      images: sortedImages
+    },
+    {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0'
+      }
+    }
+  );
 }
 
 export async function DELETE(request: Request) {

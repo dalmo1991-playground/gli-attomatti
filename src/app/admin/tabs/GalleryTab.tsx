@@ -116,7 +116,10 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
       if (adminSecret) {
         headers["x-admin-secret"] = adminSecret;
       }
-      const res = await fetch("/api/images", { headers });
+      const res = await fetch(`/api/images?t=${Date.now()}`, {
+        cache: "no-store",
+        headers
+      });
       if (res.ok) {
         const data = await res.json();
         setImages(data.images || []);

@@ -103,7 +103,10 @@ export function MediaLibraryModal({
       if (adminSecret) {
         headers["x-admin-secret"] = adminSecret;
       }
-      const res = await fetch("/api/images", { headers });
+      const res = await fetch(`/api/images?t=${Date.now()}`, {
+        cache: "no-store",
+        headers
+      });
       if (res.ok) {
         const data = await res.json();
         setImages(data.images || []);
@@ -155,8 +158,8 @@ export function MediaLibraryModal({
 
         const stageData = await stageRes.json();
         stagedBlobs.push({
-          path: stageData.path,
-          sha: stageData.sha,
+          path: stageData.filePath || stageData.path,
+          sha: stageData.blobSha || stageData.sha,
           url: stageData.url,
           originalName: file.name
         });
@@ -170,8 +173,9 @@ export function MediaLibraryModal({
           "x-admin-secret": adminSecret
         },
         body: JSON.stringify({
-          action: "commit_multiple",
-          files: stagedBlobs
+          action: "commit",
+          items: stagedBlobs,
+          message: `Upload batch of ${stagedBlobs.length} images via Media Library`
         })
       });
 
@@ -186,7 +190,7 @@ export function MediaLibraryModal({
       await fetchImages();
 
       // Auto-select uploaded images
-      const newUrls = (commitData.committed || []).map((c: any) => c.url);
+      const newUrls = (commitData.urls || stagedBlobs.map((b) => b.url)).filter(Boolean);
       if (newUrls.length > 0) {
         if (multiple) {
           setSelectedUrls((prev) => [...prev, ...newUrls]);
