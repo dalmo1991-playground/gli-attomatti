@@ -31,7 +31,15 @@
   },
   "preview_access": {
     "enabled": true,
-    "rules": []
+    "rules": [
+      {
+        "id": "rule-1794220520213",
+        "label": "Nuova anteprima riservata",
+        "path": "/Iniziative/laboratorio-teatrale",
+        "token": "laboratorio-shakespeare",
+        "enabled": true
+      }
+    ]
   },
   "navigation": [
     {
@@ -1651,8 +1659,9 @@
           "slug": "laboratorio-teatrale",
           "title": "Laboratorio Teatrale",
           "year": "2026-27",
-          "short_description": "Un percorso formativo pratico ed emozionante per avvicinarsi alla recitazione, alla dizione e all'improvvisazione scenica.",
-          "text": "Il nostro corso di teatro è pensato per chiunque voglia mettersi in gioco, superare la timidezza o perfezionare le proprie capacità sceniche in un ambiente stimolante, accogliente e divertente.\n\nAttraverso esercizi di respirazione, dizione, improvvisazione teatrale e lavoro corale sul testo, esploreremo insieme i fondamenti della recitazione fino alla messa in scena di un saggio finale aperto al pubblico.",
+          "detail_main_heading": null,
+          "short_description": "Uno spazio sicuro per staccare dalla routine, togliere la maschera quotidiana e salire sul palco. Torna a Zurigo il laboratorio teatrale guidato da Domenico Scotti di Carlo: quest'anno esploriamo Shakespeare e creiamo legami autentici prima, durante e dopo le prove.",
+          "text": "<p><span class=\"text-lg\"><b>Un porto franco per mettersi in gioco</b></span></p>\n\n<p>Arrivati al nostro terzo anno consecutivo, il laboratorio teatrale patrocinato da Gli Attomatti e condotto principalmente da Domenico Scotti di Carlo riapre le sue porte. Più che un semplice corso, è ormai un punto di incontro vivo per la comunità italiana a Zurigo: un posto dove staccare dalla routine, ritrovare la propria lingua e condividere una serata diversa.</p>\n\n<p>Non serve alcuna esperienza sul palco né l’ambizione di diventare attori provetti. Basta la curiosità di mettersi in gioco in uno spazio sicuro e senza giudizio, dove l’ascolto reciproco, la risata e un pizzico di sana follia contano molto più della tecnica accademica.</p>\n\n<p><span class=\"text-lg\"><b>Quest’anno tocca a Shakespeare</b></span></p>\n\n<p>Per questa nuova edizione abbiamo deciso di confrontarci con un gigante: William Shakespeare. Lo faremo senza alcuna reverenza polverosa, trattando le sue opere per ciò che sono realmente, ovvero storie viscerali di passioni, beffe e fragilità universali.</p>\n\n<p>Durante l’anno lavoreremo anche divisi in piccoli sottogruppi su opere specifiche. Sarà un lavoro laboratoriale a tutto tondo: dall'analisi del testo alla proposta di soluzioni registiche e di messa in scena originali. Il viaggio culminerà, come da tradizione, in un momento di restituzione finale aperto a tutta la comunità, per festeggiare insieme il lavoro svolto e salire sul palco davanti al pubblico.</p>\n\n<p><b><span class=\"text-lg\">Oltre la sala prove</span></b></p>\n\n<p>La verità è che la parte migliore spesso comincia proprio quando si spengono i riflettori. In questi anni il laboratorio ha dato vita a un gruppo affiatato che si ritrova regolarmente fuori dalla sala, vuoi per rifinire le scene in vista del saggio, vuoi semplicemente per una cena, una festa o un bicchiere condiviso a fine giornata. Perché il teatro, prima ancora che recitazione, resta una splendida scusa per trovare amici veri e sentirsi a casa.</p>\n\n<p style=\"text-align: center;\"><i><br>Purtroppo le iscrizioni per quest'anno sono chiuse ma non esitare a <a href=\"/Cobtatti\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">metterti in contatto</a> con noi!</i></p>",
           "images": [
             {
               "url": "/images/1790877903475-mbpr-ZSC_5779.webp",
@@ -1665,6 +1674,10 @@
             {
               "url": "/images/1791565354643-spoe-CorsoTeatro.webp",
               "alt": "spoe CorsoTeatro"
+            },
+            {
+              "url": "/images/1794220493010-nt32-Laboratorio_foto_cena.webp",
+              "alt": "Laboratorio foto cena"
             }
           ],
           "dates": [
@@ -1677,11 +1690,6 @@
             }
           ],
           "details": [
-            {
-              "label": "Livello",
-              "value": "Aperto a tutti",
-              "visible": true
-            },
             {
               "label": "Frequenza",
               "value": "Settimanale",
