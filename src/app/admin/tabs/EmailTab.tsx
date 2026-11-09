@@ -53,7 +53,9 @@ import {
   AlertTriangle,
   Star,
   Edit2,
-  Bookmark
+  Bookmark,
+  Target,
+  Link2
 } from "lucide-react";
 import { parseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
 import { useAdmin } from "../context/AdminContext";
@@ -67,7 +69,8 @@ import {
   EmailSubcaseConfig,
   EmailSenderProfile,
   EmailSettingsConfig,
-  EmailFieldMapping
+  EmailFieldMapping,
+  EmailUtmConfig
 } from "@/lib/email/template";
 import {
   extractFieldsFromJson,
@@ -619,8 +622,8 @@ export function EmailTab() {
   const originUrl = typeof window !== "undefined" ? window.location.origin : "https://gliattomatti.ch";
   const siteBaseUrl =
     typeof window !== "undefined" &&
-    window.location.hostname !== "localhost" &&
-    window.location.hostname !== "127.0.0.1"
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1"
       ? window.location.origin
       : "https://gliattomatti.ch";
   const apiEndpointUrl = `${originUrl}/api/email/send?template=${activeTemplate?.id || "template-id"}&secret=TUO_SEGRETO`;
@@ -746,10 +749,10 @@ export function EmailTab() {
       const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
       const suggestedName = block.custom_name || (
         block.type === "heading" ? (block.text || def.label) :
-        block.type === "button" ? (block.label || def.label) :
-        block.type === "badge" ? (block.text || def.label) :
-        block.type === "two_column" ? (`${block.col1_title || "Col 1"} & ${block.col2_title || "Col 2"}`) :
-        def.label
+          block.type === "button" ? (block.label || def.label) :
+            block.type === "badge" ? (block.text || def.label) :
+              block.type === "two_column" ? (`${block.col1_title || "Col 1"} & ${block.col2_title || "Col 2"}`) :
+                def.label
       );
 
       const entered = window.prompt("Nome identificativo per questa componente nella libreria:", suggestedName);
@@ -1260,9 +1263,8 @@ export function EmailTab() {
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
-                      className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                        activeTemplate?.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
-                      }`}
+                      className={`w-2.5 h-2.5 rounded-full shrink-0 ${activeTemplate?.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
+                        }`}
                     />
                     <span className="text-sm font-bold text-foreground truncate">
                       {activeTemplate?.name || "Seleziona Template..."}
@@ -1331,17 +1333,15 @@ export function EmailTab() {
                                   setIsTemplateDropdownOpen(false);
                                   setTemplateSearchQuery("");
                                 }}
-                                className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                                  isSelected
+                                className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${isSelected
                                     ? "bg-primary/10 text-primary font-bold"
                                     : "text-foreground hover:bg-foreground/5 font-medium"
-                                }`}
+                                  }`}
                               >
                                 <div className="flex items-center gap-2.5 min-w-0">
                                   <span
-                                    className={`w-2 h-2 rounded-full shrink-0 ${
-                                      tpl.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
-                                    }`}
+                                    className={`w-2 h-2 rounded-full shrink-0 ${tpl.enabled !== false ? "bg-emerald-400" : "bg-zinc-500"
+                                      }`}
                                   />
                                   <div className="min-w-0">
                                     <div className="text-xs truncate">{tpl.name || `Template ${idx + 1}`}</div>
@@ -1369,10 +1369,10 @@ export function EmailTab() {
                             (tpl.subject && tpl.subject.toLowerCase().includes(q))
                           );
                         }).length === 0 && (
-                          <div className="p-4 text-center text-xs text-foreground/50">
-                            Nessun template corrispondente a &quot;{templateSearchQuery}&quot;
-                          </div>
-                        )}
+                            <div className="p-4 text-center text-xs text-foreground/50">
+                              Nessun template corrispondente a &quot;{templateSearchQuery}&quot;
+                            </div>
+                          )}
                       </div>
                     </div>
                   </>
@@ -1401,9 +1401,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("theme")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "theme" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "theme" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Palette size={15} /> Tema & Colori
                 </button>
@@ -1412,9 +1411,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("details")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "details" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "details" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Mail size={15} /> Dettagli Email
                 </button>
@@ -1423,9 +1421,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("builder")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "builder" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "builder" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Layers size={15} /> Componenti ({activeBlocks.length})
                 </button>
@@ -1434,9 +1431,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("personalization")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "personalization" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "personalization" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Sliders size={15} /> Personalizzazione {activeTemplate.subcases?.length ? `(${activeTemplate.subcases.length})` : ""}
                 </button>
@@ -1445,9 +1441,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("api")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "api" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "api" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Code size={15} /> Integrazione (API & Trigger)
                 </button>
@@ -1456,9 +1451,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("mass")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "mass" ? "border-primary text-primary font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "mass" ? "border-primary text-primary font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Users size={15} /> Invio Massivo (CSV)
                   {parsedCsvData && parsedCsvData.totalRows > 0 && (
@@ -1472,9 +1466,8 @@ export function EmailTab() {
                 <button
                   type="button"
                   onClick={() => setActiveTabSection("preview")}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "preview" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "preview" ? "border-primary text-primary" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <Eye size={15} /> Anteprima Tutta Pagina
                 </button>
@@ -1486,9 +1479,8 @@ export function EmailTab() {
                     setActiveTabSection("queue");
                     fetchQueue();
                   }}
-                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTabSection === "queue" ? "border-rose-400 text-rose-400 font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
-                  }`}
+                  className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "queue" ? "border-rose-400 text-rose-400 font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
+                    }`}
                 >
                   <RotateCcw size={15} className={queueItems.length > 0 ? "text-rose-400 animate-spin-slow" : ""} />
                   <span>Coda Errori</span>
@@ -1549,9 +1541,8 @@ export function EmailTab() {
                       <button
                         type="button"
                         onClick={() => setPreviewDevice("mobile")}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${
-                          previewDevice === "mobile" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${previewDevice === "mobile" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
+                          }`}
                       >
                         <Smartphone size={14} />
                         <span>Mobile (375px)</span>
@@ -1559,9 +1550,8 @@ export function EmailTab() {
                       <button
                         type="button"
                         onClick={() => setPreviewDevice("desktop")}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${
-                          previewDevice === "desktop" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${previewDevice === "desktop" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
+                          }`}
                       >
                         <Monitor size={14} />
                         <span>Standard (650px)</span>
@@ -1569,9 +1559,8 @@ export function EmailTab() {
                       <button
                         type="button"
                         onClick={() => setPreviewDevice("fluid")}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${
-                          previewDevice === "fluid" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer font-bold ${previewDevice === "fluid" ? "bg-foreground text-background shadow-xs" : "text-foreground/60 hover:text-foreground"
+                          }`}
                       >
                         <Maximize2 size={14} />
                         <span>Fluido / Widescreen</span>
@@ -1585,11 +1574,10 @@ export function EmailTab() {
                     <button
                       type="button"
                       onClick={() => setIsPreviewJsonOpen(!isPreviewJsonOpen)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0 ${
-                        isPreviewJsonOpen
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0 ${isPreviewJsonOpen
                           ? "bg-primary text-background border-primary"
                           : "bg-foreground/5 text-foreground/80 border-foreground/10 hover:border-foreground/20"
-                      }`}
+                        }`}
                     >
                       <FileJson size={14} />
                       <span>{isPreviewJsonOpen ? "Chiudi JSON" : "Modifica JSON"}</span>
@@ -1663,7 +1651,7 @@ export function EmailTab() {
                               if (activeTemplate?.id) {
                                 handleUpdateFieldMapping({ sample_payload_json: formatted });
                               }
-                            } catch {}
+                            } catch { }
                           }}
                           className="px-2.5 py-1 rounded-lg bg-foreground/10 hover:bg-foreground/15 text-[11px] font-bold text-foreground transition-colors cursor-pointer"
                         >
@@ -1718,11 +1706,10 @@ export function EmailTab() {
                     <span className="text-xs font-black uppercase tracking-wider text-primary flex items-center gap-1.5">
                       <Sliders size={14} /> Campi Tecnici Risolti (Header Live)
                     </span>
-                    <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full ${
-                      resolvedTechnicalFields.hasSampleJson
+                    <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full ${resolvedTechnicalFields.hasSampleJson
                         ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                         : "bg-foreground/5 text-foreground/50"
-                    }`}>
+                      }`}>
                       {resolvedTechnicalFields.hasSampleJson ? "Valutato da JSON attivo" : "Valori Predefiniti"}
                     </span>
                   </div>
@@ -1786,11 +1773,10 @@ export function EmailTab() {
 
                 {testResult && (
                   <div
-                    className={`p-3 rounded-xl text-xs flex items-start gap-2 ${
-                      testResult.type === "success"
+                    className={`p-3 rounded-xl text-xs flex items-start gap-2 ${testResult.type === "success"
                         ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
                         : "bg-rose-500/10 text-rose-300 border border-rose-500/20"
-                    }`}
+                      }`}
                   >
                     {testResult.type === "success" ? (
                       <CheckCircle2 size={16} className="shrink-0 mt-0.5 text-emerald-400" />
@@ -1804,13 +1790,12 @@ export function EmailTab() {
                 {/* Full-width Email Studio Canvas */}
                 <div className="w-full flex justify-center bg-slate-950/70 p-4 sm:p-8 md:p-12 rounded-3xl border border-foreground/10 overflow-hidden shadow-2xl min-h-[900px]">
                   <div
-                    className={`transition-all duration-300 overflow-hidden shadow-2xl rounded-2xl border border-foreground/15 ${
-                      previewDevice === "mobile"
+                    className={`transition-all duration-300 overflow-hidden shadow-2xl rounded-2xl border border-foreground/15 ${previewDevice === "mobile"
                         ? "w-[375px]"
                         : previewDevice === "desktop"
-                        ? "w-full max-w-[650px]"
-                        : "w-full max-w-5xl"
-                    }`}
+                          ? "w-full max-w-[650px]"
+                          : "w-full max-w-5xl"
+                      }`}
                   >
                     <iframe
                       title="Email Studio Live Preview Fullscreen"
@@ -1918,11 +1903,10 @@ export function EmailTab() {
                   {/* Feedback Message */}
                   {queueMessage && (
                     <div
-                      className={`p-3.5 rounded-xl text-xs flex items-center justify-between gap-3 ${
-                        queueMessage.type === "success"
+                      className={`p-3.5 rounded-xl text-xs flex items-center justify-between gap-3 ${queueMessage.type === "success"
                           ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
                           : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         {queueMessage.type === "success" ? (
@@ -2000,11 +1984,10 @@ export function EmailTab() {
 
                     {notifyTestResult && (
                       <div
-                        className={`p-3 rounded-xl text-xs flex items-center justify-between gap-2 ${
-                          notifyTestResult.type === "success"
+                        className={`p-3 rounded-xl text-xs flex items-center justify-between gap-2 ${notifyTestResult.type === "success"
                             ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
                             : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           {notifyTestResult.type === "success" ? (
@@ -2157,1865 +2140,2065 @@ export function EmailTab() {
                 {/* Left 6 Cols: Builder Controls */}
                 <div className="lg:col-span-6 space-y-6">
 
-              {/* SECTION 1: THEME & COLOR CUSTOMIZER */}
-              {activeTabSection === "theme" && (
-                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                  <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
-                    <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground">
-                        Personalizzazione Stile & Palette Colori
-                      </h4>
-                      <p className="text-xs text-foreground/60">
-                        Scegli una base dai preset ufficiali o personalizza manualmente ogni singola tonalità dell'email.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Preset Suggestions */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
-                      Preset Consigliati & Temi Landing:
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: "default", customColors: undefined }))}
-                        className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                          activeTemplate.theme === "default" && !activeTemplate.customColors
-                            ? "bg-primary/10 border-primary text-foreground"
-                            : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
-                        }`}
-                      >
-                        <span className="font-bold text-xs block">Ufficiale Attomatti</span>
-                        <span className="text-[10px] text-foreground/50 block">Ardesia & Rosa</span>
-                      </button>
-
-                      {LANDING_THEME_PRESETS.filter((p) => p.id !== "default").map((preset) => (
-                        <button
-                          key={preset.id}
-                          type="button"
-                          onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: preset.id, customColors: undefined }))}
-                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                            activeTemplate.theme === preset.id && !activeTemplate.customColors
-                              ? "bg-primary/10 border-primary text-foreground"
-                              : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
-                          }`}
-                        >
-                          <span className="font-bold text-xs block">{preset.name}</span>
-                          <span className="text-[10px] text-foreground/50 block">{preset.tagline}</span>
-                        </button>
-                      ))}
-
-                      {landings.map((l) => (
-                        <button
-                          key={l.id || l.slug}
-                          type="button"
-                          onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: l.slug, customColors: undefined }))}
-                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                            activeTemplate.theme === l.slug && !activeTemplate.customColors
-                              ? "bg-primary/10 border-primary text-foreground"
-                              : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
-                          }`}
-                        >
-                          <span className="font-bold text-xs block">Landing: {l.slug}</span>
-                          <span className="text-[10px] text-foreground/50 block">{l.title || "Tema dedicato"}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Manual Color Pickers */}
-                  <div className="pt-4 border-t border-foreground/5 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
-                        Override Colori Personalizzati:
-                      </span>
-                      {activeTemplate.customColors && (
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateTemplate((t) => ({ ...t, customColors: undefined }))}
-                          className="inline-flex items-center gap-1 text-[11px] text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
-                        >
-                          <RotateCcw size={12} /> Ripristina Preset
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Canvas Background */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                  {/* SECTION 1: THEME & COLOR CUSTOMIZER */}
+                  {activeTabSection === "theme" && (
+                    <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                      <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
                         <div>
-                          <span className="text-xs font-bold text-foreground block">Sfondo Canvas Esterno</span>
-                          <span className="text-[10px] text-foreground/50 block">Colore sfondo principale</span>
+                          <h4 className="text-base font-black uppercase tracking-tight text-foreground">
+                            Personalizzazione Stile & Palette Colori
+                          </h4>
+                          <p className="text-xs text-foreground/60">
+                            Scegli una base dai preset ufficiali o personalizza manualmente ogni singola tonalità dell'email.
+                          </p>
                         </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.background}
-                          onChange={(e) => {
-                            const newColors = { ...(activeTemplate.customColors || {}), background: e.target.value };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
                       </div>
 
-                      {/* Card Background */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-xs font-bold text-foreground block">Sfondo Card Centrale</span>
-                          <span className="text-[10px] text-foreground/50 block">Superficie del contenuto</span>
-                        </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.muted}
-                          onChange={(e) => {
-                            const newColors = { ...(activeTemplate.customColors || {}), muted: e.target.value };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
-                      </div>
-
-                      {/* Primary Color (Buttons) */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-xs font-bold text-foreground block">Colore Primario Pulsanti</span>
-                          <span className="text-[10px] text-foreground/50 block">CTA e accenti principali</span>
-                        </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.primary}
-                          onChange={(e) => {
-                            const newPrimary = e.target.value;
-                            const newColors = {
-                              ...(activeTemplate.customColors || {}),
-                              primary: newPrimary,
-                              primaryForeground: getAutoContrastColor(newPrimary)
-                            };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
-                      </div>
-
-                      {/* Text on Primary */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-xs font-bold text-foreground block">Testo sul Pulsante</span>
-                          <span className="text-[10px] text-foreground/50 block">Calcolato per contrasto leggibile</span>
-                        </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.primaryForeground || "#000000"}
-                          onChange={(e) => {
-                            const newColors = { ...(activeTemplate.customColors || {}), primaryForeground: e.target.value };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
-                      </div>
-
-                      {/* Accent Color */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-xs font-bold text-foreground block">Colore Accento & Titoli Info</span>
-                          <span className="text-[10px] text-foreground/50 block">Bordi luminosi e badge</span>
-                        </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.accent}
-                          onChange={(e) => {
-                            const newColors = { ...(activeTemplate.customColors || {}), accent: e.target.value };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
-                      </div>
-
-                      {/* Main Text Foreground */}
-                      <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-xs font-bold text-foreground block">Colore Testo Principale</span>
-                          <span className="text-[10px] text-foreground/50 block">Tipografia e titoli</span>
-                        </div>
-                        <input
-                          type="color"
-                          value={resolvedColors.foreground}
-                          onChange={(e) => {
-                            const newColors = { ...(activeTemplate.customColors || {}), foreground: e.target.value };
-                            handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
-                          }}
-                          className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION 2: DETTAGLI EMAIL (METADATI, SENDER & DESTINATARIO) */}
-              {activeTabSection === "details" && (
-                <div className="space-y-6">
-                  {/* Card 1: Informazioni Template, Oggetto & Preheader */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
-                    <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
-                      <div>
-                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                          <FileText size={18} className="text-primary" />
-                          Informazioni & Oggetto Email
-                        </h4>
-                        <p className="text-xs text-foreground/60 mt-0.5">
-                          Definisci nome, identificatore, oggetto della mail e testo di anteprima per la posta in arrivo.
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          role="switch"
-                          id="email-template-enabled-toggle"
-                          aria-checked={activeTemplate.enabled !== false}
-                          onClick={() => handleUpdateTemplate((t) => ({ ...t, enabled: t.enabled === false }))}
-                          title={activeTemplate.enabled !== false ? "Disattiva invio di questa email" : "Attiva invio di questa email"}
-                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${
-                            activeTemplate.enabled !== false
-                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25"
-                              : "bg-foreground/5 text-foreground/50 border-foreground/10 hover:bg-foreground/10"
-                          }`}
-                        >
-                          <span className={`relative inline-block w-7 h-4 rounded-full transition-colors ${activeTemplate.enabled !== false ? "bg-emerald-400" : "bg-foreground/20"}`}>
-                            <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-background transition-all ${activeTemplate.enabled !== false ? "left-3.5" : "left-0.5"}`} />
-                          </span>
-                          {activeTemplate.enabled !== false ? "Attiva" : "Disattivata"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDuplicateTemplate(selectedIndex)}
-                          title="Duplica intero template"
-                          className="p-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
-                        >
-                          <CopyPlus size={15} />
-                        </button>
-                        {templates.length > 1 && (
+                      {/* Preset Suggestions */}
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
+                          Preset Consigliati & Temi Landing:
+                        </label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                           <button
                             type="button"
-                            onClick={() => handleDeleteTemplate(selectedIndex)}
-                            title="Elimina template"
-                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+                            onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: "default", customColors: undefined }))}
+                            className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${activeTemplate.theme === "default" && !activeTemplate.customColors
+                                ? "bg-primary/10 border-primary text-foreground"
+                                : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
+                              }`}
                           >
-                            <Trash2 size={15} />
+                            <span className="font-bold text-xs block">Ufficiale Attomatti</span>
+                            <span className="text-[10px] text-foreground/50 block">Ardesia & Rosa</span>
                           </button>
+
+                          {LANDING_THEME_PRESETS.filter((p) => p.id !== "default").map((preset) => (
+                            <button
+                              key={preset.id}
+                              type="button"
+                              onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: preset.id, customColors: undefined }))}
+                              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${activeTemplate.theme === preset.id && !activeTemplate.customColors
+                                  ? "bg-primary/10 border-primary text-foreground"
+                                  : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
+                                }`}
+                            >
+                              <span className="font-bold text-xs block">{preset.name}</span>
+                              <span className="text-[10px] text-foreground/50 block">{preset.tagline}</span>
+                            </button>
+                          ))}
+
+                          {landings.map((l) => (
+                            <button
+                              key={l.id || l.slug}
+                              type="button"
+                              onClick={() => handleUpdateTemplate((t) => ({ ...t, theme: l.slug, customColors: undefined }))}
+                              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${activeTemplate.theme === l.slug && !activeTemplate.customColors
+                                  ? "bg-primary/10 border-primary text-foreground"
+                                  : "bg-background/40 border-foreground/5 text-foreground/70 hover:border-foreground/20"
+                                }`}
+                            >
+                              <span className="font-bold text-xs block">Landing: {l.slug}</span>
+                              <span className="text-[10px] text-foreground/50 block">{l.title || "Tema dedicato"}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Manual Color Pickers */}
+                      <div className="pt-4 border-t border-foreground/5 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
+                            Override Colori Personalizzati:
+                          </span>
+                          {activeTemplate.customColors && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateTemplate((t) => ({ ...t, customColors: undefined }))}
+                              className="inline-flex items-center gap-1 text-[11px] text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
+                            >
+                              <RotateCcw size={12} /> Ripristina Preset
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Canvas Background */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Sfondo Canvas Esterno</span>
+                              <span className="text-[10px] text-foreground/50 block">Colore sfondo principale</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.background}
+                              onChange={(e) => {
+                                const newColors = { ...(activeTemplate.customColors || {}), background: e.target.value };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+
+                          {/* Card Background */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Sfondo Card Centrale</span>
+                              <span className="text-[10px] text-foreground/50 block">Superficie del contenuto</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.muted}
+                              onChange={(e) => {
+                                const newColors = { ...(activeTemplate.customColors || {}), muted: e.target.value };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+
+                          {/* Primary Color (Buttons) */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Colore Primario Pulsanti</span>
+                              <span className="text-[10px] text-foreground/50 block">CTA e accenti principali</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.primary}
+                              onChange={(e) => {
+                                const newPrimary = e.target.value;
+                                const newColors = {
+                                  ...(activeTemplate.customColors || {}),
+                                  primary: newPrimary,
+                                  primaryForeground: getAutoContrastColor(newPrimary)
+                                };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+
+                          {/* Text on Primary */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Testo sul Pulsante</span>
+                              <span className="text-[10px] text-foreground/50 block">Calcolato per contrasto leggibile</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.primaryForeground || "#000000"}
+                              onChange={(e) => {
+                                const newColors = { ...(activeTemplate.customColors || {}), primaryForeground: e.target.value };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+
+                          {/* Accent Color */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Colore Accento & Titoli Info</span>
+                              <span className="text-[10px] text-foreground/50 block">Bordi luminosi e badge</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.accent}
+                              onChange={(e) => {
+                                const newColors = { ...(activeTemplate.customColors || {}), accent: e.target.value };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+
+                          {/* Main Text Foreground */}
+                          <div className="p-3.5 rounded-2xl bg-foreground/[0.02] border border-foreground/5 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-xs font-bold text-foreground block">Colore Testo Principale</span>
+                              <span className="text-[10px] text-foreground/50 block">Tipografia e titoli</span>
+                            </div>
+                            <input
+                              type="color"
+                              value={resolvedColors.foreground}
+                              onChange={(e) => {
+                                const newColors = { ...(activeTemplate.customColors || {}), foreground: e.target.value };
+                                handleUpdateTemplate((t) => ({ ...t, customColors: newColors }));
+                              }}
+                              className="w-9 h-9 rounded-xl border border-foreground/15 cursor-pointer bg-transparent"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SECTION 2: DETTAGLI EMAIL (METADATI, SENDER & DESTINATARIO) */}
+                  {activeTabSection === "details" && (
+                    <div className="space-y-6">
+                      {/* Card 1: Informazioni Template, Oggetto & Preheader */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
+                        <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <FileText size={18} className="text-primary" />
+                              Informazioni & Oggetto Email
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Definisci nome, identificatore, oggetto della mail e testo di anteprima per la posta in arrivo.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              role="switch"
+                              id="email-template-enabled-toggle"
+                              aria-checked={activeTemplate.enabled !== false}
+                              onClick={() => handleUpdateTemplate((t) => ({ ...t, enabled: t.enabled === false }))}
+                              title={activeTemplate.enabled !== false ? "Disattiva invio di questa email" : "Attiva invio di questa email"}
+                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${activeTemplate.enabled !== false
+                                  ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25"
+                                  : "bg-foreground/5 text-foreground/50 border-foreground/10 hover:bg-foreground/10"
+                                }`}
+                            >
+                              <span className={`relative inline-block w-7 h-4 rounded-full transition-colors ${activeTemplate.enabled !== false ? "bg-emerald-400" : "bg-foreground/20"}`}>
+                                <span className={`absolute top-0.5 w-3 h-3 rounded-full bg-background transition-all ${activeTemplate.enabled !== false ? "left-3.5" : "left-0.5"}`} />
+                              </span>
+                              {activeTemplate.enabled !== false ? "Attiva" : "Disattivata"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDuplicateTemplate(selectedIndex)}
+                              title="Duplica intero template"
+                              className="p-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+                            >
+                              <CopyPlus size={15} />
+                            </button>
+                            {templates.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteTemplate(selectedIndex)}
+                                title="Elimina template"
+                                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <FormField
+                            label="Nome Template (Interno)"
+                            value={activeTemplate.name || ""}
+                            onChange={(v) => handleUpdateTemplate((t) => ({ ...t, name: v }))}
+                            placeholder="es. Conferma Iscrizione Cineforum"
+                          />
+                          <FormField
+                            label="Identificativo ID"
+                            value={activeTemplate.id || ""}
+                            onChange={(v) => handleUpdateTemplate((t) => ({ ...t, id: v }))}
+                            placeholder="cineforum-confirmation"
+                            helpText="Usato nei bottoni del sito: href='#email:ID'"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            label="Oggetto dell'Email"
+                            value={activeTemplate.subject || ""}
+                            onChange={(v) => handleUpdateTemplate((t) => ({ ...t, subject: v }))}
+                            placeholder="Iscrizione confermata: {{event_title}} — Gli Attomatti"
+                            autocompleteTags={allAvailableTags}
+                            helpText="Supporta tag dinamici come {{event_title}} o {{nome}}"
+                          />
+
+                          <FormField
+                            label="Preheader (Testo di Anteprima Inbox)"
+                            value={activeTemplate.preheader || ""}
+                            onChange={(v) => handleUpdateTemplate((t) => ({ ...t, preheader: v }))}
+                            placeholder="Breve frase visibile nell'elenco della posta in arrivo"
+                            autocompleteTags={allAvailableTags}
+                            helpText="Visibile prima dell'apertura dell'email nei client di posta"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Card 2: Destinatario (A / To) */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <Send size={18} className="text-primary" />
+                              Destinatario (A / To)
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Definisci da dove estrarre l'email e il nome del destinatario. Supporta campi form, variabili o percorsi JSON per webhook e payload terzi.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* to_path */}
+                          <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-foreground block">
+                                Percorso Email Destinatario (<code className="text-primary font-mono">to_path</code>)
+                              </label>
+                              {fieldMapping.recipient_email_path && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateFieldMapping({ recipient_email_path: "" })}
+                                  className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
+                                >
+                                  Reimposta automatico
+                                </button>
+                              )}
+                            </div>
+                            <input
+                              type="text"
+                              value={fieldMapping.recipient_email_path || ""}
+                              onChange={(e) => handleUpdateFieldMapping({ recipient_email_path: e.target.value })}
+                              placeholder="es. {{data.fields[0].value}}, email, customer.email"
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                            />
+                            {/* Live preview badge for to_path */}
+                            <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
+                              <span className="text-foreground/60 font-semibold">Valore risolto:</span>
+                              {resolvedTechnicalFields.to ? (
+                                <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                                  {resolvedTechnicalFields.to}
+                                </span>
+                              ) : (
+                                <span className="font-mono text-amber-400 italic">
+                                  {parsedSampleJson ? "Nessuna email trovata per questo percorso" : "Nessun JSON di test fornito"}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-foreground/40 font-mono ml-auto">
+                                ({resolvedTechnicalFields.toSource})
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-foreground/50">
+                              Supporta percorsi come <code className="font-mono text-primary">{"{{data.fields[0].value}}"}</code>, <code className="font-mono text-primary">customer.email</code> o filtri RFC JSONPath. Se vuoto, cerca in automatico campi email noti.
+                            </p>
+                          </div>
+
+                          {/* name_path */}
+                          <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-foreground block">
+                                Percorso Nome Destinatario (<code className="text-primary font-mono">name_path</code>)
+                              </label>
+                              {fieldMapping.recipient_name_path && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateFieldMapping({ recipient_name_path: "" })}
+                                  className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
+                                >
+                                  Reimposta automatico
+                                </button>
+                              )}
+                            </div>
+                            <input
+                              type="text"
+                              value={fieldMapping.recipient_name_path || ""}
+                              onChange={(e) => handleUpdateFieldMapping({ recipient_name_path: e.target.value })}
+                              placeholder="es. {{data.fields[0].value}}, customer.first_name, cliente.nome"
+                              className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                            />
+                            {/* Live preview badge for name_path */}
+                            <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
+                              <span className="text-foreground/60 font-semibold">Valore risolto:</span>
+                              {resolvedTechnicalFields.name ? (
+                                <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                                  {resolvedTechnicalFields.name}
+                                </span>
+                              ) : (
+                                <span className="font-mono text-foreground/40 italic">
+                                  {parsedSampleJson ? "Nessun nome rilevato con questo percorso" : "Nessun JSON di test fornito"}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-foreground/50">
+                              Viene iniettato automaticamente nelle variabili <code className="font-mono">{"{{name}}"}</code> e <code className="font-mono">{"{{nome}}"}</code>.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card 3: Profilo Mittente (Da / From & Reply-To) */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <Mail size={18} className="text-primary" />
+                              Profilo Mittente Personalizzato & Dinamico (Da / From & Reply-To)
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Definisci chi appare come mittente e l'indirizzo di risposta per questo template. Puoi usare testo fisso o tag dinamici <code className="text-primary font-mono">{"{{...}}"}</code> estratti dal form, dai webhook o dai custom fields!
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* From Name */}
+                          <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                            <FormField
+                              label="Nome Mittente (From Name):"
+                              value={activeTemplate.sender_profile?.from_name ?? ""}
+                              onChange={(val) => {
+                                handleUpdateTemplate((t) => ({
+                                  ...t,
+                                  sender_profile: {
+                                    ...(t.sender_profile || {}),
+                                    from_name: val
+                                  }
+                                }));
+                              }}
+                              placeholder={`Default: ${settings.from_name || "Gli Attomatti"} (o es. {{event_title}})`}
+                              helpText="Es. Gli Attomatti Cineforum o dinamico {{organizzatore}}"
+                              autocompleteTags={allAvailableTags}
+                            />
+                          </div>
+
+                          {/* From Email */}
+                          <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                            <FormField
+                              label="Email Mittente (From Email):"
+                              value={activeTemplate.sender_profile?.from_email ?? ""}
+                              onChange={(val) => {
+                                handleUpdateTemplate((t) => ({
+                                  ...t,
+                                  sender_profile: {
+                                    ...(t.sender_profile || {}),
+                                    from_email: val
+                                  }
+                                }));
+                              }}
+                              placeholder={`Default: ${settings.from_email || "no-reply@mail.gliattomatti.ch"}`}
+                              helpText="Deve appartenere al dominio verificato su Resend (es. mail.gliattomatti.ch)"
+                            />
+                          </div>
+
+                          {/* Reply-To */}
+                          <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                            <FormField
+                              label="Indirizzo Reply-To (Rispondi a):"
+                              value={activeTemplate.sender_profile?.reply_to ?? ""}
+                              onChange={(val) => {
+                                handleUpdateTemplate((t) => ({
+                                  ...t,
+                                  sender_profile: {
+                                    ...(t.sender_profile || {}),
+                                    reply_to: val
+                                  }
+                                }));
+                              }}
+                              placeholder={`Default: ${settings.reply_to || "compagniateatralegliattomatti@gmail.com"}`}
+                              helpText="Dove riceverai le risposte dei destinatari. Supporta anche tag come {{x-reply-to}}"
+                              autocompleteTags={allAvailableTags}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Resolved preview badge */}
+                        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+                          <div>
+                            <span className="text-xs font-bold text-foreground block">Intestazione Mittente Risolta:</span>
+                            <span className="text-xs font-mono text-primary mt-0.5 block">
+                              {resolvedTechnicalFields.from}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-[11px] text-foreground/50 block">Reply-To attivo:</span>
+                            <span className="text-xs font-mono text-foreground/80 mt-0.5 block">
+                              {resolvedTechnicalFields.replyTo}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card 4: Tracciamento Campagne & Parametri UTM */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <Target size={18} className="text-primary" />
+                              Tracciamento Campagne & Parametri UTM (Auto-wrapping dei Link)
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Aggiunge automaticamente i tag UTM scelti a tutti i link presenti nell'email prima dell'invio. Traccia le conversioni su Google Analytics, Plausible o Matomo senza dover modificare ogni singolo link a mano!
+                            </p>
+                          </div>
+
+                          {/* Enable/Disable Toggle */}
+                          <label className="flex items-center gap-2 cursor-pointer self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-background/50 border border-foreground/10 hover:border-foreground/20 transition-all">
+                            <input
+                              type="checkbox"
+                              checked={activeTemplate.utm?.enabled ?? false}
+                              onChange={(e) => {
+                                const isChecked = e.target.checked;
+                                handleUpdateTemplate((t) => ({
+                                  ...t,
+                                  utm: {
+                                    ...(t.utm || {}),
+                                    enabled: isChecked,
+                                    utm_source: t.utm?.utm_source || "newsletter",
+                                    utm_medium: t.utm?.utm_medium || "email",
+                                    utm_campaign: t.utm?.utm_campaign || t.id || "campagna"
+                                  }
+                                }));
+                              }}
+                              className="rounded text-primary focus:ring-primary h-4 w-4"
+                            />
+                            <span className="text-xs font-bold text-foreground">
+                              {activeTemplate.utm?.enabled ? "Tracciamento Attivo" : "Disattivato"}
+                            </span>
+                          </label>
+                        </div>
+
+                        {activeTemplate.utm?.enabled ? (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                              {/* utm_source */}
+                              <div className="space-y-1.5 p-3.5 rounded-2xl bg-background/50 border border-foreground/10">
+                                <label className="text-xs font-bold text-foreground block">
+                                  utm_source (Sorgente)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={activeTemplate.utm?.utm_source ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    handleUpdateTemplate((t) => ({
+                                      ...t,
+                                      utm: { ...(t.utm || {}), utm_source: val }
+                                    }));
+                                  }}
+                                  placeholder="es. newsletter, email, tally"
+                                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <p className="text-[10px] text-foreground/45">
+                                  Piattaforma o canale di provenienza.
+                                </p>
+                              </div>
+
+                              {/* utm_medium */}
+                              <div className="space-y-1.5 p-3.5 rounded-2xl bg-background/50 border border-foreground/10">
+                                <label className="text-xs font-bold text-foreground block">
+                                  utm_medium (Mezzo)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={activeTemplate.utm?.utm_medium ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    handleUpdateTemplate((t) => ({
+                                      ...t,
+                                      utm: { ...(t.utm || {}), utm_medium: val }
+                                    }));
+                                  }}
+                                  placeholder="es. email, notification"
+                                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <p className="text-[10px] text-foreground/45">
+                                  Di norma impostato su <code className="text-primary font-mono">email</code>.
+                                </p>
+                              </div>
+
+                              {/* utm_campaign */}
+                              <div className="space-y-1.5 p-3.5 rounded-2xl bg-background/50 border border-foreground/10">
+                                <label className="text-xs font-bold text-foreground block">
+                                  utm_campaign (Campagna)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={activeTemplate.utm?.utm_campaign ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    handleUpdateTemplate((t) => ({
+                                      ...t,
+                                      utm: { ...(t.utm || {}), utm_campaign: val }
+                                    }));
+                                  }}
+                                  placeholder="es. {{template_id}} o la-regione-2026"
+                                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <p className="text-[10px] text-foreground/45">
+                                  Supporta tag come <code className="text-primary font-mono">{"{{template_id}}"}</code>.
+                                </p>
+                              </div>
+
+                              {/* utm_content */}
+                              <div className="space-y-1.5 p-3.5 rounded-2xl bg-background/50 border border-foreground/10">
+                                <label className="text-xs font-bold text-foreground block">
+                                  utm_content (Opzionale)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={activeTemplate.utm?.utm_content ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    handleUpdateTemplate((t) => ({
+                                      ...t,
+                                      utm: { ...(t.utm || {}), utm_content: val }
+                                    }));
+                                  }}
+                                  placeholder="es. cta-button o link-footer"
+                                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <p className="text-[10px] text-foreground/45">
+                                  Distingue contenuti o varianti all'interno dell'email.
+                                </p>
+                              </div>
+
+                              {/* utm_term */}
+                              <div className="space-y-1.5 p-3.5 rounded-2xl bg-background/50 border border-foreground/10">
+                                <label className="text-xs font-bold text-foreground block">
+                                  utm_term (Opzionale)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={activeTemplate.utm?.utm_term ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    handleUpdateTemplate((t) => ({
+                                      ...t,
+                                      utm: { ...(t.utm || {}), utm_term: val }
+                                    }));
+                                  }}
+                                  placeholder="es. teatro, zurigo"
+                                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                />
+                                <p className="text-[10px] text-foreground/45">
+                                  Parola chiave o target dell'invio.
+                                </p>
+                              </div>
+
+                              {/* apply_to_external */}
+                              <div className="space-y-2 p-3.5 rounded-2xl bg-background/50 border border-foreground/10 flex flex-col justify-center">
+                                <label className="text-xs font-bold text-foreground block">
+                                  Destinazione Link
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer text-xs text-foreground/80">
+                                  <input
+                                    type="checkbox"
+                                    checked={activeTemplate.utm?.apply_to_external ?? false}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      handleUpdateTemplate((t) => ({
+                                        ...t,
+                                        utm: { ...(t.utm || {}), apply_to_external: isChecked }
+                                      }));
+                                    }}
+                                    className="rounded text-primary focus:ring-primary h-4 w-4"
+                                  />
+                                  <span>Applica anche a link esterni</span>
+                                </label>
+                                <p className="text-[10px] text-foreground/45">
+                                  Disattivato: aggiunge gli UTM solo ai link verso <code className="font-mono">gliattomatti.ch</code>.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Live Example Preview Banner */}
+                            <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/20 space-y-1">
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
+                                <Link2 size={13} /> Anteprima Link Risultante:
+                              </div>
+                              <div className="text-xs font-mono text-foreground/80 break-all select-all bg-background/60 p-2.5 rounded-xl border border-foreground/10">
+                                {(() => {
+                                  const base = "https://gliattomatti.ch/Chi_Siamo/Blog/articolo";
+                                  const params: string[] = [];
+                                  if (activeTemplate.utm?.utm_source) params.push(`utm_source=${encodeURIComponent(activeTemplate.utm.utm_source)}`);
+                                  if (activeTemplate.utm?.utm_medium) params.push(`utm_medium=${encodeURIComponent(activeTemplate.utm.utm_medium)}`);
+                                  if (activeTemplate.utm?.utm_campaign) params.push(`utm_campaign=${encodeURIComponent(activeTemplate.utm.utm_campaign.replace("{{template_id}}", activeTemplate.id || "template"))}`);
+                                  if (activeTemplate.utm?.utm_content) params.push(`utm_content=${encodeURIComponent(activeTemplate.utm.utm_content)}`);
+                                  if (activeTemplate.utm?.utm_term) params.push(`utm_term=${encodeURIComponent(activeTemplate.utm.utm_term)}`);
+                                  return params.length > 0 ? `${base}?${params.join("&")}` : base;
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-4 rounded-2xl bg-background/40 border border-dashed border-foreground/10 text-xs text-foreground/50 text-center">
+                            Attiva la spunta in alto a destra per configurare i parametri UTM (source, medium, campaign, content, term).
+                          </div>
                         )}
                       </div>
                     </div>
+                  )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <FormField
-                        label="Nome Template (Interno)"
-                        value={activeTemplate.name || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, name: v }))}
-                        placeholder="es. Conferma Iscrizione Cineforum"
-                      />
-                      <FormField
-                        label="Identificativo ID"
-                        value={activeTemplate.id || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, id: v }))}
-                        placeholder="cineforum-confirmation"
-                        helpText="Usato nei bottoni del sito: href='#email:ID'"
-                      />
-                    </div>
+                  {/* SECTION 3: BUILDER COMPONENTS */}
+                  {activeTabSection === "builder" && (
+                    <div className="space-y-5">
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        label="Oggetto dell'Email"
-                        value={activeTemplate.subject || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, subject: v }))}
-                        placeholder="Iscrizione confermata: {{event_title}} — Gli Attomatti"
-                        autocompleteTags={allAvailableTags}
-                        helpText="Supporta tag dinamici come {{event_title}} o {{nome}}"
-                      />
-
-                      <FormField
-                        label="Preheader (Testo di Anteprima Inbox)"
-                        value={activeTemplate.preheader || ""}
-                        onChange={(v) => handleUpdateTemplate((t) => ({ ...t, preheader: v }))}
-                        placeholder="Breve frase visibile nell'elenco della posta in arrivo"
-                        autocompleteTags={allAvailableTags}
-                        helpText="Visibile prima dell'apertura dell'email nei client di posta"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Card 2: Destinatario (A / To) */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-5 glass">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                      <div>
-                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                          <Send size={18} className="text-primary" />
-                          Destinatario (A / To)
-                        </h4>
-                        <p className="text-xs text-foreground/60 mt-0.5">
-                          Definisci da dove estrarre l'email e il nome del destinatario. Supporta campi form, variabili o percorsi JSON per webhook e payload terzi.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* to_path */}
-                      <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
+                      {/* Component Blocks List */}
+                      <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-bold text-foreground block">
-                            Percorso Email Destinatario (<code className="text-primary font-mono">to_path</code>)
-                          </label>
-                          {fieldMapping.recipient_email_path && (
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateFieldMapping({ recipient_email_path: "" })}
-                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
-                            >
-                              Reimposta automatico
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="text"
-                          value={fieldMapping.recipient_email_path || ""}
-                          onChange={(e) => handleUpdateFieldMapping({ recipient_email_path: e.target.value })}
-                          placeholder="es. {{data.fields[0].value}}, email, customer.email"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        {/* Live preview badge for to_path */}
-                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
-                          <span className="text-foreground/60 font-semibold">Valore risolto:</span>
-                          {resolvedTechnicalFields.to ? (
-                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
-                              {resolvedTechnicalFields.to}
-                            </span>
-                          ) : (
-                            <span className="font-mono text-amber-400 italic">
-                              {parsedSampleJson ? "Nessuna email trovata per questo percorso" : "Nessun JSON di test fornito"}
-                            </span>
-                          )}
-                          <span className="text-[10px] text-foreground/40 font-mono ml-auto">
-                            ({resolvedTechnicalFields.toSource})
+                          <span className="text-xs font-black uppercase tracking-wider text-foreground/70">
+                            Struttura dell'Email a Blocchi
                           </span>
+                          <button
+                            type="button"
+                            onClick={() => setIsAddBlockOpen(true)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all cursor-pointer"
+                          >
+                            <Plus size={14} /> Aggiungi Componente
+                          </button>
                         </div>
-                        <p className="text-[11px] text-foreground/50">
-                          Supporta percorsi come <code className="font-mono text-primary">{"{{data.fields[0].value}}"}</code>, <code className="font-mono text-primary">customer.email</code> o filtri RFC JSONPath. Se vuoto, cerca in automatico campi email noti.
-                        </p>
-                      </div>
 
-                      {/* name_path */}
-                      <div className="space-y-1.5 p-4 rounded-2xl bg-background/50 border border-foreground/10">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-bold text-foreground block">
-                            Percorso Nome Destinatario (<code className="text-primary font-mono">name_path</code>)
-                          </label>
-                          {fieldMapping.recipient_name_path && (
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateFieldMapping({ recipient_name_path: "" })}
-                              className="text-[11px] text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
-                            >
-                              Reimposta automatico
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="text"
-                          value={fieldMapping.recipient_name_path || ""}
-                          onChange={(e) => handleUpdateFieldMapping({ recipient_name_path: e.target.value })}
-                          placeholder="es. {{data.fields[0].value}}, customer.first_name, cliente.nome"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        {/* Live preview badge for name_path */}
-                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-background/60 border border-foreground/10 text-xs">
-                          <span className="text-foreground/60 font-semibold">Valore risolto:</span>
-                          {resolvedTechnicalFields.name ? (
-                            <span className="font-mono font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
-                              {resolvedTechnicalFields.name}
-                            </span>
-                          ) : (
-                            <span className="font-mono text-foreground/40 italic">
-                              {parsedSampleJson ? "Nessun nome rilevato con questo percorso" : "Nessun JSON di test fornito"}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-foreground/50">
-                          Viene iniettato automaticamente nelle variabili <code className="font-mono">{"{{name}}"}</code> e <code className="font-mono">{"{{nome}}"}</code>.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                        {activeBlocks.map((block, idx) => {
+                          const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
+                          const Icon = def.icon;
+                          const isExpanded = expandedBlockId === block.id;
 
-                  {/* Card 3: Profilo Mittente (Da / From & Reply-To) */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                      <div>
-                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                          <Mail size={18} className="text-primary" />
-                          Profilo Mittente Personalizzato & Dinamico (Da / From & Reply-To)
-                        </h4>
-                        <p className="text-xs text-foreground/60 mt-0.5">
-                          Definisci chi appare come mittente e l'indirizzo di risposta per questo template. Puoi usare testo fisso o tag dinamici <code className="text-primary font-mono">{"{{...}}"}</code> estratti dal form, dai webhook o dai custom fields!
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* From Name */}
-                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                        <FormField
-                          label="Nome Mittente (From Name):"
-                          value={activeTemplate.sender_profile?.from_name ?? ""}
-                          onChange={(val) => {
-                            handleUpdateTemplate((t) => ({
-                              ...t,
-                              sender_profile: {
-                                ...(t.sender_profile || {}),
-                                from_name: val
-                              }
-                            }));
-                          }}
-                          placeholder={`Default: ${settings.from_name || "Gli Attomatti"} (o es. {{event_title}})`}
-                          helpText="Es. Gli Attomatti Cineforum o dinamico {{organizzatore}}"
-                          autocompleteTags={allAvailableTags}
-                        />
-                      </div>
-
-                      {/* From Email */}
-                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                        <FormField
-                          label="Email Mittente (From Email):"
-                          value={activeTemplate.sender_profile?.from_email ?? ""}
-                          onChange={(val) => {
-                            handleUpdateTemplate((t) => ({
-                              ...t,
-                              sender_profile: {
-                                ...(t.sender_profile || {}),
-                                from_email: val
-                              }
-                            }));
-                          }}
-                          placeholder={`Default: ${settings.from_email || "no-reply@mail.gliattomatti.ch"}`}
-                          helpText="Deve appartenere al dominio verificato su Resend (es. mail.gliattomatti.ch)"
-                        />
-                      </div>
-
-                      {/* Reply-To */}
-                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                        <FormField
-                          label="Indirizzo Reply-To (Rispondi a):"
-                          value={activeTemplate.sender_profile?.reply_to ?? ""}
-                          onChange={(val) => {
-                            handleUpdateTemplate((t) => ({
-                              ...t,
-                              sender_profile: {
-                                ...(t.sender_profile || {}),
-                                reply_to: val
-                              }
-                            }));
-                          }}
-                          placeholder={`Default: ${settings.reply_to || "compagniateatralegliattomatti@gmail.com"}`}
-                          helpText="Dove riceverai le risposte dei destinatari. Supporta anche tag come {{x-reply-to}}"
-                          autocompleteTags={allAvailableTags}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Resolved preview badge */}
-                    <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
-                      <div>
-                        <span className="text-xs font-bold text-foreground block">Intestazione Mittente Risolta:</span>
-                        <span className="text-xs font-mono text-primary mt-0.5 block">
-                          {resolvedTechnicalFields.from}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[11px] text-foreground/50 block">Reply-To attivo:</span>
-                        <span className="text-xs font-mono text-foreground/80 mt-0.5 block">
-                          {resolvedTechnicalFields.replyTo}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION 3: BUILDER COMPONENTS */}
-              {activeTabSection === "builder" && (
-                <div className="space-y-5">
-
-                  {/* Component Blocks List */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-wider text-foreground/70">
-                        Struttura dell'Email a Blocchi
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setIsAddBlockOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all cursor-pointer"
-                      >
-                        <Plus size={14} /> Aggiungi Componente
-                      </button>
-                    </div>
-
-                    {activeBlocks.map((block, idx) => {
-                      const def = BLOCK_DEFINITIONS.find((d) => d.type === block.type) || BLOCK_DEFINITIONS[0];
-                      const Icon = def.icon;
-                      const isExpanded = expandedBlockId === block.id;
-
-                      return (
-                        <div
-                          key={block.id}
-                          className="rounded-2xl bg-muted/20 border border-foreground/5 overflow-hidden transition-all glass hover:border-foreground/10"
-                        >
-                          {/* Block Header */}
-                          <div className="p-3.5 flex items-center justify-between gap-3 bg-foreground/[0.02]">
+                          return (
                             <div
-                              onClick={() => {
-                                const next = isExpanded ? null : block.id;
-                                setExpandedBlockId(next);
-                                if (!isExpanded) {
-                                  setLastExpandedBlockId(block.id);
-                                }
-                              }}
-                              className="flex items-center gap-3 flex-1 cursor-pointer select-none"
+                              key={block.id}
+                              className="rounded-2xl bg-muted/20 border border-foreground/5 overflow-hidden transition-all glass hover:border-foreground/10"
                             >
-                              <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-primary shrink-0">
-                                <Icon size={16} />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-bold text-xs text-foreground truncate block">
-                                    {block.custom_name || def.label}
-                                  </span>
-                                  {block.starred && (
-                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-400/10 text-amber-400 text-[10px] font-bold">
-                                      <Star size={10} className="fill-amber-400" /> Starred
+                              {/* Block Header */}
+                              <div className="p-3.5 flex items-center justify-between gap-3 bg-foreground/[0.02]">
+                                <div
+                                  onClick={() => {
+                                    const next = isExpanded ? null : block.id;
+                                    setExpandedBlockId(next);
+                                    if (!isExpanded) {
+                                      setLastExpandedBlockId(block.id);
+                                    }
+                                  }}
+                                  className="flex items-center gap-3 flex-1 cursor-pointer select-none"
+                                >
+                                  <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-primary shrink-0">
+                                    <Icon size={16} />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold text-xs text-foreground truncate block">
+                                        {block.custom_name || def.label}
+                                      </span>
+                                      {block.starred && (
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-400/10 text-amber-400 text-[10px] font-bold">
+                                          <Star size={10} className="fill-amber-400" /> Starred
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] text-foreground/50 block truncate">
+                                      {block.custom_name ? `${def.label} • ${def.desc}` : def.desc}
                                     </span>
+                                  </div>
+                                </div>
+
+                                {/* Block Action Controls */}
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleToggleStarBlock(idx);
+                                    }}
+                                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${block.starred
+                                        ? "text-amber-400 bg-amber-400/10 hover:bg-amber-400/20"
+                                        : "text-foreground/30 hover:text-amber-400 hover:bg-foreground/5"
+                                      }`}
+                                    title={block.starred ? "Rimuovi dai blocchi preferiti (Star)" : "Aggiungi ai blocchi preferiti (Star)"}
+                                  >
+                                    <Star size={14} className={block.starred ? "fill-amber-400 text-amber-400" : ""} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx === 0}
+                                    onClick={() => handleMoveBlock(idx, "up")}
+                                    className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
+                                    title="Sposta su"
+                                  >
+                                    <ArrowUp size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx === activeBlocks.length - 1}
+                                    onClick={() => handleMoveBlock(idx, "down")}
+                                    className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
+                                    title="Sposta giù"
+                                  >
+                                    <ArrowDown size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDuplicateBlock(idx)}
+                                    className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
+                                    title="Duplica blocco"
+                                  >
+                                    <Copy size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteBlock(idx)}
+                                    className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+                                    title="Elimina blocco"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
+                                    className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer ml-1"
+                                  >
+                                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Block Inspector (Expanded properties) */}
+                              {isExpanded && (
+                                <div className="p-5 border-t border-foreground/5 space-y-4 bg-background/30">
+                                  {/* Custom Name / Library Label Field */}
+                                  <div className="p-3 rounded-xl bg-background/50 border border-foreground/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div className="space-y-0.5">
+                                      <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 flex items-center gap-1.5">
+                                        <Bookmark size={13} className="text-primary" />
+                                        Nome Identificativo nella Libreria:
+                                      </label>
+                                      <p className="text-[10px] text-foreground/50">
+                                        Dai un titolo riconoscibile a questa componente (es. &quot;Scheda Cineforum&quot;, &quot;Pulsante Iscrizione&quot;).
+                                      </p>
+                                    </div>
+                                    <div className="w-full sm:w-64">
+                                      <input
+                                        type="text"
+                                        value={block.custom_name || ""}
+                                        onChange={(e) => handleUpdateSingleBlock(block.id, { custom_name: e.target.value })}
+                                        placeholder={def.label}
+                                        className="w-full px-3 py-1.5 rounded-lg bg-background border border-foreground/15 text-xs font-medium text-foreground focus:outline-none focus:border-primary"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Header Block Properties */}
+                                  {block.type === "header" && (
+                                    <div className="space-y-3">
+                                      <FormField
+                                        label="Nome Marchio / Brand"
+                                        value={block.brand_name || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { brand_name: v })}
+                                        placeholder="GLI ATTOMATTI"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Sottotitolo / Payoff"
+                                        value={block.tagline || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { tagline: v })}
+                                        placeholder="Teatro Italiano • Zurigo"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Allineamento"
+                                        value={block.align || "center"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "Centrato", value: "center" },
+                                          { label: "A Sinistra", value: "left" }
+                                        ]}
+                                      />
+                                    </div>
                                   )}
-                                </div>
-                                <span className="text-[10px] text-foreground/50 block truncate">
-                                  {block.custom_name ? `${def.label} • ${def.desc}` : def.desc}
-                                </span>
-                              </div>
-                            </div>
 
-                            {/* Block Action Controls */}
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleToggleStarBlock(idx);
-                                }}
-                                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                                  block.starred
-                                    ? "text-amber-400 bg-amber-400/10 hover:bg-amber-400/20"
-                                    : "text-foreground/30 hover:text-amber-400 hover:bg-foreground/5"
-                                }`}
-                                title={block.starred ? "Rimuovi dai blocchi preferiti (Star)" : "Aggiungi ai blocchi preferiti (Star)"}
-                              >
-                                <Star size={14} className={block.starred ? "fill-amber-400 text-amber-400" : ""} />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={idx === 0}
-                                onClick={() => handleMoveBlock(idx, "up")}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
-                                title="Sposta su"
-                              >
-                                <ArrowUp size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={idx === activeBlocks.length - 1}
-                                onClick={() => handleMoveBlock(idx, "down")}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground disabled:opacity-20 transition-colors cursor-pointer"
-                                title="Sposta giù"
-                              >
-                                <ArrowDown size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDuplicateBlock(idx)}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
-                                title="Duplica blocco"
-                              >
-                                <Copy size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteBlock(idx)}
-                                className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
-                                title="Elimina blocco"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
-                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground transition-colors cursor-pointer ml-1"
-                              >
-                                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                              </button>
-                            </div>
-                          </div>
+                                  {/* Badge Block Properties */}
+                                  {block.type === "badge" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Testo del Badge"
+                                        value={block.text || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
+                                        placeholder="es. Cineforum, Workshop"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Allineamento"
+                                        value={block.align || "center"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "Centrato", value: "center" },
+                                          { label: "A Sinistra", value: "left" }
+                                        ]}
+                                      />
+                                    </div>
+                                  )}
 
-                          {/* Block Inspector (Expanded properties) */}
-                          {isExpanded && (
-                            <div className="p-5 border-t border-foreground/5 space-y-4 bg-background/30">
-                              {/* Custom Name / Library Label Field */}
-                              <div className="p-3 rounded-xl bg-background/50 border border-foreground/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div className="space-y-0.5">
-                                  <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 flex items-center gap-1.5">
-                                    <Bookmark size={13} className="text-primary" />
-                                    Nome Identificativo nella Libreria:
-                                  </label>
-                                  <p className="text-[10px] text-foreground/50">
-                                    Dai un titolo riconoscibile a questa componente (es. &quot;Scheda Cineforum&quot;, &quot;Pulsante Iscrizione&quot;).
-                                  </p>
-                                </div>
-                                <div className="w-full sm:w-64">
-                                  <input
-                                    type="text"
-                                    value={block.custom_name || ""}
-                                    onChange={(e) => handleUpdateSingleBlock(block.id, { custom_name: e.target.value })}
-                                    placeholder={def.label}
-                                    className="w-full px-3 py-1.5 rounded-lg bg-background border border-foreground/15 text-xs font-medium text-foreground focus:outline-none focus:border-primary"
-                                  />
-                                </div>
-                              </div>
-                              
-                              {/* Header Block Properties */}
-                              {block.type === "header" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Nome Marchio / Brand"
-                                    value={block.brand_name || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { brand_name: v })}
-                                    placeholder="GLI ATTOMATTI"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <FormField
-                                    label="Sottotitolo / Payoff"
-                                    value={block.tagline || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { tagline: v })}
-                                    placeholder="Teatro Italiano • Zurigo"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "center"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Centrato", value: "center" },
-                                      { label: "A Sinistra", value: "left" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
+                                  {/* Heading Block Properties */}
+                                  {block.type === "heading" && (
+                                    <div className="space-y-3">
+                                      <FormField
+                                        label="Testo del Titolo"
+                                        value={block.text || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
+                                        placeholder="La tua prenotazione è confermata!"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Dimensione / Livello"
+                                          value={block.level || "h1"}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { level: v })}
+                                          type="select"
+                                          options={[
+                                            { label: "Grande (H1 - 24px)", value: "h1" },
+                                            { label: "Medio (H2 - 20px)", value: "h2" },
+                                            { label: "Compatto (H3 - 17px)", value: "h3" }
+                                          ]}
+                                        />
+                                        <FormField
+                                          label="Allineamento"
+                                          value={block.align || "left"}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                          type="select"
+                                          options={[
+                                            { label: "A Sinistra", value: "left" },
+                                            { label: "Centrato", value: "center" }
+                                          ]}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
 
-                              {/* Badge Block Properties */}
-                              {block.type === "badge" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Testo del Badge"
-                                    value={block.text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
-                                    placeholder="es. Cineforum, Workshop"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "center"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Centrato", value: "center" },
-                                      { label: "A Sinistra", value: "left" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
+                                  {/* Text Block Properties */}
+                                  {block.type === "text" && (
+                                    <div className="space-y-3">
+                                      <FormField
+                                        label="Contenuto del Messaggio"
+                                        value={block.content || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { content: v })}
+                                        type="textarea"
+                                        rows={5}
+                                        helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Allineamento"
+                                        value={block.align || "left"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "A Sinistra", value: "left" },
+                                          { label: "Centrato", value: "center" }
+                                        ]}
+                                      />
+                                    </div>
+                                  )}
 
-                              {/* Heading Block Properties */}
-                              {block.type === "heading" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Testo del Titolo"
-                                    value={block.text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { text: v })}
-                                    placeholder="La tua prenotazione è confermata!"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Dimensione / Livello"
-                                      value={block.level || "h1"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { level: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Grande (H1 - 24px)", value: "h1" },
-                                        { label: "Medio (H2 - 20px)", value: "h2" },
-                                        { label: "Compatto (H3 - 17px)", value: "h3" }
-                                      ]}
-                                    />
-                                    <FormField
-                                      label="Allineamento"
-                                      value={block.align || "left"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "A Sinistra", value: "left" },
-                                        { label: "Centrato", value: "center" }
-                                      ]}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                                  {/* Button Block Properties */}
+                                  {block.type === "button" && (
+                                    <div className="space-y-3">
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Etichetta Pulsante"
+                                          value={block.label || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { label: v })}
+                                          placeholder="es. Dettagli Evento"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                        <FormField
+                                          label="Indirizzo URL"
+                                          value={block.url || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { url: v })}
+                                          placeholder="https://gliattomatti.ch o {{event_url}}"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                      </div>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Allineamento / Larghezza"
+                                          value={block.align || "center"}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                          type="select"
+                                          options={[
+                                            { label: "Centrato", value: "center" },
+                                            { label: "A Sinistra", value: "left" },
+                                            { label: "Larghezza Piena (Full Width)", value: "full" }
+                                          ]}
+                                        />
+                                        <FormField
+                                          label="Stile Angoli"
+                                          value={block.style || "pill"}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
+                                          type="select"
+                                          options={[
+                                            { label: "Arrotondato (Pillola)", value: "pill" },
+                                            { label: "Morbido (12px)", value: "rounded" },
+                                            { label: "Squadrato (4px)", value: "square" }
+                                          ]}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
 
-                              {/* Text Block Properties */}
-                              {block.type === "text" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Contenuto del Messaggio"
-                                    value={block.content || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { content: v })}
-                                    type="textarea"
-                                    rows={5}
-                                    helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <FormField
-                                    label="Allineamento"
-                                    value={block.align || "left"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "A Sinistra", value: "left" },
-                                      { label: "Centrato", value: "center" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Button Block Properties */}
-                              {block.type === "button" && (
-                                <div className="space-y-3">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Etichetta Pulsante"
-                                      value={block.label || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { label: v })}
-                                      placeholder="es. Dettagli Evento"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Indirizzo URL"
-                                      value={block.url || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { url: v })}
-                                      placeholder="https://gliattomatti.ch o {{event_url}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Allineamento / Larghezza"
-                                      value={block.align || "center"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Centrato", value: "center" },
-                                        { label: "A Sinistra", value: "left" },
-                                        { label: "Larghezza Piena (Full Width)", value: "full" }
-                                      ]}
-                                    />
-                                    <FormField
-                                      label="Stile Angoli"
-                                      value={block.style || "pill"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
-                                      type="select"
-                                      options={[
-                                        { label: "Arrotondato (Pillola)", value: "pill" },
-                                        { label: "Morbido (12px)", value: "rounded" },
-                                        { label: "Squadrato (4px)", value: "square" }
-                                      ]}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Info Box Properties */}
-                              {block.type === "info_box" && (
-                                <div className="space-y-4">
-                                  <FormField
-                                    label="Titolo Box Info"
-                                    value={block.title || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
-                                    placeholder="Riepilogo Evento"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
-                                      Voci della Scheda Info:
-                                    </label>
-                                    {(block.items || []).map((item, itemIdx) => (
-                                      <div key={itemIdx} className="flex gap-2 items-center">
-                                        <input
-                                          type="text"
-                                          value={item.label}
-                                          onChange={(e) => {
-                                            const updatedItems = [...block.items];
-                                            updatedItems[itemIdx] = { ...updatedItems[itemIdx], label: e.target.value };
+                                  {/* Info Box Properties */}
+                                  {block.type === "info_box" && (
+                                    <div className="space-y-4">
+                                      <FormField
+                                        label="Titolo Box Info"
+                                        value={block.title || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
+                                        placeholder="Riepilogo Evento"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-wider text-foreground/70 block">
+                                          Voci della Scheda Info:
+                                        </label>
+                                        {(block.items || []).map((item, itemIdx) => (
+                                          <div key={itemIdx} className="flex gap-2 items-center">
+                                            <input
+                                              type="text"
+                                              value={item.label}
+                                              onChange={(e) => {
+                                                const updatedItems = [...block.items];
+                                                updatedItems[itemIdx] = { ...updatedItems[itemIdx], label: e.target.value };
+                                                handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                              }}
+                                              placeholder="Etichetta (es. Data)"
+                                              className="w-1/3 px-3 py-2 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary shrink-0 self-start mt-0.5"
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                              <FormField
+                                                label=""
+                                                value={item.value}
+                                                onChange={(v) => {
+                                                  const updatedItems = [...block.items];
+                                                  updatedItems[itemIdx] = { ...updatedItems[itemIdx], value: v };
+                                                  handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                                }}
+                                                placeholder="Valore (es. {{event_date}})"
+                                                autocompleteTags={allAvailableTags}
+                                              />
+                                            </div>
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                const updatedItems = block.items.filter((_, i) => i !== itemIdx);
+                                                handleUpdateSingleBlock(block.id, { items: updatedItems });
+                                              }}
+                                              className="p-1.5 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer shrink-0 self-start mt-1.5"
+                                            >
+                                              <Trash2 size={14} />
+                                            </button>
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updatedItems = [...(block.items || []), { label: "Nuova Voce", value: "" }];
                                             handleUpdateSingleBlock(block.id, { items: updatedItems });
                                           }}
-                                          placeholder="Etichetta (es. Data)"
-                                          className="w-1/3 px-3 py-2 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary shrink-0 self-start mt-0.5"
+                                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-[11px] font-bold text-foreground transition-colors cursor-pointer"
+                                        >
+                                          <Plus size={12} /> Aggiungi Voce
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Calendar Appointment Block Properties */}
+                                  {block.type === "calendar" && (
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Testo Header / Badge Superiore"
+                                          value={block.header_label ?? ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { header_label: v })}
+                                          placeholder="Default: Promemoria Evento in Agenda"
+                                          helpText="Es. Promemoria Evento in Agenda, Save the Date, o {{badge_text}}"
+                                          autocompleteTags={allAvailableTags}
                                         />
-                                        <div className="flex-1 min-w-0">
+                                        <FormField
+                                          label="Titolo Appuntamento / Evento"
+                                          value={block.title || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
+                                          placeholder="Spettacolo Teatrale Gli Attomatti o {{event_title}}"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                      </div>
+
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Data & Ora Inizio"
+                                          value={block.start_date || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { start_date: v })}
+                                          placeholder="2026-11-14T18:00:00 o {{event_date}}"
+                                          helpText="Formato ISO (es. 2026-11-14T18:00:00) o tag dinamico {{event_date}}"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                        <FormField
+                                          label="Data & Ora Fine (Opzionale)"
+                                          value={block.end_date || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { end_date: v })}
+                                          placeholder="2026-11-14T20:30:00 (default: +2 ore)"
+                                          helpText="Se non specificata, calcola automaticamente +2 ore"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                      </div>
+
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Luogo Evento"
+                                          value={block.location || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { location: v })}
+                                          placeholder="Balberstrasse 47, Zurigo o {{event_location}}"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                        <FormField
+                                          label="Descrizione Promemoria (Opzionale)"
+                                          value={block.description || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { description: v })}
+                                          placeholder="Porta con te la conferma della prenotazione!"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                      </div>
+
+                                      <div className="p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10 flex items-center gap-3">
+                                        <span className="text-base select-none">🗓️</span>
+                                        <div className="text-[11px] text-foreground/70 leading-relaxed">
+                                          Nell&apos;email vengono generati direttamente 3 link in accent color per l&apos;aggiunta all&apos;agenda: <strong>Google Calendar</strong>, <strong>Apple / iCal (.ics)</strong> e <strong>Outlook</strong>.
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Image Block Properties */}
+                                  {block.type === "image" && (
+                                    <div className="space-y-4">
+                                      <div className="flex gap-2">
+                                        <div className="flex-1">
                                           <FormField
-                                            label=""
-                                            value={item.value}
-                                            onChange={(v) => {
-                                              const updatedItems = [...block.items];
-                                              updatedItems[itemIdx] = { ...updatedItems[itemIdx], value: v };
-                                              handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                            }}
-                                            placeholder="Valore (es. {{event_date}})"
+                                            label="URL Immagine"
+                                            value={block.image_url || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { image_url: v })}
+                                            placeholder="https://gliattomatti.ch/images/locandina.webp o {{poster_image}}"
                                             autocompleteTags={allAvailableTags}
                                           />
                                         </div>
                                         <button
                                           type="button"
-                                          onClick={() => {
-                                            const updatedItems = block.items.filter((_, i) => i !== itemIdx);
-                                            handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                          }}
-                                          className="p-1.5 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer shrink-0 self-start mt-1.5"
+                                          onClick={() => setMediaPickerBlockId(block.id)}
+                                          className="self-end mb-1 px-3 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0"
                                         >
-                                          <Trash2 size={14} />
+                                          Galleria
                                         </button>
                                       </div>
-                                    ))}
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const updatedItems = [...(block.items || []), { label: "Nuova Voce", value: "" }];
-                                        handleUpdateSingleBlock(block.id, { items: updatedItems });
-                                      }}
-                                      className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-[11px] font-bold text-foreground transition-colors cursor-pointer"
-                                    >
-                                      <Plus size={12} /> Aggiungi Voce
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
 
-                              {/* Calendar Appointment Block Properties */}
-                              {block.type === "calendar" && (
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Testo Header / Badge Superiore"
-                                      value={block.header_label ?? ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { header_label: v })}
-                                      placeholder="Default: Promemoria Evento in Agenda"
-                                      helpText="Es. Promemoria Evento in Agenda, Save the Date, o {{badge_text}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Titolo Appuntamento / Evento"
-                                      value={block.title || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
-                                      placeholder="Spettacolo Teatrale Gli Attomatti o {{event_title}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
+                                      {/* Full width toggle */}
+                                      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10">
+                                        <div className="space-y-0.5 pr-4">
+                                          <label className="text-xs font-bold text-foreground block cursor-pointer">
+                                            Larghezza Piena (Full Width a filo scheda)
+                                          </label>
+                                          <span className="text-[11px] text-foreground/50 block">
+                                            Estende l&apos;immagine al 100% da bordo a bordo della scheda bianca (senza margini laterali).
+                                          </span>
+                                        </div>
+                                        <input
+                                          type="checkbox"
+                                          checked={Boolean(block.full_width || block.align === "full")}
+                                          onChange={(e) => {
+                                            const isFull = e.target.checked;
+                                            handleUpdateSingleBlock(block.id, {
+                                              full_width: isFull,
+                                              align: isFull ? "full" : "center"
+                                            });
+                                          }}
+                                          className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
+                                        />
+                                      </div>
 
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Data & Ora Inizio"
-                                      value={block.start_date || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { start_date: v })}
-                                      placeholder="2026-11-14T18:00:00 o {{event_date}}"
-                                      helpText="Formato ISO (es. 2026-11-14T18:00:00) o tag dinamico {{event_date}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Data & Ora Fine (Opzionale)"
-                                      value={block.end_date || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { end_date: v })}
-                                      placeholder="2026-11-14T20:30:00 (default: +2 ore)"
-                                      helpText="Se non specificata, calcola automaticamente +2 ore"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
+                                      {/* Alignment if not full width */}
+                                      {!(block.full_width || block.align === "full") && (
+                                        <FormField
+                                          label="Allineamento"
+                                          value={block.align || "center"}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { align: v as any })}
+                                          type="select"
+                                          options={[
+                                            { label: "Centrato", value: "center" },
+                                            { label: "A Sinistra", value: "left" },
+                                            { label: "A Destra", value: "right" }
+                                          ]}
+                                        />
+                                      )}
 
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Luogo Evento"
-                                      value={block.location || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { location: v })}
-                                      placeholder="Balberstrasse 47, Zurigo o {{event_location}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Descrizione Promemoria (Opzionale)"
-                                      value={block.description || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { description: v })}
-                                      placeholder="Porta con te la conferma della prenotazione!"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
-
-                                  <div className="p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10 flex items-center gap-3">
-                                    <span className="text-base select-none">🗓️</span>
-                                    <div className="text-[11px] text-foreground/70 leading-relaxed">
-                                      Nell&apos;email vengono generati direttamente 3 link in accent color per l&apos;aggiunta all&apos;agenda: <strong>Google Calendar</strong>, <strong>Apple / iCal (.ics)</strong> e <strong>Outlook</strong>.
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <FormField
+                                          label="Didascalia (Opzionale)"
+                                          value={block.caption || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { caption: v })}
+                                          placeholder="Scena dello spettacolo"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                        <FormField
+                                          label="Link al click (Opzionale)"
+                                          value={block.link_url || ""}
+                                          onChange={(v) => handleUpdateSingleBlock(block.id, { link_url: v })}
+                                          placeholder="https://gliattomatti.ch o {{cta_url}}"
+                                          autocompleteTags={allAvailableTags}
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Image Block Properties */}
-                              {block.type === "image" && (
-                                <div className="space-y-4">
-                                  <div className="flex gap-2">
-                                    <div className="flex-1">
-                                      <FormField
-                                        label="URL Immagine"
-                                        value={block.image_url || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { image_url: v })}
-                                        placeholder="https://gliattomatti.ch/images/locandina.webp o {{poster_image}}"
-                                        autocompleteTags={allAvailableTags}
-                                      />
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => setMediaPickerBlockId(block.id)}
-                                      className="self-end mb-1 px-3 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0"
-                                    >
-                                      Galleria
-                                    </button>
-                                  </div>
-
-                                  {/* Full width toggle */}
-                                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/10">
-                                    <div className="space-y-0.5 pr-4">
-                                      <label className="text-xs font-bold text-foreground block cursor-pointer">
-                                        Larghezza Piena (Full Width a filo scheda)
-                                      </label>
-                                      <span className="text-[11px] text-foreground/50 block">
-                                        Estende l&apos;immagine al 100% da bordo a bordo della scheda bianca (senza margini laterali).
-                                      </span>
-                                    </div>
-                                    <input
-                                      type="checkbox"
-                                      checked={Boolean(block.full_width || block.align === "full")}
-                                      onChange={(e) => {
-                                        const isFull = e.target.checked;
-                                        handleUpdateSingleBlock(block.id, {
-                                          full_width: isFull,
-                                          align: isFull ? "full" : "center"
-                                        });
-                                      }}
-                                      className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
-                                    />
-                                  </div>
-
-                                  {/* Alignment if not full width */}
-                                  {!(block.full_width || block.align === "full") && (
-                                    <FormField
-                                      label="Allineamento"
-                                      value={block.align || "center"}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { align: v as any })}
-                                      type="select"
-                                      options={[
-                                        { label: "Centrato", value: "center" },
-                                        { label: "A Sinistra", value: "left" },
-                                        { label: "A Destra", value: "right" }
-                                      ]}
-                                    />
                                   )}
 
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField
-                                      label="Didascalia (Opzionale)"
-                                      value={block.caption || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { caption: v })}
-                                      placeholder="Scena dello spettacolo"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                    <FormField
-                                      label="Link al click (Opzionale)"
-                                      value={block.link_url || ""}
-                                      onChange={(v) => handleUpdateSingleBlock(block.id, { link_url: v })}
-                                      placeholder="https://gliattomatti.ch o {{cta_url}}"
-                                      autocompleteTags={allAvailableTags}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                                  {/* Two Column Properties */}
+                                  {block.type === "two_column" && (
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
+                                          <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
+                                            Colonna 1 (Sinistra)
+                                          </span>
+                                          <FormField
+                                            label="Titolo Colonna 1"
+                                            value={block.col1_title || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                          <FormField
+                                            label="Testo Colonna 1"
+                                            value={block.col1_text || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
+                                            type="textarea"
+                                            rows={3}
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                          <FormField
+                                            label="Link Scheda 1 (Opzionale)"
+                                            value={block.col1_url || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col1_url: v })}
+                                            placeholder="https://... o /Spettacoli/..."
+                                            helpText="Se inserito, l'intera scheda diventa cliccabile come card."
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                        </div>
+                                        <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
+                                          <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
+                                            Colonna 2 (Destra)
+                                          </span>
+                                          <FormField
+                                            label="Titolo Colonna 2"
+                                            value={block.col2_title || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                          <FormField
+                                            label="Testo Colonna 2"
+                                            value={block.col2_text || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
+                                            type="textarea"
+                                            rows={3}
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                          <FormField
+                                            label="Link Scheda 2 (Opzionale)"
+                                            value={block.col2_url || ""}
+                                            onChange={(v) => handleUpdateSingleBlock(block.id, { col2_url: v })}
+                                            placeholder="https://... o /Location/..."
+                                            helpText="Se inserito, l'intera scheda diventa cliccabile come card."
+                                            autocompleteTags={allAvailableTags}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
 
-                              {/* Two Column Properties */}
-                              {block.type === "two_column" && (
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
-                                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
-                                        Colonna 1 (Sinistra)
-                                      </span>
+                                  {/* Divider Properties */}
+                                  {block.type === "divider" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                       <FormField
-                                        label="Titolo Colonna 1"
-                                        value={block.col1_title || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_title: v })}
+                                        label="Stile Divisore"
+                                        value={block.style || "gradient"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "Gradiente Sfumato Luminoso", value: "gradient" },
+                                          { label: "Linea Sottile Piatta", value: "solid" },
+                                          { label: "Solo Spaziatore Trasparente", value: "spacer" }
+                                        ]}
+                                      />
+                                      <FormField
+                                        label="Spaziatura"
+                                        value={block.spacing || "md"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { spacing: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "Compatta (12px)", value: "sm" },
+                                          { label: "Media (20px)", value: "md" },
+                                          { label: "Ampia (32px)", value: "lg" }
+                                        ]}
+                                      />
+                                    </div>
+                                  )}
+
+                                  {/* Social Block Properties */}
+                                  {block.type === "social_links" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField
+                                        label="Link Instagram"
+                                        value={block.instagram_url || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { instagram_url: v })}
+                                        placeholder="https://instagram.com/..."
+                                      />
+                                      <FormField
+                                        label="Link Sito Web"
+                                        value={block.website_url || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { website_url: v })}
+                                        placeholder="https://gliattomatti.ch"
+                                      />
+                                    </div>
+                                  )}
+
+                                  {/* Footer Block Properties */}
+                                  {block.type === "footer" && (
+                                    <div className="space-y-3">
+                                      <FormField
+                                        label="Testo Istituzionale"
+                                        value={block.legal_text || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { legal_text: v })}
+                                        placeholder="Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera"
                                         autocompleteTags={allAvailableTags}
                                       />
                                       <FormField
-                                        label="Testo Colonna 1"
-                                        value={block.col1_text || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_text: v })}
-                                        type="textarea"
-                                        rows={3}
-                                        autocompleteTags={allAvailableTags}
-                                      />
-                                      <FormField
-                                        label="Link Scheda 1 (Opzionale)"
-                                        value={block.col1_url || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col1_url: v })}
-                                        placeholder="https://... o /Spettacoli/..."
-                                        helpText="Se inserito, l'intera scheda diventa cliccabile come card."
+                                        label="Nota di Conformità Privacy"
+                                        value={block.privacy_note || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { privacy_note: v })}
                                         autocompleteTags={allAvailableTags}
                                       />
                                     </div>
-                                    <div className="space-y-3 p-3.5 rounded-xl bg-background/40 border border-foreground/5">
-                                      <span className="text-[11px] font-bold uppercase tracking-wider text-accent block">
-                                        Colonna 2 (Destra)
-                                      </span>
-                                      <FormField
-                                        label="Titolo Colonna 2"
-                                        value={block.col2_title || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_title: v })}
-                                        autocompleteTags={allAvailableTags}
-                                      />
-                                      <FormField
-                                        label="Testo Colonna 2"
-                                        value={block.col2_text || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_text: v })}
-                                        type="textarea"
-                                        rows={3}
-                                        autocompleteTags={allAvailableTags}
-                                      />
-                                      <FormField
-                                        label="Link Scheda 2 (Opzionale)"
-                                        value={block.col2_url || ""}
-                                        onChange={(v) => handleUpdateSingleBlock(block.id, { col2_url: v })}
-                                        placeholder="https://... o /Location/..."
-                                        helpText="Se inserito, l'intera scheda diventa cliccabile come card."
-                                        autocompleteTags={allAvailableTags}
-                                      />
-                                    </div>
-                                  </div>
+                                  )}
+
                                 </div>
                               )}
-
-                              {/* Divider Properties */}
-                              {block.type === "divider" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Stile Divisore"
-                                    value={block.style || "gradient"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { style: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Gradiente Sfumato Luminoso", value: "gradient" },
-                                      { label: "Linea Sottile Piatta", value: "solid" },
-                                      { label: "Solo Spaziatore Trasparente", value: "spacer" }
-                                    ]}
-                                  />
-                                  <FormField
-                                    label="Spaziatura"
-                                    value={block.spacing || "md"}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { spacing: v })}
-                                    type="select"
-                                    options={[
-                                      { label: "Compatta (12px)", value: "sm" },
-                                      { label: "Media (20px)", value: "md" },
-                                      { label: "Ampia (32px)", value: "lg" }
-                                    ]}
-                                  />
-                                </div>
-                              )}
-
-                              {/* Social Block Properties */}
-                              {block.type === "social_links" && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                  <FormField
-                                    label="Link Instagram"
-                                    value={block.instagram_url || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { instagram_url: v })}
-                                    placeholder="https://instagram.com/..."
-                                  />
-                                  <FormField
-                                    label="Link Sito Web"
-                                    value={block.website_url || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { website_url: v })}
-                                    placeholder="https://gliattomatti.ch"
-                                  />
-                                </div>
-                              )}
-
-                              {/* Footer Block Properties */}
-                              {block.type === "footer" && (
-                                <div className="space-y-3">
-                                  <FormField
-                                    label="Testo Istituzionale"
-                                    value={block.legal_text || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { legal_text: v })}
-                                    placeholder="Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera"
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                  <FormField
-                                    label="Nota di Conformità Privacy"
-                                    value={block.privacy_note || ""}
-                                    onChange={(v) => handleUpdateSingleBlock(block.id, { privacy_note: v })}
-                                    autocompleteTags={allAvailableTags}
-                                  />
-                                </div>
-                              )}
-
                             </div>
-                          )}
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+
+
+                  {/* SECTION 4: PERSONALIZZAZIONE (SUBCASES + CAMPI/JSON) */}
+                  {activeTabSection === "personalization" && (
+                    <div className="space-y-6">
+                      {/* Card 1: Subcases & Varianti Controllate da Tag */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <Tag size={18} className="text-primary" />
+                              Subcases & Varianti Controllate da Tag
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Un unico template email per gestire più date o varianti di evento (es. 3 Cineforum differenti). Ogni subcase definisce i propri custom fields e viene attivato sul sito tramite <code className="text-primary font-mono font-bold">#email:{activeTemplate.id}:subcase-id</code>.
+                            </p>
+                          </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
+                        {/* Add Subcase Input Bar */}
+                        <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3">
+                          <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
+                            Aggiungi Nuovo Subcase / Variante:
+                          </span>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <input
+                              type="text"
+                              value={newSubcaseId}
+                              onChange={(e) => setNewSubcaseId(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
+                              placeholder="ID / Tag univoco (es. cineforum-1)"
+                              className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                            />
+                            <input
+                              type="text"
+                              value={newSubcaseName}
+                              onChange={(e) => setNewSubcaseName(e.target.value)}
+                              placeholder="Nome descrittivo (es. 14 Novembre - Monsieur Hulot)"
+                              className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                            />
+                            <button
+                              type="button"
+                              disabled={!newSubcaseId.trim()}
+                              onClick={() => {
+                                const id = newSubcaseId.trim();
+                                const name = newSubcaseName.trim() || id;
+                                const existing = activeTemplate.subcases || [];
+                                if (existing.some((s) => s.id === id)) {
+                                  alert(`Esiste già un subcase con ID "${id}".`);
+                                  return;
+                                }
+                                const updatedSubcases: EmailSubcaseConfig[] = [
+                                  ...existing,
+                                  {
+                                    id,
+                                    name,
+                                    custom_fields: {}
+                                  }
+                                ];
+                                handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                setNewSubcaseId("");
+                                setNewSubcaseName("");
+                                setSelectedSubcaseId(id);
+                              }}
+                              className="px-4 py-2.5 rounded-xl bg-primary text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-40 transition-all cursor-pointer shrink-0"
+                            >
+                              + Aggiungi Subcase
+                            </button>
+                          </div>
+                        </div>
 
+                        {/* List of existing subcases */}
+                        {(!activeTemplate.subcases || activeTemplate.subcases.length === 0) ? (
+                          <div className="p-8 rounded-2xl bg-foreground/[0.02] border border-dashed border-foreground/10 text-center space-y-2">
+                            <p className="text-xs text-foreground/60">
+                              Nessun subcase configurato per questo template.
+                            </p>
+                            <p className="text-[11px] text-foreground/40 max-w-md mx-auto">
+                              Aggiungendo dei subcase (es. <code className="text-primary font-mono">cineforum-1</code>, <code className="text-primary font-mono">cineforum-2</code>) potrai personalizzare titolo del film, data e orario per ciascun evento senza dover duplicare l'intero template email!
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {activeTemplate.subcases.map((sub, sIdx) => {
+                              const isSelectedInPreview = selectedSubcaseId === sub.id;
+                              const subcaseTagSnippet = `#email:${activeTemplate.id}:${sub.id}`;
+                              const isCopied = copiedSubcaseSnippet === sub.id;
 
-              {/* SECTION 4: PERSONALIZZAZIONE (SUBCASES + CAMPI/JSON) */}
-              {activeTabSection === "personalization" && (
-                <div className="space-y-6">
-                  {/* Card 1: Subcases & Varianti Controllate da Tag */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                    <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                        <Tag size={18} className="text-primary" />
-                        Subcases & Varianti Controllate da Tag
-                      </h4>
-                      <p className="text-xs text-foreground/60 mt-0.5">
-                        Un unico template email per gestire più date o varianti di evento (es. 3 Cineforum differenti). Ogni subcase definisce i propri custom fields e viene attivato sul sito tramite <code className="text-primary font-mono font-bold">#email:{activeTemplate.id}:subcase-id</code>.
-                      </p>
-                    </div>
-                  </div>
+                              return (
+                                <div
+                                  key={sub.id}
+                                  className={`p-5 rounded-2xl border transition-all space-y-4 ${isSelectedInPreview
+                                      ? "bg-primary/5 border-primary/40 shadow-xs"
+                                      : "bg-background/40 border-foreground/5 hover:border-foreground/15"
+                                    }`}
+                                >
+                                  {/* Subcase Header */}
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-foreground/5 pb-3">
+                                    <div className="flex items-center gap-3">
+                                      <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                                      <div>
+                                        <div className="flex items-center gap-2">
+                                          <span className="font-mono text-xs font-bold text-primary px-2 py-0.5 rounded-md bg-primary/10">
+                                            {sub.id}
+                                          </span>
+                                          <span className="font-bold text-sm text-foreground">{sub.name}</span>
+                                        </div>
+                                      </div>
+                                    </div>
 
-                  {/* Add Subcase Input Bar */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3">
-                    <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
-                      Aggiungi Nuovo Subcase / Variante:
-                    </span>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <input
-                        type="text"
-                        value={newSubcaseId}
-                        onChange={(e) => setNewSubcaseId(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
-                        placeholder="ID / Tag univoco (es. cineforum-1)"
-                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                      />
-                      <input
-                        type="text"
-                        value={newSubcaseName}
-                        onChange={(e) => setNewSubcaseName(e.target.value)}
-                        placeholder="Nome descrittivo (es. 14 Novembre - Monsieur Hulot)"
-                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-muted/60 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
-                      />
-                      <button
-                        type="button"
-                        disabled={!newSubcaseId.trim()}
-                        onClick={() => {
-                          const id = newSubcaseId.trim();
-                          const name = newSubcaseName.trim() || id;
-                          const existing = activeTemplate.subcases || [];
-                          if (existing.some((s) => s.id === id)) {
-                            alert(`Esiste già un subcase con ID "${id}".`);
-                            return;
-                          }
-                          const updatedSubcases: EmailSubcaseConfig[] = [
-                            ...existing,
-                            {
-                              id,
-                              name,
-                              custom_fields: {}
-                            }
-                          ];
-                          handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
-                          setNewSubcaseId("");
-                          setNewSubcaseName("");
-                          setSelectedSubcaseId(id);
-                        }}
-                        className="px-4 py-2.5 rounded-xl bg-primary text-background font-bold text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-40 transition-all cursor-pointer shrink-0"
-                      >
-                        + Aggiungi Subcase
-                      </button>
-                    </div>
-                  </div>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      {/* Link Snippet Button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(subcaseTagSnippet);
+                                          setCopiedSubcaseSnippet(sub.id);
+                                          setTimeout(() => setCopiedSubcaseSnippet(null), 2000);
+                                        }}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-mono transition-colors cursor-pointer"
+                                        title="Copia link per i pulsanti del sito"
+                                      >
+                                        {isCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                                        <span>{subcaseTagSnippet}</span>
+                                      </button>
 
-                  {/* List of existing subcases */}
-                  {(!activeTemplate.subcases || activeTemplate.subcases.length === 0) ? (
-                    <div className="p-8 rounded-2xl bg-foreground/[0.02] border border-dashed border-foreground/10 text-center space-y-2">
-                      <p className="text-xs text-foreground/60">
-                        Nessun subcase configurato per questo template.
-                      </p>
-                      <p className="text-[11px] text-foreground/40 max-w-md mx-auto">
-                        Aggiungendo dei subcase (es. <code className="text-primary font-mono">cineforum-1</code>, <code className="text-primary font-mono">cineforum-2</code>) potrai personalizzare titolo del film, data e orario per ciascun evento senza dover duplicare l'intero template email!
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {activeTemplate.subcases.map((sub, sIdx) => {
-                        const isSelectedInPreview = selectedSubcaseId === sub.id;
-                        const subcaseTagSnippet = `#email:${activeTemplate.id}:${sub.id}`;
-                        const isCopied = copiedSubcaseSnippet === sub.id;
+                                      {/* Preview Button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => setSelectedSubcaseId(isSelectedInPreview ? null : sub.id)}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${isSelectedInPreview
+                                            ? "bg-primary text-background"
+                                            : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground"
+                                          }`}
+                                      >
+                                        {isSelectedInPreview ? "Attivo in Anteprima ✓" : "Anteprima"}
+                                      </button>
 
-                        return (
-                          <div
-                            key={sub.id}
-                            className={`p-5 rounded-2xl border transition-all space-y-4 ${
-                              isSelectedInPreview
-                                ? "bg-primary/5 border-primary/40 shadow-xs"
-                                : "bg-background/40 border-foreground/5 hover:border-foreground/15"
-                            }`}
-                          >
-                            {/* Subcase Header */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-foreground/5 pb-3">
-                              <div className="flex items-center gap-3">
-                                <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-xs font-bold text-primary px-2 py-0.5 rounded-md bg-primary/10">
-                                      {sub.id}
-                                    </span>
-                                    <span className="font-bold text-sm text-foreground">{sub.name}</span>
+                                      {/* Delete Subcase Button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          if (confirm(`Eliminare il subcase "${sub.name}" (${sub.id})?`)) {
+                                            const updated = (activeTemplate.subcases || []).filter((_, i) => i !== sIdx);
+                                            handleUpdateTemplate((t) => ({ ...t, subcases: updated }));
+                                            if (selectedSubcaseId === sub.id) setSelectedSubcaseId(null);
+                                          }
+                                        }}
+                                        className="p-1.5 rounded-xl text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                                        title="Elimina Subcase"
+                                      >
+                                        <Trash2 size={14} />
+                                      </button>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
 
-                              <div className="flex flex-wrap items-center gap-2">
-                                {/* Link Snippet Button */}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText(subcaseTagSnippet);
-                                    setCopiedSubcaseSnippet(sub.id);
-                                    setTimeout(() => setCopiedSubcaseSnippet(null), 2000);
-                                  }}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-mono transition-colors cursor-pointer"
-                                  title="Copia link per i pulsanti del sito"
-                                >
-                                  {isCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
-                                  <span>{subcaseTagSnippet}</span>
-                                </button>
+                                  {/* Subcase Custom Fields */}
+                                  <div className="space-y-3">
+                                    <span className="text-[11px] font-bold text-foreground/70 uppercase tracking-wider block">
+                                      Custom Fields di questo Subcase:
+                                    </span>
 
-                                {/* Preview Button */}
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedSubcaseId(isSelectedInPreview ? null : sub.id)}
-                                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
-                                    isSelectedInPreview
-                                      ? "bg-primary text-background"
-                                      : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground"
-                                  }`}
-                                >
-                                  {isSelectedInPreview ? "Attivo in Anteprima ✓" : "Anteprima"}
-                                </button>
+                                    {/* Existing fields grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                      {Object.entries(sub.custom_fields || {}).map(([fKey, fVal]) => (
+                                        <div
+                                          key={fKey}
+                                          className="p-2.5 rounded-xl bg-background/60 border border-foreground/5 flex items-center justify-between gap-2"
+                                        >
+                                          <div className="min-w-0 flex-1">
+                                            <span className="font-mono text-xs font-bold text-primary block truncate">
+                                              {"{{" + fKey + "}}"}
+                                            </span>
+                                            <input
+                                              type="text"
+                                              value={fVal}
+                                              onChange={(e) => {
+                                                const val = e.target.value;
+                                                const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
+                                                  if (idx !== sIdx) return s;
+                                                  return {
+                                                    ...s,
+                                                    custom_fields: {
+                                                      ...(s.custom_fields || {}),
+                                                      [fKey]: val
+                                                    }
+                                                  };
+                                                });
+                                                handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                              }}
+                                              className="w-full text-xs text-foreground bg-transparent focus:outline-none focus:underline"
+                                            />
+                                          </div>
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
+                                                if (idx !== sIdx) return s;
+                                                const newFields = { ...(s.custom_fields || {}) };
+                                                delete newFields[fKey];
+                                                return { ...s, custom_fields: newFields };
+                                              });
+                                              handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                            }}
+                                            className="p-1 text-foreground/30 hover:text-rose-400 transition-colors cursor-pointer shrink-0"
+                                            title="Rimuovi campo"
+                                          >
+                                            <Trash2 size={12} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
 
-                                {/* Delete Subcase Button */}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (confirm(`Eliminare il subcase "${sub.name}" (${sub.id})?`)) {
-                                      const updated = (activeTemplate.subcases || []).filter((_, i) => i !== sIdx);
-                                      handleUpdateTemplate((t) => ({ ...t, subcases: updated }));
-                                      if (selectedSubcaseId === sub.id) setSelectedSubcaseId(null);
-                                    }
-                                  }}
-                                  className="p-1.5 rounded-xl text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                                  title="Elimina Subcase"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Subcase Custom Fields */}
-                            <div className="space-y-3">
-                              <span className="text-[11px] font-bold text-foreground/70 uppercase tracking-wider block">
-                                Custom Fields di questo Subcase:
-                              </span>
-
-                              {/* Existing fields grid */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {Object.entries(sub.custom_fields || {}).map(([fKey, fVal]) => (
-                                  <div
-                                    key={fKey}
-                                    className="p-2.5 rounded-xl bg-background/60 border border-foreground/5 flex items-center justify-between gap-2"
-                                  >
-                                    <div className="min-w-0 flex-1">
-                                      <span className="font-mono text-xs font-bold text-primary block truncate">
-                                        {"{{" + fKey + "}}"}
-                                      </span>
+                                    {/* Add Field to Subcase */}
+                                    <div className="flex flex-col sm:flex-row gap-2 pt-1">
                                       <input
                                         type="text"
-                                        value={fVal}
+                                        placeholder="Nuova chiave (es. event_date, poster_image, locazione)"
+                                        value={activeSubcaseIndex === sIdx ? newSubcaseFieldKey : ""}
                                         onChange={(e) => {
-                                          const val = e.target.value;
+                                          setActiveSubcaseIndex(sIdx);
+                                          setNewSubcaseFieldKey(e.target.value.trim().replace(/[^a-zA-Z0-9_-]/g, ""));
+                                        }}
+                                        className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                      />
+                                      <input
+                                        type="text"
+                                        placeholder="Valore del campo per questo subcase"
+                                        value={activeSubcaseIndex === sIdx ? newSubcaseFieldValue : ""}
+                                        onChange={(e) => {
+                                          setActiveSubcaseIndex(sIdx);
+                                          setNewSubcaseFieldValue(e.target.value);
+                                        }}
+                                        className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                                      />
+                                      <button
+                                        type="button"
+                                        disabled={activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()}
+                                        onClick={() => {
+                                          if (activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()) return;
                                           const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
                                             if (idx !== sIdx) return s;
                                             return {
                                               ...s,
                                               custom_fields: {
                                                 ...(s.custom_fields || {}),
-                                                [fKey]: val
+                                                [newSubcaseFieldKey]: newSubcaseFieldValue
                                               }
                                             };
                                           });
                                           handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
+                                          setNewSubcaseFieldKey("");
+                                          setNewSubcaseFieldValue("");
                                         }}
-                                        className="w-full text-xs text-foreground bg-transparent focus:outline-none focus:underline"
-                                      />
+                                        className="px-3 py-1.5 rounded-xl bg-primary/20 text-primary font-bold text-xs hover:bg-primary/30 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
+                                      >
+                                        + Aggiungi Campo
+                                      </button>
                                     </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
-                                          if (idx !== sIdx) return s;
-                                          const newFields = { ...(s.custom_fields || {}) };
-                                          delete newFields[fKey];
-                                          return { ...s, custom_fields: newFields };
-                                        });
-                                        handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
-                                      }}
-                                      className="p-1 text-foreground/30 hover:text-rose-400 transition-colors cursor-pointer shrink-0"
-                                      title="Rimuovi campo"
-                                    >
-                                      <Trash2 size={12} />
-                                    </button>
                                   </div>
-                                ))}
-                              </div>
-
-                              {/* Add Field to Subcase */}
-                              <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                                <input
-                                  type="text"
-                                  placeholder="Nuova chiave (es. event_date, poster_image, locazione)"
-                                  value={activeSubcaseIndex === sIdx ? newSubcaseFieldKey : ""}
-                                  onChange={(e) => {
-                                    setActiveSubcaseIndex(sIdx);
-                                    setNewSubcaseFieldKey(e.target.value.trim().replace(/[^a-zA-Z0-9_-]/g, ""));
-                                  }}
-                                  className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Valore del campo per questo subcase"
-                                  value={activeSubcaseIndex === sIdx ? newSubcaseFieldValue : ""}
-                                  onChange={(e) => {
-                                    setActiveSubcaseIndex(sIdx);
-                                    setNewSubcaseFieldValue(e.target.value);
-                                  }}
-                                  className="flex-1 px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
-                                />
-                                <button
-                                  type="button"
-                                  disabled={activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()}
-                                  onClick={() => {
-                                    if (activeSubcaseIndex !== sIdx || !newSubcaseFieldKey.trim()) return;
-                                    const updatedSubcases = (activeTemplate.subcases || []).map((s, idx) => {
-                                      if (idx !== sIdx) return s;
-                                      return {
-                                        ...s,
-                                        custom_fields: {
-                                          ...(s.custom_fields || {}),
-                                          [newSubcaseFieldKey]: newSubcaseFieldValue
-                                        }
-                                      };
-                                    });
-                                    handleUpdateTemplate((t) => ({ ...t, subcases: updatedSubcases }));
-                                    setNewSubcaseFieldKey("");
-                                    setNewSubcaseFieldValue("");
-                                  }}
-                                  className="px-3 py-1.5 rounded-xl bg-primary/20 text-primary font-bold text-xs hover:bg-primary/30 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
-                                >
-                                  + Aggiungi Campo
-                                </button>
-                              </div>
-                            </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                  </div>
-
-                  {/* Card 2: Campi Personalizzati & Analizzatore JSON */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                    <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                        <FileJson size={18} className="text-primary" />
-                        Campi Personalizzati & Analizzatore JSON
-                      </h4>
-                      <p className="text-xs text-foreground/60 mt-0.5">
-                        Incolla qualsiasi payload JSON per estrarre tutti i campi disponibili, verificare i valori di prova e copiare i tag delle variabili con un click.
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleLoadSampleJson}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs text-foreground font-semibold border border-foreground/10 transition-colors cursor-pointer"
-                      >
-                        <Database size={13} className="text-primary" />
-                        <span>Carica Esempio</span>
-                      </button>
-                      {jsonInput && (
-                        <button
-                          type="button"
-                          onClick={handleFormatJson}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs text-foreground font-semibold border border-foreground/10 transition-colors cursor-pointer"
-                        >
-                          <Sparkles size={13} className="text-accent" />
-                          <span>Formatta</span>
-                        </button>
-                      )}
-                      {jsonInput && (
-                        <button
-                          type="button"
-                          onClick={() => handleSaveJsonPayload("")}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-xs text-rose-400 font-semibold transition-colors cursor-pointer"
-                          title="Svuota JSON"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* JSON Textarea Area */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-bold text-foreground">
-                      <span>Payload JSON del Webhook / Servizio Terzo:</span>
-                      <span className="text-[11px] text-foreground/50 font-normal">
-                        Salvataggio automatico con il template
-                      </span>
-                    </div>
-
-                    <textarea
-                      value={jsonInput}
-                      onChange={(e) => handleSaveJsonPayload(e.target.value)}
-                      placeholder={`Incolla qui il JSON inviato da Stripe, Typeform, Tally o dal tuo script...\nEsempio:\n{\n  "pippo": "mario.rossi@example.com",\n  "cliente": {\n    "nome": "Mario Rossi",\n    "citta": "Zurigo"\n  }\n}`}
-                      rows={9}
-                      className="w-full px-4 py-3 rounded-2xl bg-black/50 border border-foreground/15 text-xs font-mono text-emerald-400 focus:outline-none focus:border-primary placeholder:text-foreground/30 leading-relaxed shadow-inner"
-                    />
-
-                    {jsonParseError && (
-                      <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
-                        <AlertCircle size={15} className="shrink-0 text-rose-400" />
-                        <span>Errore di sintassi JSON: {jsonParseError}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Extracted Fields Explorer */}
-                  <div className="space-y-4 pt-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-foreground">
-                          Campi Rilevati nel JSON
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-bold text-[11px]">
-                          {extractedFields.length} {extractedFields.length === 1 ? "campo" : "campi"}
-                        </span>
+                        )}
                       </div>
 
-                      {/* Filter Input */}
-                      {extractedFields.length > 3 && (
-                        <div className="relative">
-                          <Search size={13} className="absolute left-3 top-2.5 text-foreground/40" />
-                          <input
-                            type="text"
-                            value={fieldSearchTerm}
-                            onChange={(e) => setFieldSearchTerm(e.target.value)}
-                            placeholder="Filtra campi per nome..."
-                            className="pl-8 pr-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary w-48 sm:w-56"
-                          />
-                        </div>
-                      )}
-                    </div>
+                      {/* Card 2: Campi Personalizzati & Analizzatore JSON */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <FileJson size={18} className="text-primary" />
+                              Campi Personalizzati & Analizzatore JSON
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Incolla qualsiasi payload JSON per estrarre tutti i campi disponibili, verificare i valori di prova e copiare i tag delle variabili con un click.
+                            </p>
+                          </div>
 
-                    {extractedFields.length === 0 ? (
-                      <div className="p-8 text-center rounded-2xl bg-muted/30 border border-dashed border-foreground/15 space-y-2">
-                        <FileJson size={32} className="mx-auto text-foreground/30" />
-                        <p className="text-xs text-foreground/70 font-bold">
-                          Nessun campo estratto
-                        </p>
-                        <p className="text-[11px] text-foreground/50 max-w-sm mx-auto">
-                          Incolla un payload JSON nel riquadro sopra oppure clicca su &quot;Carica Esempio&quot; per vedere come i dati vengono analizzati.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
-                        {extractedFields
-                          .filter((f) => !fieldSearchTerm || f.path.toLowerCase().includes(fieldSearchTerm.toLowerCase()) || f.sampleValue.toLowerCase().includes(fieldSearchTerm.toLowerCase()))
-                          .map((field) => {
-                            const isCurrentEmail = fieldMapping.recipient_email_path === field.path;
-                            const isCurrentName = fieldMapping.recipient_name_path === field.path;
-                            const isCopied = copiedFieldPath === field.path;
-
-                            return (
-                              <div
-                                key={field.path}
-                                className="p-3.5 rounded-2xl bg-background/50 border border-foreground/10 hover:border-foreground/20 transition-all space-y-2.5"
-                              >
-                                <div className="flex flex-wrap items-center justify-between gap-2">
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <span className="font-mono text-xs font-black text-primary px-2.5 py-1 rounded-xl bg-primary/10 border border-primary/20">
-                                      {field.path}
-                                    </span>
-
-                                    {field.isEmailCandidate && (
-                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                        Email ✉️
-                                      </span>
-                                    )}
-                                    {field.isNameCandidate && (
-                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                                        Nome 👤
-                                      </span>
-                                    )}
-                                    <span className="text-[10px] font-mono text-foreground/50 px-2 py-0.5 rounded-full bg-foreground/5">
-                                      {field.type}
-                                    </span>
-                                  </div>
-
-                                  {/* Copy {{path}} button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCopyFieldVar(field.path)}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-bold transition-all cursor-pointer border border-foreground/10 shrink-0"
-                                  >
-                                    {isCopied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                                    <span>{isCopied ? "Copiato!" : `Copia {{${field.path}}}`}</span>
-                                  </button>
-                                </div>
-
-                                {/* Sample Value Preview */}
-                                <div className="flex items-center gap-2 text-xs">
-                                  <span className="text-foreground/50 text-[11px]">Valore rilevato:</span>
-                                  <span className="font-mono text-emerald-400/90 bg-black/40 px-2 py-0.5 rounded-md truncate max-w-md text-[11px]">
-                                    {field.sampleValue}
-                                  </span>
-                                </div>
-
-                                {/* Quick Action Helpers */}
-                                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-foreground/5 text-xs">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateFieldMapping({ recipient_email_path: isCurrentEmail ? "" : field.path })}
-                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                                      isCurrentEmail
-                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                                        : "bg-foreground/5 hover:bg-foreground/10 text-foreground/70"
-                                    }`}
-                                  >
-                                    {isCurrentEmail && <Check size={11} />}
-                                    {isCurrentEmail ? "Email Destinatario Attiva" : "Imposta come Email (to_path)"}
-                                  </button>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateFieldMapping({ recipient_name_path: isCurrentName ? "" : field.path })}
-                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                                      isCurrentName
-                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                                        : "bg-foreground/5 hover:bg-foreground/10 text-foreground/70"
-                                    }`}
-                                  >
-                                    {isCurrentName && <Check size={11} />}
-                                    {isCurrentName ? "Nome Destinatario Attivo" : "Imposta come Nome (name_path)"}
-                                  </button>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const segments = field.path.split(/[\.\[\]]/).filter(Boolean);
-                                      const suggestedVar = segments[segments.length - 1] || "campo";
-                                      setNewVarName(suggestedVar);
-                                      setNewVarPath(field.path);
-                                      setActiveTabSection("api");
-                                    }}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-all cursor-pointer ml-auto"
-                                  >
-                                    <span>+ Mappa in API</span>
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Live Preview Sync Callout */}
-                  <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-3">
-                    <Sparkles size={18} className="text-primary shrink-0 mt-0.5" />
-                    <div className="text-xs text-foreground/80 leading-relaxed">
-                      <strong className="text-foreground">Sincronizzazione Live con l'Anteprima:</strong> I valori rilevati da questo JSON vengono usati automaticamente come dati di prova nell'anteprima dell'email a destra e a schermo intero! Se modifichi il JSON qui sopra, l'anteprima si aggiorna all'istante con i tuoi dati reali.
-                    </div>
-                  </div>
-                  </div>
-                </div>
-              )}
-
-              {/* SECTION 4: API & INTEGRATION HELPER */}
-              {activeTabSection === "api" && (
-                <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                  <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
-                    <div>
-                      <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                        <Braces size={18} className="text-primary" />
-                        Integrazione API, Webhook & Payload Terzi
-                      </h4>
-                      <p className="text-xs text-foreground/60">
-                        Configura percorsi JSON per payload arbitrari, webhook esterni o bottoni del sito.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* FEATURE: JSON PATH & PAYLOAD MAPPING */}
-                  <div className="p-5 rounded-2xl bg-background/50 border border-foreground/10 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-xs font-bold text-primary uppercase tracking-wider block">
-                          Mappatura Payload & JSON Path (per Payload Non Standard)
-                        </span>
-                        <p className="text-xs text-foreground/70 mt-0.5">
-                          Se il servizio esterno (es. Stripe, Typeform, webhook terzi) usa nomi di campi personalizzati come <code className="text-primary font-mono">pippo</code> o <code className="text-primary font-mono">customer.email</code>, configurali qui.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Pointer to Dettagli Email for to_path & name_path */}
-                    <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                      <div className="flex items-center gap-2 text-foreground/80">
-                        <Info size={16} className="text-primary shrink-0" />
-                        <span>
-                          La configurazione del <strong>Destinatario (Email & Nome)</strong> è ora nella scheda{" "}
-                          <button
-                            type="button"
-                            onClick={() => setActiveTabSection("details")}
-                            className="text-primary underline font-semibold hover:opacity-80 cursor-pointer"
-                          >
-                            Dettagli Email
-                          </button>.
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[11px] font-mono shrink-0">
-                        <span className="text-foreground/50">to:</span>
-                        <span className="text-emerald-400 font-bold">{resolvedTechnicalFields.to || "non rilevata"}</span>
-                      </div>
-                    </div>
-
-                    {/* Custom Variables Mapping */}
-                    <div className="pt-3 border-t border-foreground/5 space-y-3">
-                      <span className="text-xs font-bold text-foreground/80 block">
-                        Mappatura Variabili Aggiuntive (Opzionale)
-                      </span>
-
-                      {fieldMapping.variables_mapping && Object.keys(fieldMapping.variables_mapping).length > 0 && (
-                        <div className="space-y-2">
-                          {Object.entries(fieldMapping.variables_mapping).map(([varKey, pathVal]) => (
-                            <div key={varKey} className="flex items-center justify-between gap-3 p-2 rounded-xl bg-muted/40 border border-foreground/5 text-xs font-mono">
-                              <div className="flex items-center gap-2">
-                                <span className="text-secondary font-bold">{"{{" + varKey + "}}"}</span>
-                                <span className="text-foreground/40">➔</span>
-                                <span className="text-emerald-400">{pathVal}</span>
-                              </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={handleLoadSampleJson}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs text-foreground font-semibold border border-foreground/10 transition-colors cursor-pointer"
+                            >
+                              <Database size={13} className="text-primary" />
+                              <span>Carica Esempio</span>
+                            </button>
+                            {jsonInput && (
                               <button
                                 type="button"
-                                onClick={() => handleRemoveVariableMapping(varKey)}
-                                className="p-1 text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
-                                title="Rimuovi mappatura"
+                                onClick={handleFormatJson}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/10 text-xs text-foreground font-semibold border border-foreground/10 transition-colors cursor-pointer"
+                              >
+                                <Sparkles size={13} className="text-accent" />
+                                <span>Formatta</span>
+                              </button>
+                            )}
+                            {jsonInput && (
+                              <button
+                                type="button"
+                                onClick={() => handleSaveJsonPayload("")}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-xs text-rose-400 font-semibold transition-colors cursor-pointer"
+                                title="Svuota JSON"
                               >
                                 <Trash2 size={13} />
                               </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Add new mapping row */}
-                      <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                        <input
-                          type="text"
-                          value={newVarName}
-                          onChange={(e) => setNewVarName(e.target.value)}
-                          placeholder="Nome Variabile (es. codice_posto)"
-                          className="flex-1 px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        <input
-                          type="text"
-                          value={newVarPath}
-                          onChange={(e) => setNewVarPath(e.target.value)}
-                          placeholder="JSON Path (es. ticket.seat_number)"
-                          className="flex-1 px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddVariableMapping}
-                          disabled={!newVarName.trim() || !newVarPath.trim()}
-                          className="px-3.5 py-2 rounded-xl bg-primary/20 text-primary font-bold text-xs hover:bg-primary/30 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
-                        >
-                          + Mappa
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Automatic dot-notation notice */}
-                    <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-2.5">
-                      <Sparkles size={16} className="text-primary shrink-0 mt-0.5" />
-                      <div className="text-[11px] text-foreground/80 leading-relaxed">
-                        <strong className="text-foreground">Appiattimento Automatico Dot-Notation:</strong> Non è obbligatorio mappare tutti i campi! Qualsiasi JSON inviato viene automaticamente appiattito. Se invii <code className="font-mono text-primary">{"{\"ordine\": {\"id\": \"#123\", \"posto\": \"Fila A\"}}"}</code>, puoi già usare direttamente <code className="font-mono text-primary">{"{{ordine.id}}"}</code> e <code className="font-mono text-primary">{"{{ordine.posto}}"}</code> nel template dell'email!
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Method 1: Website Button */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                    <span className="text-xs font-bold text-primary uppercase tracking-wider block">
-                      1. Da qualsiasi Pulsante del Sito (Senza Codice)
-                    </span>
-                    <p className="text-xs text-foreground/70">
-                      Imposta il link di qualsiasi pulsante (anche nell'Admin delle Landing o Spettacoli) su:
-                    </p>
-                    <code className="block p-2.5 rounded-xl bg-muted text-primary text-xs font-mono border border-foreground/5 select-all">
-                      #email:{activeTemplate.id}
-                    </code>
-                    {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
-                      <div className="pt-2 space-y-1.5">
-                        <span className="text-xs font-bold text-foreground/80 block">
-                          Oppure per un Subcase / Variante specifica:
-                        </span>
-                        {activeTemplate.subcases.map((sub) => (
-                          <div key={sub.id} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-muted border border-foreground/5 font-mono text-xs">
-                            <span className="text-accent">#email:{activeTemplate.id}:{sub.id}</span>
-                            <span className="text-[11px] text-foreground/40 font-sans">{sub.name}</span>
+                            )}
                           </div>
-                        ))}
-                      </div>
-                    )}
-                    <p className="text-[11px] text-foreground/50">
-                      Al click si aprirà automaticamente il popup protetto per raccogliere l'email e inviare questo template (con i dati del subcase selezionato)!
-                    </p>
-                  </div>
+                        </div>
 
-                  {/* Method 1b: Subcases in Query Param or Body (No Headers Needed!) */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                    <span className="text-xs font-bold text-accent uppercase tracking-wider block">
-                      Varianti e Subcases da Webhook / API (Senza Header!)
-                    </span>
-                    <p className="text-xs text-foreground/70">
-                      Puoi specificare il Subcase direttamente nell'URL del Webhook (es. Tally, Zapier, Make) senza bisogno di configurare header HTTP aggiuntivi:
-                    </p>
-                    <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-2">
-                      <div>
-                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione A (Query param &subcase):</span>
-                        <code className="text-primary font-bold">/api/email/send?template={activeTemplate.id}&subcase=cineforum-1&secret=TUO_SEGRETO</code>
-                      </div>
-                      <div>
-                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione B (Sintassi con due punti):</span>
-                        <code className="text-accent font-bold">/api/email/send?template={activeTemplate.id}:cineforum-1&secret=TUO_SEGRETO</code>
-                      </div>
-                      <div>
-                        <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione C (Nel Body JSON):</span>
-                        <code className="text-emerald-400 font-bold">{`{ "subcase": "cineforum-1" }`}</code>
+                        {/* JSON Textarea Area */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs font-bold text-foreground">
+                            <span>Payload JSON del Webhook / Servizio Terzo:</span>
+                            <span className="text-[11px] text-foreground/50 font-normal">
+                              Salvataggio automatico con il template
+                            </span>
+                          </div>
+
+                          <textarea
+                            value={jsonInput}
+                            onChange={(e) => handleSaveJsonPayload(e.target.value)}
+                            placeholder={`Incolla qui il JSON inviato da Stripe, Typeform, Tally o dal tuo script...\nEsempio:\n{\n  "pippo": "mario.rossi@example.com",\n  "cliente": {\n    "nome": "Mario Rossi",\n    "citta": "Zurigo"\n  }\n}`}
+                            rows={9}
+                            className="w-full px-4 py-3 rounded-2xl bg-black/50 border border-foreground/15 text-xs font-mono text-emerald-400 focus:outline-none focus:border-primary placeholder:text-foreground/30 leading-relaxed shadow-inner"
+                          />
+
+                          {jsonParseError && (
+                            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+                              <AlertCircle size={15} className="shrink-0 text-rose-400" />
+                              <span>Errore di sintassi JSON: {jsonParseError}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Extracted Fields Explorer */}
+                        <div className="space-y-4 pt-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-black uppercase tracking-wider text-foreground">
+                                Campi Rilevati nel JSON
+                              </span>
+                              <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-bold text-[11px]">
+                                {extractedFields.length} {extractedFields.length === 1 ? "campo" : "campi"}
+                              </span>
+                            </div>
+
+                            {/* Filter Input */}
+                            {extractedFields.length > 3 && (
+                              <div className="relative">
+                                <Search size={13} className="absolute left-3 top-2.5 text-foreground/40" />
+                                <input
+                                  type="text"
+                                  value={fieldSearchTerm}
+                                  onChange={(e) => setFieldSearchTerm(e.target.value)}
+                                  placeholder="Filtra campi per nome..."
+                                  className="pl-8 pr-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary w-48 sm:w-56"
+                                />
+                              </div>
+                            )}
+                          </div>
+
+                          {extractedFields.length === 0 ? (
+                            <div className="p-8 text-center rounded-2xl bg-muted/30 border border-dashed border-foreground/15 space-y-2">
+                              <FileJson size={32} className="mx-auto text-foreground/30" />
+                              <p className="text-xs text-foreground/70 font-bold">
+                                Nessun campo estratto
+                              </p>
+                              <p className="text-[11px] text-foreground/50 max-w-sm mx-auto">
+                                Incolla un payload JSON nel riquadro sopra oppure clicca su &quot;Carica Esempio&quot; per vedere come i dati vengono analizzati.
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
+                              {extractedFields
+                                .filter((f) => !fieldSearchTerm || f.path.toLowerCase().includes(fieldSearchTerm.toLowerCase()) || f.sampleValue.toLowerCase().includes(fieldSearchTerm.toLowerCase()))
+                                .map((field) => {
+                                  const isCurrentEmail = fieldMapping.recipient_email_path === field.path;
+                                  const isCurrentName = fieldMapping.recipient_name_path === field.path;
+                                  const isCopied = copiedFieldPath === field.path;
+
+                                  return (
+                                    <div
+                                      key={field.path}
+                                      className="p-3.5 rounded-2xl bg-background/50 border border-foreground/10 hover:border-foreground/20 transition-all space-y-2.5"
+                                    >
+                                      <div className="flex flex-wrap items-center justify-between gap-2">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          <span className="font-mono text-xs font-black text-primary px-2.5 py-1 rounded-xl bg-primary/10 border border-primary/20">
+                                            {field.path}
+                                          </span>
+
+                                          {field.isEmailCandidate && (
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                              Email ✉️
+                                            </span>
+                                          )}
+                                          {field.isNameCandidate && (
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                              Nome 👤
+                                            </span>
+                                          )}
+                                          <span className="text-[10px] font-mono text-foreground/50 px-2 py-0.5 rounded-full bg-foreground/5">
+                                            {field.type}
+                                          </span>
+                                        </div>
+
+                                        {/* Copy {{path}} button */}
+                                        <button
+                                          type="button"
+                                          onClick={() => handleCopyFieldVar(field.path)}
+                                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-bold transition-all cursor-pointer border border-foreground/10 shrink-0"
+                                        >
+                                          {isCopied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                                          <span>{isCopied ? "Copiato!" : `Copia {{${field.path}}}`}</span>
+                                        </button>
+                                      </div>
+
+                                      {/* Sample Value Preview */}
+                                      <div className="flex items-center gap-2 text-xs">
+                                        <span className="text-foreground/50 text-[11px]">Valore rilevato:</span>
+                                        <span className="font-mono text-emerald-400/90 bg-black/40 px-2 py-0.5 rounded-md truncate max-w-md text-[11px]">
+                                          {field.sampleValue}
+                                        </span>
+                                      </div>
+
+                                      {/* Quick Action Helpers */}
+                                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-foreground/5 text-xs">
+                                        <button
+                                          type="button"
+                                          onClick={() => handleUpdateFieldMapping({ recipient_email_path: isCurrentEmail ? "" : field.path })}
+                                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${isCurrentEmail
+                                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                              : "bg-foreground/5 hover:bg-foreground/10 text-foreground/70"
+                                            }`}
+                                        >
+                                          {isCurrentEmail && <Check size={11} />}
+                                          {isCurrentEmail ? "Email Destinatario Attiva" : "Imposta come Email (to_path)"}
+                                        </button>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => handleUpdateFieldMapping({ recipient_name_path: isCurrentName ? "" : field.path })}
+                                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${isCurrentName
+                                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                              : "bg-foreground/5 hover:bg-foreground/10 text-foreground/70"
+                                            }`}
+                                        >
+                                          {isCurrentName && <Check size={11} />}
+                                          {isCurrentName ? "Nome Destinatario Attivo" : "Imposta come Nome (name_path)"}
+                                        </button>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const segments = field.path.split(/[\.\[\]]/).filter(Boolean);
+                                            const suggestedVar = segments[segments.length - 1] || "campo";
+                                            setNewVarName(suggestedVar);
+                                            setNewVarPath(field.path);
+                                            setActiveTabSection("api");
+                                          }}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-all cursor-pointer ml-auto"
+                                        >
+                                          <span>+ Mappa in API</span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Live Preview Sync Callout */}
+                        <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-3">
+                          <Sparkles size={18} className="text-primary shrink-0 mt-0.5" />
+                          <div className="text-xs text-foreground/80 leading-relaxed">
+                            <strong className="text-foreground">Sincronizzazione Live con l'Anteprima:</strong> I valori rilevati da questo JSON vengono usati automaticamente come dati di prova nell'anteprima dell'email a destra e a schermo intero! Se modifichi il JSON qui sopra, l'anteprima si aggiorna all'istante con i tuoi dati reali.
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-[11px] text-foreground/50">
-                      Tutti i campi personalizzati definiti nel subcase (es. data, orario, luogo, film) vengono automaticamente applicati all'email!
-                    </p>
-                  </div>
+                  )}
 
-                  {/* Method 1c: Custom Webhook Headers (Alternative) */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                    <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider block">
-                      Alternativa: Personalizzazione tramite Custom Header HTTP (Tally / Zapier / Make)
-                    </span>
-                    <p className="text-xs text-foreground/70">
-                      Se preferisci passare parametri non presenti nel modulo tramite header HTTP:
-                    </p>
-                    <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-1">
-                      <div><span className="text-primary font-bold">x-subcase</span>: cineforum-1</div>
-                      <div><span className="text-primary font-bold">x-event-date</span>: 14 Novembre 2026</div>
-                      <div><span className="text-primary font-bold">x-event-title</span>: Le vacanze di Monsieur Hulot</div>
-                      <div><span className="text-primary font-bold">x-reply-to</span>: cineforum@gliattomatti.ch</div>
-                    </div>
-                    <p className="text-[11px] text-foreground/50">
-                      Gli header con prefisso <code className="text-primary font-mono">x-event-*</code> o <code className="text-primary font-mono">x-var-*</code> diventano automaticamente variabili utilizzabili nell'email.
-                    </p>
-                  </div>
-
-                  {/* Method 2: cURL Command */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-accent uppercase tracking-wider block">
-                        2. Chiamata REST API Universale (cURL / Zapier / Make / Webhook)
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const snippet = `curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "to": "mario.rossi@example.com",\n    "name": "Mario Rossi",\n    "event_title": "Monsieur Hulot"\n  }'`;
-                            navigator.clipboard.writeText(snippet);
-                            setCopiedSnippet(true);
-                            setTimeout(() => setCopiedSnippet(false), 2000);
-                          }}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-semibold transition-colors cursor-pointer"
-                        >
-                          {copiedSnippet ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                          {copiedSnippet ? "Copiato!" : "Copia cURL Standard"}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const customSnippet = `curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO&to_path=pippo" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "pippo": "mario.rossi@example.com",\n    "cliente": {\n      "nome": "Mario Rossi",\n      "citta": "Zurigo"\n    },\n    "ordine": {\n      "codice": "ORD-1234",\n      "posto": "Fila 3, Poltrona 12"\n    }\n  }'`;
-                            navigator.clipboard.writeText(customSnippet);
-                            setCopiedCustomSnippet(true);
-                            setTimeout(() => setCopiedCustomSnippet(false), 2000);
-                          }}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/20 hover:bg-primary/30 text-xs text-primary font-semibold transition-colors cursor-pointer"
-                        >
-                          {copiedCustomSnippet ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                          {copiedCustomSnippet ? "Copiato!" : "Copia cURL con ?to_path=pippo"}
-                        </button>
+                  {/* SECTION 4: API & INTEGRATION HELPER */}
+                  {activeTabSection === "api" && (
+                    <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                      <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
+                        <div>
+                          <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                            <Braces size={18} className="text-primary" />
+                            Integrazione API, Webhook & Payload Terzi
+                          </h4>
+                          <p className="text-xs text-foreground/60">
+                            Configura percorsi JSON per payload arbitrari, webhook esterni o bottoni del sito.
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <p className="text-xs text-foreground/70">
-                      Esempio con payload personalizzato (dove l'email è nel campo <code className="text-primary font-mono">pippo</code> o annidata in oggetti):
-                    </p>
+                      {/* FEATURE: JSON PATH & PAYLOAD MAPPING */}
+                      <div className="p-5 rounded-2xl bg-background/50 border border-foreground/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-xs font-bold text-primary uppercase tracking-wider block">
+                              Mappatura Payload & JSON Path (per Payload Non Standard)
+                            </span>
+                            <p className="text-xs text-foreground/70 mt-0.5">
+                              Se il servizio esterno (es. Stripe, Typeform, webhook terzi) usa nomi di campi personalizzati come <code className="text-primary font-mono">pippo</code> o <code className="text-primary font-mono">customer.email</code>, configurali qui.
+                            </p>
+                          </div>
+                        </div>
 
-                    <pre className="p-3.5 rounded-xl bg-black/60 text-emerald-400 text-[11px] font-mono overflow-x-auto whitespace-pre leading-relaxed border border-foreground/10">
-{`curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO&to_path=pippo" \\
+                        {/* Pointer to Dettagli Email for to_path & name_path */}
+                        <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center gap-2 text-foreground/80">
+                            <Info size={16} className="text-primary shrink-0" />
+                            <span>
+                              La configurazione del <strong>Destinatario (Email & Nome)</strong> è ora nella scheda{" "}
+                              <button
+                                type="button"
+                                onClick={() => setActiveTabSection("details")}
+                                className="text-primary underline font-semibold hover:opacity-80 cursor-pointer"
+                              >
+                                Dettagli Email
+                              </button>.
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] font-mono shrink-0">
+                            <span className="text-foreground/50">to:</span>
+                            <span className="text-emerald-400 font-bold">{resolvedTechnicalFields.to || "non rilevata"}</span>
+                          </div>
+                        </div>
+
+                        {/* Custom Variables Mapping */}
+                        <div className="pt-3 border-t border-foreground/5 space-y-3">
+                          <span className="text-xs font-bold text-foreground/80 block">
+                            Mappatura Variabili Aggiuntive (Opzionale)
+                          </span>
+
+                          {fieldMapping.variables_mapping && Object.keys(fieldMapping.variables_mapping).length > 0 && (
+                            <div className="space-y-2">
+                              {Object.entries(fieldMapping.variables_mapping).map(([varKey, pathVal]) => (
+                                <div key={varKey} className="flex items-center justify-between gap-3 p-2 rounded-xl bg-muted/40 border border-foreground/5 text-xs font-mono">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-secondary font-bold">{"{{" + varKey + "}}"}</span>
+                                    <span className="text-foreground/40">➔</span>
+                                    <span className="text-emerald-400">{pathVal}</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveVariableMapping(varKey)}
+                                    className="p-1 text-foreground/40 hover:text-rose-400 transition-colors cursor-pointer"
+                                    title="Rimuovi mappatura"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Add new mapping row */}
+                          <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                            <input
+                              type="text"
+                              value={newVarName}
+                              onChange={(e) => setNewVarName(e.target.value)}
+                              placeholder="Nome Variabile (es. codice_posto)"
+                              className="flex-1 px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                            />
+                            <input
+                              type="text"
+                              value={newVarPath}
+                              onChange={(e) => setNewVarPath(e.target.value)}
+                              placeholder="JSON Path (es. ticket.seat_number)"
+                              className="flex-1 px-3 py-2 rounded-xl bg-muted/60 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddVariableMapping}
+                              disabled={!newVarName.trim() || !newVarPath.trim()}
+                              className="px-3.5 py-2 rounded-xl bg-primary/20 text-primary font-bold text-xs hover:bg-primary/30 disabled:opacity-40 transition-colors cursor-pointer shrink-0"
+                            >
+                              + Mappa
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Automatic dot-notation notice */}
+                        <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-2.5">
+                          <Sparkles size={16} className="text-primary shrink-0 mt-0.5" />
+                          <div className="text-[11px] text-foreground/80 leading-relaxed">
+                            <strong className="text-foreground">Appiattimento Automatico Dot-Notation:</strong> Non è obbligatorio mappare tutti i campi! Qualsiasi JSON inviato viene automaticamente appiattito. Se invii <code className="font-mono text-primary">{"{\"ordine\": {\"id\": \"#123\", \"posto\": \"Fila A\"}}"}</code>, puoi già usare direttamente <code className="font-mono text-primary">{"{{ordine.id}}"}</code> e <code className="font-mono text-primary">{"{{ordine.posto}}"}</code> nel template dell'email!
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Method 1: Website Button */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <span className="text-xs font-bold text-primary uppercase tracking-wider block">
+                          1. Da qualsiasi Pulsante del Sito (Senza Codice)
+                        </span>
+                        <p className="text-xs text-foreground/70">
+                          Imposta il link di qualsiasi pulsante (anche nell'Admin delle Landing o Spettacoli) su:
+                        </p>
+                        <code className="block p-2.5 rounded-xl bg-muted text-primary text-xs font-mono border border-foreground/5 select-all">
+                          #email:{activeTemplate.id}
+                        </code>
+                        {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
+                          <div className="pt-2 space-y-1.5">
+                            <span className="text-xs font-bold text-foreground/80 block">
+                              Oppure per un Subcase / Variante specifica:
+                            </span>
+                            {activeTemplate.subcases.map((sub) => (
+                              <div key={sub.id} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-muted border border-foreground/5 font-mono text-xs">
+                                <span className="text-accent">#email:{activeTemplate.id}:{sub.id}</span>
+                                <span className="text-[11px] text-foreground/40 font-sans">{sub.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-[11px] text-foreground/50">
+                          Al click si aprirà automaticamente il popup protetto per raccogliere l'email e inviare questo template (con i dati del subcase selezionato)!
+                        </p>
+                      </div>
+
+                      {/* Method 1b: Subcases in Query Param or Body (No Headers Needed!) */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <span className="text-xs font-bold text-accent uppercase tracking-wider block">
+                          Varianti e Subcases da Webhook / API (Senza Header!)
+                        </span>
+                        <p className="text-xs text-foreground/70">
+                          Puoi specificare il Subcase direttamente nell'URL del Webhook (es. Tally, Zapier, Make) senza bisogno di configurare header HTTP aggiuntivi:
+                        </p>
+                        <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-2">
+                          <div>
+                            <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione A (Query param &subcase):</span>
+                            <code className="text-primary font-bold">/api/email/send?template={activeTemplate.id}&subcase=cineforum-1&secret=TUO_SEGRETO</code>
+                          </div>
+                          <div>
+                            <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione B (Sintassi con due punti):</span>
+                            <code className="text-accent font-bold">/api/email/send?template={activeTemplate.id}:cineforum-1&secret=TUO_SEGRETO</code>
+                          </div>
+                          <div>
+                            <span className="text-foreground/50 block text-[10px] uppercase font-sans">Opzione C (Nel Body JSON):</span>
+                            <code className="text-emerald-400 font-bold">{`{ "subcase": "cineforum-1" }`}</code>
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-foreground/50">
+                          Tutti i campi personalizzati definiti nel subcase (es. data, orario, luogo, film) vengono automaticamente applicati all'email!
+                        </p>
+                      </div>
+
+                      {/* Method 1c: Custom Webhook Headers (Alternative) */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider block">
+                          Alternativa: Personalizzazione tramite Custom Header HTTP (Tally / Zapier / Make)
+                        </span>
+                        <p className="text-xs text-foreground/70">
+                          Se preferisci passare parametri non presenti nel modulo tramite header HTTP:
+                        </p>
+                        <div className="p-3 rounded-xl bg-muted/80 text-foreground font-mono text-xs space-y-1">
+                          <div><span className="text-primary font-bold">x-subcase</span>: cineforum-1</div>
+                          <div><span className="text-primary font-bold">x-event-date</span>: 14 Novembre 2026</div>
+                          <div><span className="text-primary font-bold">x-event-title</span>: Le vacanze di Monsieur Hulot</div>
+                          <div><span className="text-primary font-bold">x-reply-to</span>: cineforum@gliattomatti.ch</div>
+                        </div>
+                        <p className="text-[11px] text-foreground/50">
+                          Gli header con prefisso <code className="text-primary font-mono">x-event-*</code> o <code className="text-primary font-mono">x-var-*</code> diventano automaticamente variabili utilizzabili nell'email.
+                        </p>
+                      </div>
+
+                      {/* Method 2: cURL Command */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-xs font-bold text-accent uppercase tracking-wider block">
+                            2. Chiamata REST API Universale (cURL / Zapier / Make / Webhook)
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const snippet = `curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "to": "mario.rossi@example.com",\n    "name": "Mario Rossi",\n    "event_title": "Monsieur Hulot"\n  }'`;
+                                navigator.clipboard.writeText(snippet);
+                                setCopiedSnippet(true);
+                                setTimeout(() => setCopiedSnippet(false), 2000);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-semibold transition-colors cursor-pointer"
+                            >
+                              {copiedSnippet ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                              {copiedSnippet ? "Copiato!" : "Copia cURL Standard"}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const customSnippet = `curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO&to_path=pippo" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "pippo": "mario.rossi@example.com",\n    "cliente": {\n      "nome": "Mario Rossi",\n      "citta": "Zurigo"\n    },\n    "ordine": {\n      "codice": "ORD-1234",\n      "posto": "Fila 3, Poltrona 12"\n    }\n  }'`;
+                                navigator.clipboard.writeText(customSnippet);
+                                setCopiedCustomSnippet(true);
+                                setTimeout(() => setCopiedCustomSnippet(false), 2000);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/20 hover:bg-primary/30 text-xs text-primary font-semibold transition-colors cursor-pointer"
+                            >
+                              {copiedCustomSnippet ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                              {copiedCustomSnippet ? "Copiato!" : "Copia cURL con ?to_path=pippo"}
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-foreground/70">
+                          Esempio con payload personalizzato (dove l'email è nel campo <code className="text-primary font-mono">pippo</code> o annidata in oggetti):
+                        </p>
+
+                        <pre className="p-3.5 rounded-xl bg-black/60 text-emerald-400 text-[11px] font-mono overflow-x-auto whitespace-pre leading-relaxed border border-foreground/10">
+                          {`curl -X POST "${originUrl}/api/email/send?template=${activeTemplate.id}&secret=TUO_SEGRETO&to_path=pippo" \\
   -H "Content-Type: application/json" \\
   -d '{
     "pippo": "mario.rossi@example.com",
@@ -4028,454 +4211,449 @@ export function EmailTab() {
       "posto": "Fila 3, Poltrona 12"
     }
   }'`}
-                    </pre>
+                        </pre>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-foreground/60 pt-1">
-                      <div><strong className="text-foreground font-mono">?to_path=...</strong> Sovrascrive il percorso email nel payload.</div>
-                      <div><strong className="text-foreground font-mono">?name_path=...</strong> Sovrascrive il percorso nome nel payload.</div>
-                      <div><strong className="text-foreground font-mono">?theme=...</strong> Sovrascrive il tema colore per questo invio.</div>
-                      <div><strong className="text-foreground font-mono">?test=true</strong> Dry-run: restituisce l'anteprima HTML senza inviare.</div>
-                    </div>
-                  </div>
-
-                  {/* Method 3: Webhook esterni (es. Tally) */}
-                  <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
-                    <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
-                      3. Webhook Esterni (Tally, Typeform, ecc.)
-                    </span>
-                    <p className="text-xs text-foreground/70">
-                      Nelle impostazioni webhook del servizio esterno, inserisci l'endpoint universale:
-                    </p>
-                    <code className="block p-2.5 rounded-xl bg-muted text-foreground text-xs font-mono border border-foreground/5 select-all break-all">
-                      {originUrl}/api/email/send?template={activeTemplate.id}&secret=TUO_SEGRETO
-                    </code>
-                    <p className="text-[11px] text-foreground/50">
-                      Il destinatario viene risolto tramite <code className="font-mono">to_path</code> (es. <code className="font-mono">{"{{data.fields[0].value}}"}</code>) o rilevato automaticamente.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-            </div>
-
-            {/* Right 6 Cols: Live Preview & Test Send */}
-            <div className="lg:col-span-6 space-y-6 lg:sticky lg:top-24">
-              
-              {/* Test Send Box */}
-              <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-primary">
-                  <Send size={15} /> Invia Prova Reale
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      value={testEmailAddress}
-                      onChange={(e) => setTestEmailAddress(e.target.value)}
-                      placeholder="latuaemail@example.com"
-                      className="flex-1 px-3.5 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
-                    />
-                    <button
-                      type="button"
-                      disabled={isSendingTest}
-                      onClick={handleSendTestEmail}
-                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-background font-black text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer shadow-xs shrink-0"
-                    >
-                      {isSendingTest ? "Invio..." : "Spedisci"}
-                    </button>
-                  </div>
-
-                  {testResult && (
-                    <div
-                      className={`p-3 rounded-xl text-xs flex items-start gap-2 ${
-                        testResult.type === "success"
-                          ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-                          : "bg-rose-500/10 text-rose-300 border border-rose-500/20"
-                      }`}
-                    >
-                      {testResult.type === "success" ? (
-                        <CheckCircle2 size={16} className="shrink-0 mt-0.5 text-emerald-400" />
-                      ) : (
-                        <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-400" />
-                      )}
-                      <span>{testResult.message}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* SECTION: INVIO MASSIVO (CSV / NEWSLETTER) */}
-              {activeTabSection === "mass" && (
-                <div className="space-y-6">
-                  {/* Card 1: Caricamento File CSV & Configurazione Colonne */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
-                      <div>
-                        <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
-                          <Users size={18} className="text-primary" />
-                          Invio Massivo Newsletter & Comunicazioni Commerciali
-                        </h4>
-                        <p className="text-xs text-foreground/60 mt-0.5">
-                          Invia questo template ad una lista di contatti da file CSV. Le colonne del file possono essere usate come variabili personalizzate (es. &#123;&#123;nome&#125;&#125;).
-                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-foreground/60 pt-1">
+                          <div><strong className="text-foreground font-mono">?to_path=...</strong> Sovrascrive il percorso email nel payload.</div>
+                          <div><strong className="text-foreground font-mono">?name_path=...</strong> Sovrascrive il percorso nome nel payload.</div>
+                          <div><strong className="text-foreground font-mono">?theme=...</strong> Sovrascrive il tema colore per questo invio.</div>
+                          <div><strong className="text-foreground font-mono">?test=true</strong> Dry-run: restituisce l'anteprima HTML senza inviare.</div>
+                        </div>
                       </div>
 
-                      {parsedCsvData && parsedCsvData.totalRows > 0 && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                          <CheckCircle2 size={14} />
-                          <span>{parsedCsvData.totalRows} contatti caricati</span>
+                      {/* Method 3: Webhook esterni (es. Tally) */}
+                      <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 space-y-2">
+                        <span className="text-xs font-bold text-foreground uppercase tracking-wider block">
+                          3. Webhook Esterni (Tally, Typeform, ecc.)
+                        </span>
+                        <p className="text-xs text-foreground/70">
+                          Nelle impostazioni webhook del servizio esterno, inserisci l'endpoint universale:
+                        </p>
+                        <code className="block p-2.5 rounded-xl bg-muted text-foreground text-xs font-mono border border-foreground/5 select-all break-all">
+                          {originUrl}/api/email/send?template={activeTemplate.id}&secret=TUO_SEGRETO
+                        </code>
+                        <p className="text-[11px] text-foreground/50">
+                          Il destinatario viene risolto tramite <code className="font-mono">to_path</code> (es. <code className="font-mono">{"{{data.fields[0].value}}"}</code>) o rilevato automaticamente.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+                {/* Right 6 Cols: Live Preview & Test Send */}
+                <div className="lg:col-span-6 space-y-6 lg:sticky lg:top-24">
+
+                  {/* Test Send Box */}
+                  <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-primary">
+                      <Send size={15} /> Invia Prova Reale
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="email"
+                          value={testEmailAddress}
+                          onChange={(e) => setTestEmailAddress(e.target.value)}
+                          placeholder="latuaemail@example.com"
+                          className="flex-1 px-3.5 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-xs text-foreground focus:outline-none focus:border-primary"
+                        />
+                        <button
+                          type="button"
+                          disabled={isSendingTest}
+                          onClick={handleSendTestEmail}
+                          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-background font-black text-xs uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer shadow-xs shrink-0"
+                        >
+                          {isSendingTest ? "Invio..." : "Spedisci"}
+                        </button>
+                      </div>
+
+                      {testResult && (
+                        <div
+                          className={`p-3 rounded-xl text-xs flex items-start gap-2 ${testResult.type === "success"
+                              ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
+                              : "bg-rose-500/10 text-rose-300 border border-rose-500/20"
+                            }`}
+                        >
+                          {testResult.type === "success" ? (
+                            <CheckCircle2 size={16} className="shrink-0 mt-0.5 text-emerald-400" />
+                          ) : (
+                            <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-400" />
+                          )}
+                          <span>{testResult.message}</span>
                         </div>
                       )}
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Caricamento File o Incolla */}
-                      <div className="space-y-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
-                          1. Carica File CSV o Incolla Dati
-                        </label>
+                  {/* SECTION: INVIO MASSIVO (CSV / NEWSLETTER) */}
+                  {activeTabSection === "mass" && (
+                    <div className="space-y-6">
+                      {/* Card 1: Caricamento File CSV & Configurazione Colonne */}
+                      <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
+                          <div>
+                            <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
+                              <Users size={18} className="text-primary" />
+                              Invio Massivo Newsletter & Comunicazioni Commerciali
+                            </h4>
+                            <p className="text-xs text-foreground/60 mt-0.5">
+                              Invia questo template ad una lista di contatti da file CSV. Le colonne del file possono essere usate come variabili personalizzate (es. &#123;&#123;nome&#125;&#125;).
+                            </p>
+                          </div>
 
-                        <div className="flex items-center gap-3">
-                          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all">
-                            <Upload size={14} />
-                            <span>Scegli File CSV</span>
-                            <input
-                              type="file"
-                              accept=".csv,text/csv,text/plain"
-                              onChange={handleCsvFileUpload}
-                              className="hidden"
-                            />
-                          </label>
-                          <span className="text-xs text-foreground/40">oppure incolla qui sotto:</span>
+                          {parsedCsvData && parsedCsvData.totalRows > 0 && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+                              <CheckCircle2 size={14} />
+                              <span>{parsedCsvData.totalRows} contatti caricati</span>
+                            </div>
+                          )}
                         </div>
 
-                        <textarea
-                          value={csvRawText}
-                          onChange={(e) => handleProcessCsvText(e.target.value)}
-                          placeholder={"Email,Nome,Posto,Citta\nmario.rossi@example.com,Mario,Fila 3,Zurigo\nlaura.bianchi@example.com,Laura,Fila 4,Berna"}
-                          rows={6}
-                          className="w-full px-3 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground font-mono text-xs focus:outline-none focus:border-primary resize-y"
-                        />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {/* Caricamento File o Incolla */}
+                          <div className="space-y-4">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                              1. Carica File CSV o Incolla Dati
+                            </label>
 
-                        {parsedCsvData?.errors && parsedCsvData.errors.length > 0 && (
-                          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-1">
-                            {parsedCsvData.errors.map((err, i) => (
-                              <div key={i} className="flex items-center gap-2">
-                                <AlertTriangle size={13} className="shrink-0" />
-                                <span>{err}</span>
+                            <div className="flex items-center gap-3">
+                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all">
+                                <Upload size={14} />
+                                <span>Scegli File CSV</span>
+                                <input
+                                  type="file"
+                                  accept=".csv,text/csv,text/plain"
+                                  onChange={handleCsvFileUpload}
+                                  className="hidden"
+                                />
+                              </label>
+                              <span className="text-xs text-foreground/40">oppure incolla qui sotto:</span>
+                            </div>
+
+                            <textarea
+                              value={csvRawText}
+                              onChange={(e) => handleProcessCsvText(e.target.value)}
+                              placeholder={"Email,Nome,Posto,Citta\nmario.rossi@example.com,Mario,Fila 3,Zurigo\nlaura.bianchi@example.com,Laura,Fila 4,Berna"}
+                              rows={6}
+                              className="w-full px-3 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground font-mono text-xs focus:outline-none focus:border-primary resize-y"
+                            />
+
+                            {parsedCsvData?.errors && parsedCsvData.errors.length > 0 && (
+                              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-1">
+                                {parsedCsvData.errors.map((err, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <AlertTriangle size={13} className="shrink-0" />
+                                    <span>{err}</span>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
+                            )}
+                          </div>
+
+                          {/* Configurazione Mappatura Colonne */}
+                          <div className="space-y-4">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                              2. Mappatura & Variabili Rilevate
+                            </label>
+
+                            {parsedCsvData && parsedCsvData.headers.length > 0 ? (
+                              <div className="space-y-4 p-4 rounded-2xl bg-background/40 border border-foreground/10">
+                                <div>
+                                  <span className="block text-xs font-semibold text-foreground/80 mb-1">
+                                    Colonna Indirizzo Email (Destinatario):
+                                  </span>
+                                  <select
+                                    value={selectedEmailCol}
+                                    onChange={(e) => setSelectedEmailCol(e.target.value)}
+                                    className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                                  >
+                                    {parsedCsvData.headers.map((h) => (
+                                      <option key={h} value={h}>
+                                        {h}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <span className="block text-xs font-semibold text-foreground/80 mb-1.5">
+                                    Variabili disponibili per i blocchi dell&apos;email:
+                                  </span>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {parsedCsvData.headers.map((h) => (
+                                      <button
+                                        key={h}
+                                        type="button"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(`{{${h}}}`);
+                                          alert(`Copiato: {{${h}}}`);
+                                        }}
+                                        className="px-2 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-primary font-mono text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer"
+                                        title="Clicca per copiare la variabile"
+                                      >
+                                        <span>&#123;&#123;{h}&#125;&#125;</span>
+                                        <Copy size={10} className="text-foreground/40" />
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <p className="text-[11px] text-foreground/50 mt-1.5">
+                                    Inserisci queste variabili nel testo o nell&apos;oggetto del template per personalizzare ogni messaggio.
+                                  </p>
+                                </div>
+
+                                <div className="pt-2 border-t border-foreground/5 flex items-center justify-between text-xs text-foreground/60">
+                                  <span>Privacy & Sicurezza:</span>
+                                  <span className="text-emerald-400 font-bold">Nessun dato salvato sul server</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="p-6 rounded-2xl bg-background/20 border border-dashed border-foreground/15 text-center text-xs text-foreground/50">
+                                Carica un file CSV per visualizzare le colonne e le variabili.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Azioni di Invio / Test */}
+                        {parsedCsvData && parsedCsvData.rows.length > 0 && (
+                          <div className="pt-4 border-t border-foreground/10 flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                disabled={isDryRunningMass || isSendingMass}
+                                onClick={() => handleExecuteMassSend(true)}
+                                className="px-4 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 border border-foreground/10"
+                              >
+                                <Play size={13} />
+                                <span>{isDryRunningMass ? "Verifica in corso..." : "Simulazione (Dry-Run)"}</span>
+                              </button>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                disabled={isDryRunningMass || isSendingMass}
+                                onClick={() => setShowMassConfirmModal(true)}
+                                className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-lg hover:opacity-90 transition-all cursor-pointer flex items-center gap-2"
+                              >
+                                <Send size={14} />
+                                <span>
+                                  {isSendingMass
+                                    ? "Invio in corso..."
+                                    : `Invia Email a ${parsedCsvData.rows.length} Destinatari`}
+                                </span>
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
 
-                      {/* Configurazione Mappatura Colonne */}
-                      <div className="space-y-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
-                          2. Mappatura & Variabili Rilevate
-                        </label>
-
-                        {parsedCsvData && parsedCsvData.headers.length > 0 ? (
-                          <div className="space-y-4 p-4 rounded-2xl bg-background/40 border border-foreground/10">
-                            <div>
-                              <span className="block text-xs font-semibold text-foreground/80 mb-1">
-                                Colonna Indirizzo Email (Destinatario):
+                      {/* Report Risultati Invio o Dry-Run */}
+                      {massSendReport && (
+                        <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                          <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
+                            <div className="flex items-center gap-2">
+                              {massSendReport.failed === 0 ? (
+                                <CheckCircle size={18} className="text-emerald-400" />
+                              ) : (
+                                <AlertCircle size={18} className="text-amber-400" />
+                              )}
+                              <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
+                                {massSendReport.dryRun ? "Esito Simulazione (Dry-Run)" : "Riepilogo Invio Massivo"}
+                              </h4>
+                            </div>
+                            <div className="flex items-center gap-4 text-xs font-bold">
+                              <span className="text-emerald-400">Riuscite: {massSendReport.sent}</span>
+                              <span className={massSendReport.failed > 0 ? "text-rose-400" : "text-foreground/40"}>
+                                Fallite: {massSendReport.failed}
                               </span>
-                              <select
-                                value={selectedEmailCol}
-                                onChange={(e) => setSelectedEmailCol(e.target.value)}
-                                className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                              <span className="text-foreground/60">Totali: {massSendReport.total}</span>
+                            </div>
+                          </div>
+
+                          <div className="max-h-60 overflow-y-auto space-y-1.5 p-1 font-mono text-xs">
+                            {massSendReport.results.map((r, i) => (
+                              <div
+                                key={i}
+                                className={`p-2 rounded-xl flex items-center justify-between border ${r.success
+                                    ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
+                                    : "bg-rose-500/5 border-rose-500/20 text-rose-400"
+                                  }`}
                               >
-                                {parsedCsvData.headers.map((h) => (
-                                  <option key={h} value={h}>
-                                    {h}
+                                <div className="flex items-center gap-2 truncate">
+                                  {r.success ? <CheckCircle size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
+                                  <span className="truncate">{r.to || "(senza email)"}</span>
+                                  {r.simulated && <span className="text-[10px] opacity-60 uppercase font-sans font-bold">[Simulata]</span>}
+                                </div>
+                                <span className="text-[11px] truncate max-w-xs font-sans">
+                                  {r.error || (r.id ? `ID: ${r.id}` : "OK")}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Card 2: Anteprima Live Controllata da Record CSV */}
+                      {parsedCsvData && parsedCsvData.rows.length > 0 && (
+                        <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground/10 pb-3">
+                            <div className="flex items-center gap-3">
+                              <Eye size={18} className="text-primary" />
+                              <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
+                                Anteprima Live Personalizzata
+                              </h4>
+                            </div>
+
+                            {/* Selettore Riga CSV per Anteprima */}
+                            <div className="flex items-center gap-2 text-xs">
+                              <span className="text-foreground/60">Destinatario in anteprima:</span>
+                              <select
+                                value={massPreviewRowIndex}
+                                onChange={(e) => setMassPreviewRowIndex(Number(e.target.value))}
+                                className="px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                              >
+                                {parsedCsvData.rows.map((row, idx) => (
+                                  <option key={idx} value={idx}>
+                                    Riga {idx + 1}: {selectedEmailCol && row[selectedEmailCol] ? row[selectedEmailCol] : `Record #${idx + 1}`}
                                   </option>
                                 ))}
                               </select>
                             </div>
+                          </div>
 
-                            <div>
-                              <span className="block text-xs font-semibold text-foreground/80 mb-1.5">
-                                Variabili disponibili per i blocchi dell&apos;email:
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {parsedCsvData.headers.map((h) => (
-                                  <button
-                                    key={h}
-                                    type="button"
-                                    onClick={() => {
-                                      navigator.clipboard.writeText(`{{${h}}}`);
-                                      alert(`Copiato: {{${h}}}`);
-                                    }}
-                                    className="px-2 py-1 rounded-lg bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 text-primary font-mono text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer"
-                                    title="Clicca per copiare la variabile"
-                                  >
-                                    <span>&#123;&#123;{h}&#125;&#125;</span>
-                                    <Copy size={10} className="text-foreground/40" />
-                                  </button>
-                                ))}
-                              </div>
-                              <p className="text-[11px] text-foreground/50 mt-1.5">
-                                Inserisci queste variabili nel testo o nell&apos;oggetto del template per personalizzare ogni messaggio.
-                              </p>
-                            </div>
-
-                            <div className="pt-2 border-t border-foreground/5 flex items-center justify-between text-xs text-foreground/60">
-                              <span>Privacy & Sicurezza:</span>
-                              <span className="text-emerald-400 font-bold">Nessun dato salvato sul server</span>
+                          {/* Frame Anteprima */}
+                          <div className="w-full flex justify-center bg-black/40 p-2 sm:p-4 rounded-2xl border border-foreground/5 overflow-hidden">
+                            <div className="w-full max-w-[650px] shadow-2xl rounded-xl border border-foreground/10 overflow-hidden">
+                              <iframe
+                                title="Mass Email Preview"
+                                srcDoc={massLivePreviewHtml}
+                                className="w-full h-[650px] bg-slate-900 border-0"
+                              />
                             </div>
                           </div>
-                        ) : (
-                          <div className="p-6 rounded-2xl bg-background/20 border border-dashed border-foreground/15 text-center text-xs text-foreground/50">
-                            Carica un file CSV per visualizzare le colonne e le variabili.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* SECTION: ANTEPRIMA TUTTA PAGINA */}
+                  <div className="p-4 sm:p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-foreground/70">
+                        <Eye size={15} /> Anteprima Live
+                        {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
+                          <div className="flex items-center gap-1.5 ml-2 normal-case font-normal">
+                            <span className="text-[11px] text-foreground/50">Subcase:</span>
+                            <select
+                              value={selectedSubcaseId || ""}
+                              onChange={(e) => setSelectedSubcaseId(e.target.value || null)}
+                              className="px-2 py-1 rounded-lg bg-foreground/10 border border-foreground/10 text-foreground text-xs font-semibold focus:outline-none focus:border-primary cursor-pointer"
+                            >
+                              <option value="">Nessuno (Default)</option>
+                              {activeTemplate.subcases.map((sub) => (
+                                <option key={sub.id} value={sub.id}>
+                                  {sub.name || sub.id} ({sub.id})
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         )}
                       </div>
-                    </div>
 
-                    {/* Azioni di Invio / Test */}
-                    {parsedCsvData && parsedCsvData.rows.length > 0 && (
-                      <div className="pt-4 border-t border-foreground/10 flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5">
+                        {/* Device Toggle */}
+                        <div className="flex items-center gap-1 p-1 rounded-xl bg-foreground/5 border border-foreground/5 text-xs">
                           <button
                             type="button"
-                            disabled={isDryRunningMass || isSendingMass}
-                            onClick={() => handleExecuteMassSend(true)}
-                            className="px-4 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-foreground text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 border border-foreground/10"
+                            onClick={() => setPreviewDevice("desktop")}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${previewDevice === "desktop" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"
+                              }`}
+                            title="Vista Computer (650px)"
                           >
-                            <Play size={13} />
-                            <span>{isDryRunningMass ? "Verifica in corso..." : "Simulazione (Dry-Run)"}</span>
+                            <Monitor size={15} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewDevice("mobile")}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${previewDevice === "mobile" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"
+                              }`}
+                            title="Vista Smartphone (360px)"
+                          >
+                            <Smartphone size={15} />
                           </button>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            disabled={isDryRunningMass || isSendingMass}
-                            onClick={() => setShowMassConfirmModal(true)}
-                            className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-lg hover:opacity-90 transition-all cursor-pointer flex items-center gap-2"
-                          >
-                            <Send size={14} />
-                            <span>
-                              {isSendingMass
-                                ? "Invio in corso..."
-                                : `Invia Email a ${parsedCsvData.rows.length} Destinatari`}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Report Risultati Invio o Dry-Run */}
-                  {massSendReport && (
-                    <div className="p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
-                      <div className="flex items-center justify-between border-b border-foreground/10 pb-3">
-                        <div className="flex items-center gap-2">
-                          {massSendReport.failed === 0 ? (
-                            <CheckCircle size={18} className="text-emerald-400" />
-                          ) : (
-                            <AlertCircle size={18} className="text-amber-400" />
-                          )}
-                          <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
-                            {massSendReport.dryRun ? "Esito Simulazione (Dry-Run)" : "Riepilogo Invio Massivo"}
-                          </h4>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs font-bold">
-                          <span className="text-emerald-400">Riuscite: {massSendReport.sent}</span>
-                          <span className={massSendReport.failed > 0 ? "text-rose-400" : "text-foreground/40"}>
-                            Fallite: {massSendReport.failed}
-                          </span>
-                          <span className="text-foreground/60">Totali: {massSendReport.total}</span>
-                        </div>
-                      </div>
-
-                      <div className="max-h-60 overflow-y-auto space-y-1.5 p-1 font-mono text-xs">
-                        {massSendReport.results.map((r, i) => (
-                          <div
-                            key={i}
-                            className={`p-2 rounded-xl flex items-center justify-between border ${
-                              r.success
-                                ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
-                                : "bg-rose-500/5 border-rose-500/20 text-rose-400"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2 truncate">
-                              {r.success ? <CheckCircle size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
-                              <span className="truncate">{r.to || "(senza email)"}</span>
-                              {r.simulated && <span className="text-[10px] opacity-60 uppercase font-sans font-bold">[Simulata]</span>}
-                            </div>
-                            <span className="text-[11px] truncate max-w-xs font-sans">
-                              {r.error || (r.id ? `ID: ${r.id}` : "OK")}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Card 2: Anteprima Live Controllata da Record CSV */}
-                  {parsedCsvData && parsedCsvData.rows.length > 0 && (
-                    <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
-                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground/10 pb-3">
-                        <div className="flex items-center gap-3">
-                          <Eye size={18} className="text-primary" />
-                          <h4 className="text-sm font-black uppercase tracking-wider text-foreground">
-                            Anteprima Live Personalizzata
-                          </h4>
-                        </div>
-
-                        {/* Selettore Riga CSV per Anteprima */}
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className="text-foreground/60">Destinatario in anteprima:</span>
-                          <select
-                            value={massPreviewRowIndex}
-                            onChange={(e) => setMassPreviewRowIndex(Number(e.target.value))}
-                            className="px-3 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
-                          >
-                            {parsedCsvData.rows.map((row, idx) => (
-                              <option key={idx} value={idx}>
-                                Riga {idx + 1}: {selectedEmailCol && row[selectedEmailCol] ? row[selectedEmailCol] : `Record #${idx + 1}`}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Frame Anteprima */}
-                      <div className="w-full flex justify-center bg-black/40 p-2 sm:p-4 rounded-2xl border border-foreground/5 overflow-hidden">
-                        <div className="w-full max-w-[650px] shadow-2xl rounded-xl border border-foreground/10 overflow-hidden">
-                          <iframe
-                            title="Mass Email Preview"
-                            srcDoc={massLivePreviewHtml}
-                            className="w-full h-[650px] bg-slate-900 border-0"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* SECTION: ANTEPRIMA TUTTA PAGINA */}
-              <div className="p-4 sm:p-6 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-foreground/70">
-                    <Eye size={15} /> Anteprima Live
-                    {activeTemplate.subcases && activeTemplate.subcases.length > 0 && (
-                      <div className="flex items-center gap-1.5 ml-2 normal-case font-normal">
-                        <span className="text-[11px] text-foreground/50">Subcase:</span>
-                        <select
-                          value={selectedSubcaseId || ""}
-                          onChange={(e) => setSelectedSubcaseId(e.target.value || null)}
-                          className="px-2 py-1 rounded-lg bg-foreground/10 border border-foreground/10 text-foreground text-xs font-semibold focus:outline-none focus:border-primary cursor-pointer"
+                        {/* Fullscreen Button */}
+                        <button
+                          type="button"
+                          onClick={() => setActiveTabSection("preview")}
+                          className="p-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/15 text-foreground/70 hover:text-foreground transition-colors cursor-pointer border border-foreground/5"
+                          title="Espandi a tutta pagina"
                         >
-                          <option value="">Nessuno (Default)</option>
-                          {activeTemplate.subcases.map((sub) => (
-                            <option key={sub.id} value={sub.id}>
-                              {sub.name || sub.id} ({sub.id})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-                  </div>
+                          <Maximize2 size={15} />
+                        </button>
 
-                  <div className="flex items-center gap-1.5">
-                    {/* Device Toggle */}
-                    <div className="flex items-center gap-1 p-1 rounded-xl bg-foreground/5 border border-foreground/5 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => setPreviewDevice("desktop")}
-                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                          previewDevice === "desktop" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"
-                        }`}
-                        title="Vista Computer (650px)"
-                      >
-                        <Monitor size={15} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPreviewDevice("mobile")}
-                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                          previewDevice === "mobile" ? "bg-foreground text-background" : "text-foreground/50 hover:text-foreground"
-                        }`}
-                        title="Vista Smartphone (360px)"
-                      >
-                        <Smartphone size={15} />
-                      </button>
+                        {/* Open in new tab button */}
+                        <button
+                          type="button"
+                          onClick={handleOpenInNewTab}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold transition-colors cursor-pointer"
+                          title="Apri l'anteprima dell'email in una nuova scheda a grandezza naturale"
+                        >
+                          <ExternalLink size={13} />
+                          <span className="hidden sm:inline">Nuova Scheda</span>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Fullscreen Button */}
-                    <button
-                      type="button"
-                      onClick={() => setActiveTabSection("preview")}
-                      className="p-1.5 rounded-xl bg-foreground/5 hover:bg-foreground/15 text-foreground/70 hover:text-foreground transition-colors cursor-pointer border border-foreground/5"
-                      title="Espandi a tutta pagina"
-                    >
-                      <Maximize2 size={15} />
-                    </button>
+                    {/* Compact Technical Header Inspector */}
+                    <div className="p-3 rounded-2xl bg-background/50 border border-foreground/10 text-xs space-y-1.5 font-mono">
+                      <div className="flex items-center justify-between text-[10px] text-foreground/50 uppercase tracking-wider font-sans font-bold">
+                        <span>Header Email Risolti</span>
+                        <span className="text-emerald-400 font-mono lowercase">{resolvedTechnicalFields.hasSampleJson ? "da JSON test" : "predefiniti"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="text-foreground/40 shrink-0 font-sans font-semibold">A:</span>
+                        <span className="text-emerald-400 font-bold truncate">
+                          {resolvedTechnicalFields.to || "(Nessun destinatario)"}
+                        </span>
+                        {resolvedTechnicalFields.name && (
+                          <span className="text-foreground/60 text-[11px] shrink-0 font-sans">
+                            ({resolvedTechnicalFields.name})
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 truncate text-[11px]">
+                        <span className="text-foreground/40 shrink-0 font-sans font-semibold">Oggetto:</span>
+                        <span className="text-foreground/90 font-sans truncate font-medium">
+                          {resolvedTechnicalFields.subject || "(Nessun oggetto)"}
+                        </span>
+                      </div>
+                    </div>
 
-                    {/* Open in new tab button */}
-                    <button
-                      type="button"
-                      onClick={handleOpenInNewTab}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold transition-colors cursor-pointer"
-                      title="Apri l'anteprima dell'email in una nuova scheda a grandezza naturale"
-                    >
-                      <ExternalLink size={13} />
-                      <span className="hidden sm:inline">Nuova Scheda</span>
-                    </button>
+                    {/* Email Live Iframe Frame */}
+                    <div className="w-full flex justify-center bg-black/40 p-2 sm:p-4 rounded-2xl border border-foreground/5 overflow-hidden">
+                      <div
+                        className={`transition-all duration-300 overflow-hidden shadow-2xl rounded-xl border border-foreground/10 ${previewDevice === "mobile" ? "w-[360px]" : "w-full max-w-[650px]"
+                          }`}
+                      >
+                        <iframe
+                          title="Email Live Preview"
+                          srcDoc={livePreviewHtml}
+                          className="w-full h-[750px] bg-slate-900 border-0"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Compact Technical Header Inspector */}
-                <div className="p-3 rounded-2xl bg-background/50 border border-foreground/10 text-xs space-y-1.5 font-mono">
-                  <div className="flex items-center justify-between text-[10px] text-foreground/50 uppercase tracking-wider font-sans font-bold">
-                    <span>Header Email Risolti</span>
-                    <span className="text-emerald-400 font-mono lowercase">{resolvedTechnicalFields.hasSampleJson ? "da JSON test" : "predefiniti"}</span>
-                  </div>
-                  <div className="flex items-center gap-2 truncate">
-                    <span className="text-foreground/40 shrink-0 font-sans font-semibold">A:</span>
-                    <span className="text-emerald-400 font-bold truncate">
-                      {resolvedTechnicalFields.to || "(Nessun destinatario)"}
-                    </span>
-                    {resolvedTechnicalFields.name && (
-                      <span className="text-foreground/60 text-[11px] shrink-0 font-sans">
-                        ({resolvedTechnicalFields.name})
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 truncate text-[11px]">
-                    <span className="text-foreground/40 shrink-0 font-sans font-semibold">Oggetto:</span>
-                    <span className="text-foreground/90 font-sans truncate font-medium">
-                      {resolvedTechnicalFields.subject || "(Nessun oggetto)"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Email Live Iframe Frame */}
-                <div className="w-full flex justify-center bg-black/40 p-2 sm:p-4 rounded-2xl border border-foreground/5 overflow-hidden">
-                  <div
-                    className={`transition-all duration-300 overflow-hidden shadow-2xl rounded-xl border border-foreground/10 ${
-                      previewDevice === "mobile" ? "w-[360px]" : "w-full max-w-[650px]"
-                    }`}
-                  >
-                    <iframe
-                      title="Email Live Preview"
-                      srcDoc={livePreviewHtml}
-                      className="w-full h-[750px] bg-slate-900 border-0"
-                    />
-                  </div>
                 </div>
               </div>
-
-            </div>
+            )}
           </div>
         )}
-      </div>
-    )}
       </div>
 
       {/* MODAL: ADD COMPONENT DIALOG */}

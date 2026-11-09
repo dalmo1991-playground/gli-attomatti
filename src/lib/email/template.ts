@@ -32,6 +32,17 @@ export interface EmailSubcaseConfig {
   sender_profile?: EmailSenderProfile;
 }
 
+export interface EmailUtmConfig {
+  enabled?: boolean;
+  utm_source?: string;    // e.g. "newsletter" or "email"
+  utm_medium?: string;    // e.g. "email"
+  utm_campaign?: string;  // e.g. "la-regione-2026" or "{{template_id}}"
+  utm_content?: string;   // e.g. "link" or "{{event_slug}}"
+  utm_term?: string;      // e.g. "gli-attomatti"
+  custom_params?: Record<string, string>; // any extra parameters e.g. { ref: "newsletter" }
+  apply_to_external?: boolean; // false = only internal / gliattomatti.ch links (default)
+}
+
 export interface EmailTemplateConfig {
   id?: string;
   name?: string;
@@ -44,6 +55,7 @@ export interface EmailTemplateConfig {
   field_mapping?: EmailFieldMapping;
   subcases?: EmailSubcaseConfig[];
   sender_profile?: EmailSenderProfile;
+  utm?: EmailUtmConfig;
 
   // Legacy fields preserved for backward compatibility
   badge?: string;
@@ -119,6 +131,210 @@ export function resolveEmailTheme(
 }
 
 /**
+ * Injects configured UTM tracking parameters into an HTML string by wrapping <a> tags.
+ * Preserves anchor fragments (#...), existing query parameters, and ignores mailto:, tel:, #.
+ */
+export function applyUtmTrackingToHtml({
+  html,
+  utm,
+  variables = {},
+  rawJsonObj,
+  templateId = "",
+  baseUrl = "https://gliattomatti.ch"
+}: {
+  html: string;
+  utm?: EmailUtmConfig;
+  variables?: Record<string, string>;
+  rawJsonObj?: any;
+  templateId?: string;
+  baseUrl?: string;
+}): string {
+  if (!html || !utm || utm.enabled === false) {
+    return html;
+  }
+
+  const r = (txt?: string) => {
+    if (!txt) return "";
+    const varsWithDefaults = {
+      template_id: templateId,
+      template: templateId,
+      ...variables
+    };
+    return replaceVars(txt, varsWithDefaults, rawJsonObj).trim();
+  };
+
+  const paramsToAppend: [string, string][] = [];
+
+  const source = r(utm.utm_source);
+  if (source) paramsToAppend.push(["utm_source", source]);
+
+  const medium = r(utm.utm_medium);
+  if (medium) paramsToAppend.push(["utm_medium", medium]);
+
+  const campaign = r(utm.utm_campaign);
+  if (campaign) paramsToAppend.push(["utm_campaign", campaign]);
+
+  const content = r(utm.utm_content);
+  if (content) paramsToAppend.push(["utm_content", content]);
+
+  const term = r(utm.utm_term);
+  if (term) paramsToAppend.push(["utm_term", term]);
+
+  if (utm.custom_params && typeof utm.custom_params === "object") {
+    for (const [k, v] of Object.entries(utm.custom_params)) {
+      const cleanKey = k.trim();
+      const cleanVal = r(v);
+      if (cleanKey && cleanVal) {
+        paramsToAppend.push([cleanKey, cleanVal]);
+      }
+    }
+  }
+
+  if (paramsToAppend.length === 0) {
+    return html;
+  }
+
+  // Determine site base host to distinguish internal links from third-party links
+  let siteHost = "gliattomatti.ch";
+  try {
+    const parsedBase = new URL(baseUrl);
+    siteHost = parsedBase.host.toLowerCase();
+  } catch {
+    siteHost = "gliattomatti.ch";
+  }
+
+  const applyToExternal = Boolean(utm.apply_to_external);
+
+  // Helper to add query params to a single URL string
+  const decorateUrl = (rawUrl: string): string => {
+    const trimmed = rawUrl.trim();
+    if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("mailto:") || trimmed.startsWith("tel:") || trimmed.startsWith("javascript:")) {
+      return rawUrl;
+    }
+
+    // Ignore ics downloads or calendar intent links if not desired
+    if (trimmed.includes(".ics") || trimmed.includes("calendar.google.com") || trimmed.includes("outlook.live.com")) {
+      return rawUrl;
+    }
+
+    const isRelative = trimmed.startsWith("/");
+    let isInternal = isRelative;
+
+    if (!isRelative) {
+      try {
+        const u = new URL(trimmed);
+        const host = u.host.toLowerCase();
+        if (host === siteHost || host.endsWith(`.${siteHost}`)) {
+          isInternal = true;
+        }
+      } catch {
+        return rawUrl;
+      }
+    }
+
+    if (!isInternal && !applyToExternal) {
+      return rawUrl;
+    }
+
+    // Split URL and hash fragment
+    const hashIndex = trimmed.indexOf("#");
+    const beforeHash = hashIndex !== -1 ? trimmed.slice(0, hashIndex) : trimmed;
+    const hash = hashIndex !== -1 ? trimmed.slice(hashIndex) : "";
+
+    const separator = beforeHash.includes("?") ? "&" : "?";
+    const queryString = paramsToAppend
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join("&");
+
+    return `${beforeHash}${separator}${queryString}${hash}`;
+  };
+
+  // Replace href attributes in HTML
+  return html.replace(/\bhref\s*=\s*(["'])([^"']+)\1/gi, (match, quote, url) => {
+    const decorated = decorateUrl(url);
+    return `href=${quote}${decorated}${quote}`;
+  });
+}
+
+/**
+ * Injects configured UTM tracking parameters into plain text links.
+ */
+export function applyUtmTrackingToText({
+  text,
+  utm,
+  variables = {},
+  rawJsonObj,
+  templateId = "",
+  baseUrl = "https://gliattomatti.ch"
+}: {
+  text: string;
+  utm?: EmailUtmConfig;
+  variables?: Record<string, string>;
+  rawJsonObj?: any;
+  templateId?: string;
+  baseUrl?: string;
+}): string {
+  if (!text || !utm || utm.enabled === false) {
+    return text;
+  }
+
+  const r = (txt?: string) => {
+    if (!txt) return "";
+    const varsWithDefaults = {
+      template_id: templateId,
+      template: templateId,
+      ...variables
+    };
+    return replaceVars(txt, varsWithDefaults, rawJsonObj).trim();
+  };
+
+  const paramsToAppend: [string, string][] = [];
+  const source = r(utm.utm_source);
+  if (source) paramsToAppend.push(["utm_source", source]);
+  const medium = r(utm.utm_medium);
+  if (medium) paramsToAppend.push(["utm_medium", medium]);
+  const campaign = r(utm.utm_campaign);
+  if (campaign) paramsToAppend.push(["utm_campaign", campaign]);
+  const content = r(utm.utm_content);
+  if (content) paramsToAppend.push(["utm_content", content]);
+  const term = r(utm.utm_term);
+  if (term) paramsToAppend.push(["utm_term", term]);
+
+  if (paramsToAppend.length === 0) return text;
+
+  let siteHost = "gliattomatti.ch";
+  try {
+    siteHost = new URL(baseUrl).host.toLowerCase();
+  } catch {
+    siteHost = "gliattomatti.ch";
+  }
+
+  const applyToExternal = Boolean(utm.apply_to_external);
+
+  // Match URLs in plain text (http:// or https://)
+  return text.replace(/https?:\/\/[^\s<>)"]+/g, (matchedUrl) => {
+    try {
+      const u = new URL(matchedUrl);
+      const host = u.host.toLowerCase();
+      const isInternal = host === siteHost || host.endsWith(`.${siteHost}`);
+      if (!isInternal && !applyToExternal) return matchedUrl;
+
+      const hashIndex = matchedUrl.indexOf("#");
+      const beforeHash = hashIndex !== -1 ? matchedUrl.slice(0, hashIndex) : matchedUrl;
+      const hash = hashIndex !== -1 ? matchedUrl.slice(hashIndex) : "";
+      const separator = beforeHash.includes("?") ? "&" : "?";
+      const queryString = paramsToAppend
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join("&");
+
+      return `${beforeHash}${separator}${queryString}${hash}`;
+    } catch {
+      return matchedUrl;
+    }
+  });
+}
+
+/**
  * Renders a complete, bulletproof HTML email using component blocks.
  */
 export function renderEmailHtml({
@@ -150,38 +366,57 @@ export function renderEmailHtml({
     return b;
   });
 
-  return renderEmailBlocksHtml({
-    blocks: blocksWithSettings,
-    variables,
-    rawJsonObj,
-    themeColors,
-    subject: template.subject || "Notifica da Gli Attomatti",
-    preheader: template.preheader || "",
-    baseUrl
-  });
-}
+    const baseHtml = renderEmailBlocksHtml({
+      blocks: blocksWithSettings,
+      variables,
+      rawJsonObj,
+      themeColors,
+      subject: template.subject || "Notifica da Gli Attomatti",
+      preheader: template.preheader || "",
+      baseUrl
+    });
+
+    // Automatically wrap links with UTM tracking if configured
+    return applyUtmTrackingToHtml({
+      html: baseHtml,
+      utm: template.utm,
+      variables,
+      rawJsonObj,
+      templateId: template.id,
+      baseUrl
+    });
+  }
 
 /**
  * Renders a plain-text alternative of the email from the blocks.
  */
 export function renderEmailText({
-  template,
-  variables = {},
-  rawJsonObj,
-  settings,
-  baseUrl
-}: {
-  template: EmailTemplateConfig;
-  variables?: Record<string, string>;
-  rawJsonObj?: any;
-  settings?: EmailSettingsConfig;
-  baseUrl?: string;
-}): string {
-  const blocks = convertLegacyToBlocks(template);
-  return renderEmailBlocksText({
-    blocks,
-    variables,
+    template,
+    variables = {},
     rawJsonObj,
+    settings,
     baseUrl
-  });
-}
+  }: {
+    template: EmailTemplateConfig;
+    variables?: Record<string, string>;
+    rawJsonObj?: any;
+    settings?: EmailSettingsConfig;
+    baseUrl?: string;
+  }): string {
+    const blocks = convertLegacyToBlocks(template);
+      const baseText = renderEmailBlocksText({
+        blocks,
+        variables,
+        rawJsonObj,
+        baseUrl
+      });
+
+      return applyUtmTrackingToText({
+        text: baseText,
+        utm: template.utm,
+        variables,
+        rawJsonObj,
+        templateId: template.id,
+        baseUrl
+      });
+    }
