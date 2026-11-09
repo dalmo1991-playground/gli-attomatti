@@ -104,19 +104,24 @@ export function LayoutWrapper({
   const isLanding = pathname?.startsWith("/landing") || pathname?.startsWith("/links") || pathname?.startsWith("/linktree");
 
   return (
-    <DevAccessGate isDev={isDev} initialHasAccess={initialHasAccess} devGateContent={content?.ui?.dev_gate}>
-      {isAdmin ? (
-        <main className="min-h-screen">
-          <DeploymentDetector serverVersion={serverVersion || "initial"} />
-          {children}
-        </main>
-      ) : (
-        <LivePreviewProvider initialContent={content}>
-          <LayoutInner content={content} isLanding={isLanding} isDev={isDev} serverVersion={serverVersion}>
+      <DevAccessGate
+        isDev={isDev}
+        initialHasAccess={initialHasAccess}
+        devGateContent={content?.ui?.dev_gate}
+        previewAccessConfig={content?.preview_access}
+      >
+        {isAdmin ? (
+          <main className="min-h-screen">
+            <DeploymentDetector serverVersion={serverVersion || "initial"} />
             {children}
-          </LayoutInner>
-        </LivePreviewProvider>
-      )}
-    </DevAccessGate>
-  );
+          </main>
+        ) : (
+          <LivePreviewProvider initialContent={content}>
+            <LayoutInner content={content} isLanding={isLanding} isDev={isDev} serverVersion={serverVersion}>
+              {children}
+            </LayoutInner>
+          </LivePreviewProvider>
+        )}
+      </DevAccessGate>
+      );
 }

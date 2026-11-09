@@ -56,7 +56,7 @@ export default function SpettacoloDettaglioClient({
         href: spettacoli.archive_href || "/Spettacoli",
         label: resolveSlugText(show.back_link_label, spettacoli.back_to_archive_label, "Torna all'Archivio")
       }}
-      mainHeading={resolveSlugText(show.main_heading, spettacoli.detail_main_heading, "Lo Spettacolo")}
+      mainHeading={resolveSlugText(show.main_heading ?? show.detail_main_heading, spettacoli.detail_main_heading, "Lo Spettacolo")}
       text={defaultText(show.text)}
       galleryImages={show.images}
       datesTitle={resolveSlugText(show.dates_title, spettacoli.detail_dates_title, "Date e Biglietti")}

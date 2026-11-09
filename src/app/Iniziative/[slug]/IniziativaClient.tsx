@@ -62,7 +62,7 @@ export default function IniziativaDettaglioClient({
         href: iniziative.archive_href || "/Iniziative",
         label: resolveSlugText(initiative.back_link_label, detail.back_link_label || iniziative.back_to_list_label, "Torna alle Iniziative")
       }}
-      mainHeading={resolveSlugText(initiative.main_heading, detail.initiative_heading || iniziative.detail_main_heading, "L'Iniziativa")}
+      mainHeading={resolveSlugText(initiative.main_heading ?? initiative.detail_main_heading, detail.initiative_heading || iniziative.detail_main_heading, "L'Iniziativa")}
       text={defaultText(initiative.text)}
       galleryImages={initiative.images}
       datesTitle={resolveSlugText(initiative.dates_title, detail.dates_title || iniziative.detail_dates_title, "Date e Iscrizioni")}
