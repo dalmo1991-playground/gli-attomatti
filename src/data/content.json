@@ -261,7 +261,7 @@
             },
             {
               "type": "text",
-              "text": "<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>La storia degli Attomatti è solo agli inizi. Scriviamo assieme i prossimi capitoli.</i></mark></span></div>"
+              "text": "<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>La storia degli Attomatti è solo agli inizi. Scriviamo assieme i prossimi capitoli. Segui la nostra storia <a href=\"/Chi_Siamo/Blog\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">qui</a>!</i></mark></span></div>"
             }
           ],
           "text": "<p><i>Ma il teatro, come la vita, è fatto anche di nuove sfide.</i></p>\n\n<p>Conclusa questa prima esperienza, emerge il desiderio di andare oltre. Il percorso compiuto ha dimostrato quanto il teatro possa unire persone diverse, trasformare le insicurezze in coraggio e dare vita a qualcosa di condiviso. Il regista sente così l’esigenza di ampliare il progetto, coinvolgere nuove energie e aprire le porte della compagnia a chiunque abbia voglia di mettersi in gioco.</p>\n\n<p>Del resto, Zurigo è una città in continuo movimento, abitata da persone che arrivano da Paesi, culture e percorsi differenti. Quante di loro stanno cercando un’occasione per incontrarsi, fare amicizia o semplicemente sentirsi parte di qualcosa?</p>\n\n<p><i>Il teatro potrebbe essere ancora una volta la risposta.</i></p>\n\n<p>Vengono organizzate due giornate di provini, pubblicizzate attraverso i social e il passaparola. La partecipazione è incoraggiante: arrivano soprattutto giovani adulti, molti intorno ai trent’anni, con esperienze diverse ma accomunati dal desiderio di mettersi alla prova.</p>\n\n<p>Sono due giornate intense, ricche di incontri e nuove possibilità.</p>\n\n<p>La compagnia si arricchisce così di nuovi volti, nuove energie e nuove ambizioni. E questa volta c’è già un progetto artistico pronto a prendere vita.</p>\n\n<p>Da qualche tempo, infatti, il regista sta lavorando a una personale rilettura della fiaba di Cenerentola, ispirata alle grandi versioni della tradizione ma destinata a diventare qualcosa di diverso.</p>\n\n<p>Una storia conosciuta da tutti, eppure ancora capace di sorprendere.</p>\n\n<p><i>Nasce così il progetto di Una Cenerentola.</i></p>",
@@ -271,9 +271,9 @@
       ],
       "navigation_links": [
         {
-          "label": "Home",
-          "href": "/",
-          "icon": "users",
+          "label": "Storie & Notizie",
+          "href": "/Chi_Siamo/Blog",
+          "icon": "newspaper",
           "visible": true
         },
         {
@@ -980,7 +980,7 @@
       "directions_badge_label": "Indicazioni"
     },
     "blog": {
-      "meta_title": "Blog & Racconti — Gli Attomatti",
+      "meta_title": "Storie & Notizie — Gli Attomatti",
       "meta_description": "Storie di scena, annunci, retroscena e racconti della compagnia teatrale Gli Attomatti a Zurigo.",
       "keywords": [
         "blog teatro zurigo",
@@ -989,13 +989,54 @@
       ],
       "title": "Storie & Notizie",
       "description": "Storie, annunci e retroscena dal palcoscenico.",
-      "year_prefix": "Anno",
+      "year_prefix": null,
       "discover_cta": "Leggi l'articolo",
       "back_to_archive_label": "Torna al Blog",
       "archive_href": "/Chi_Siamo/Blog",
       "empty_message": "Nessun articolo pubblicato al momento.",
       "not_found_title": "Articolo non trovato",
-      "articles": []
+      "articles": [
+        {
+          "slug": "gli-attomatti-la-regione-2026",
+          "title": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «la Regione»",
+          "year": "2026",
+          "date": "10 novembre 2026",
+          "timestamp": "2026-11-10T09:00:00.000Z",
+          "short_description": "Dalla formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Vedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. Il giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. Una chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.</p><p>L’articolo ripercorre tutte le tappe di questa avventura corale: il debutto con <i>Eduardo De Filippo</i>&nbsp;nell'opera <i>Ditegli sempre di sì</i>, le repliche e la tournée di <i>Una Cenerentola</i>, la partecipazione alla <i>Biennale del teatro amatoriale svizzero</i> e lo sguardo già rivolto alle trasferte future. Ma c'è spazio soprattutto per il nostro impegno quotidiano nella vita culturale cittadina, tra laboratori teatrali aperti a chiunque voglia salire sul palco e le serate di cineforum in italiano in collaborazione con <i>UNITRE</i>.</p><p>Un grazie di cuore a Moreno Invernizzi per l’attenzione, la curiosità e la cura con cui ha saputo dare voce alla nostra storia e alla nostra passione.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794222467540-0-q8py-ArticoloLaRegione.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Leggi l'articolo completo su <i><a href=\"https://www.laregione.ch/ticino7/ticino7/1960559\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">laRegione</a></i>.</p><div style=\"text-align: center;\"><i>Vuoi scoprire tutta la nostra storia? Leggila <a href=\"/Chi_Siamo\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">qua</a>!</i></div><div style=\"text-align: center;\"><i>Vuoi leggere partecipare ai prossimi capitoli? Iscriviti alla nostra <a href=\"/Registrazioni/newsletter\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">newsletter</a>!</i></div>"
+                }
+              ],
+              "text": "<p>Vedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. Il giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. Una chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.</p><p>L’articolo ripercorre tutte le tappe di questa avventura corale: il debutto con <i>Eduardo De Filippo</i>&nbsp;nell'opera <i>Ditegli sempre di sì</i>, le repliche e la tournée di <i>Una Cenerentola</i>, la partecipazione alla <i>Biennale del teatro amatoriale svizzero</i> e lo sguardo già rivolto alle trasferte future. Ma c'è spazio soprattutto per il nostro impegno quotidiano nella vita culturale cittadina, tra laboratori teatrali aperti a chiunque voglia salire sul palco e le serate di cineforum in italiano in collaborazione con <i>UNITRE</i>.</p><p>Un grazie di cuore a Moreno Invernizzi per l’attenzione, la curiosità e la cura con cui ha saputo dare voce alla nostra storia e alla nostra passione.</p>",
+              "images": [
+                {
+                  "url": "/images/1794222467540-0-q8py-ArticoloLaRegione.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   },
   "landings": [
