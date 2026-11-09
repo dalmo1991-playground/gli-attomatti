@@ -155,7 +155,7 @@ export function CarouselBlock({
                 alt={itemAlt}
                 fill
                 priority={idx === 0}
-                loading="eager"
+                loading={idx <= 1 ? "eager" : "lazy"}
                 unoptimized={isItemUnoptimized}
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 onError={() => handleImageError(idx)}
