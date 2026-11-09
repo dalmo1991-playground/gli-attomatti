@@ -890,6 +890,26 @@
               ]
             }
           ]
+        },
+        {
+          "slug": "biennale-scuol",
+          "title": "Non sottovalutare i 40: Gli Attomatti alla Biennale di Scuol",
+          "year": "",
+          "date": "26 ottobre 2026",
+          "timestamp": "2026-10-26T09:00:00.000Z",
+          "short_description": "Il racconto della trasferta de Gli Attomatti alla Biennale di Scuol: incontri senza barriere linguistiche e il debutto della commedia Non sottovalutare i 40.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "Capitolo 1",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
