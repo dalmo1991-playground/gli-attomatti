@@ -1723,7 +1723,7 @@
       {
         "id": "newsletter-gli-attomatti-la-regione-2026",
         "name": "Newsletter laRegione 11.2026",
-        "enabled": true,
+        "enabled": false,
         "subject": "Dalla Limmat al Ticino: Gli Attomatti si raccontano su «la Regione»",
         "preheader": "Nuovo articolo sul nostro blog.",
         "theme": "default",
