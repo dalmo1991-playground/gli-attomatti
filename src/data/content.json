@@ -29,6 +29,10 @@
       ]
     }
   },
+  "preview_access": {
+    "enabled": true,
+    "rules": []
+  },
   "navigation": [
     {
       "label": "Home",
