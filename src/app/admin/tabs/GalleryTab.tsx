@@ -226,6 +226,26 @@ export function GalleryTab({ onNavigateTab }: GalleryTabProps) {
 
       const count = stagedBlobs.length;
       setStagedFiles([]);
+
+      // Optimistic update: aggiungi subito le nuove immagini a inizio lista
+      const optimisticNewImages: MediaImage[] = stagedBlobs.map((blob) => {
+        const filename = blob.path.replace(/^public\/images\//, "");
+        const match = filename.match(/^(\d{10,14})-(.+)\.[^.]+$/);
+        const name = match ? match[2].replace(/[-_]/g, " ") : filename.replace(/\.[^.]+$/, "");
+        const timestamp = match ? parseInt(match[1], 10) : Date.now();
+        return {
+          url: blob.url,
+          name,
+          timestamp
+        };
+      });
+
+      setImages((prev) => {
+        const existingUrls = new Set(prev.map((img) => img.url));
+        const filteredNew = optimisticNewImages.filter((img) => !existingUrls.has(img.url));
+        return [...filteredNew, ...prev];
+      });
+
       setSuccessMessage(`${count} ${count === 1 ? "foto caricata" : "foto caricate"} con successo con 1 solo commit Git!`);
       setTimeout(() => setSuccessMessage(null), 6000);
       await fetchImages();

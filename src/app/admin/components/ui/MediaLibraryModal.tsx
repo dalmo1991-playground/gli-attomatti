@@ -186,7 +186,26 @@ export function MediaLibraryModal({
 
       const commitData = await commitRes.json();
 
-      // Refresh list
+      // Optimistic UI update: inserisci subito le foto caricate nello stato locale del modal
+      const optimisticNewImages: MediaImage[] = stagedBlobs.map((blob) => {
+        const filename = (blob.path || "").replace(/^public\/images\//, "");
+        const match = filename.match(/^(\d{10,14})-(.+)\.[^.]+$/);
+        const name = match ? match[2].replace(/[-_]/g, " ") : blob.originalName || filename;
+        const timestamp = match ? parseInt(match[1], 10) : Date.now();
+        return {
+          url: blob.url,
+          name,
+          timestamp
+        };
+      });
+
+      setImages((prev) => {
+        const existingUrls = new Set(prev.map((img) => img.url));
+        const filteredNew = optimisticNewImages.filter((img) => !existingUrls.has(img.url));
+        return [...filteredNew, ...prev];
+      });
+
+      // Refresh list in background
       await fetchImages();
 
       // Auto-select uploaded images
@@ -409,11 +428,10 @@ export function MediaLibraryModal({
                         onClose();
                       }
                     }}
-                    className={`group relative rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer border transition-all duration-200 flex flex-col bg-muted/20 ${
-                      isSelected
+                    className={`group relative rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer border transition-all duration-200 flex flex-col bg-muted/20 ${isSelected
                         ? "border-primary ring-2 ring-primary/40 shadow-lg shadow-primary/15 scale-[1.01]"
                         : "border-foreground/10 hover:border-foreground/25 hover:bg-muted/40 hover:scale-[1.01]"
-                    }`}
+                      }`}
                   >
                     {/* Thumbnail */}
                     <div className="aspect-[4/3] sm:aspect-square relative w-full overflow-hidden bg-black/40">
@@ -428,11 +446,10 @@ export function MediaLibraryModal({
 
                       {/* Selection Badge */}
                       <div
-                        className={`absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
-                          isSelected
+                        className={`absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${isSelected
                             ? "bg-primary text-white shadow-md scale-100 ring-2 ring-background"
                             : "bg-black/50 text-white/40 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
-                        }`}
+                          }`}
                       >
                         <Check size={12} strokeWidth={3} />
                       </div>
