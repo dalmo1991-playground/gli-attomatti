@@ -69,104 +69,106 @@ export function CarouselBlock({
     return () => clearInterval(timer);
   }, [count, isPaused, autoplayIntervalMs, nextSlide]);
 
-  // Keep track of which slides have been displayed/visited so we progressively mount them
-  // and NEVER unmount them once loaded (avoiding re-fetching when cycling through the carousel)
-  const [visitedIndices, setVisitedIndices] = useState<Set<number>>(() => new Set([0]));
-  // Traccia eventuali immagini che hanno fallito il caricamento per renderizzare fallback elegante a zero retry
+  // Traccia eventuali tentativi di retry (cache-busting) e fallimenti definitivi per ogni slide
+  const [retriedIndices, setRetriedIndices] = useState<Set<number>>(() => new Set());
   const [failedIndices, setFailedIndices] = useState<Set<number>>(() => new Set());
 
-  useEffect(() => {
-    setVisitedIndices((prev) => {
-      if (prev.has(currentIndex)) return prev;
-      const next = new Set(prev);
-      next.add(currentIndex);
-      return next;
-    });
-  }, [currentIndex]);
-
-    const handleImageError = (idx: number) => {
-      // Zero chiamate extra al server: se l'immagine fallisce, mostra immediatamente il fallback locale
-      setFailedIndices((prev) => {
+  const handleImageError = (idx: number) => {
+    // Primo errore (es. 404 salvato in cache dal browser durante il build Vercel):
+    // effettua 1 singolo retry con query param di cache-busting prima di mostrare il fallback
+    if (!retriedIndices.has(idx)) {
+      setRetriedIndices((prev) => {
         const next = new Set(prev);
         next.add(idx);
         return next;
       });
-    };
+      return;
+    }
 
-    const currentImage = validImages[currentIndex];
-    const { isVideo } = getSafeImageProps(currentImage?.url);
+    setFailedIndices((prev) => {
+      if (prev.has(idx)) return prev;
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+  };
 
-    return (
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-3xl shadow-2xl bg-muted/20 select-none group",
-          aspectRatioClass,
-          className
-        )}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {/* Ambient theatrical background glow */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <div className="absolute -top-4 -left-4 w-28 h-28 bg-primary/15 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-4 -right-4 w-36 h-36 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
-        </div>
+  const currentImage = validImages[currentIndex];
+  const { isVideo } = getSafeImageProps(currentImage?.url);
 
-        {/* Layered Image Stack:
-          Each slide that has been visited remains mounted in the DOM.
-          This ensures once an image is fetched, it is never re-requested from the server on subsequent loops. */}
-        {validImages.map((img, idx) => {
-          if (!visitedIndices.has(idx)) return null;
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-3xl shadow-2xl bg-muted/20 select-none group",
+        aspectRatioClass,
+        className
+      )}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Ambient theatrical background glow */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <div className="absolute -top-4 -left-4 w-28 h-28 bg-primary/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-4 -right-4 w-36 h-36 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
+      </div>
 
-          const isActive = idx === currentIndex;
-          const { src: itemSafeSrc, unoptimized: isItemUnoptimized } = getSafeImageProps(img?.url);
-          const itemAlt = img?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${idx + 1}` : "");
-          const isFailed = failedIndices.has(idx);
+      {/* Layered Image Stack:
+        Tutte le slide del carosello vengono renderizzate sin dall'SSR così da ricevere
+        lo stesso URL/deployment token ed evitare disallineamenti di cache tra la prima e le successive. */}
+      {validImages.map((img, idx) => {
+        const isActive = idx === currentIndex;
+        const { src: itemSafeSrc, unoptimized: isItemUnoptimized } = getSafeImageProps(img?.url);
+        const hasRetried = retriedIndices.has(idx);
+        const resolvedSrc = hasRetried
+          ? `${itemSafeSrc}${itemSafeSrc.includes("?") ? "&" : "?"}v=retry`
+          : itemSafeSrc;
+        const itemAlt = img?.alt || (resolvedFallbackAlt ? `${resolvedFallbackAlt} ${idx + 1}` : "");
+        const isFailed = failedIndices.has(idx);
 
-          return (
-            <div
-              key={`slide-${idx}-${itemSafeSrc}`}
-              className={cn(
-                "absolute inset-0 transition-opacity duration-700 ease-in-out",
-                isActive ? "opacity-100 z-1" : "opacity-0 pointer-events-none z-0"
-              )}
-              onClick={isActive && onImageClick ? () => onImageClick(currentIndex) : undefined}
-            >
-              {isFailed ? (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-muted/40 text-foreground/40 p-4 text-center select-none">
-                  <Image
-                    src="/images/1782553290530-TheaterCurtain.webp"
-                    alt="Gli Attomatti"
-                    fill
-                    className="object-cover opacity-25 filter grayscale"
-                    unoptimized
-                  />
-                  <div className="relative z-10 space-y-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-foreground/70">
-                      {itemAlt || "Immagine non disponibile"}
-                    </p>
-                  </div>
-                </div>
-              ) : (
+        return (
+          <div
+            key={`slide-${idx}-${itemSafeSrc}`}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-700 ease-in-out",
+              isActive ? "opacity-100 z-1" : "opacity-0 pointer-events-none z-0"
+            )}
+            onClick={isActive && onImageClick ? () => onImageClick(currentIndex) : undefined}
+          >
+            {isFailed ? (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-muted/40 text-foreground/40 p-4 text-center select-none">
                 <Image
-                  src={itemSafeSrc}
-                  alt={itemAlt}
+                  src="/images/1782553290530-TheaterCurtain.webp"
+                  alt="Gli Attomatti"
                   fill
-                  priority={idx === 0}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  unoptimized={isItemUnoptimized}
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  onError={() => handleImageError(idx)}
-                  className={cn(
-                    "transition-transform duration-700",
-                    isActive && onImageClick && "cursor-pointer",
-                    img?.no_crop ? "object-contain bg-background/50" : "object-cover group-hover:scale-105"
-                  )}
+                  className="object-cover opacity-25 filter grayscale"
+                  unoptimized
                 />
-              )}
-            </div>
-          );
-        })}
+                <div className="relative z-10 space-y-1">
+                  <p className="text-xs font-bold uppercase tracking-wider text-foreground/70">
+                    {itemAlt || "Immagine non disponibile"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <Image
+                src={resolvedSrc}
+                alt={itemAlt}
+                fill
+                priority={idx === 0}
+                loading="eager"
+                unoptimized={isItemUnoptimized}
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                onError={() => handleImageError(idx)}
+                className={cn(
+                  "transition-transform duration-700",
+                  isActive && onImageClick && "cursor-pointer",
+                  img?.no_crop ? "object-contain bg-background/50" : "object-cover group-hover:scale-105"
+                )}
+              />
+            )}
+          </div>
+        );
+      })}
 
         {/* Video Indicator Overlay */}
         {isVideo && (
