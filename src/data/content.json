@@ -1845,6 +1845,12 @@
           "reply_to": "compagniateatralegliattomatti@gmail.com",
           "from_name": "Gli Attomatti",
           "from_email": "newsletter@mail.gliattomatti.ch"
+        },
+        "utm": {
+          "enabled": true,
+          "utm_source": "newsletter",
+          "utm_medium": "email",
+          "utm_campaign": "la-regione-2026"
         }
       }
     ]
