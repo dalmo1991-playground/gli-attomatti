@@ -857,7 +857,7 @@
           "year": "2026",
           "date": "10 novembre 2026",
           "timestamp": "2026-11-10T09:00:00.000Z",
-          "short_description": "Dalle formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».",
+          "short_description": "Dalla formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».",
           "visible": true,
           "content_sections": [
             {
@@ -2649,7 +2649,7 @@
             "id": "desc-5u2yvvx",
             "type": "text",
             "enabled": true,
-            "content": "**Dalle formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».**",
+            "content": "**Dalla formazione del gruppo ai palcoscenici in giro per la Svizzera: il quotidiano della Svizzera italiana racconta il nostro viaggio e la nostra contagiosa «sana follia».**",
             "align": "center"
           },
           {
@@ -2678,6 +2678,27 @@
             "type": "text",
             "content": "Ti auguriamo una buona lettura.\nGli Attomatti.",
             "align": "left"
+          },
+          {
+            "id": "block-1794224476623",
+            "type": "divider",
+            "style": "solid",
+            "spacing": "md"
+          },
+          {
+            "id": "block-1794224551079",
+            "type": "heading",
+            "text": "Cosa è successo nel frattempo? ",
+            "level": "h3",
+            "align": "left"
+          },
+          {
+            "id": "block-1794224487991",
+            "type": "two_column",
+            "col1_title": "Cineforum",
+            "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti",
+            "col2_title": "Non sottovalutare il 40",
+            "col2_text": "Ci siamo esibiti alla Biennale di teatro amatoriale svizzero. Scopri qui il video dello spettacolo"
           },
           {
             "id": "div-foot-lng0bec",
