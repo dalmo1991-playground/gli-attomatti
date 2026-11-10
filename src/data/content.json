@@ -2589,23 +2589,23 @@
       "theme_color": "primary",
       "theme": {
         "preset": "emerald",
-        "background": "#FDF8F3",
-        "foreground": "#2B1810",
-        "primary": "#8C1D24",
-        "primaryForeground": "#FFFFFF",
-        "secondary": "#F3E8DB",
-        "secondaryForeground": "#2B1810",
-        "accent": "#C97A2B",
-        "accentForeground": "#FFFFFF",
-        "muted": "#7A5C4D"
+        "background": "#5C0F12",
+        "foreground": "#FFF8EE",
+        "primary": "#E8B04A",
+        "primaryForeground": "#2A0E0A",
+        "secondary": "#7DB88A",
+        "secondaryForeground": "#2A0E0A",
+        "accent": "#F08A4B",
+        "accentForeground": "#2A0E0A",
+        "muted": "#E6CDB8"
       },
       "header": {
         "logo_text": "Gli Attomatti & Libriamo",
-        "cta_label": "Acquista Biglietti",
+        "cta_label": "",
         "cta_href": ""
       },
       "sticky_bar": {
-        "enabled": true,
+        "enabled": false,
         "text": "Spettacolo Teatrale • Riserva il tuo posto",
         "cta_label": "Biglietti",
         "cta_href": ""
@@ -2614,14 +2614,14 @@
         {
           "id": "b-1794322436489-1",
           "type": "hero",
-          "badge": "Nuova Produzione",
-          "title": "Titolo dello Spettacolo",
-          "tagline": "Una breve frase coinvolgente che cattura subito l'attenzione del pubblico.",
-          "hero_image": "",
-          "primary_cta_label": "Acquista Biglietti",
-          "primary_cta_href": "",
-          "secondary_cta_label": "Dettagli Evento",
-          "secondary_cta_href": "#dettagli"
+          "badge": "gli attomatti insieme a Libriamo presentano",
+          "title": "Racconti di natale",
+          "tagline": "Letture, teatro e improvissazione in un unico spettacolo",
+          "hero_image": "/images/1794324053497-0-45co-Gemini_Generated_Image_xfypg4xfypg4xfyp.webp",
+          "primary_cta_label": "Registrati",
+          "primary_cta_href": "#registrazione",
+          "secondary_cta_label": "Ingresso Libero",
+          "secondary_cta_href": ""
         },
         {
           "id": "b-1794322436489-2",
