@@ -2109,6 +2109,51 @@
           "utm_medium": "email",
           "utm_campaign": "la-regione-2026"
         }
+      },
+      {
+        "id": "manual",
+        "name": "Manual email",
+        "enabled": false,
+        "subject": "Correzione iscrizione al cineforum",
+        "preheader": "",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "b1",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "b4",
+            "type": "text",
+            "content": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per il cineforum ma ci siamo accorti di un errore nell'indirizzo email. Lo abbiamo corretto e dovresti aver ricevuto la mail di conferma per il cineforum.\n\nTi aspettiamo in sala!\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "b6",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "b7",
+            "type": "footer",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+            "privacy_note": "Questa email è stata inviata manualmente.",
+            "show_privacy_link": true
+          }
+        ],
+        "field_mapping": {
+          "recipient_email_path": "{{email}}",
+          "recipient_name_path": "{{name}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti",
+          "from_email": "cineforum@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        }
       }
     ]
   },
