@@ -1101,11 +1101,165 @@
           "visible": true,
           "content_sections": [
             {
-              "title": "Capitolo 1",
+              "title": "Come nasce una fiaba",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                  "text": "<p>Ci eravamo lasciati proprio lì, sulla soglia di una nuova avventura, con i provini appena conclusi, un gruppo arricchito di volti nuovi e il copione di <i>Una Cenerentola</i> pronto a prendere vita. Avevamo promesso che quello sarebbe stato un nuovo capitolo della nostra storia, fatto di personaggi, costumi e palcoscenici capaci di portarci anche oltre i confini di Zurigo.</p>\n\n<p>È arrivato il momento di raccontarvi come sono andate davvero le cose.</p>\n\n<p>Tutto è cominciato in autunno, quando le giornate zurighesi si accorciano e la sala prove diventa un rifugio fisso. Mettere in piedi uno spettacolo corale con una formazione appena rinnovata non è stato uno scherzo. All'inizio, guardando l'intero copione, l'impresa ci sembrava gigantesca, quasi più grande di noi. C'erano l'emozione di chi saliva sul palco per la prima volta, il timore di non riuscire a incastrare tutti i pezzi in tempo e quella sana vertigine che accompagna le cose a cui si tiene davvero.</p>\n\n<p style=\"text-align: center;\"><span class=\"text-lg\"><i><mark>Ma avevamo una voglia matta di darci dentro.</mark></i></span></p>\n\n<p>Alle prove settimanali si sono presto aggiunti i weekend intensivi, giornate intere passate a provare e riprovare entrate, battute e movimenti finché le gambe non chiedevano pietà e le risate prendevano il sopravvento sulla stanchezza. Essendo una compagnia giovanissima e con pochissimi fondi in cassa, abbiamo scoperto in fretta l'arte dell'ingegno. Avevamo poche risorse, ma una quantità inesauribile di inventiva: ognuno ha messo a disposizione ciò che aveva, setacciando mercatini, cucendo stoffe a mano nel tempo libero, costruendo oggetti di scena in salotto e trasformando materiali di recupero in una vera scenografia.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>All'inizio avevamo solo un mucchio di fogli stampati, qualche scatolone e il terrore di dimenticare le battute. Poi, settimana dopo settimana, ci siamo accorti che non stavamo solo costruendo uno spettacolo: stavamo costruendo noi stessi.</p>"
+                }
+              ],
+              "text": "<p>Ci eravamo lasciati proprio lì, sulla soglia di una nuova avventura, con i provini appena conclusi, un gruppo arricchito di volti nuovi e il copione di <i>Una Cenerentola</i> pronto a prendere vita. Avevamo promesso che quello sarebbe stato un nuovo capitolo della nostra storia, fatto di personaggi, costumi e palcoscenici capaci di portarci anche oltre i confini di Zurigo.</p>\n\n<p>È arrivato il momento di raccontarvi come sono andate davvero le cose.</p>\n\n<p>Tutto è cominciato in autunno, quando le giornate zurighesi si accorciano e la sala prove diventa un rifugio fisso. Mettere in piedi uno spettacolo corale con una formazione appena rinnovata non è stato uno scherzo. All'inizio, guardando l'intero copione, l'impresa ci sembrava gigantesca, quasi più grande di noi. C'erano l'emozione di chi saliva sul palco per la prima volta, il timore di non riuscire a incastrare tutti i pezzi in tempo e quella sana vertigine che accompagna le cose a cui si tiene davvero.</p>\n\n<p style=\"text-align: center;\"><span class=\"text-lg\"><i><mark>Ma avevamo una voglia matta di darci dentro.</mark></i></span></p>\n\n<p>Alle prove settimanali si sono presto aggiunti i weekend intensivi, giornate intere passate a provare e riprovare entrate, battute e movimenti finché le gambe non chiedevano pietà e le risate prendevano il sopravvento sulla stanchezza. Essendo una compagnia giovanissima e con pochissimi fondi in cassa, abbiamo scoperto in fretta l'arte dell'ingegno. Avevamo poche risorse, ma una quantità inesauribile di inventiva: ognuno ha messo a disposizione ciò che aveva, setacciando mercatini, cucendo stoffe a mano nel tempo libero, costruendo oggetti di scena in salotto e trasformando materiali di recupero in una vera scenografia.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Si va in scena",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Poi, quasi senza che ce ne rendessimo conto, è arrivato gennaio. E con gennaio l'ora di fare sul serio davanti al pubblico di Zurigo.</p>\n<p>In quel fine settimana abbiamo capito cosa significa davvero far parte di una compagnia amatoriale: vuol dire dimenticarsi i ruoli fissi e indossare mille cappelli contemporaneamente. Prima ancora di diventare principi, matrigne o sorellastre, siamo stati carpentieri, costumisti dell'ultimo minuto, addetti alle luci, truccatori e maschere in biglietteria. Ognuno si è preso cura di un pezzetto dello spettacolo perché tutto funzionasse al meglio.</p>\n<p>Ma il ricordo più vivo di quelle tre serate resta nascosto dietro le quinte, nell'ora che precede l'apertura del sipario. Il profumo dei cartoni della pizza condivisi al volo sui tavoli del camerino, il caos allegro dei pennelli da trucco che passano di mano in mano, i costumi sistemati con le spille da balia a cinque minuti dall'inizio. E poi il nostro rito sacro: i giochi di gruppo in cerchio per sciogliere i muscoli, far scendere la tensione e guardarci negli occhi prima di uscire alla luce dei riflettori.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Buona la prima. Anzi, buone tutte e tre.</p>\n<p>Tre date completamente sold out, oltre trecentocinquanta biglietti staccati e una sala piena di calore, risate e applausi che ci hanno ripagato di ogni singola sera passata a provare sotto la pioggia autunnale.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Poi, quasi senza che ce ne rendessimo conto, è arrivato gennaio. E con gennaio l'ora di fare sul serio davanti al pubblico di Zurigo.</p>\n<p>In quel fine settimana abbiamo capito cosa significa davvero far parte di una compagnia amatoriale: vuol dire dimenticarsi i ruoli fissi e indossare mille cappelli contemporaneamente. Prima ancora di diventare principi, matrigne o sorellastre, siamo stati carpentieri, costumisti dell'ultimo minuto, addetti alle luci, truccatori e maschere in biglietteria. Ognuno si è preso cura di un pezzetto dello spettacolo perché tutto funzionasse al meglio.</p>\n<p>Ma il ricordo più vivo di quelle tre serate resta nascosto dietro le quinte, nell'ora che precede l'apertura del sipario. Il profumo dei cartoni della pizza condivisi al volo sui tavoli del camerino, il caos allegro dei pennelli da trucco che passano di mano in mano, i costumi sistemati con le spille da balia a cinque minuti dall'inizio. E poi il nostro rito sacro: i giochi di gruppo in cerchio per sciogliere i muscoli, far scendere la tensione e guardarci negli occhi prima di uscire alla luce dei riflettori.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "La carrozza si mette in moto verso Wetzikon",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Quando si spengono le luci dell'ultima replica, si ha sempre la sensazione che tutto sia finito. Ci si abbraccia, si smonta la scenografia e ci si lascia con quel velo di malinconia che segue le cose belle.</p>\n<p>Noi, però, non sapevamo che tra le poltrone di Zurigo sedeva qualcuno che aveva altri piani per la nostra Cenerentola.</p>\n<p>Durante le repliche di gennaio, infatti, erano venuti a vederci i rappresentanti delle Colonie Libere Italiane di Wetzikon. Lo spettacolo li aveva conquistati a tal punto da invitarci a portarlo sul loro palcoscenico in primavera. Non potevamo certo dire di no alla nostra prima vera trasferta.</p>\n<p>Rimettiamo insieme i pezzi dopo oltre un mese di pausa. E chi fa teatro lo sa: fermarsi per qualche settimana significa dover riaccordare tutti gli strumenti. Le battute sembrano essersi nascoste in qualche angolo della memoria, i tempi comici vanno rispolverati e il ritmo di gruppo richiede qualche prova di rodaggio per tornare a girare come un orologio. Ma è bastato ritrovarsi in sala perché la complicità facesse di nuovo il suo lavoro.</p>\n<p>Portare lo spettacolo su un palco nuovo ti toglie tutti i punti di riferimento abituali. Ti resta solo una bussola a cui aggrapparti: lo sguardo dei tuoi compagni di scena</p>\n<p>Wetzikon dista pochi chilometri da Zurigo, eppure caricare le auto di costumi e quinte per portare il nostro spettacolo fuori dalla nostra sala abituale aveva già il sapore delle grandi spedizioni. L'accoglienza della comunità locale è stata straordinaria: un pubblico caloroso, generoso e partecipe che ci ha fatto sentire a casa fin dal primo minuto.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Quando si spengono le luci dell'ultima replica, si ha sempre la sensazione che tutto sia finito. Ci si abbraccia, si smonta la scenografia e ci si lascia con quel velo di malinconia che segue le cose belle.</p>\n<p>Noi, però, non sapevamo che tra le poltrone di Zurigo sedeva qualcuno che aveva altri piani per la nostra Cenerentola.</p>\n<p>Durante le repliche di gennaio, infatti, erano venuti a vederci i rappresentanti delle Colonie Libere Italiane di Wetzikon. Lo spettacolo li aveva conquistati a tal punto da invitarci a portarlo sul loro palcoscenico in primavera. Non potevamo certo dire di no alla nostra prima vera trasferta.</p>\n<p>Rimettiamo insieme i pezzi dopo oltre un mese di pausa. E chi fa teatro lo sa: fermarsi per qualche settimana significa dover riaccordare tutti gli strumenti. Le battute sembrano essersi nascoste in qualche angolo della memoria, i tempi comici vanno rispolverati e il ritmo di gruppo richiede qualche prova di rodaggio per tornare a girare come un orologio. Ma è bastato ritrovarsi in sala perché la complicità facesse di nuovo il suo lavoro.</p>\n<p>Portare lo spettacolo su un palco nuovo ti toglie tutti i punti di riferimento abituali. Ti resta solo una bussola a cui aggrapparti: lo sguardo dei tuoi compagni di scena</p>\n<p>Wetzikon dista pochi chilometri da Zurigo, eppure caricare le auto di costumi e quinte per portare il nostro spettacolo fuori dalla nostra sala abituale aveva già il sapore delle grandi spedizioni. L'accoglienza della comunità locale è stata straordinaria: un pubblico caloroso, generoso e partecipe che ci ha fatto sentire a casa fin dal primo minuto.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Una tira l'altra: la spedizione in Ticino",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Con le repliche teatrali, a volte, succede esattamente come con le ciliegie: una tira l'altra.</p>\n<p>Nel frattempo, infatti, Gli Attomatti erano entrati ufficialmente a far parte della Federazione Filodrammatiche della Svizzera Italiana (FFSI). Proprio a Wetzikon erano presenti in sala alcuni rappresentanti della Federazione, venuti a curiosare e a conoscere questa nuova realtà zurighese. Anche a loro la nostra Cenerentola ha strappato più di un sorriso, e così è arrivato un invito che ci ha riempito di orgoglio: portare lo spettacolo in Ticino, a Tenero, per una quinta data.</p>\n<p>Più che una semplice trasferta teatrale, il weekend a Tenero è stato l’occasione perfetta per vivere la compagnia anche fuori dalla sala prove.</p>\n<p>Arrivare in Ticino significava però anche misurarsi con una sfida del tutto nuova. A Zurigo e dintorni molti spettatori ci conoscevano o facevano parte della nostra rete; a Tenero ci presentavamo davanti a un pubblico completamente nuovo, abituato per tradizione alle commedie in dialetto ticinese.</p>\n<p>Come avrebbero accolto una compagnia venuta da oltre il Gottardo con una Cenerentola tutta in italiano?</p>\n<p>La risposta ce l'ha data la sala, molto calorosa ed attenta. Sentire un pubblico che non ci aveva mai visto prima ridere a crepapelle, lasciarsi trasportare dalla storia e regalarci un applauso finale lunghissimo è stata una delle soddisfazioni più grandi di tutta la stagione.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Con le repliche teatrali, a volte, succede esattamente come con le ciliegie: una tira l'altra.</p>\n<p>Nel frattempo, infatti, Gli Attomatti erano entrati ufficialmente a far parte della Federazione Filodrammatiche della Svizzera Italiana (FFSI). Proprio a Wetzikon erano presenti in sala alcuni rappresentanti della Federazione, venuti a curiosare e a conoscere questa nuova realtà zurighese. Anche a loro la nostra Cenerentola ha strappato più di un sorriso, e così è arrivato un invito che ci ha riempito di orgoglio: portare lo spettacolo in Ticino, a Tenero, per una quinta data.</p>\n<p>Più che una semplice trasferta teatrale, il weekend a Tenero è stato l’occasione perfetta per vivere la compagnia anche fuori dalla sala prove.</p>\n<p>Arrivare in Ticino significava però anche misurarsi con una sfida del tutto nuova. A Zurigo e dintorni molti spettatori ci conoscevano o facevano parte della nostra rete; a Tenero ci presentavamo davanti a un pubblico completamente nuovo, abituato per tradizione alle commedie in dialetto ticinese.</p>\n<p>Come avrebbero accolto una compagnia venuta da oltre il Gottardo con una Cenerentola tutta in italiano?</p>\n<p>La risposta ce l'ha data la sala, molto calorosa ed attenta. Sentire un pubblico che non ci aveva mai visto prima ridere a crepapelle, lasciarsi trasportare dalla storia e regalarci un applauso finale lunghissimo è stata una delle soddisfazioni più grandi di tutta la stagione.</p>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
+            },
+            {
+              "title": "Le scarpette nel baule",
+              "blocks": [
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Tornati dal Ticino, abbiamo capito che era arrivato il momento di chiudere il sipario su questa avventura e riporre con cura le scarpette di Cenerentola nel nostro baule.</p>\n\n<p>Guardandoci indietro, facciamo quasi fatica a credere a quanta strada abbiamo percorso in pochi mesi. Questa commedia è stata molto più di un copione ben riuscito: è stata una palestra di vita e di amicizia che ci ha cambiati profondamente, uno per uno.</p>\n\n<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>In autunno eravamo partiti come quindici persone con la voglia di recitare. A fine primavera siamo tornati a casa come Gli Attomatti.</i></mark></span></div>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1782553290530-TheaterCurtain.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Per ora, dunque, <i>Una Cenerentola</i> si prende il suo meritato riposo. O almeno, così avevamo promesso a noi stessi mentre chiudevamo gli scatoloni della scenografia.</p>\n\n<p>Perché in realtà, a dirla tutta, quel baule non lo abbiamo chiuso poi così a doppia mandata. Qualche voce di corridoio suggerisce che le nostre scarpette abbiano già nostalgia del palcoscenico e che...</p>\n\n<p>Ma non sveliamo troppo.</p> \n\n<p>Ogni fiaba che si rispetti ha bisogno dei suoi segreti, e questo capitolo lo scriveremo insieme al momento giusto. Continuate a seguirci qui sul sito e sulla nostra pagina Instagram: il bello, come sempre, deve ancora venire!</p>\n\n<p>Prima di voltare pagina, vogliamo dire grazie a chi ha reso possibile questo viaggio: a chi ci ha invitato e accolto con un entusiasmo straordinario, a ogni singolo spettatore che ha scelto di sedersi in platea, ridere con noi e farci sentire a casa su ogni palco, e, soprattutto, a tutti i volontari che hanno dedicato qualche ora per aiutarci nella messa in scena.</p>"
+                }
+              ],
+              "text": "<p>Tornati dal Ticino, abbiamo capito che era arrivato il momento di chiudere il sipario su questa avventura e riporre con cura le scarpette di Cenerentola nel nostro baule.</p>\n\n<p>Guardandoci indietro, facciamo quasi fatica a credere a quanta strada abbiamo percorso in pochi mesi. Questa commedia è stata molto più di un copione ben riuscito: è stata una palestra di vita e di amicizia che ci ha cambiati profondamente, uno per uno.</p>\n\n<div style=\"text-align: center;\"><span class=\"text-lg\"><mark><i>In autunno eravamo partiti come quindici persone con la voglia di recitare. A fine primavera siamo tornati a casa come Gli Attomatti.</i></mark></span></div>",
+              "images": [
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1782553290530-TheaterCurtain.webp",
+                  "alt": "Foto articolo"
                 }
               ]
             }
