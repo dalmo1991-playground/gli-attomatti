@@ -2587,6 +2587,7 @@
       "title": "Natale a teatro",
       "active": true,
       "theme_color": "primary",
+      "ticket_label": null,
       "theme": {
         "preset": "emerald",
         "background": "#5C0F12",
@@ -2620,20 +2621,68 @@
           "hero_image": "/images/1794324053497-0-45co-Gemini_Generated_Image_xfypg4xfypg4xfyp.webp",
           "primary_cta_label": "Registrati",
           "primary_cta_href": "#registrazione",
-          "secondary_cta_label": "Ingresso Libero",
+          "secondary_cta_label": "",
           "secondary_cta_href": ""
+        },
+        {
+          "id": "b-1794324712089",
+          "type": "synopsis",
+          "title": "L'evento",
+          "text": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+          "quote": "",
+          "quote_author": ""
         },
         {
           "id": "b-1794322436489-2",
           "type": "event_details",
-          "title": "Data e Informazioni",
-          "date": "Sabato 20:00",
-          "location": "Zurigo",
-          "location_href": "",
-          "price": "CHF 25.-",
-          "info_badge": "Posti limitati",
-          "cta_label": "Prenota ora",
-          "cta_href": ""
+          "title": "Tutte le informazioni",
+          "date": "Mercoledì XX dicembre, ore 20:00",
+          "location": "Balberstrasse 47, 8038 Zürich",
+          "location_href": "/Location/sala-wollishofen",
+          "price": "INGRESSO LIBERO",
+          "info_badge": "",
+          "cta_label": "Registrati",
+          "cta_href": "#registrazione"
+        },
+        {
+          "id": "b-1794324792724",
+          "type": "faq",
+          "title": "Domande Frequenti",
+          "items": [
+            {
+              "question": "Come funziona l'accesso?",
+              "answer": "L'ingresso è libero previa registrazione. La sala apre 15 minuti prima dell'evento. Si prega di essere puntuali."
+            },
+            {
+              "question": "Come raggiungo la sala ABZ Saal a Wollishofen?",
+              "answer": "La sala si trova in Balberstrasse 47 a Zurigo. È comodamente servita dai mezzi pubblici con il Tram 7 e la stazione ferroviaria S-Bahn Wollishofen. Indicazioni precise possono essere trovate [qui](/Location/sala-wollishofen)"
+            },
+            {
+              "question": "Perché è richiesta la prenotazione?",
+              "answer": "Sapere in anticipo quanti saranno i partecipanti ci aiuta ad organizzare meglio la serata."
+            },
+            {
+              "question": "Come mi devo vestire?",
+              "answer": "Vi invitiamo ad utilizzare abiti comodi per facilitare il movimento. In caso di mal tempo, saremmo grati se poteste portare un paio di scarpe di riserva pulite o dei calzini da ginnastica in modo da non sporcare troppo la sala."
+            }
+          ]
+        },
+        {
+          "id": "b-1794324795008",
+          "type": "tally",
+          "title": "Iscrizione Online",
+          "subtitle": "Compila il modulo sottostante per confermare la tua partecipazione.",
+          "tally_url": "https://tally.so/r/NqDGbQ",
+          "fallback_label": "Apri modulo Tally",
+          "show_privacy_note": true,
+          "anchor": "registrazione"
+        },
+        {
+          "id": "b-1794325119592",
+          "type": "closing_cta",
+          "title": "Importante",
+          "text": "Durante la serata possono essere effettuate riprese fotografiche o audiovisive d'insieme per documentazione culturale e rassegna stampa. Per ulteriori informazioni, consulta i nostri [Termini & Condizioni](/Termini)",
+          "cta_label": ""
         }
       ]
     }
