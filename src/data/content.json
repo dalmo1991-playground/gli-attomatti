@@ -45,6 +45,13 @@
         "path": "/Chi_Siamo/Blog/una-cenerentola",
         "token": "anteprima-blog",
         "enabled": true
+      },
+      {
+        "id": "rule-1794325479976",
+        "label": "Nuova anteprima riservata",
+        "path": "/landing/natale-a-teatro",
+        "token": "libriamo",
+        "enabled": true
       }
     ]
   },
