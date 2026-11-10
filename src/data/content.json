@@ -42,7 +42,7 @@
       {
         "id": "rule-1794222859123",
         "label": "Nuova anteprima riservata",
-        "path": "/Chi_Siamo/Blog/biennale-scuol",
+        "path": "/Chi_Siamo/Blog/una-cenerentola",
         "token": "anteprima-blog",
         "enabled": true
       }
@@ -1129,6 +1129,10 @@
                     {
                       "url": "/images/1794303416994-9lgv-DSD02586.webp",
                       "alt": "Foto articolo"
+                    },
+                    {
+                      "url": "/images/1794303404674-ku8t-DSD02240.webp",
+                      "alt": "Foto articolo"
                     }
                   ]
                 },
@@ -1157,6 +1161,10 @@
                 },
                 {
                   "url": "/images/1794303416994-9lgv-DSD02586.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1794303404674-ku8t-DSD02240.webp",
                   "alt": "Foto articolo"
                 }
               ]
