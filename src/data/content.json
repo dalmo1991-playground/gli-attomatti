@@ -2363,16 +2363,31 @@
       },
       {
         "id": "sec-1794153028242",
-        "title": "Dicono di noi",
+        "title": "Le nostre storie",
         "visible": true
       },
       {
         "id": "sec-1794153425923",
+        "title": "Dicono di noi",
+        "visible": true
+      },
+      {
+        "id": "sec-1794306350250",
         "title": "Come trovarci",
         "visible": true
       }
     ],
     "links": [
+      {
+        "id": "link-1794306486255",
+        "title": "Gli Attomatti alla Biennale di Scuol",
+        "subtitle": "Il racconto della trasferta",
+        "url": "/Chi_Siamo/Blog/biennale-scuol",
+        "icon": "Theater",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153028242"
+      },
       {
         "id": "link-1794154045659",
         "title": "Iscriviti alla newsletter",
@@ -2391,7 +2406,7 @@
         "icon": "Globe",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153028242"
+        "section_id": "sec-1794153425923"
       },
       {
         "id": "link-1794153533363",
@@ -2401,7 +2416,7 @@
         "icon": "Globe",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153028242"
+        "section_id": "sec-1794153425923"
       },
       {
         "id": "link-1794153042463",
@@ -2422,7 +2437,7 @@
         "icon": "MapPin",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153425923"
+        "section_id": "sec-1794306350250"
       }
     ],
     "footer_text": "Gli Attomatti"
