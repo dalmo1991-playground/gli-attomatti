@@ -2580,6 +2580,62 @@
         "accentForeground": "#ffffff",
         "muted": "#ffffff"
       }
+    },
+    {
+      "id": "landing-1794322436489",
+      "slug": "natale-a-teatro",
+      "title": "Natale a teatro",
+      "active": true,
+      "theme_color": "primary",
+      "theme": {
+        "preset": "emerald",
+        "background": "#FDF8F3",
+        "foreground": "#2B1810",
+        "primary": "#8C1D24",
+        "primaryForeground": "#FFFFFF",
+        "secondary": "#F3E8DB",
+        "secondaryForeground": "#2B1810",
+        "accent": "#C97A2B",
+        "accentForeground": "#FFFFFF",
+        "muted": "#7A5C4D"
+      },
+      "header": {
+        "logo_text": "Gli Attomatti & Libriamo",
+        "cta_label": "Acquista Biglietti",
+        "cta_href": ""
+      },
+      "sticky_bar": {
+        "enabled": true,
+        "text": "Spettacolo Teatrale • Riserva il tuo posto",
+        "cta_label": "Biglietti",
+        "cta_href": ""
+      },
+      "blocks": [
+        {
+          "id": "b-1794322436489-1",
+          "type": "hero",
+          "badge": "Nuova Produzione",
+          "title": "Titolo dello Spettacolo",
+          "tagline": "Una breve frase coinvolgente che cattura subito l'attenzione del pubblico.",
+          "hero_image": "",
+          "primary_cta_label": "Acquista Biglietti",
+          "primary_cta_href": "",
+          "secondary_cta_label": "Dettagli Evento",
+          "secondary_cta_href": "#dettagli"
+        },
+        {
+          "id": "b-1794322436489-2",
+          "type": "event_details",
+          "title": "Data e Informazioni",
+          "date": "Sabato 20:00",
+          "location": "Zurigo",
+          "location_href": "",
+          "price": "CHF 25.-",
+          "info_badge": "Posti limitati",
+          "cta_label": "Prenota ora",
+          "cta_href": ""
+        }
+      ]
     }
   ],
   "ticketing_hub": {
