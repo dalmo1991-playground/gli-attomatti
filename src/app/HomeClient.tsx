@@ -15,6 +15,7 @@ import { getHeroTitleSizeClass, getTaglineSizeClass } from "@/lib/typography";
 import { useLiveContent } from "@/components/dev/LivePreviewContext";
 import { getImagePositionClass, getImageObjectPositionStyle } from "@/lib/imageAlign";
 import { CarouselBlock } from "@/components/ui/CarouselBlock";
+import { HeroCtaActions } from "@/components/ui/HeroCtaActions";
 import { getSafeImageProps } from "@/lib/youtube";
 import { trackInitiateCheckout } from "@/lib/tracking";
 
@@ -230,59 +231,19 @@ export default function HomeClient({ content: initialContent }: { content: any }
                   )}
 
                   {/* Buttons / Actions Area */}
-                  {(() => {
-                    const primaryCta = defaultText(activeShows[currentShowIndex].cta);
-                    const secondaryCta = defaultText(activeShows[currentShowIndex].secondary_cta, activeShows[currentShowIndex].details_label);
-                    if (!primaryCta && !secondaryCta) return null;
-
-                    return (
-                      <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
-                        {/* Button 1 */}
-                        {primaryCta && (
-                          activeShows[currentShowIndex].cta_href ? (
-                            <Link
-                              href={activeShows[currentShowIndex].cta_href}
-                              prefetch={false}
-                              onClick={() =>
-                                trackInitiateCheckout(
-                                  activeShows[currentShowIndex].title || "Spettacolo",
-                                  activeShows[currentShowIndex].cta_href,
-                                  "home_hero"
-                                )
-                              }
-                              className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
-                            >
-                              {primaryCta}
-                              <ArrowRight size={18} className="ml-2" />
-                            </Link>
-                          ) : (
-                            <div className="px-6 py-2.5 bg-primary/20 border-2 border-primary/30 text-primary rounded-xl font-black text-base flex items-center justify-center backdrop-blur-md shadow-lg shadow-primary/10">
-                              <Info size={16} className="mr-2 opacity-80" />
-                              {primaryCta}
-                            </div>
-                          )
-                        )}
-
-                        {/* Button 2 */}
-                        {secondaryCta && (
-                          (activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href) ? (
-                            <Link
-                              href={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
-                              prefetch={false}
-                              className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
-                            >
-                              {secondaryCta}
-                            </Link>
-                          ) : (
-                            <div className="px-6 py-2.5 glass border-2 border-secondary/30 text-secondary rounded-xl font-black text-base flex items-center justify-center shadow-xl">
-                              <Info size={16} className="mr-2 text-secondary opacity-80" />
-                              {secondaryCta}
-                            </div>
-                          )
-                        )}
-                      </div>
-                    );
-                  })()}
+                  <HeroCtaActions
+                    primaryLabel={defaultText(activeShows[currentShowIndex].cta)}
+                    primaryHref={activeShows[currentShowIndex].cta_href}
+                    onPrimaryClick={() =>
+                      trackInitiateCheckout(
+                        activeShows[currentShowIndex].title || "Spettacolo",
+                        activeShows[currentShowIndex].cta_href,
+                        "home_hero"
+                      )
+                    }
+                    secondaryLabel={defaultText(activeShows[currentShowIndex].secondary_cta, activeShows[currentShowIndex].details_label)}
+                    secondaryHref={activeShows[currentShowIndex].secondary_cta_href || activeShows[currentShowIndex].details_href}
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>

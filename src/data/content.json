@@ -2601,7 +2601,7 @@
         "foreground": "#FFF8EE",
         "primary": "#E8B04A",
         "primaryForeground": "#2A0E0A",
-        "secondary": "#7DB88A",
+        "secondary": "#37b027",
         "secondaryForeground": "#2A0E0A",
         "accent": "#F08A4B",
         "accentForeground": "#2A0E0A",
@@ -2628,7 +2628,7 @@
           "hero_image": "/images/1794324053497-0-45co-Gemini_Generated_Image_xfypg4xfypg4xfyp.webp",
           "primary_cta_label": "Registrati",
           "primary_cta_href": "#registrazione",
-          "secondary_cta_label": "",
+          "secondary_cta_label": "Ingresso Libero",
           "secondary_cta_href": ""
         },
         {
