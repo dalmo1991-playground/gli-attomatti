@@ -40,11 +40,15 @@ export interface HeroPageBlock extends BasePageBlock {
 
 export interface EventDetailsPageBlock extends BasePageBlock {
   type: "event_details";
-  title?: string;
+  title?: string | null;
   date?: string;
+  date_time_label?: string | null;
   location?: string;
+  location_label?: string | null;
   location_href?: string;
+  google_maps_label?: string | null;
   price?: string;
+  ticket_label?: string | null;
   info_badge?: string;
   cta_label?: string;
   cta_href?: string;

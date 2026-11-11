@@ -202,10 +202,10 @@ export function PageBlockRenderer({
           case "event_details": {
             const anchor = getBlockAnchor(block, "event_details");
             const eventDetailsTitle = defaultText(block.title, defaults.event_details_title, "Data e Informazioni");
-            const dateTimeLabel = defaultText(defaults.date_time_label, "Data & Ora");
-            const locationLabel = defaultText(defaults.location_label, "Luogo");
-            const mapsLabel = defaultText(defaults.google_maps_label, "Apri su Google Maps");
-            const ticketLabel = defaultText(defaults.ticket_label, "Biglietto");
+            const dateTimeLabel = defaultText(block.date_time_label, defaults.date_time_label, "Data & Ora");
+            const locationLabel = defaultText(block.location_label, defaults.location_label, "Luogo");
+            const mapsLabel = defaultText(block.google_maps_label, defaults.google_maps_label, "Apri su Google Maps");
+            const ticketLabel = defaultText(block.ticket_label, defaults.ticket_label, "Biglietto");
 
             return (
               <section key={block.id || bIdx} id={anchor} className="py-16 px-4 sm:px-6 scroll-mt-24 relative">
