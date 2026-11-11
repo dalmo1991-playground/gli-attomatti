@@ -1386,13 +1386,15 @@
           "visible": true,
           "content_sections": [
             {
-              "title": "Capitolo 1",
+              "title": "",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                  "text": "<div style=\"text-align: left;\"><span class=\"text-lg\"><i>\nFilastrocca corta<br>\nRacconta di noi <br>\nMa forse chissà,<br>\nanche un pochino di voi.\n</i></span></div><div><br></div>\n<div style=\"text-align: left;\"><span class=\"text-lg\"><i>\nCi piace pensare che i luoghi<br>\noltre ai quali non possiamo vedere,<br>\nLuoghi come montagne, mare<br>\nDistese di terra infinita <br>\nChe non si può quantificare, <br>\nEcco, ci piace pensare<br>\nChe, quei luoghi, noi li possiamo immaginare <br>\nE con la fantasia, ci portano via.<br>\nLa signora con l’ombrello <br>\nAdesso vive in un castello<br>\nChe non è fatto di pietre e cemento<br>\nMa che se lo porta via il vento! <br>\nLa fantasia ci ha portati in questa compagnia.<br> \nNoi quei luoghi infiniti <br>\nLi viviamo al contrario.<br>\nPerché non è da fuori che li immaginiamo.<br> \nSono luoghi che ci abitano dentro<br>\nE un giorno sei calzolaio <br>\nE l’altro invece sei un marinaio. <br>\nMa la cosa più bella ancora <br>\nÈ che vivendo un giorno da malfattore <br>\nE l’altro da sacro protettore<br>\nImpari a conoscere il male ed il bene,<br>\nImpari a conoscere anche te stesso<br>\nChe forse, è quello il vero diletto.\n</i></span></div>"
                 }
-              ]
+              ],
+              "text": "<div style=\"text-align: left;\"><span class=\"text-lg\"><i>\nFilastrocca corta<br>\nRacconta di noi <br>\nMa forse chissà,<br>\nanche un pochino di voi.\n</i></span></div><div><br></div>\n<div style=\"text-align: left;\"><span class=\"text-lg\"><i>\nCi piace pensare che i luoghi<br>\noltre ai quali non possiamo vedere,<br>\nLuoghi come montagne, mare<br>\nDistese di terra infinita <br>\nChe non si può quantificare, <br>\nEcco, ci piace pensare<br>\nChe, quei luoghi, noi li possiamo immaginare <br>\nE con la fantasia, ci portano via.<br>\nLa signora con l’ombrello <br>\nAdesso vive in un castello<br>\nChe non è fatto di pietre e cemento<br>\nMa che se lo porta via il vento! <br>\nLa fantasia ci ha portati in questa compagnia.<br> \nNoi quei luoghi infiniti <br>\nLi viviamo al contrario.<br>\nPerché non è da fuori che li immaginiamo.<br> \nSono luoghi che ci abitano dentro<br>\nE un giorno sei calzolaio <br>\nE l’altro invece sei un marinaio. <br>\nMa la cosa più bella ancora <br>\nÈ che vivendo un giorno da malfattore <br>\nE l’altro da sacro protettore<br>\nImpari a conoscere il male ed il bene,<br>\nImpari a conoscere anche te stesso<br>\nChe forse, è quello il vero diletto.\n</i></span></div>",
+              "images": []
             }
           ]
         }
