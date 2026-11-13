@@ -2680,10 +2680,6 @@
     "enabled": false,
     "rules": []
   },
-<<<<<<< HEAD
-  "tally_checkin_forms": []
-}
-=======
   "tally_checkin_forms": [
     {
       "id": "Eky7ON",
@@ -2766,4 +2762,3 @@
     }
   ]
 }
->>>>>>> cef44ae7d2241960b47fdaaab2a096b16c012632
