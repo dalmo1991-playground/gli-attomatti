@@ -294,19 +294,37 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
     };
   }, [effectiveSubmissions]);
 
+  const getPrimaryValue = useCallback(
+    (sub: MergedTallySubmission): string => {
+      const fieldEntries = Object.entries(sub.fields || {});
+      return (
+        (selectedForm?.primaryFieldId && sub.fields?.[selectedForm.primaryFieldId]) ||
+        fieldEntries[0]?.[1] ||
+        `Iscrizione #${sub.submissionId.slice(-6)}`
+      );
+    },
+    [selectedForm]
+  );
+
   const filteredSubmissions = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return effectiveSubmissions.filter((sub) => {
-      if (filterMode === "pending" && sub.checkedIn) return false;
-      if (filterMode === "checked_in" && !sub.checkedIn) return false;
-      if (!q) return true;
+    return effectiveSubmissions
+      .filter((sub) => {
+        if (filterMode === "pending" && sub.checkedIn) return false;
+        if (filterMode === "checked_in" && !sub.checkedIn) return false;
+        if (!q) return true;
 
-      const allValues = Object.values(sub.fields || {})
-        .join(" ")
-        .toLowerCase();
-      return allValues.includes(q);
-    });
-  }, [effectiveSubmissions, filterMode, search]);
+        const allValues = Object.values(sub.fields || {})
+          .join(" ")
+          .toLowerCase();
+        return allValues.includes(q);
+      })
+      .sort((a, b) =>
+        getPrimaryValue(a).localeCompare(getPrimaryValue(b), "it", {
+          sensitivity: "base"
+        })
+      );
+  }, [effectiveSubmissions, filterMode, search, getPrimaryValue]);
 
   const pendingCount = Object.keys(pendingMap).length;
 
@@ -574,10 +592,7 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
         <div className="space-y-2.5">
           {filteredSubmissions.map((sub) => {
             const fieldEntries = Object.entries(sub.fields || {});
-            const primaryVal =
-              (selectedForm?.primaryFieldId && sub.fields?.[selectedForm.primaryFieldId]) ||
-              fieldEntries[0]?.[1] ||
-              `Iscrizione #${sub.submissionId.slice(-6)}`;
+            const primaryVal = getPrimaryValue(sub);
             const secondaryVal =
               (selectedForm?.secondaryFieldId && sub.fields?.[selectedForm.secondaryFieldId]) ||
               (fieldEntries[1]?.[0] !== selectedForm?.primaryFieldId ? fieldEntries[1]?.[1] : "");
