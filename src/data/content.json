@@ -2221,8 +2221,8 @@
         "name": "Reminder Cineforum",
         "enabled": true,
         "theme": "cineforum",
-        "subject": "Reminder: Cineforum - Le Meraviglie - 14 novembre 2026, ore 18:00",
-        "preheader": "Ci vediamo questa sera",
+        "subject": "Reminder: Cineforum - Le Meraviglie - domani, sabato 14.11 , ore 18:00",
+        "preheader": "Ci vediamo domani sera",
         "badge": "Cineforum",
         "heading": "La tua prenotazione è confermata!",
         "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
@@ -2299,14 +2299,14 @@
           {
             "id": "block-heading",
             "type": "heading",
-            "text": "Ci vediamo questa sera!",
+            "text": "Ci vediamo domani sera!",
             "level": "h1",
             "align": "left"
           },
           {
             "id": "block-body",
             "type": "text",
-            "content": "Ciao {{name}},\n\nTi ricordiamo l'appuntamento di questa sera per il cineforum con la proiezione di \"Le Meraviglie\". Ci vediamo alle ore 18:00 nella nostra sala di Wollishofen.\n",
+            "content": "Ciao {{name}},\n\nTi ricordiamo l'appuntamento di domani sera per il cineforum con la proiezione di \"**Le Meraviglie**\". Ci vediamo alle ore 18:00 nella nostra sala di Wollishofen.\n",
             "align": "left"
           },
           {
