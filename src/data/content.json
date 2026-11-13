@@ -2154,6 +2154,149 @@
           "from_email": "cineforum@mail.gliattomatti.ch",
           "reply_to": "compagniateatralegliattomatti@gmail.com"
         }
+      },
+      {
+        "id": "reminder-cineforum",
+        "name": "Reminder Cineforum",
+        "enabled": true,
+        "theme": "cineforum",
+        "subject": "Reminder: Cineforum - Le Meraviglie - 14 novembre 2026, ore 18:00",
+        "preheader": "Ci vediamo questa sera",
+        "badge": "Cineforum",
+        "heading": "La tua prenotazione è confermata!",
+        "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+        "event_date": "",
+        "event_location": "",
+        "cta_label": "Tutte le date del Cineforum",
+        "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
+        "field_mapping": {
+          "sample_payload_json": "{\n  \"eventId\": \"10356a55-a1ac-450c-9867-55796553770f\",\n  \"createdAt\": \"2026-10-04T14:14:04.897Z\",\n  \"data\": {\n    \"responseId\": \"a78e6b0c-dedd-48cb-9404-1b42c10dedd8\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"2EQGpV\",\n    \"formName\": \"Cineforum - I vitelloni - 16 Gennaio 2027, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/2EQGpV/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/2EQGpV/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"fields\": [\n      {\n        \"key\": \"question_2xdg0e\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_xNbLKd\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_ZRkL0V\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_V1Oy8g\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
+          "recipient_email_path": "{{email}}",
+          "recipient_name_path": "{{name}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti & UNITRE",
+          "from_email": "cineforum@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        },
+        "subcases": [
+          {
+            "id": "cineforum-1",
+            "name": "Le Meraviglie (14 Novembre)",
+            "custom_fields": {
+              "event_title": "Le Meraviglie",
+              "event_date": "14 novembre 2026, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-2",
+            "name": "I vitelloni",
+            "custom_fields": {
+              "event_title": "I vitelloni",
+              "event_date": "16 gennaio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-3",
+            "name": "Pane e tulipani",
+            "custom_fields": {
+              "event_title": "Pane e tulipani",
+              "event_date": "20 febbraio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-4",
+            "name": "Una storia vera",
+            "custom_fields": {
+              "event_title": "Una storia vera",
+              "event_date": "20 marzo 2027, ore 18:00"
+            }
+          }
+        ],
+        "blocks": [
+          {
+            "id": "block-header",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI & UNITRE",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791142683214",
+            "type": "image",
+            "image_url": "https://gli-attomatti.vercel.app/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+            "alt": "Locandina Evento",
+            "align": "full",
+            "full_width": true
+          },
+          {
+            "id": "block-1791126590992",
+            "type": "divider",
+            "style": "spacer",
+            "spacing": "md"
+          },
+          {
+            "id": "block-heading",
+            "type": "heading",
+            "text": "Ci vediamo questa sera!",
+            "level": "h1",
+            "align": "left"
+          },
+          {
+            "id": "block-body",
+            "type": "text",
+            "content": "Ciao {{name}},\n\nTi ricordiamo l'appuntamento di questa sera per il cineforum con la proiezione di \"Le Meraviglie\". Ci vediamo alle ore 18:00 nella nostra sala di Wollishofen.\n",
+            "align": "left"
+          },
+          {
+            "id": "block-1791142839814",
+            "type": "calendar",
+            "header_label": "",
+            "title": "Cineforum - Le Meraviglie",
+            "start_date": "14 novembre 2026, ore 18:00",
+            "end_date": "",
+            "location": "Balberstrasse 47, Zurigo (Wollishofen)",
+            "description": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791126717083",
+            "type": "text",
+            "content": "Siamo felici di averti con noi in sala! Hai paura di non trovare la sala? Nessun problema: segui la nostra guida [qui](https://gliattomatti.ch/Location/sala-wollishofen)!\n\nSe dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+            "align": "left"
+          },
+          {
+            "id": "block-button",
+            "type": "button",
+            "label": "Ulteriori informazioni",
+            "url": "https://gliattomatti.ch/landing/cineforum",
+            "align": "center",
+            "style": "pill"
+          },
+          {
+            "id": "block-divider",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "block-social",
+            "type": "social_links",
+            "instagram_url": "https://instagram.com/gliattomatti",
+            "website_url": "https://gliattomatti.ch",
+            "align": "center"
+          },
+          {
+            "id": "block-footer",
+            "type": "footer",
+            "legal_text": "Gli Attomatti & UNITRE • Zurigo, Svizzera",
+            "privacy_note": "Ricevi questa email in seguito a una registrazione o richiesta sul sito gliattomatti.ch",
+            "show_privacy_link": true
+          }
+        ],
+        "customColors": {
+          "muted": "#ffffff"
+        }
       }
     ]
   },
