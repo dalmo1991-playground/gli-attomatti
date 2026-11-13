@@ -170,7 +170,7 @@ export function TallyCheckinTab() {
                 <strong>solo i campi spuntati</strong> qui sotto. Tutti gli altri campi del form Tally vengono ignorati.
               </li>
               <li>
-                <strong>Azioni operative:</strong> il <em>Sync da Tally</em> e il <em>Check-in mobile</em> si eseguono direttamente dall&apos;Area Riservata (<code>/area-riservata/check-in</code>).
+                <strong>Azioni operative:</strong> <em>Aggiorna iscrizioni</em> e il <em>Check-in mobile</em> si eseguono direttamente dall&apos;Area Riservata (<code>/area-riservata/check-in</code>).
               </li>
               <li>
                 <strong>Ricorda di pubblicare:</strong> dopo aver aggiunto o modificato un modulo, clicca <strong>Pubblica</strong> in alto per salvare in <code>content.json</code>.

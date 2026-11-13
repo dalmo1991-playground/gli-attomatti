@@ -4,6 +4,7 @@ import path from "path";
 import {
   CheckinBatchItem,
   CheckinRecord,
+  ManualCheckinGuest,
   MergedTallySubmission,
   StoredCheckinsFile,
   StoredTallySubmission,
@@ -436,6 +437,7 @@ export async function getMergedTallySubmissions(
 
   const submissionsFile = subRes.data;
   const checkinsMap: Record<string, CheckinRecord> = chkRes.data?.checkins || {};
+  const manualGuests: ManualCheckinGuest[] = chkRes.data?.manualGuests || [];
 
   const rawSubs = submissionsFile?.submissions || [];
   let checkedInSubmissions = 0;
@@ -443,31 +445,90 @@ export async function getMergedTallySubmissions(
 
   const merged: MergedTallySubmission[] = rawSubs.map((sub) => {
     const chk = checkinsMap[sub.submissionId];
-    const isCheckedIn = Boolean(chk?.checkedIn);
+    const maxCount = sub.participantsCount || 1;
+    let checkedInCount = 0;
+
+    if (chk) {
+      if (typeof chk.checkedInCount === "number") {
+        checkedInCount = Math.max(0, Math.min(maxCount, chk.checkedInCount));
+      } else if (chk.checkedIn) {
+        checkedInCount = maxCount;
+      }
+    }
+
+    const isCheckedIn = checkedInCount > 0;
     if (isCheckedIn) {
       checkedInSubmissions += 1;
-      checkedInParticipants += sub.participantsCount || 1;
+      checkedInParticipants += checkedInCount;
     }
     return {
       ...sub,
       checkedIn: isCheckedIn,
+      checkedInCount,
       checkedInAt: isCheckedIn ? chk?.updatedAt : undefined,
       checkedInBy: isCheckedIn ? chk?.checkedInBy : undefined
     };
   });
 
-  const totalParticipants =
+  // Include manual walk-in guests stored only in checkins.json
+  let manualTotalParticipants = 0;
+  for (const guest of manualGuests) {
+    const count = Math.max(1, guest.participantsCount || 1);
+    manualTotalParticipants += count;
+    const chk = checkinsMap[guest.id];
+    const checkedInCount = chk
+      ? typeof chk.checkedInCount === "number"
+        ? Math.max(0, Math.min(count, chk.checkedInCount))
+        : chk.checkedIn
+          ? count
+          : 0
+      : count; // Manual guests default to checked-in immediately
+    const isCheckedIn = checkedInCount > 0;
+    if (isCheckedIn) {
+      checkedInSubmissions += 1;
+      checkedInParticipants += checkedInCount;
+    }
+
+    const fields: Record<string, string> = {
+      __manual_name: guest.name
+    };
+    if (guest.note) {
+      fields.__manual_note = guest.note;
+    }
+
+    merged.push({
+      submissionId: guest.id,
+      submittedAt: guest.createdAt,
+      participantsCount: count,
+      fields,
+      checkedIn: isCheckedIn,
+      checkedInCount,
+      checkedInAt: isCheckedIn ? chk?.updatedAt || guest.createdAt : undefined,
+      checkedInBy: isCheckedIn ? chk?.checkedInBy || guest.createdBy : undefined,
+      isManual: true
+    });
+  }
+
+  const baseTotalParticipants =
     submissionsFile?.totalParticipants ??
     rawSubs.reduce((sum, s) => sum + (s.participantsCount || 1), 0);
+  const totalParticipants = baseTotalParticipants + manualTotalParticipants;
+
+  const fieldLabels: Record<string, string> = {
+    ...(submissionsFile?.fieldLabels || {}),
+    ...(manualGuests.length > 0
+      ? { __manual_name: "Nome (Ospite in sala)", __manual_note: "Nota" }
+      : {})
+  };
 
   const response: TallySubmissionsResponse = {
     formId: cleanId,
     syncedAt: submissionsFile?.syncedAt || null,
-    totalSubmissions: rawSubs.length,
+    totalSubmissions: merged.length,
     totalParticipants,
     checkedInSubmissions,
     checkedInParticipants,
-    fieldLabels: submissionsFile?.fieldLabels || {},
+    fieldLabels,
     submissions: merged,
     storage: subRes.storage
   };
@@ -502,20 +563,16 @@ export async function applyCheckinBatch(
 
     // Multi-user Last-Write-Wins per submissionId
     if (!current || incomingTime >= current.updatedAt) {
-      if (item.checkedIn) {
-        checkins[item.submissionId] = {
-          checkedIn: true,
-          updatedAt: incomingTime,
-          checkedInBy: item.checkedInBy || undefined
-        };
-      } else {
-        // Keep the unchecked record with timestamp so older stale flushes don't re-enable it
-        checkins[item.submissionId] = {
-          checkedIn: false,
-          updatedAt: incomingTime,
-          checkedInBy: item.checkedInBy || undefined
-        };
-      }
+      const hasCount = typeof item.checkedInCount === "number";
+      const normalizedCount = hasCount ? Math.max(0, item.checkedInCount as number) : undefined;
+      const isChecked = hasCount ? (normalizedCount as number) > 0 : Boolean(item.checkedIn);
+
+      checkins[item.submissionId] = {
+        checkedIn: isChecked,
+        ...(hasCount ? { checkedInCount: normalizedCount } : {}),
+        updatedAt: incomingTime,
+        checkedInBy: item.checkedInBy || undefined
+      };
       appliedCount += 1;
     }
   }
@@ -524,12 +581,79 @@ export async function applyCheckinBatch(
   const nextFile: StoredCheckinsFile = {
     formId: cleanId,
     updatedAt,
-    checkins
+    checkins,
+    ...(existingFile?.manualGuests ? { manualGuests: existingFile.manualGuests } : {})
   };
 
   const storage = await writeJsonFile(cleanId, "checkins.json", nextFile);
   invalidateTallyCache(cleanId);
 
   return { appliedCount, updatedAt, storage };
+}
+
+/**
+ * Adds a walk-in / non-Tally guest directly into checkins.json (stored only on Vercel Blob / local).
+ */
+export async function addManualCheckinGuest(
+  formId: string,
+  input: { name: string; participantsCount: number; note?: string; createdBy?: string }
+): Promise<{ guest: ManualCheckinGuest; storage: "vercel-blob" | "local-file" }> {
+  const cleanId = sanitizeFormId(formId);
+  if (!cleanId) throw new Error("ID modulo Tally non valido.");
+
+  const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
+  const manualGuests = [...(existingFile?.manualGuests || [])];
+
+  const guest: ManualCheckinGuest = {
+    id: `manual_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    name: input.name.trim(),
+    participantsCount: Math.max(1, Math.min(99, Math.round(input.participantsCount || 1))),
+    ...(input.note?.trim() ? { note: input.note.trim() } : {}),
+    createdAt: new Date().toISOString(),
+    ...(input.createdBy?.trim() ? { createdBy: input.createdBy.trim() } : {})
+  };
+
+  manualGuests.push(guest);
+
+  const nextFile: StoredCheckinsFile = {
+    formId: cleanId,
+    updatedAt: new Date().toISOString(),
+    checkins: existingFile?.checkins || {},
+    manualGuests
+  };
+
+  const storage = await writeJsonFile(cleanId, "checkins.json", nextFile);
+  invalidateTallyCache(cleanId);
+
+  return { guest, storage };
+}
+
+/**
+ * Removes a walk-in / non-Tally guest from checkins.json.
+ */
+export async function removeManualCheckinGuest(
+  formId: string,
+  guestId: string
+): Promise<{ removed: boolean; storage: "vercel-blob" | "local-file" }> {
+  const cleanId = sanitizeFormId(formId);
+  if (!cleanId) throw new Error("ID modulo Tally non valido.");
+
+  const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
+  const currentGuests = existingFile?.manualGuests || [];
+  const nextGuests = currentGuests.filter((g) => g.id !== guestId);
+  const nextCheckins = { ...(existingFile?.checkins || {}) };
+  delete nextCheckins[guestId];
+
+  const nextFile: StoredCheckinsFile = {
+    formId: cleanId,
+    updatedAt: new Date().toISOString(),
+    checkins: nextCheckins,
+    manualGuests: nextGuests
+  };
+
+  const storage = await writeJsonFile(cleanId, "checkins.json", nextFile);
+  invalidateTallyCache(cleanId);
+
+  return { removed: nextGuests.length < currentGuests.length, storage };
 }
 

@@ -12,10 +12,14 @@ import {
   ClipboardList,
   CloudUpload,
   Loader2,
+  Minus,
+  Plus,
   RefreshCw,
   Search,
   Sparkles,
+  Trash2,
   User as UserIcon,
+  UserPlus,
   Users,
   X
 } from "lucide-react";
@@ -36,6 +40,7 @@ type FilterMode = "all" | "pending" | "checked_in";
 
 interface LocalPendingEntry {
   checkedIn: boolean;
+  checkedInCount: number;
   updatedAt: string;
   checkedInBy?: string;
 }
@@ -92,7 +97,16 @@ export default function TallyCheckinClient({
     }
   });
   const [isSelectingMember, setIsSelectingMember] = useState<boolean>(false);
-  const [pendingToggleSub, setPendingToggleSub] = useState<MergedTallySubmission | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    sub: MergedTallySubmission;
+    targetCount: number;
+  } | null>(null);
+  const [isAddingManual, setIsAddingManual] = useState<boolean>(false);
+  const [manualName, setManualName] = useState<string>("");
+  const [manualCount, setManualCount] = useState<number>(1);
+  const [manualNote, setManualNote] = useState<string>("");
+  const [isSavingManual, setIsSavingManual] = useState<boolean>(false);
+  const [pendingOpenManual, setPendingOpenManual] = useState<boolean>(false);
 
   const [data, setData] = useState<TallySubmissionsResponse | null>(null);
   const [pendingMap, setPendingMap] = useState<LocalPendingMap>({});
@@ -215,21 +229,23 @@ export default function TallyCheckinClient({
     }
   };
 
-  const applyToggleCheckin = (sub: MergedTallySubmission, memberName: string) => {
+  const applyCheckinCount = (
+    sub: MergedTallySubmission,
+    targetCount: number,
+    memberName: string
+  ) => {
     if (!selectedFormId) return;
-    const currentChecked =
-      pendingMap[sub.submissionId] !== undefined
-        ? pendingMap[sub.submissionId].checkedIn
-        : sub.checkedIn;
-    const nextChecked = !currentChecked;
+    const maxCount = sub.participantsCount || 1;
+    const clampedCount = Math.max(0, Math.min(maxCount, targetCount));
 
     const nextPending: LocalPendingMap = { ...pendingMap };
-    // If toggling back to the exact server state, remove from pending draft
-    if (nextChecked === sub.checkedIn) {
+    // If returning to the exact server state, remove from pending draft
+    if (clampedCount === sub.checkedInCount) {
       delete nextPending[sub.submissionId];
     } else {
       nextPending[sub.submissionId] = {
-        checkedIn: nextChecked,
+        checkedIn: clampedCount > 0,
+        checkedInCount: clampedCount,
         updatedAt: new Date().toISOString(),
         checkedInBy: memberName || undefined
       };
@@ -239,14 +255,25 @@ export default function TallyCheckinClient({
     writeLocalDraft(selectedFormId, nextPending);
   };
 
-  const handleToggleCheckin = (sub: MergedTallySubmission) => {
+  const handleSetCheckinCount = (sub: MergedTallySubmission, targetCount: number) => {
     if (!selectedFormId) return;
     if (!activeMember) {
-      setPendingToggleSub(sub);
+      setPendingAction({ sub, targetCount });
       setIsSelectingMember(true);
       return;
     }
-    applyToggleCheckin(sub, activeMember);
+    applyCheckinCount(sub, targetCount, activeMember);
+  };
+
+  const handleToggleCheckin = (sub: MergedTallySubmission) => {
+    const maxCount = sub.participantsCount || 1;
+    const currentCount =
+      pendingMap[sub.submissionId] !== undefined
+        ? pendingMap[sub.submissionId].checkedInCount
+        : sub.checkedInCount;
+    // Main button: if not all checked in yet, check in ALL; if all checked in, reset to 0
+    const nextCount = currentCount < maxCount ? maxCount : 0;
+    handleSetCheckinCount(sub, nextCount);
   };
 
   const handleSelectMember = (name: string) => {
@@ -255,10 +282,83 @@ export default function TallyCheckinClient({
       localStorage.setItem("attomatti_active_member", name);
     } catch {}
     setIsSelectingMember(false);
-    if (pendingToggleSub) {
-      const subToToggle = pendingToggleSub;
-      setPendingToggleSub(null);
-      applyToggleCheckin(subToToggle, name);
+    if (pendingAction) {
+      const { sub, targetCount } = pendingAction;
+      setPendingAction(null);
+      applyCheckinCount(sub, targetCount, name);
+    } else if (pendingOpenManual) {
+      setPendingOpenManual(false);
+      setIsAddingManual(true);
+    }
+  };
+
+  const handleOpenAddManual = () => {
+    if (!activeMember) {
+      setPendingOpenManual(true);
+      setIsSelectingMember(true);
+      return;
+    }
+    setManualName("");
+    setManualCount(1);
+    setManualNote("");
+    setIsAddingManual(true);
+  };
+
+  const handleSaveManualGuest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFormId || !manualName.trim() || isSavingManual) return;
+    setIsSavingManual(true);
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/tally-submissions/manual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formId: selectedFormId,
+          name: manualName.trim(),
+          participantsCount: manualCount,
+          note: manualNote.trim() || undefined,
+          createdBy: activeMember || undefined
+        })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Errore durante l'aggiunta dell'ospite.");
+      }
+      setIsAddingManual(false);
+      setStatusMsg({
+        type: "success",
+        text: `Ospite "${manualName.trim()}" (${manualCount}) aggiunto al check-in.`
+      });
+      await loadSubmissions(selectedFormId, true);
+    } catch (err: unknown) {
+      setStatusMsg({
+        type: "error",
+        text: (err as Error)?.message || "Impossibile aggiungere l'ospite."
+      });
+    } finally {
+      setIsSavingManual(false);
+    }
+  };
+
+  const handleRemoveManualGuest = async (sub: MergedTallySubmission) => {
+    if (!selectedFormId || !sub.isManual) return;
+    setStatusMsg(null);
+    try {
+      const qs = new URLSearchParams({ formId: selectedFormId, guestId: sub.submissionId });
+      const res = await fetch(`/api/tally-submissions/manual?${qs.toString()}`, {
+        method: "DELETE"
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Errore durante la rimozione.");
+      }
+      await loadSubmissions(selectedFormId, true);
+    } catch (err: unknown) {
+      setStatusMsg({
+        type: "error",
+        text: (err as Error)?.message || "Impossibile rimuovere l'ospite."
+      });
     }
   };
 
@@ -273,6 +373,7 @@ export default function TallyCheckinClient({
       const changes: CheckinBatchItem[] = entries.map(([submissionId, item]) => ({
         submissionId,
         checkedIn: item.checkedIn,
+        checkedInCount: item.checkedInCount,
         updatedAt: item.updatedAt,
         checkedInBy: item.checkedInBy
       }));
@@ -313,9 +414,16 @@ export default function TallyCheckinClient({
       if (!pending) {
         return { ...sub, isPendingSync: false };
       }
+      const pendingCount =
+        typeof pending.checkedInCount === "number"
+          ? pending.checkedInCount
+          : pending.checkedIn
+            ? sub.participantsCount || 1
+            : 0;
       return {
         ...sub,
-        checkedIn: pending.checkedIn,
+        checkedIn: pendingCount > 0,
+        checkedInCount: pendingCount,
         checkedInAt: pending.updatedAt,
         checkedInBy: pending.checkedInBy,
         isPendingSync: true
@@ -330,10 +438,11 @@ export default function TallyCheckinClient({
 
     for (const s of effectiveSubmissions) {
       const count = s.participantsCount || 1;
+      const present = Math.max(0, Math.min(count, s.checkedInCount || 0));
       totalParticipants += count;
-      if (s.checkedIn) {
+      checkedInParticipants += present;
+      if (present > 0) {
         checkedInSubmissions += 1;
-        checkedInParticipants += count;
       }
     }
 
@@ -347,6 +456,9 @@ export default function TallyCheckinClient({
 
   const getPrimaryValue = useCallback(
     (sub: MergedTallySubmission): string => {
+      if (sub.isManual && sub.fields?.__manual_name) {
+        return sub.fields.__manual_name;
+      }
       const fieldEntries = Object.entries(sub.fields || {});
       return (
         (selectedForm?.primaryFieldId && sub.fields?.[selectedForm.primaryFieldId]) ||
@@ -492,7 +604,17 @@ export default function TallyCheckinClient({
           <span>Cambia evento</span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleOpenAddManual}
+            disabled={!selectedFormId}
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 min-h-[40px] shadow-sm"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Aggiungi ospite</span>
+          </button>
+
           <button
             type="button"
             onClick={() => loadSubmissions(selectedFormId, true)}
@@ -501,7 +623,7 @@ export default function TallyCheckinClient({
             title="Ricarica dati dal server"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Aggiorna</span>
+            <span>Aggiorna check-in</span>
           </button>
 
           <button
@@ -515,7 +637,7 @@ export default function TallyCheckinClient({
             ) : (
               <CloudUpload className="w-3.5 h-3.5" />
             )}
-            <span>{isSyncingTally ? "Sync in corso..." : "Sync da Tally"}</span>
+            <span>{isSyncingTally ? "Aggiornamento..." : "Aggiorna iscrizioni"}</span>
           </button>
         </div>
       </div>
@@ -543,6 +665,96 @@ export default function TallyCheckinClient({
         </p>
       </div>
 
+      {/* Add Manual Walk-in Guest Modal */}
+      {isAddingManual && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <form
+            onSubmit={handleSaveManualGuest}
+            className="w-full max-w-md bg-muted/95 border border-muted rounded-3xl p-6 shadow-2xl space-y-4"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-base text-foreground">
+                Aggiungi ospite non su Tally
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAddingManual(false)}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
+              >
+                Chiudi
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Salvato solo su Vercel per il conteggio finale (non modifica Tally).
+            </p>
+
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-foreground">
+                  Nome e Cognome / Riferimento *
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={manualName}
+                  onChange={(e) => setManualName(e.target.value)}
+                  placeholder="Es. Mario Rossi"
+                  className="w-full min-h-[44px] px-3.5 rounded-xl bg-background border border-muted text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-foreground">Numero partecipanti</label>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setManualCount((c) => Math.max(1, c - 1))}
+                    className="min-h-[44px] min-w-[44px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted active:scale-95"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="min-w-[40px] text-center text-lg font-black text-foreground">
+                    {manualCount}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setManualCount((c) => Math.min(99, c + 1))}
+                    className="min-h-[44px] min-w-[44px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted active:scale-95"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-foreground">Nota (opzionale)</label>
+                <input
+                  type="text"
+                  value={manualNote}
+                  onChange={(e) => setManualNote(e.target.value)}
+                  placeholder="Es. Ospite in cassa"
+                  className="w-full min-h-[44px] px-3.5 rounded-xl bg-background border border-muted text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSavingManual || !manualName.trim()}
+              className="w-full min-h-[46px] rounded-xl bg-primary text-primary-foreground font-extrabold text-sm flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.99] disabled:opacity-50"
+            >
+              {isSavingManual ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <UserPlus className="w-4 h-4" />
+              )}
+              <span>{isSavingManual ? "Salvataggio..." : "Aggiungi e segna presente"}</span>
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Member Identification Modal */}
       {isSelectingMember && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -553,7 +765,7 @@ export default function TallyCheckinClient({
                 type="button"
                 onClick={() => {
                   setIsSelectingMember(false);
-                  setPendingToggleSub(null);
+                  setPendingAction(null);
                 }}
                 className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
               >
@@ -723,7 +935,7 @@ export default function TallyCheckinClient({
           </p>
           {effectiveSubmissions.length === 0 && (
             <p className="text-xs text-muted-foreground">
-              Premi <strong>&quot;Sync da Tally&quot;</strong> in alto per importare le iscrizioni nel Blob Storage.
+              Premi <strong>&quot;Aggiorna iscrizioni&quot;</strong> in alto per importare le iscrizioni nel Blob Storage.
             </p>
           )}
         </div>
@@ -737,16 +949,22 @@ export default function TallyCheckinClient({
               (fieldEntries[1]?.[0] !== selectedForm?.primaryFieldId ? fieldEntries[1]?.[1] : "");
 
             const isExpanded = Boolean(expandedIds[sub.submissionId]);
+            const maxParticipants = sub.participantsCount || 1;
+            const currentPresent = sub.checkedInCount || 0;
+            const isFullCheckin = currentPresent >= maxParticipants;
+            const isPartialCheckin = currentPresent > 0 && currentPresent < maxParticipants;
             const showParticipantsBadge =
-              sub.participantsCount > 1 || selectedForm?.participantsMode === "from_field";
+              maxParticipants > 1 || selectedForm?.participantsMode === "from_field";
 
             return (
               <div
                 key={sub.submissionId}
                 className={`rounded-2xl border p-3.5 sm:p-4 transition-all ${
-                  sub.checkedIn
+                  isFullCheckin
                     ? "bg-primary/10 border-primary/35"
-                    : "bg-muted/30 border-muted"
+                    : isPartialCheckin
+                      ? "bg-secondary/10 border-secondary/35"
+                      : "bg-muted/30 border-muted"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -758,7 +976,12 @@ export default function TallyCheckinClient({
                       {showParticipantsBadge && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-secondary/20 text-secondary border border-secondary/30">
                           <Users className="w-3 h-3" />
-                          {sub.participantsCount}
+                          {currentPresent > 0 ? `${currentPresent}/${maxParticipants}` : maxParticipants}
+                        </span>
+                      )}
+                      {sub.isManual && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-secondary/20 text-secondary border border-secondary/30">
+                          In sala (extra)
                         </span>
                       )}
                       {sub.isPendingSync && (
@@ -775,29 +998,83 @@ export default function TallyCheckinClient({
                     )}
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground/80">
-                      <span>Inviato: {formatDate(sub.submittedAt)}</span>
+                      <span>{sub.isManual ? "Aggiunto" : "Inviato"}: {formatDate(sub.submittedAt)}</span>
                       {sub.checkedIn && sub.checkedInBy && (
                         <span className="text-primary font-semibold">
                           Check-in: {sub.checkedInBy}
                         </span>
                       )}
+                      {sub.isManual && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveManualGuest(sub)}
+                          className="inline-flex items-center gap-1 text-accent hover:underline font-semibold"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Rimuovi</span>
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  {/* Large Touch-Friendly Check-in Button */}
+                  {/* Large Touch-Friendly Main Check-in Button (Totale) */}
                   <button
                     type="button"
                     onClick={() => handleToggleCheckin(sub)}
-                    className={`shrink-0 min-h-[44px] min-w-[110px] px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
-                      sub.checkedIn
+                    className={`shrink-0 min-h-[44px] min-w-[116px] px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                      isFullCheckin
                         ? "bg-primary text-primary-foreground shadow-sm"
-                        : "bg-background hover:bg-muted text-foreground border border-muted"
+                        : isPartialCheckin
+                          ? "bg-secondary text-secondary-foreground shadow-sm"
+                          : "bg-background hover:bg-muted text-foreground border border-muted"
                     }`}
                   >
                     <Check className="w-4 h-4" />
-                    <span>{sub.checkedIn ? "Presente" : "Check-in"}</span>
+                    <span>
+                      {isFullCheckin
+                        ? maxParticipants > 1
+                          ? `Presenti (${maxParticipants}/${maxParticipants})`
+                          : "Presente"
+                        : isPartialCheckin
+                          ? `Completa (${currentPresent}/${maxParticipants})`
+                          : maxParticipants > 1
+                            ? `Check-in (${maxParticipants})`
+                            : "Check-in"}
+                    </span>
                   </button>
                 </div>
+
+                {/* Partial Check-in Stepper (when > 1 participant) */}
+                {maxParticipants > 1 && (
+                  <div className="mt-3 pt-2.5 border-t border-muted/50 flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-muted-foreground">
+                      Check-in parziale:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSetCheckinCount(sub, currentPresent - 1)}
+                        disabled={currentPresent <= 0}
+                        aria-label="Rimuovi un partecipante"
+                        className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="min-w-[54px] text-center text-sm font-black text-foreground">
+                        {currentPresent} / {maxParticipants}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleSetCheckinCount(sub, currentPresent + 1)}
+                        disabled={currentPresent >= maxParticipants}
+                        aria-label="Aggiungi un partecipante"
+                        className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Expandable Details */}
                 {fieldEntries.length > 0 && (

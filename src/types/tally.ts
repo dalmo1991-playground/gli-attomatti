@@ -51,25 +51,39 @@ export interface StoredTallySubmissionsFile {
 
 export interface CheckinRecord {
   checkedIn: boolean;
+  checkedInCount?: number;
   updatedAt: string;
   checkedInBy?: string;
+}
+
+export interface ManualCheckinGuest {
+  id: string;
+  name: string;
+  participantsCount: number;
+  note?: string;
+  createdAt: string;
+  createdBy?: string;
 }
 
 export interface StoredCheckinsFile {
   formId: string;
   updatedAt: string;
   checkins: Record<string, CheckinRecord>;
+  manualGuests?: ManualCheckinGuest[];
 }
 
 export interface MergedTallySubmission extends StoredTallySubmission {
   checkedIn: boolean;
+  checkedInCount: number;
   checkedInAt?: string;
   checkedInBy?: string;
+  isManual?: boolean;
 }
 
 export interface CheckinBatchItem {
   submissionId: string;
   checkedIn: boolean;
+  checkedInCount?: number;
   updatedAt: string;
   checkedInBy?: string;
 }
