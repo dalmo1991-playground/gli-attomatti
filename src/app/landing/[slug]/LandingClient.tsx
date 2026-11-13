@@ -22,7 +22,6 @@ interface LandingClientProps {
 
 export default function LandingClient({ landing: initialLanding, site, slug, ui }: LandingClientProps) {
   const liveContent = useLiveContent(null);
-  const landingDefaults = liveContent?.ui?.landing_defaults || ui || {};
   const landing = useMemo(() => {
     if (liveContent?.landings) {
       const match = liveContent.landings.find(
@@ -32,6 +31,32 @@ export default function LandingClient({ landing: initialLanding, site, slug, ui 
     }
     return initialLanding;
   }, [liveContent, initialLanding, slug]);
+
+  // Merge per-landing text overrides (including explicit `null` suppression) onto global landing_defaults
+  const landingDefaults = useMemo(() => {
+    const baseDefaults = liveContent?.ui?.landing_defaults || ui || {};
+    if (!landing || typeof landing !== "object") return baseDefaults;
+
+    const merged: Record<string, unknown> = { ...baseDefaults };
+    const overrideKeys = new Set([
+      ...Object.keys(baseDefaults),
+      "ticket_label",
+      "date_time_label",
+      "location_label",
+      "google_maps_label",
+      "event_details_title",
+      "header_subtitle",
+      "hero_image_alt",
+    ]);
+
+    for (const key of overrideKeys) {
+      const val = landing[key];
+      if (val === null || (val !== undefined && val !== "")) {
+        merged[key] = val;
+      }
+    }
+    return merged;
+  }, [liveContent?.ui?.landing_defaults, ui, landing]);
 
   const initialTheme = useMemo(() => getLandingTheme(landing), [landing]);
   const [theme, setTheme] = useState(initialTheme);

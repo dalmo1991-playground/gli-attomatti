@@ -2169,5 +2169,10 @@
       }
     ],
     "footer_text": "Gli Attomatti"
-  }
+  },
+  "preview_access": {
+    "enabled": false,
+    "rules": []
+  },
+  "tally_checkin_forms": []
 }

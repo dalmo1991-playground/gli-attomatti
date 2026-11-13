@@ -127,7 +127,7 @@ export function getSafeImageProps(
   }
   return {
     src: trimmed || fallback,
-    unoptimized: trimmed.endsWith(".svg"),
+    unoptimized: true,
     isVideo: false,
   };
 }

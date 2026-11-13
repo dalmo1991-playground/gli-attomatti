@@ -13,13 +13,13 @@ import {
   ExternalLink,
   Maximize2,
   ClipboardList,
-  Play,
-  ArrowRight
+  Play
 } from "lucide-react";
 import { cn, stripHtml, defaultText } from "@/lib/utils";
 import { FormattedText } from "./FormattedText";
 import { RichText } from "./RichText";
 import { CarouselBlock } from "./CarouselBlock";
+import { HeroCtaActions } from "./HeroCtaActions";
 import { ArchiveTimelineSection } from "./ArchiveTimelineSection";
 import { CatalogCard, CatalogGrid } from "./CatalogCard";
 import { EmbeddedFrameView } from "./EmbeddedFrameView";
@@ -164,34 +164,14 @@ export function PageBlockRenderer({
                     )}
 
                     {/* Buttons / Actions Area - matching HomeClient 1:1 */}
-                    {(block.primary_cta_label || block.secondary_cta_label) && (
-                      <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full">
-                        {block.primary_cta_label && (
-                          <Link
-                            href={block.primary_cta_href || "#"}
-                            prefetch={false}
-                            onClick={(e) => handleAnchorClickInternal(e, block.primary_cta_href)}
-                            target={block.primary_cta_href?.startsWith("http") ? "_blank" : undefined}
-                            rel={block.primary_cta_href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground rounded-full font-black text-base sm:text-lg hover:opacity-90 transition-all shadow-xl shadow-primary/25 hover:-translate-y-1 flex items-center justify-center min-w-[220px] sm:min-w-[240px]"
-                          >
-                            <span>{block.primary_cta_label}</span>
-                            <ArrowRight size={18} className="ml-2" />
-                          </Link>
-                        )}
-
-                        {block.secondary_cta_label && (
-                          <Link
-                            href={block.secondary_cta_href || "#"}
-                            prefetch={false}
-                            onClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
-                            className="px-8 py-3.5 sm:py-4 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/30 hover:border-secondary rounded-full font-bold text-base sm:text-lg transition-all flex items-center justify-center min-w-[220px] sm:min-w-[240px] shadow-xs hover:-translate-y-0.5"
-                          >
-                            <span>{block.secondary_cta_label}</span>
-                          </Link>
-                        )}
-                      </div>
-                    )}
+                    <HeroCtaActions
+                      primaryLabel={defaultText(block.primary_cta_label)}
+                      primaryHref={block.primary_cta_href}
+                      onPrimaryClick={(e) => handleAnchorClickInternal(e, block.primary_cta_href)}
+                      secondaryLabel={defaultText(block.secondary_cta_label)}
+                      secondaryHref={block.secondary_cta_href}
+                      onSecondaryClick={(e) => handleAnchorClickInternal(e, block.secondary_cta_href)}
+                    />
                   </div>
                 </div>
               </section>
@@ -202,10 +182,10 @@ export function PageBlockRenderer({
           case "event_details": {
             const anchor = getBlockAnchor(block, "event_details");
             const eventDetailsTitle = defaultText(block.title, defaults.event_details_title, "Data e Informazioni");
-            const dateTimeLabel = defaultText(defaults.date_time_label, "Data & Ora");
-            const locationLabel = defaultText(defaults.location_label, "Luogo");
-            const mapsLabel = defaultText(defaults.google_maps_label, "Apri su Google Maps");
-            const ticketLabel = defaultText(defaults.ticket_label, "Biglietto");
+            const dateTimeLabel = defaultText(block.date_time_label, defaults.date_time_label, "Data & Ora");
+            const locationLabel = defaultText(block.location_label, defaults.location_label, "Luogo");
+            const mapsLabel = defaultText(block.google_maps_label, defaults.google_maps_label, "Apri su Google Maps");
+            const ticketLabel = defaultText(block.ticket_label, defaults.ticket_label, "Biglietto");
 
             return (
               <section key={block.id || bIdx} id={anchor} className="py-16 px-4 sm:px-6 scroll-mt-24 relative">

@@ -30,6 +30,7 @@ interface LightboxProps {
 export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiContent }: LightboxProps) {
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [retriedIndices, setRetriedIndices] = useState<Set<number>>(() => new Set());
   const ui = uiContent || {};
 
   useEffect(() => {
@@ -213,7 +214,20 @@ export function Lightbox({ images, initialIndex, isOpen = true, onClose, uiConte
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.04 }}
                   transition={{ duration: 0.2 }}
-                  src={currentMediaUrl}
+                  src={
+                    retriedIndices.has(currentIndex)
+                      ? `${currentMediaUrl}${currentMediaUrl.includes("?") ? "&" : "?"}v=retry`
+                      : currentMediaUrl
+                  }
+                  onError={() => {
+                    if (!retriedIndices.has(currentIndex)) {
+                      setRetriedIndices((prev) => {
+                        const next = new Set(prev);
+                        next.add(currentIndex);
+                        return next;
+                      });
+                    }
+                  }}
                   alt={defaultText(currentItem?.alt, `${defaultText(ui.default_alt, "Foto") || "Foto"} ${currentIndex + 1}`) || ""}
                   className="max-w-full max-h-[75vh] sm:max-h-[82vh] object-contain rounded-xl shadow-2xl pointer-events-none"
                 />

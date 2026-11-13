@@ -13,7 +13,8 @@ import {
   MapPin,
   Calendar,
   ChevronRight,
-  Shield
+  Shield,
+  ClipboardCheck
 } from "lucide-react";
 import { SpecialDate, DEFAULT_MEMBERS } from "@/types/absence";
 import { logoutAreaRiservata } from "@/app/actions/areaRiservataAuth";
@@ -319,6 +320,34 @@ export default function AreaRiservataHomeClient({
 
             <div className="pt-6 mt-2 border-t border-muted/60 flex items-center justify-between text-xs font-bold text-secondary">
               <span>Consulta Appuntamenti</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Miniapp 3: Iscrizioni & Check-in Tally */}
+          <Link
+            href="/area-riservata/check-in"
+            className="group relative bg-muted/40 hover:bg-muted/70 border border-muted hover:border-accent/40 rounded-3xl p-6 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 flex flex-col justify-between md:col-span-2"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-accent/15 text-accent border border-accent/25 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <ClipboardCheck className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 px-2.5 py-0.5 rounded-full">
+                  Tally & Accoglienza
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
+                Iscrizioni & Check-in
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Sincronizza le iscrizioni dai moduli Tally configurati, controlla il numero di partecipanti ed effettua il check-in in sala da smartphone.
+              </p>
+            </div>
+
+            <div className="pt-6 mt-2 border-t border-muted/60 flex items-center justify-between text-xs font-bold text-accent">
+              <span>Apri Iscrizioni & Check-in</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>

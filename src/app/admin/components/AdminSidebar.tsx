@@ -17,6 +17,7 @@ import {
   Sliders,
   Ticket,
   ClipboardList,
+  ClipboardCheck,
   MapPin,
   PanelLeftClose,
   PanelLeftOpen,
@@ -62,6 +63,7 @@ const navSections = [
       { id: "site", label: "Sito & Meta", icon: Globe },
       { id: "gallery", label: "Galleria Immagini", icon: Images },
       { id: "emails", label: "Email & Notifiche", icon: Send },
+      { id: "tally_checkin", label: "Iscrizioni & Check-in", icon: ClipboardCheck },
       { id: "integrations", label: "Marketing & Privacy", icon: Sliders }
     ]
   },

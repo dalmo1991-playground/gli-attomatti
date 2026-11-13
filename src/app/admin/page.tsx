@@ -19,6 +19,7 @@ import { SpettacoliTab } from "./tabs/SpettacoliTab";
 import { IniziativeTab } from "./tabs/IniziativeTab";
 import { TicketingTab } from "./tabs/TicketingTab";
 import { RegistrationsTab } from "./tabs/RegistrationsTab";
+import { TallyCheckinTab } from "./tabs/TallyCheckinTab";
 import { LocationsTab } from "./tabs/LocationsTab";
 import { PressTab } from "./tabs/PressTab";
 import { BlogTab } from "./tabs/BlogTab";
@@ -41,6 +42,7 @@ const getRouteForTab = (tab: string, content: any, activeLandingSlug?: string): 
     case "navigation":
     case "gallery":
     case "emails":
+    case "tally_checkin":
     case "integrations":
       return "/";
     case "chi_siamo":
@@ -184,6 +186,7 @@ function AdminContent() {
                   {activeTab === "home" && <HomeTab />}
                   {activeTab === "gallery" && <GalleryTab onNavigateTab={(tab) => setActiveTab(tab)} />}
                   {activeTab === "emails" && <EmailTab />}
+                  {activeTab === "tally_checkin" && <TallyCheckinTab />}
                   {activeTab === "integrations" && <IntegrationsTab />}
                   {activeTab === "chi_siamo" && <ChiSiamoTab />}
                   {activeTab === "attori" && <AttoriTab />}
