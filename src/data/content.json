@@ -2228,7 +2228,7 @@
         "paragraphs": [
           "Per le registrazioni a workshop, corsi, eventi gratuiti o richieste di affitto sala utilizziamo i moduli di Tally BV (Gand, Belgio).",
           "Distinzione delle finalità: la compilazione del form per la partecipazione a un evento ha finalità puramente organizzative e contrattuali (gestione degli accessi e lista d'attesa). L'eventuale iscrizione alla Newsletter promozionale della compagnia richiede una casella di spunta separata e facoltativa (Opt-in esplicito) all'interno del modulo.",
-          "I dati sono archiviati su server cloud situati all'interno dell'Unione Europea (Belgio/Germania). La lista iscritti è consultata unicamente dai referenti autorizzati dell'Associazione. Non esiste profilazione commerciale di terzi e ci si può cancellare in qualsiasi momento inviando un'email a compagniateatralegliattomatti@gmail.com.",
+          "I dati sono archiviati su server cloud situati all'interno dell'Unione Europea (Belgio/Germania). Per la gestione dell'accoglienza e del check-in in sala, i soli campi strettamente necessari possono essere sincronizzati su storage protetto Vercel Blob accessibile esclusivamente ai referenti autorizzati tramite Area Riservata autenticata. La lista iscritti è consultata unicamente dai referenti autorizzati dell'Associazione. Non esiste profilazione commerciale di terzi e ci si può cancellare in qualsiasi momento inviando un'email a compagniateatralegliattomatti@gmail.com.",
           "Per maggiori informazioni: tally.so/help/privacy-policy."
         ],
         "privacy_url": "https://tally.so/help/privacy-policy"
@@ -3664,5 +3664,6 @@
       }
     ],
     "footer_text": "Gli Attomatti • Compagnia Teatrale Zurigo"
-  }
+  },
+  "tally_checkin_forms": []
 }
