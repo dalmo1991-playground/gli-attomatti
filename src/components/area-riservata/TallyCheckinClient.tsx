@@ -111,6 +111,7 @@ export default function TallyCheckinClient({
   const [manualNote, setManualNote] = useState<string>("");
   const [isSavingManual, setIsSavingManual] = useState<boolean>(false);
   const [pendingOpenManual, setPendingOpenManual] = useState<boolean>(false);
+  const [guestOperatorName, setGuestOperatorName] = useState<string>("");
 
   const [data, setData] = useState<TallySubmissionsResponse | null>(null);
   const [pendingMap, setPendingMap] = useState<LocalPendingMap>({});
@@ -815,6 +816,7 @@ export default function TallyCheckinClient({
                 onClick={() => {
                   setIsSelectingMember(false);
                   setPendingAction(null);
+                  setPendingOpenManual(false);
                 }}
                 className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
               >
@@ -824,7 +826,7 @@ export default function TallyCheckinClient({
             <p className="text-xs text-muted-foreground">
               Seleziona il tuo nome prima di registrare le presenze in sala.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-72 overflow-y-auto pr-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-1">
               {members.map((mem) => (
                 <button
                   key={mem}
@@ -841,6 +843,37 @@ export default function TallyCheckinClient({
                 </button>
               ))}
             </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const clean = guestOperatorName.trim();
+                if (!clean) return;
+                setGuestOperatorName("");
+                handleSelectMember(`${clean} (Ospite)`);
+              }}
+              className="pt-3 border-t border-muted space-y-2"
+            >
+              <label className="block text-xs font-bold text-foreground">
+                Oppure partecipa come Ospite
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={guestOperatorName}
+                  onChange={(e) => setGuestOperatorName(e.target.value)}
+                  placeholder="Inserisci il tuo nome..."
+                  className="flex-1 min-h-[42px] px-3 rounded-xl bg-background border border-muted text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <button
+                  type="submit"
+                  disabled={!guestOperatorName.trim()}
+                  className="min-h-[42px] px-4 rounded-xl bg-secondary text-secondary-foreground text-xs font-extrabold hover:opacity-90 active:scale-95 disabled:opacity-40 transition-all shrink-0"
+                >
+                  Conferma
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
