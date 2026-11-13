@@ -69,7 +69,7 @@ async function putBlobJson(pathname: string, payload: unknown, token: string): P
   const content = JSON.stringify(payload);
   try {
     await put(pathname, content, {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: "application/json",
@@ -78,13 +78,14 @@ async function putBlobJson(pathname: string, payload: unknown, token: string): P
   } catch (err: unknown) {
     const msg = String((err as Error)?.message || "").toLowerCase();
     if (
+      msg.includes("public") ||
       msg.includes("private") ||
       msg.includes("access") ||
       msg.includes("forbidden") ||
       msg.includes("not allowed")
     ) {
       await put(pathname, content, {
-        access: "private",
+        access: "public",
         addRandomSuffix: false,
         allowOverwrite: true,
         contentType: "application/json",
@@ -98,14 +99,14 @@ async function putBlobJson(pathname: string, payload: unknown, token: string): P
 
 async function getBlobText(pathname: string, token: string): Promise<string | null> {
   try {
-    const res = await get(pathname, { access: "public", token, useCache: false });
+    const res = await get(pathname, { access: "private", token, useCache: false });
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
   } catch {}
 
   try {
-    const res = await get(pathname, { access: "private", token, useCache: false });
+    const res = await get(pathname, { access: "public", token, useCache: false });
     if (res?.statusCode === 200 && res.stream) {
       return await new Response(res.stream).text();
     }
