@@ -11,6 +11,7 @@ import {
   ChevronUp,
   ClipboardList,
   CloudUpload,
+  FileDown,
   Loader2,
   Minus,
   Plus,
@@ -24,6 +25,7 @@ import {
   X
 } from "lucide-react";
 import { DEFAULT_MEMBERS } from "@/types/absence";
+import { exportCheckinPdfReport } from "@/lib/checkinPdfExport";
 import {
   CheckinBatchItem,
   MergedTallySubmission,
@@ -41,6 +43,8 @@ type FilterMode = "all" | "pending" | "checked_in";
 interface LocalPendingEntry {
   checkedIn: boolean;
   checkedInCount: number;
+  delta: number;
+  maxCount: number;
   updatedAt: string;
   checkedInBy?: string;
 }
@@ -237,15 +241,21 @@ export default function TallyCheckinClient({
     if (!selectedFormId) return;
     const maxCount = sub.participantsCount || 1;
     const clampedCount = Math.max(0, Math.min(maxCount, targetCount));
+    const baseServerCount =
+      data?.submissions.find((s) => s.submissionId === sub.submissionId)?.checkedInCount ??
+      sub.checkedInCount;
+    const delta = clampedCount - baseServerCount;
 
     const nextPending: LocalPendingMap = { ...pendingMap };
     // If returning to the exact server state, remove from pending draft
-    if (clampedCount === sub.checkedInCount) {
+    if (delta === 0) {
       delete nextPending[sub.submissionId];
     } else {
       nextPending[sub.submissionId] = {
         checkedIn: clampedCount > 0,
         checkedInCount: clampedCount,
+        delta,
+        maxCount,
         updatedAt: new Date().toISOString(),
         checkedInBy: memberName || undefined
       };
@@ -374,6 +384,8 @@ export default function TallyCheckinClient({
         submissionId,
         checkedIn: item.checkedIn,
         checkedInCount: item.checkedInCount,
+        delta: item.delta,
+        maxCount: item.maxCount,
         updatedAt: item.updatedAt,
         checkedInBy: item.checkedInBy
       }));
@@ -490,6 +502,32 @@ export default function TallyCheckinClient({
   }, [effectiveSubmissions, filterMode, search, getPrimaryValue]);
 
   const pendingCount = Object.keys(pendingMap).length;
+
+  const handleExportPdf = () => {
+    if (!selectedForm) return;
+    const sortedAll = [...effectiveSubmissions].sort((a, b) =>
+      getPrimaryValue(a).localeCompare(getPrimaryValue(b), "it", { sensitivity: "base" })
+    );
+    const opened = exportCheckinPdfReport({
+      formName: selectedForm.name,
+      syncedAt: data?.syncedAt || null,
+      submissions: sortedAll,
+      fieldLabels: data?.fieldLabels || {},
+      getPrimaryValue,
+      primaryFieldId: selectedForm.primaryFieldId,
+      totalParticipants: stats.totalParticipants,
+      checkedInParticipants: stats.checkedInParticipants,
+      totalSubmissions: stats.totalSubmissions,
+      checkedInSubmissions: stats.checkedInSubmissions,
+      hasPendingSync: pendingCount > 0
+    });
+    if (!opened) {
+      setStatusMsg({
+        type: "error",
+        text: "Popup bloccato dal browser: consenti i popup per esportare il PDF."
+      });
+    }
+  };
 
   const formatDate = (iso?: string | null) => {
     if (!iso) return "Mai";
@@ -613,6 +651,17 @@ export default function TallyCheckinClient({
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>Aggiungi ospite</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            disabled={!selectedForm || effectiveSubmissions.length === 0}
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
+            title="Esporta report PDF con tutti i partecipanti"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            <span>Esporta PDF</span>
           </button>
 
           <button

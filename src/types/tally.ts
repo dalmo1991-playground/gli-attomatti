@@ -84,6 +84,8 @@ export interface CheckinBatchItem {
   submissionId: string;
   checkedIn: boolean;
   checkedInCount?: number;
+  delta?: number;
+  maxCount?: number;
   updatedAt: string;
   checkedInBy?: string;
 }

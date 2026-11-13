@@ -561,7 +561,29 @@ export async function applyCheckinBatch(
     const incomingTime = item.updatedAt || new Date().toISOString();
     const current = checkins[item.submissionId];
 
-    // Multi-user Last-Write-Wins per submissionId
+    // Multi-user delta merge: adds/subtracts relative change on top of latest server state
+    if (typeof item.delta === "number") {
+      const upperBound = Math.max(1, item.maxCount || 99);
+      const currentCount = current
+        ? typeof current.checkedInCount === "number"
+          ? current.checkedInCount
+          : current.checkedIn
+            ? upperBound
+            : 0
+        : 0;
+      const nextCount = Math.max(0, Math.min(upperBound, currentCount + item.delta));
+
+      checkins[item.submissionId] = {
+        checkedIn: nextCount > 0,
+        checkedInCount: nextCount,
+        updatedAt: incomingTime,
+        checkedInBy: item.checkedInBy || current?.checkedInBy || undefined
+      };
+      appliedCount += 1;
+      continue;
+    }
+
+    // Fallback: Last-Write-Wins per submissionId
     if (!current || incomingTime >= current.updatedAt) {
       const hasCount = typeof item.checkedInCount === "number";
       const normalizedCount = hasCount ? Math.max(0, item.checkedInCount as number) : undefined;
