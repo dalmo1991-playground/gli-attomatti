@@ -2634,5 +2634,85 @@
     "enabled": false,
     "rules": []
   },
-  "tally_checkin_forms": []
+  "tally_checkin_forms": [
+    {
+      "id": "Eky7ON",
+      "name": "Cineforum - Le Meraviglie",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "JkjZo4",
+          "label": "Nome e Cognome",
+          "type": "INPUT_TEXT"
+        },
+        {
+          "questionId": "rrMWlR",
+          "label": "Numero di partecipanti",
+          "type": "INPUT_NUMBER"
+        }
+      ],
+      "participantsMode": "from_field",
+      "primaryFieldId": "JkjZo4",
+      "participantsFieldId": "rrMWlR"
+    },
+    {
+      "id": "Gx8AZj",
+      "name": "Cineforum - Pane e tulipani",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "MdZQBl",
+          "label": "Nome e Cognome",
+          "type": "INPUT_TEXT"
+        },
+        {
+          "questionId": "BbW5GK",
+          "label": "Numero di partecipanti",
+          "type": "INPUT_NUMBER"
+        }
+      ],
+      "participantsMode": "from_field",
+      "primaryFieldId": "MdZQBl",
+      "participantsFieldId": "BbW5GK"
+    },
+    {
+      "id": "2EQGpV",
+      "name": "Cineforum - I vitelloni",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "2xdg0e",
+          "label": "Nome e Cognome",
+          "type": "INPUT_TEXT"
+        },
+        {
+          "questionId": "V1Oy8g",
+          "label": "Numero di partecipanti",
+          "type": "INPUT_NUMBER"
+        }
+      ],
+      "participantsMode": "from_field",
+      "participantsFieldId": "V1Oy8g"
+    },
+    {
+      "id": "obXLq1",
+      "name": "Cineforum - Una storia vera ",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "LMxqly",
+          "label": "Nome e Cognome",
+          "type": "INPUT_TEXT"
+        },
+        {
+          "questionId": "arMEBW",
+          "label": "Numero di partecipanti",
+          "type": "INPUT_NUMBER"
+        }
+      ],
+      "participantsMode": "from_field",
+      "primaryFieldId": "LMxqly",
+      "participantsFieldId": "arMEBW"
+    }
+  ]
 }
