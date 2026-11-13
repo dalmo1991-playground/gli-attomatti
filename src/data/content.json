@@ -660,6 +660,7 @@
       "badge": "Note Legali",
       "title": "Impressum",
       "description": "Informazioni legali ed editoriali ai sensi della legge federale svizzera contro la concorrenza sleale (art. 3 cpv. 1 lett. s LCSl) e del Codice Civile Svizzero (artt. 60 e segg. CC).",
+      "last_updated": "Ultimo aggiornamento: Novembre 2026",
       "organization": {
         "section_title": "Organizzazione & Forma Giuridica",
         "name": "Associazione Gli Attomatti",
@@ -673,10 +674,12 @@
         "address": "Alte Landstrasse 4, 8802 Kilchberg (ZH), Svizzera",
         "represented_by_label": "Rappresentanza legale",
         "represented_by": "Domenico Scotti Di Carlo (Presidente, con potere di rappresentanza legale individuale)",
+        "editorial_responsible_label": "Responsabile dei contenuti editoriali",
+        "editorial_responsible": "Domenico Scotti Di Carlo (Presidente) — Alte Landstrasse 4, 8802 Kilchberg (ZH), Svizzera",
         "treasurer_label": "Cassa e amministrazione",
         "treasurer": "Teresa Bianco (Cassiera, senza potere di rappresentanza esterna)",
         "registry_label": "Registro di commercio / IVA",
-        "registry": "Associazione non iscritta al Registro di commercio (iscrizione non obbligatoria ai sensi dell'art. 61 cpv. 2 CC); non soggetta a imposta sul valore aggiunto (IVA / MWST)."
+        "registry": "Associazione non iscritta al Registro di commercio (iscrizione non obbligatoria ai sensi dell'art. 61 cpv. 2 CC) e non soggetta a imposta sul valore aggiunto (IVA / MWST) in quanto al di sotto della soglia d'obbligo di cifra d'affari (art. 10 LIVA)."
       },
       "contacts": {
         "section_title": "Contatti telematici",
@@ -685,45 +688,46 @@
         "website_label": "Sito web",
         "website_url": "https://gliattomatti.ch"
       },
+      "providers_section": {
+        "section_title": "Fornitori di servizi e infrastruttura digitale",
+        "intro": "Per l'erogazione del sito web, della biglietteria, dei moduli di iscrizione e delle comunicazioni telematiche, l'Associazione si avvale dei seguenti fornitori di servizi esterni (in coerenza con la nostra Informativa sulla Privacy):"
+      },
       "liability": {
         "section_title": "Esclusione di responsabilità",
         "contents_title": "Contenuti del sito:",
         "contents_text": "I contenuti di questo sito web sono stati elaborati con la massima diligenza e accuratezza. Tuttavia, l'Associazione Gli Attomatti non assume alcuna responsabilità per l'esattezza, la completezza, l'attualità e la disponibilità continua delle informazioni pubblicate.",
         "links_title": "Collegamenti esterni e servizi terzi incorporati:",
-        "links_text_1": "Il nostro sito web include collegamenti a pagine terze e integra componenti digitali e servizi incorporati di fornitori esterni, in particolare: la biglietteria svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten), i formulari interattivi Tally BV (Muinklaan 23, 9000 Gand, Belgio), i trailer video di YouTube (Google Ireland Ltd., Gordon House, Barrow Street, Dublino 4, Irlanda) e i post social di Instagram (Meta Platforms Ireland Ltd., Merrion Road, Dublino 4, Irlanda).",
-        "links_text_2": "L'accesso a tali servizi esterni avviene a esclusivo rischio dell'utente. L'Associazione Gli Attomatti non ha alcuna influenza sulla conformazione tecnica, sulla sicurezza dei dati né sui contenuti dei siti o servizi di terzi. Per il trattamento dei dati personali da parte di ciascun fornitore, si rimanda alle rispettive informative: <a href='https://eventfrog.ch/de/privacy-policy.html' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>Eventfrog Privacy</a>, <a href='https://tally.so/help/privacy-policy' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>Tally Privacy</a>, <a href='https://policies.google.com/privacy' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>Google / YouTube Privacy</a>, <a href='https://privacycenter.instagram.com/policy' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>Instagram / Meta Privacy</a> e alla nostra <a href='/Privacy' class='text-primary hover:underline'>Informativa sulla Privacy</a>."
+        "links_text_1": "Il nostro sito web include collegamenti a pagine terze e integra componenti digitali e servizi incorporati di fornitori esterni, tra cui la biglietteria svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten) e i formulari interattivi Tally BV (Muinklaan 23, 9000 Gand, Belgio).",
+        "links_text_2": "L'accesso a tali servizi esterni avviene a esclusivo rischio dell'utente. L'Associazione Gli Attomatti non ha alcuna influenza sulla conformazione tecnica, sulla sicurezza dei dati né sui contenuti dei siti o servizi di terzi. Per il trattamento dei dati personali da parte di ciascun fornitore, si rimanda alle rispettive informative elencate sopra e alla nostra <a href='/Privacy' class='text-primary hover:underline'>Informativa sulla Privacy</a>."
       },
       "copyright": {
         "section_title": "Diritto d'autore",
-        "text": "I contenuti, i testi, le immagini, i loghi e i materiali pubblicati su questo sito web sono di proprietà dell'Associazione Gli Attomatti o dei rispettivi autori indicati e sono protetti dalla Legge federale svizzera sul diritto d'autore (LDA). Ai sensi dello Statuto associativo, la denominazione, il logo e l'identità visiva sono di proprietà esclusiva dell'Associazione; qualsiasi utilizzo promozionale o riproduzione necessita dell'espressa autorizzazione scritta del Presidente."
+        "text": "I contenuti, i testi, le immagini, i loghi e i materiali pubblicati su questo sito web sono di proprietà dell'Associazione Gli Attomatti o dei rispettivi autori indicati e sono protetti dalla Legge federale svizzera sul diritto d'autore (LDA). Qualsiasi riproduzione, elaborazione o utilizzo promozionale richiede la previa autorizzazione scritta dell'Associazione."
       }
     },
     "termini": {
       "meta": {
-        "title": "Termini e Condizioni di Biglietteria e Iscrizioni",
+        "title": "Termini e Condizioni",
         "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione agli eventi e il regolamento di sala dell'Associazione Gli Attomatti a Zurigo."
       },
       "back_link": "Torna alla home",
       "badge": "Regolamento Spettacoli & Eventi",
-      "title": "Termini e Condizioni Generali (CGC)",
-      "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione a corsi ed eventi teatrali, e regolamento di sala dell'Associazione Gli Attomatti (Kilchberg / Zurigo, Svizzera).",
+      "title": "Termini e Condizioni",
+      "description": "Condizioni generali per l'acquisto dei biglietti, l'iscrizione a corsi ed eventi teatrali e il regolamento di sala dell'Associazione Gli Attomatti (Kilchberg / Zurigo, Svizzera).",
+      "last_updated": "Ultimo aggiornamento: Novembre 2026",
       "sections": [
         {
           "id": "scope",
           "title": "1. Ambito di applicazione, venditore e canali di fruizione",
-          "intro": "Le presenti Condizioni Generali di Contratto (CGC) disciplinano tutti i rapporti tra l'acquirente/partecipante e l'Associazione Gli Attomatti (Alte Landstrasse 4, 8802 Kilchberg ZH, Svizzera, di seguito \"Organizzatore\" o \"Venditore\") in merito alla vendita dei biglietti per gli spettacoli, all'iscrizione a corsi, laboratori, audizioni ed eventi culturali promossi dalla compagnia teatrale.",
+          "intro": "I presenti Termini e Condizioni disciplinano tutti i rapporti tra l'acquirente/partecipante e l'Associazione Gli Attomatti (Alte Landstrasse 4, 8802 Kilchberg ZH, Svizzera, di seguito \"Organizzatore\" o \"Venditore\") in merito alla vendita dei biglietti per gli spettacoli, all'iscrizione a corsi, laboratori, audizioni ed eventi culturali promossi dalla compagnia teatrale.",
           "items": [
             {
               "label": "Spettacoli a pagamento e casse incorporate:",
-              "text": "l'acquisto dei titoli di accesso può avvenire sia direttamente sul portale del nostro partner di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera), sia tramite le casse digitali incorporate (iframe embed) integrate all'interno del nostro sito web (nelle sezioni /Biglietti, /Biglietti/[slug], schede spettacolo o landing page). L'Organizzatore e venditore dei biglietti teatrali è l'Associazione Gli Attomatti, mentre Eventfrog AG opera quale intermediario tecnico e gestore della piattaforma transazionale e di emissione dei biglietti con codice QR. Le presenti condizioni generali si applicano indistintamente agli acquisti effettuati sul sito o tramite cassa incorporata, unitamente alle condizioni d'uso generali della piattaforma Eventfrog per gli acquirenti."
+              "text": "l'acquisto dei titoli di accesso può avvenire sia direttamente sul portale del nostro partner di biglietteria Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera), sia tramite le casse digitali incorporate (iframe embed) integrate all'interno del nostro sito web (nelle sezioni /Biglietti, /Biglietti/[slug], schede spettacolo o landing page). La controparte contrattuale per la vendita dei biglietti è l'Associazione Gli Attomatti. Eventfrog AG agisce esclusivamente come fornitore tecnico della piattaforma di biglietteria e di emissione dei biglietti con codice QR. I presenti Termini e Condizioni si applicano indistintamente agli acquisti effettuati sul sito o tramite cassa incorporata, unitamente alle condizioni d'uso tecniche della piattaforma Eventfrog per gli acquirenti."
             },
             {
               "label": "Iscrizioni a eventi gratuiti, workshop o audizioni:",
               "text": "la prenotazione o registrazione a eventi gratuiti, prove aperte o workshop a numero programmato avviene tramite moduli interattivi (anche incorporati via iframe o finestre modali) gestiti dalla piattaforma tecnica Tally BV (Gand, Belgio) raggiungibili all'hub /Registrazioni, alle sezioni /Registrazioni/[slug] o alle relative landing page."
-            },
-            {
-              "label": "Richieste per affitto sala (Saalvermietung) o contatti speciali:",
-              "text": "la compilazione dei moduli per la richiesta di utilizzo della sala teatrale costituisce una richiesta informativa preliminare e non vincola le parti alla stipula, la quale richiede la sottoscrizione di un apposito contratto scritto di locazione o comodato."
             }
           ]
         },
@@ -770,8 +774,8 @@
           "title": "4. Annullamento, interruzione o rinvio dell'evento",
           "paragraphs": [
             "Annullamento definitivo dell'evento: qualora uno spettacolo debba essere annullato definitivamente per cause di forza maggiore, malattia degli interpreti, disposizioni di pubblica autorità o motivi organizzativi insormontabili, l'Organizzatore rimborserà all'acquirente il 100% del prezzo nominale del biglietto pagato. Il rimborso viene disposto entro un termine massimo di 30 giorni dalla data di comunicazione dell'annullamento, tramite lo stesso metodo di pagamento utilizzato in fase d'acquisto attraverso la piattaforma Eventfrog. Le commissioni per servizi opzionali esterni scelti volontariamente dall'utente (quali costi assicurativi di terzi) sono disciplinate dalle condizioni dei rispettivi fornitori.",
-            "Rinvio o spostamento a nuova data: in caso di spostamento dello spettacolo a una data o sede alternativa, il biglietto acquistato rimane pienamente valido per la nuova recita. Se l'acquirente non può partecipare nella nuova data stabilita, ha diritto a richiedere il rimborso integrale del biglietto entro e non oltre 14 giorni dalla comunicazione ufficiale della nuova data (o entro il termine indicato nell'avviso inviato da Eventfrog/Organizzatore), inviando richiesta all'indirizzo compagniateatralegliattomatti@gmail.com o tramite i canali d'assistenza di Eventfrog.",
-            "Interruzione a spettacolo già iniziato: qualora la rappresentazione debba essere interrotta dopo l'inizio del secondo tempo o dopo aver superato la metà della durata prevista per cause non imputabili all'Organizzatore (es. allarme antincendio, evacuazione della struttura, interruzione elettrica municipale), non è dovuto alcun rimborso."
+            "Rinvio o spostamento a nuova data: in caso di spostamento dello spettacolo a una data o sede alternativa, il biglietto acquistato rimane pienamente valido per la nuova data. Se l'acquirente non può partecipare nella nuova data stabilita, ha diritto a richiedere il rimborso integrale del biglietto entro e non oltre 14 giorni dalla comunicazione ufficiale della nuova data (o entro il termine indicato nell'avviso inviato da Eventfrog/Organizzatore), inviando richiesta all'indirizzo compagniateatralegliattomatti@gmail.com o tramite i canali d'assistenza di Eventfrog.",
+            "Interruzione a spettacolo già iniziato: qualora la rappresentazione debba essere interrotta dopo l'inizio del secondo tempo o dopo aver superato la metà della durata prevista per cause non imputabili all'Organizzatore (es. allarme antincendio, evacuazione della struttura, interruzione elettrica municipale), non è dovuto alcun rimborso monetario automatico; compatibilmente con il calendario della stagione, l'Organizzatore si impegna tuttavia a offrire agli spettatori interessati un voucher o un cambio data per una replica successiva. Restano in ogni caso salvi eventuali diritti inderogabili riconosciuti al consumatore dalla legge applicabile."
           ]
         },
         {
@@ -794,7 +798,7 @@
         {
           "id": "photo_policy",
           "title": "7. Foto, riprese della compagnia e diritto all'immagine",
-          "intro": "In occasione delle rappresentazioni, dei corsi, delle prove aperte e delle iniziative culturali promosse dall'Associazione Gli Attomatti, possono essere effettuate riprese fotografiche e videoriprese a scopo di documentazione culturale, rassegna stampa, archivio storico e divulgazione sui canali ufficiali della compagnia (sito web, social network Instagram e Facebook, locandine e brochure).",
+          "intro": "In occasione delle rappresentazioni, dei corsi, delle prove aperte e delle iniziative culturali promosse dall'Associazione Gli Attomatti, possono essere effettuate riprese fotografiche e videoriprese a scopo di documentazione culturale, rassegna stampa, archivio storico e divulgazione sui canali ufficiali della compagnia (sito web, social network Instagram e Facebook, locandine e brochure). Il trattamento delle immagini si fonda sul nostro legittimo interesse documentale e promozionale dell'attività culturale, come dettagliato nella nostra <a href='/Privacy' class='text-primary hover:underline'>Informativa sulla Privacy</a>.",
           "items": [
             {
               "label": "Inquadratura generale della sala:",
@@ -815,7 +819,7 @@
           "title": "8. Accessibilità, posti per persone a mobilità ridotta e requisiti di età",
           "paragraphs": [
             "Accessibilità e posti riservati: l'Associazione Gli Attomatti favorisce la piena partecipazione di tutte le persone alle iniziative teatrali. La maggior parte delle sale utilizzate a Zurigo e dintorni è accessibile alle persone con sedia a rotelle o a ridotta mobilità. Invitiamo gli spettatori con particolari esigenze motorie o di accompagnamento a contattarci via email (compagniateatralegliattomatti@gmail.com) con congruo anticipo prima della data dello spettacolo, in modo da riservare la postazione idonea e agevolare l'accoglienza all'ingresso.",
-            "Età consigliata e minori: salvo dove espressamente indicato nella scheda descrittiva dello spettacolo (es. 'spettacolo adatto a tutte le famiglie' o specifiche indicazioni di età minima consigliata per tematiche complesse), le produzioni teatrali ordinarie sono rivolte a un pubblico adulto o a ragazzi accompagnati (età generalmente consigliata dai 10 anni in su). I minori di anni 14 devono essere obbligatoriamente accompagnati da un genitore o adulto responsabile per l'intera durata della rappresentazione."
+            "Età consigliata e minori: Età minima consigliata: come indicato nella rispettiva scheda evento (in assenza di indicazioni specifiche, gli spettacoli ordinari sono consigliati a partire dai 10 anni). I minori di 14 anni devono essere obbligatoriamente accompagnati da un adulto responsabile per tutta la durata della rappresentazione."
           ]
         },
         {
@@ -831,7 +835,7 @@
           "title": "10. Servizi digitali di terze parti e limitazione di responsabilità",
           "paragraphs": [
             "L'Organizzatore declina ogni responsabilità per temporanei malfunzionamenti tecnici, interruzioni della connessione internet o guasti indipendenti dei server riconducibili alle infrastrutture dei fornitori terzi indipendenti impiegati (Eventfrog AG per la biglietteria, Tally BV per i moduli di registrazione, Google / YouTube per i flussi video, Meta / Instagram per i post social, Vercel per l'hosting).",
-            "Limitazione di responsabilità ai sensi dell'art. 100 CO: la responsabilità contrattuale ed extracontrattuale dell'Associazione Gli Attomatti per eventuali danni materiali o patrimoniali diretti è limitata, nei limiti massimi consentiti dal diritto svizzero applicabile (art. 100 del Codice delle Obbligazioni svizzero), all'importo effettivamente corrisposto dall'utente per il biglietto o servizio in questione. Resta espressamente esclusa qualsiasi responsabilità per danni indiretti, perdita di guadagno o per lieve colpa (leichte Fahrlässigkeit). La responsabilità non è limitata o esclusa in caso di dolo (Vorsatz), colpa grave (grobe Fahrlässigkeit) o per danni alla vita, al corpo o alla salute della persona."
+            "Limitazione di responsabilità: la responsabilità contrattuale ed extracontrattuale dell'Associazione Gli Attomatti per eventuali danni materiali o patrimoniali diretti è limitata, nei limiti consentiti dalla legge applicabile (incluso l'art. 100 del Codice delle Obbligazioni svizzero), all'importo effettivamente corrisposto dall'utente per il biglietto o servizio in questione. Resta espressamente esclusa, nei limiti di legge, qualsiasi responsabilità per danni indiretti, perdita di guadagno o per lieve colpa (leichte Fahrlässigkeit). La responsabilità non è limitata o esclusa in caso di dolo (Vorsatz), colpa grave (grobe Fahrlässigkeit) o per danni alla vita, al corpo o alla salute della persona. Restano in ogni caso impregiudicati i diritti inderogabili del consumatore."
           ]
         },
         {
@@ -847,7 +851,7 @@
           "title": "12. Diritto applicabile e foro competente",
           "paragraphs": [
             "Diritto applicabile: il rapporto contrattuale è disciplinato dal diritto materiale svizzero (Codice delle Obbligazioni - CO), con espressa esclusione della Convenzione delle Nazioni Unite sui contratti di compravendita internazionale di merci (CISG). Per gli acquirenti che rivestono la qualifica di consumatori residenti nell'Unione Europea, la scelta della legge svizzera non pregiudica l'applicazione delle disposizioni inderogabili a tutela del consumatore previste dalla legge dello Stato membro di residenza abituale (ai sensi dell'art. 6 par. 2 del Regolamento CE n. 593/2008 'Roma I').",
-            "Foro competente: per qualsiasi controversia derivante da o collegata alle presenti Condizioni Generali o ai servizi forniti dall'Organizzatore, il foro competente ordinario esclusivo è quello della sede dell'Associazione (Zurigo / distretto di Horgen, Svizzera). Qualora l'utente rivesta la qualifica di consumatore ai sensi dell'art. 17 della Convenzione di Lugano (Convenzione concernente la competenza giurisdizionale, il riconoscimento e l'esecuzione delle decisioni in materia civile e commerciale) o dell'art. 18 del Regolamento UE n. 1215/2012 (Bruxelles I-bis), resta salva la facoltà del consumatore di adire i tribunali del proprio domicilio di residenza, nonché l'obbligo dell'Organizzatore di promuovere eventuali azioni contro il consumatore esclusivamente dinanzi ai tribunali del domicilio di quest'ultimo."
+            "Foro competente: per qualsiasi controversia derivante da o collegata ai presenti Termini e Condizioni o ai servizi forniti dall'Organizzatore, il foro competente ordinario esclusivo è quello della sede dell'Associazione (Zurigo / distretto di Horgen, Svizzera). Qualora l'utente rivesta la qualifica di consumatore ai sensi della Convenzione di Lugano (Convenzione concernente la competenza giurisdizionale, il riconoscimento e l'esecuzione delle decisioni in materia civile e commerciale) o dell'art. 18 del Regolamento UE n. 1215/2012 (Bruxelles I-bis), resta salva la facoltà del consumatore di adire i tribunali del proprio domicilio di residenza, nonché l'obbligo dell'Organizzatore di promuovere eventuali azioni contro il consumatore esclusivamente dinanzi ai tribunali del domicilio di quest'ultimo."
           ]
         }
       ]
@@ -861,6 +865,7 @@
       "badge": "nLPD & GDPR",
       "title": "Informativa sulla Privacy",
       "description": "Trattamento dei dati personali conforme alla nuova Legge federale svizzera sulla protezione dei dati (nLPD), al Regolamento Generale sulla Protezione dei Dati dell'Unione Europea (GDPR, Reg. UE 2016/679) e al principio di trasparenza preventiva e opt-in.",
+      "last_updated": "Ultimo aggiornamento: Novembre 2026",
       "data_controller": {
         "title": "Titolare del trattamento",
         "name": "Associazione Gli Attomatti",
@@ -876,21 +881,31 @@
         "title": "Periodi di conservazione dei dati",
         "paragraphs": [
           "I dati personali vengono conservati per il tempo strettamente necessario a conseguire le finalità per cui sono stati raccolti, in ottemperanza al principio di proporzionalità (art. 6 cpv. 2 nLPD e art. 5 cpv. 1 lett. e GDPR):",
-          "• Dati di acquisto biglietti e contabilità: i dati anagrafici e contabili collegati alle transazioni di acquisto vengono conservati per 10 anni in conformità agli obblighi di conservazione dei libri contabili previsti dal diritto commerciale e fiscale svizzero (art. 958f del Codice delle Obbligazioni svizzero - CO).",
+          "• Dati di acquisto biglietti e contabilità: i dati anagrafici e contabili collegati alle transazioni di acquisto vengono conservati per 10 anni in conformità agli obblighi di conservazione dei libri contabili previsti dal diritto commerciale e fiscale svizzero (art. 958f del Codice delle Obbligazioni svizzero - CO). Per i dati di profilo eventualmente salvati su un account personale Eventfrog si applica l'informativa di Eventfrog AG.",
           "• Dati di registrazione a eventi gratuiti o workshop (Tally): conservati per la durata dell'organizzazione dell'evento e cancellati entro 6 mesi dalla conclusione dello stesso, salvo consenso dell'interessato all'iscrizione alla newsletter continuativa.",
+          "• Dati di check-in in Area Riservata (Vercel Blob): le liste partecipanti sincronizzate temporaneamente per il controllo accessi in sala vengono eliminate entro 30 giorni dalla conclusione del rispettivo evento.",
           "• Dati newsletter e comunicazioni teatrali: conservati fino alla revoca del consenso o alla richiesta di disiscrizione da parte dell'utente, a seguito della quale vengono cancellati tempestivamente dalla lista attiva.",
-          "• File di log del server (Vercel) e dati di sicurezza (reCAPTCHA): i file di log tecnici contenenti gli indirizzi IP vengono conservati per un massimo di 30 giorni a fini di diagnostica e sicurezza di rete e successivamente aggregati o sovrascritti.",
-          "• Dati analitici e di tracciamento (Google Analytics / Meta Pixel): conservati per i periodi massimi previsti dalle rispettive impostazioni (fino a 14 mesi per le metriche utente GA4; 90 giorni per i cookie Meta Pixel), salva precedente cancellazione dei cookie dal browser."
-        ]
+          "• File di log del server (Vercel) e dati di sicurezza (reCAPTCHA): i file di log tecnici contenenti gli indirizzi IP vengono conservati per un massimo di 30 giorni a fini di diagnostica e sicurezza di rete e successivamente aggregati o sovrascritti."
+        ],
+        "ga_retention": "• Dati statistici (Google Analytics 4): conservati per un massimo di 14 mesi secondo le impostazioni GA4, salva precedente cancellazione dei cookie dal browser.",
+        "meta_retention": "• Dati di marketing (Meta Pixel): conservati per un massimo di 90 giorni per i cookie Meta Pixel, salva precedente cancellazione dei cookie dal browser."
       },
       "data_processors": {
         "title": "Responsabili del trattamento (Data Processors) e accordi DPA",
         "paragraphs": [
           "Nello svolgimento delle attività telematiche, l'Associazione Gli Attomatti si avvale di fornitori terzi specializzati che trattano i dati personali per nostro conto in qualità di Responsabili del trattamento (ai sensi dell'art. 9 nLPD e dell'art. 28 GDPR). Con ciascuno di essi è stato stipulato o è attivo il relativo Data Processing Agreement (DPA) vincolante:",
-          "• Hosting e CDN: Vercel Inc. (440 N Barranca Ave #4133, Covina, CA 91723, USA) — server e nodi di edge hosting situati nell'Unione Europea (Francoforte, Germania) con infrastruttura globale di sicurezza. Trasferimento verso gli USA regolato dal Swiss-U.S. Data Privacy Framework (DPF) e dalle Clausole Contrattuali Standard (SCC).",
+          "• Hosting, CDN e archiviazione Vercel Blob: Vercel Inc. (440 N Barranca Ave #4133, Covina, CA 91723, USA) — server e nodi di edge hosting situati nell'Unione Europea (Francoforte, Germania) con infrastruttura globale di sicurezza. Trasferimento verso gli USA regolato dal Swiss-U.S. Data Privacy Framework (DPF) e dalle Clausole Contrattuali Standard (SCC).",
           "• Moduli telematici di registrazione: Tally BV (Muinklaan 23, 9000 Gand, Belgio) — server dedicati ospitati all'interno dell'Unione Europea (Belgio e Germania).",
-          "• Distribuzione email e notifiche: Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA) — elaborazione telematico delle email transazionali; trasferimento verso gli USA disciplinato da accordo DPA conforme e dalle Clausole Contrattuali Standard approvate (SCC / Swiss Addendum).",
+          "• Distribuzione email e notifiche: Resend Inc. (2261 Market Street #5039, San Francisco, CA 94114, USA) — elaborazione telematica delle email transazionali; trasferimento verso gli USA disciplinato da accordo DPA conforme e dalle Clausole Contrattuali Standard approvate (SCC / Swiss Addendum).",
           "• Casella postale ufficiale: Google Workspace / Gmail (Google Cloud EMEA Limited, 70 Sir John Rogerson's Quay, Dublino 2, Irlanda) — gestione sicura delle comunicazioni via posta elettronica."
+        ]
+      },
+      "vercel_blob": {
+        "title": "Area Riservata, Check-in e Archiviazione Vercel Blob",
+        "paragraphs": [
+          "Per supportare l'organizzazione operativa degli eventi, l'Associazione utilizza il servizio di archiviazione protetta Vercel Blob (Vercel Inc.) esclusivamente per: (a) la sincronizzazione temporanea delle liste partecipanti Tally necessarie al check-in in sala; (b) la gestione delle code tecniche di invio email (DLQ) e dei contatori anti-abuso.",
+          "Accesso e sicurezza: l'archivio è protetto e accessibile unicamente tramite l'Area Riservata autenticata ai soli referenti autorizzati della compagnia.",
+          "Periodo di conservazione: i dati dei partecipanti sincronizzati su Vercel Blob per il check-in vengono conservati per il tempo strettamente necessario alla gestione della serata e cancellati entro 30 giorni dalla conclusione dell'evento."
         ]
       },
       "server_logs": {
@@ -989,17 +1004,17 @@
         "title": "Biglietteria Online e Casse Incorporate (Eventfrog AG)",
         "paragraphs": [
           "Per la vendita e l'emissione dei biglietti teatrali ci avvaliamo della piattaforma svizzera Eventfrog AG (Neuhardstrasse 38, 4600 Olten, Svizzera).",
-          "I widget di cassa possono essere raggiunti tramite link o incorporati via iframe nelle nostre pagine. Quando acquisti un biglietto, la transazione e l'elaborazione dei dati di pagamento avvengono tramite connessione cifrata diretta con i server di Eventfrog AG, la quale opera quale titolare indipendente del trattamento nel pieno rispetto della nLPD svizzera.",
-          "L'Associazione Gli Attomatti riceve unicamente i dati necessari per la gestione degli accessi in sala (nominativo dell'acquirente, tipologia di biglietto, codice QR) e non memorizza né ha accesso alle coordinate bancarie o di carta di credito. I dati risiedono su data center svizzeri. Per l'informativa completa: eventfrog.ch/it/privacy.html."
+          "I widget di cassa possono essere raggiunti tramite link o incorporati via iframe nelle nostre pagine. Quando acquisti un biglietto, la transazione e l'elaborazione dei dati di pagamento avvengono tramite connessione cifrata diretta con i server di Eventfrog AG, la quale opera quale titolare indipendente del trattamento per la piattaforma di pagamento nel pieno rispetto della nLPD svizzera.",
+          "L'Associazione Gli Attomatti riceve unicamente i dati necessari per la gestione degli accessi in sala (nominativo dell'acquirente, tipologia di biglietto, codice QR) e non memorizza né ha accesso alle coordinate bancarie o di carta di credito. I dati risiedono su data center svizzeri; la conservazione dei dati di profilo Eventfrog è disciplinata dall'informativa di Eventfrog: eventfrog.ch/datenschutz."
         ],
-        "privacy_url": "https://eventfrog.ch/it/privacy.html"
+        "privacy_url": "https://eventfrog.ch/datenschutz"
       },
       "tally": {
         "title": "Moduli di Registrazione Eventi e Iscrizione Newsletter (Tally BV)",
         "paragraphs": [
-          "Per le registrazioni a workshop, corsi, eventi gratuiti o richieste di affitto sala utilizziamo i moduli di Tally BV (Gand, Belgio).",
-          "Distinzione delle finalità: la compilazione del form per la partecipazione a un evento ha finalità puramente organizzative e contrattuali (gestione degli accessi e lista d'attesa). L'eventuale iscrizione alla Newsletter promozionale della compagnia richiede una casella di spunta separata e facoltativa (Opt-in esplicito) all'interno del modulo.",
-          "I dati sono archiviati su server cloud situati all'interno dell'Unione Europea (Belgio/Germania). Per la gestione dell'accoglienza e del check-in in sala, i soli campi strettamente necessari possono essere sincronizzati su storage protetto Vercel Blob accessibile esclusivamente ai referenti autorizzati tramite Area Riservata autenticata. La lista iscritti è consultata unicamente dai referenti autorizzati dell'Associazione. Non esiste profilazione commerciale di terzi e ci si può cancellare in qualsiasi momento inviando un'email a compagniateatralegliattomatti@gmail.com.",
+          "Per le registrazioni a workshop, corsi ed eventi gratuiti utilizziamo i moduli di Tally BV (Gand, Belgio).",
+          "Distinzione delle finalità e minori: la compilazione del form per la partecipazione a un evento ha finalità puramente organizzative e contrattuali (gestione degli accessi e lista d'attesa). L'eventuale iscrizione alla Newsletter promozionale della compagnia richiede una casella di spunta separata e facoltativa (Opt-in esplicito) all'interno del modulo. Per i minori di 16 anni che si iscrivono a corsi o workshop, la registrazione richiede il consenso di un genitore o tutore.",
+          "I dati sono archiviati su server cloud situati all'interno dell'Unione Europea (Belgio/Germania) e, per il solo check-in in sala, possono essere sincronizzati temporaneamente su Vercel Blob come descritto nella sezione dedicata. La lista iscritti è consultata unicamente dai referenti autorizzati dell'Associazione. Non esiste profilazione commerciale di terzi e ci si può cancellare in qualsiasi momento inviando un'email a compagniateatralegliattomatti@gmail.com.",
           "Per maggiori informazioni: tally.so/help/privacy-policy."
         ],
         "privacy_url": "https://tally.so/help/privacy-policy"
@@ -1015,7 +1030,7 @@
         "title": "Fotografie e riprese durante gli eventi (Diritto all'immagine)",
         "paragraphs": [
           "Durante gli spettacoli e gli eventi organizzati dalla compagnia teatrale possono essere effettuate riprese fotografiche o audiovisive d'insieme per documentazione culturale e rassegna stampa.",
-          "Come disciplinato all'art. 7 dei nostri Termini e Condizioni, ogni partecipante ha il diritto di opporsi preventivamente prima dell'evento (inviando un'email a compagniateatralegliattomatti@gmail.com o comunicandolo all'ingresso al personale di sala) oppure di richiedere in qualsiasi momento la rimozione o l'oscuramento delle foto pubblicate sui nostri canali ufficiali."
+          "Il trattamento delle immagini si basa sul nostro legittimo interesse documentale e di promozione culturale (art. 31 cpv. 1 nLPD; art. 6 par. 1 lett. f GDPR). Hai diritto di opposizione secondo quanto indicato nei <a href='/Termini' class='text-primary hover:underline'>Termini e Condizioni</a>, art. 7: puoi opporti preventivamente prima dell'evento (scrivendo a compagniateatralegliattomatti@gmail.com o comunicandolo all'ingresso al personale di sala) oppure richiedere in qualsiasi momento la rimozione o l'oscuramento delle foto pubblicate sui nostri canali ufficiali."
         ],
         "contact_email": "compagniateatralegliattomatti@gmail.com"
       },

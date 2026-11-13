@@ -8,6 +8,7 @@ export interface LegalDocLayoutProps {
   badge?: string | null;
   title?: string | null;
   description?: string | null;
+  lastUpdated?: string | null;
   backHref?: string | null;
   backLabel?: string | null;
   className?: string;
@@ -18,6 +19,7 @@ export function LegalDocLayout({
   badge,
   title,
   description,
+  lastUpdated,
   backHref = "/",
   backLabel = "Torna alla home",
   className,
@@ -55,6 +57,12 @@ export function LegalDocLayout({
             {description && (
               <p className="text-base sm:text-lg text-foreground/70 max-w-2xl font-medium leading-relaxed">
                 <FormattedText text={description} />
+              </p>
+            )}
+
+            {lastUpdated && (
+              <p className="text-xs font-bold uppercase tracking-wider text-foreground/45">
+                {lastUpdated}
               </p>
             )}
           </div>

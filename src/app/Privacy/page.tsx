@@ -6,7 +6,7 @@ import { ShieldCheck, Server, ExternalLink, Scale, BarChart3, Target, Ticket, Co
 import { defaultText } from "@/lib/utils";
 import PrivacyConsentButton from "./PrivacyConsentButton";
 import { LegalDocLayout } from "@/components/ui/LegalDocLayout";
-import { isYouTubeUrl } from "@/lib/youtube";
+import { getActiveIntegrationsState } from "@/lib/legalProviders";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent();
@@ -23,18 +23,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrivacyPage() {
   const content = await getContent();
   const p = content?.pages?.privacy;
-  const integrations = content?.integrations || {};
-
-  const isGaActive = Boolean(integrations?.google_analytics?.enabled && integrations?.google_analytics?.measurement_id);
-  const isMetaActive = Boolean(integrations?.meta_pixel?.enabled && integrations?.meta_pixel?.pixel_id);
-  const isEventfrogActive = Boolean(
-    integrations?.eventfrog?.enabled ||
-    (content?.ticketing_pages && content.ticketing_pages.length > 0) ||
-    content?.shows?.some((s: any) => Boolean(s.eventfrog_url || s.eventfrog_id)) ||
-    (content?.landing_pages && content.landing_pages.some((lp: any) => lp.blocks?.some((b: any) => b.type === "biglietti" || b.eventfrog_url)))
-  );
+  const {
+    isGaActive,
+    isMetaActive,
+    isYouTubeActive,
+    isAnyTrackerActive,
+  } = getActiveIntegrationsState(content);
+  const isEventfrogActive = true;
   const isTallyActive = Boolean(
-    integrations?.tally?.enabled ||
+    content?.integrations?.tally?.enabled ||
     (content?.registration_pages && content.registration_pages.length > 0) ||
     (content?.landing_pages && content.landing_pages.some((lp: any) => lp.blocks?.some((b: any) => b.type === "registrazione" || b.tally_url)))
   );
@@ -42,13 +39,6 @@ export default async function PrivacyPage() {
     content?.emails?.templates?.some((t: any) => t.enabled !== false) ||
     content?.emails?.settings?.from_email
   );
-  const isYouTubeActive = Boolean(
-    p?.youtube ||
-    content?.shows?.some((s: any) => isYouTubeUrl(s.hero_image) || isYouTubeUrl(s.image) || s.images?.some((img: any) => isYouTubeUrl(img.url))) ||
-    content?.initiatives?.some((i: any) => isYouTubeUrl(i.hero_image) || isYouTubeUrl(i.image) || i.images?.some((img: any) => isYouTubeUrl(img.url))) ||
-    content?.landing_pages?.some((lp: any) => lp.blocks?.some((b: any) => isYouTubeUrl(b.hero_image) || isYouTubeUrl(b.image) || b.images?.some((img: any) => isYouTubeUrl(img.url))))
-  );
-  const isAnyTrackerActive = isGaActive || isMetaActive;
 
   const cookieRows = p?.cookie_opt_in?.rows || {};
 
@@ -57,6 +47,7 @@ export default async function PrivacyPage() {
       badge={defaultText(p?.badge)}
       title={defaultText(p?.title, "Informativa sulla Privacy")}
       description={defaultText(p?.description)}
+      lastUpdated={defaultText(p?.last_updated)}
       backHref="/"
       backLabel={defaultText(p?.back_link, "Torna alla home")}
     >
@@ -133,6 +124,12 @@ export default async function PrivacyPage() {
                   const val = defaultText(para);
                   return val ? <p key={idx}><FormattedText text={val} /></p> : null;
                 })}
+                {isGaActive && defaultText(p.retention.ga_retention) && (
+                  <p><FormattedText text={p.retention.ga_retention} /></p>
+                )}
+                {isMetaActive && defaultText(p.retention.meta_retention) && (
+                  <p><FormattedText text={p.retention.meta_retention} /></p>
+                )}
               </div>
             </div>
           )}
@@ -177,6 +174,28 @@ export default async function PrivacyPage() {
                   <FormattedText text={p.server_logs.text} />
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Area Riservata, Check-in e Archiviazione Vercel Blob */}
+          {p?.vercel_blob && (
+            <div className="p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-4 glass">
+              {defaultText(p.vercel_blob.title) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Lock size={20} />
+                  </div>
+                  <h2 className="text-xs font-black uppercase tracking-widest text-foreground/40">
+                    {defaultText(p.vercel_blob.title)}
+                  </h2>
+                </div>
+              )}
+              <div className="space-y-3 text-foreground/80 leading-relaxed font-medium text-sm">
+                {p.vercel_blob.paragraphs?.map((para: string, idx: number) => {
+                  const val = defaultText(para);
+                  return val ? <p key={idx}><FormattedText text={val} /></p> : null;
+                })}
+              </div>
             </div>
           )}
 

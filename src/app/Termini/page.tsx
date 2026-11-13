@@ -42,6 +42,7 @@ export default async function TerminiPage() {
       badge={defaultText(t?.badge)}
       title={defaultText(t?.title, "Termini e Condizioni")}
       description={defaultText(t?.description)}
+      lastUpdated={defaultText(t?.last_updated)}
       backHref="/"
       backLabel={defaultText(t?.back_link, "Torna alla home")}
     >
