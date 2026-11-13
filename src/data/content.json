@@ -62,6 +62,10 @@
         {
           "label": "Cineforum",
           "href": "/Iniziative/cineforum"
+        },
+        {
+          "label": "Laboratorio Teatrale",
+          "href": "/Iniziative/laboratorio-teatrale"
         }
       ]
     },
@@ -571,6 +575,59 @@
             }
           ],
           "hero_image_align": "left"
+        },
+        {
+          "title": "Laboratorio Teatrale",
+          "slug": "laboratorio-teatrale",
+          "year": "2026-27",
+          "short_description": "Uno spazio sicuro per staccare dalla routine, togliere la maschera quotidiana e salire sul palco. Torna a Zurigo il laboratorio teatrale guidato da Domenico Scotti di Carlo: quest'anno esploriamo Shakespeare e creiamo legami autentici prima, durante e dopo le prove.",
+          "text": "<p>Il laboratorio teatrale organizzato dall’associazione Gli Attomatti e condotto da Domenico Scotti di Carlo apre le sue porte a chiunque abbia voglia di scoprire il teatro, sperimentare e condividere un’esperienza diversa.</p>\n\n<p>Più che un semplice corso, vuole essere un punto di incontro per la comunità italiana a Zurigo: un luogo dove staccare dalla routine quotidiana, ritrovare la propria lingua, conoscere nuove persone e concedersi una serata fuori dall’ordinario.</p>\n\n<p>Non serve alcuna esperienza sul palco, né tantomeno l’ambizione di diventare attori provetti. Bastano la curiosità e la voglia di mettersi in gioco. Il laboratorio è uno spazio accogliente, libero dal giudizio, dove si può sbagliare, improvvisare, ridere di se stessi e scoprire possibilità espressive che magari non si pensava nemmeno di avere.</p>\n\n<p>Attraverso giochi teatrali, esercizi di gruppo, improvvisazioni e lavoro sul corpo e sulla voce, i partecipanti imparano ad ascoltarsi, a fidarsi degli altri e a costruire qualcosa insieme. Perché fare teatro non significa soltanto imparare a recitare: significa anche lasciarsi sorprendere, superare qualche timidezza e, soprattutto, divertirsi.</p>\n\n<p><span class=\"text-lg\"><b>Quest’anno tocca a Shakespeare!</b></span></p>\n\n<p>Per questa edizione abbiamo deciso di confrontarci con un gigante del teatro: William Shakespeare.</p>\n\n<p>Ma niente paura! Non lo affronteremo con eccessiva reverenza o con il timore di trovarci davanti a qualcosa di troppo complicato. Al contrario, vogliamo scoprire quanto le sue storie siano ancora vive, attuali e sorprendentemente vicine a noi.</p>\n\n<p>Amore, gelosia, tradimento, ambizione, potere, equivoci e passioni travolgenti: nelle opere di Shakespeare c’è praticamente tutto ciò che rende gli esseri umani meravigliosamente complicati. E spesso anche terribilmente ridicoli.</p>\n\n<p>Durante il laboratorio alterneremo esercizi di recitazione, improvvisazione e giochi teatrali allo studio delle sue opere. I partecipanti lavoreranno anche in piccoli gruppi, confrontandosi con testi e personaggi, analizzando le scene e sperimentando soluzioni registiche e interpretative originali.</p>\n\n<p>Non si tratterà semplicemente di imparare delle battute a memoria, ma di comprendere cosa muove un personaggio, quali desideri lo guidano, quali ostacoli incontra e come trasformare tutto questo in azione teatrale.</p>\n\n<p>Il percorso culminerà in un saggio finale aperto alla comunità, un’occasione per condividere con il pubblico il lavoro svolto, mettersi alla prova sul palcoscenico e festeggiare insieme un’esperienza costruita passo dopo passo.</p>\n\n<p><b><span class=\"text-lg\">Il teatro, però, non finisce quando termina una lezione.</span></b></p>\n\n<p>Uno degli aspetti più belli del laboratorio è proprio la possibilità di creare legami che vadano oltre il palcoscenico. Una prova organizzata per perfezionare una scena può trasformarsi in una serata tra amici; un esercizio di gruppo può diventare l’inizio di una nuova amicizia; una lezione può concludersi davanti a un bicchiere, continuando a ridere di ciò che è successo poco prima.</p>\n\n<p>Ci piace pensare al laboratorio come a un luogo in cui persone con storie, età, professioni ed esperienze diverse possano incontrarsi attraverso una passione comune, senza dover dimostrare nulla a nessuno.</p>\n\n<p>Perché, in fondo, il teatro è anche questo: una splendida occasione per incontrarsi, sentirsi parte di un gruppo e trovare, anche lontano da casa, un posto in cui sentirsi a casa.</p>\n\n<p style=\"text-align: center;\"><i><br>Le iscrizioni per questa edizione sono purtroppo chiuse! Ma se il teatro ti incuriosisce e hai voglia di metterti in gioco, non esitare a <a href=\"/Contatti\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">contattarci</a>. Saremo felici di conoscerti e tenerti al corrente sulle nostre prossime attività!</i></p>",
+          "hero_image": "/images/1794250419494-0-qea7-Gemini_Generated_Image_u1f748u1f748u1f7.webp",
+          "detail_floating_cta_label": null,
+          "detail_cta_tickets_label": null,
+          "dates": [
+            {
+              "date": "Martedì, 19:00 - 21:00",
+              "location": "ABZ-Gemeinschaftsraum",
+              "location_href": "/Location/sala-wollishofen",
+              "ticket_label": "Iscrizioni chiuse",
+              "ticket_href": ""
+            }
+          ],
+          "details": [
+            {
+              "label": "Frequenza",
+              "value": "Settimanale"
+            },
+            {
+              "label": "Lingua",
+              "value": "Italiano"
+            },
+            {
+              "label": "A cura di",
+              "value": "Domenico Scotti di Carlo"
+            }
+          ],
+          "images": [
+            {
+              "url": "/images/1790877903475-mbpr-ZSC_5779.webp",
+              "alt": "Lavoro di gruppo"
+            },
+            {
+              "url": "/images/1790877901700-vn3m-ZSC_5769.webp",
+              "alt": "Esercizi in sala"
+            },
+            {
+              "url": "/images/1791565354643-spoe-CorsoTeatro.webp",
+              "alt": "Esercizi in sala"
+            },
+            {
+              "url": "/images/1794220493010-nt32-Laboratorio_foto_cena.webp",
+              "alt": "Cena a tema Shakespeare",
+              "no_crop": true
+            }
+          ],
+          "hero_image_align": "left"
         }
       ]
     },
@@ -1027,7 +1084,7 @@
                 },
                 {
                   "type": "text",
-                  "text": "<p>Leggi l'articolo completo su <i><a href=\"https://www.laregione.ch/ticino7/ticino7/1960559\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">laRegione</a></i>.</p><div style=\"text-align: center;\"><i><span class=\"text-lg\">Vuoi scoprire tutta la nostra storia? Leggila </span><a href=\"/Chi_Siamo\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\"><span class=\"text-lg\">qua</span></a><span class=\"text-lg\">!</span></i></div><div style=\"text-align: center;\"><i><span class=\"text-lg\">Vuoi leggere partecipare ai prossimi capitoli? Iscriviti alla nostra </span><a href=\"/Registrazioni/newsletter\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\"><span class=\"text-lg\">newsletter</span></a><span class=\"text-lg\">!</span></i></div>"
+                  "text": "<p>Leggi l'articolo completo su <i><a href=\"https://www.laregione.ch/ticino7/ticino7/1960559\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">laRegione</a></i>.</p><div style=\"text-align: center;\"><i><span class=\"text-lg\">Vuoi scoprire tutta la nostra storia? Leggila </span><a href=\"/Chi_Siamo\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\"><span class=\"text-lg\">qua</span></a><span class=\"text-lg\">!</span></i></div><div style=\"text-align: center;\"><i><span class=\"text-lg\">Vuoi partecipare ai prossimi capitoli? Iscriviti alla nostra </span><a href=\"/Registrazioni/newsletter\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\"><span class=\"text-lg\">newsletter</span></a><span class=\"text-lg\">!</span></i></div>"
                 }
               ],
               "text": "<p>Vedere la propria storia stampata nero su bianco fa sempre un certo effetto, soprattutto quando ad accendere i riflettori è una testata come «<i>laRegione</i>», lo storico quotidiano indipendente della Svizzera italiana. Il giornalista Moreno Invernizzi ha dedicato un bellissimo approfondimento al nostro percorso: dagli inizi nel 2020, quando Domenico è approdato a Zurigo portando in valigia la passione teatrale e tanta voglia di non arrendersi alle porte chiuse, fino alla nascita ufficiale della compagnia nel 2024. Una chiacchierata sincera che ripercorre il nostro bisogno più autentico: creare un punto di riferimento accogliente per la comunità italofona sulla Limmat, dove mettersi in gioco e fare gruppo senza paura di sbagliare.</p><p>L’articolo ripercorre tutte le tappe di questa avventura corale: il debutto con <i>Eduardo De Filippo</i>&nbsp;nell'opera <i>Ditegli sempre di sì</i>, le repliche e la tournée di <i>Una Cenerentola</i>, la partecipazione alla <i>Biennale del teatro amatoriale svizzero</i> e lo sguardo già rivolto alle trasferte future. Ma c'è spazio soprattutto per il nostro impegno quotidiano nella vita culturale cittadina, tra laboratori teatrali aperti a chiunque voglia salire sul palco e le serate di cineforum in italiano in collaborazione con <i>UNITRE</i>.</p><p>Un grazie di cuore a Moreno Invernizzi per l’attenzione, la curiosità e la cura con cui ha saputo dare voce alla nostra storia e alla nostra passione.</p>",
@@ -1035,6 +1092,206 @@
                 {
                   "url": "/images/1794135182092-1kob-ArticoloLaRegione.webp",
                   "alt": "Foto articolo"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "slug": "biennale-scuol",
+          "title": "Non sottovalutare i 40: Gli Attomatti alla Biennale di Scuol",
+          "year": "",
+          "date": "26 ottobre 2026",
+          "timestamp": "2026-10-26T09:00:00.000Z",
+          "short_description": "Il racconto della trasferta de Gli Attomatti alla Biennale di Scuol: incontri con le altre realtà del teatro amatoriale e il debutto della commedia Non sottovalutare i 40.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "La preparazione ed il viaggio",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Partecipare alla Biennale di Scuol ha rappresentato per noi un traguardo importante e un motivo di autentico orgoglio. Per una realtà giovane come Gli Attomatti, essere selezionati per portare il nostro lavoro in un contesto simile è stato un onore doppio, oltre che il riconoscimento più bello per il percorso costruito insieme fin qui.&nbsp;</p>\n<p>Nelle settimane precedenti ci siamo rimboccati le maniche per preparare la trasferta e curare ogni elemento della messa in scena. In sala prove l'aria era carica di entusiasmo: abbiamo ripassato le battute, ritrovato i tempi comici e condiviso l'attesa con quel pizzico di sana complicità che si crea quando ci si prepara a qualcosa di bello.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794237002565-jhl7-PXL_20261021_171201884.webp",
+                      "alt": "Prove dello spettacolo non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1794237005433-vcsc-PXL_20261021_173448734.webp",
+                      "alt": "Prove dello spettacolo non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1794237007805-759r-PXL_20261021_175052846.webp",
+                      "alt": "Prove dello spettacolo non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1794237009804-w06h-DJI_20260909214844_0235_D.webp",
+                      "alt": "Lettura copione dello spettacolo non sottovalutare i 40"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Poi è arrivato il momento di partire. Il viaggio da Zurigo verso l’Engadina si è trasformato nel preludio ideale all’evento: tra le ultime prove generali dello spettacolo e momenti di pura spensieratezza, abbiamo colonizzato una porzione del treno ed il tragitto è volato via in fretta, regalandoci l'opportunità di condividere l'emozione con il sorriso e fare gruppo prima dell'impegno sul palcoscenico.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794237319273-wzmf-DJI_20261023133609_0013_D.webp",
+                      "alt": "Gli Attomatti in viaggio in treno per Scuol"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Partecipare alla Biennale di Scuol ha rappresentato per noi un traguardo importante e un motivo di autentico orgoglio. Per una realtà giovane come Gli Attomatti, essere selezionati per portare il nostro lavoro in un contesto simile è stato un onore doppio, oltre che il riconoscimento più bello per il percorso costruito insieme fin qui.&nbsp;</p>\n<p>Nelle settimane precedenti ci siamo rimboccati le maniche per preparare la trasferta e curare ogni elemento della messa in scena. In sala prove l'aria era carica di entusiasmo: abbiamo ripassato le battute, ritrovato i tempi comici e condiviso l'attesa con quel pizzico di sana complicità che si crea quando ci si prepara a qualcosa di bello.</p>",
+              "images": [
+                {
+                  "url": "/images/1794237002565-jhl7-PXL_20261021_171201884.webp",
+                  "alt": "Prove dello spettacolo non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1794237005433-vcsc-PXL_20261021_173448734.webp",
+                  "alt": "Prove dello spettacolo non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1794237007805-759r-PXL_20261021_175052846.webp",
+                  "alt": "Prove dello spettacolo non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1794237009804-w06h-DJI_20260909214844_0235_D.webp",
+                  "alt": "Lettura copione dello spettacolo non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1794237319273-wzmf-DJI_20261023133609_0013_D.webp",
+                  "alt": "Gli Attomatti in viaggio in treno per Scuol"
+                }
+              ]
+            },
+            {
+              "title": "Un’occasione per connettere",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Arrivare a Scuol e respirare l’atmosfera del festival ha confermato quanto la Biennale sia un’occasione unica per riunire realtà teatrali provenienti da tutta la Svizzera. Incontrare compagnie arrivate da cantoni diversi ha creato un terreno fertile per lo scambio e il confronto artistico.</p>\n\n<p>Durante le giornate della rassegna è emerso con forza un aspetto fondamentale: il teatro non ha barriere linguistiche. Dal romancio al francese, dallo svizzero-tedesco all’italiano, la forza del corpo, il ritmo scenico e l’espressività hanno permesso a tutti di comprendersi con naturalezza, dimostrando come il linguaggio della recitazione sappia unire persone con background differenti.</p>\n\n<div style=\"text-align: center;\"><i><mark><span class=\"text-lg\">Perchè il teatro, in fondo, parla una sola lingua!</span></mark></i></div>\n<div><br></div>\n<p>Per valorizzare questo patrimonio di incontri, noi Attomatti abbiamo portato alla Biennale anche un nostro progetto parallelo. Abbiamo infatti raccolto interviste e retroscena con le varie compagnie presenti, materiale che pubblicheremo nei prossimi mesi sui nostri canali social per dare voce alla vitalità e alla varietà della scena teatrale elvetica.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794237011692-ixok-ZSC_6549.webp",
+                      "alt": "Gli Attomatti intervistano Ana Camponovo"
+                    },
+                    {
+                      "url": "/images/1794237013349-8ud9-ZSC_6611.webp",
+                      "alt": "Gli Attomatti intervistano i Girondini"
+                    },
+                    {
+                      "url": "/images/1794237015051-d2kq-dalmolens_047.webp",
+                      "alt": "Gli Attomatti intervistano Drauf"
+                    }
+                  ]
+                }
+              ],
+              "text": "<p>Arrivare a Scuol e respirare l’atmosfera del festival ha confermato quanto la Biennale sia un’occasione unica per riunire realtà teatrali provenienti da tutta la Svizzera. Incontrare compagnie arrivate da cantoni diversi ha creato un terreno fertile per lo scambio e il confronto artistico.</p>\n\n<p>Durante le giornate della rassegna è emerso con forza un aspetto fondamentale: il teatro non ha barriere linguistiche. Dal romancio al francese, dallo svizzero-tedesco all’italiano, la forza del corpo, il ritmo scenico e l’espressività hanno permesso a tutti di comprendersi con naturalezza, dimostrando come il linguaggio della recitazione sappia unire persone con background differenti.</p>\n\n<div style=\"text-align: center;\"><i><mark><span class=\"text-lg\">Perchè il teatro, in fondo, parla una sola lingua!</span></mark></i></div>\n<div><br></div>\n<p>Per valorizzare questo patrimonio di incontri, noi Attomatti abbiamo portato alla Biennale anche un nostro progetto parallelo. Abbiamo infatti raccolto interviste e retroscena con le varie compagnie presenti, materiale che pubblicheremo nei prossimi mesi sui nostri canali social per dare voce alla vitalità e alla varietà della scena teatrale elvetica.</p>",
+              "images": [
+                {
+                  "url": "/images/1794237011692-ixok-ZSC_6549.webp",
+                  "alt": "Gli Attomatti intervistano Ana Camponovo"
+                },
+                {
+                  "url": "/images/1794237013349-8ud9-ZSC_6611.webp",
+                  "alt": "Gli Attomatti intervistano i Girondini"
+                },
+                {
+                  "url": "/images/1794237015051-d2kq-dalmolens_047.webp",
+                  "alt": "Gli Attomatti intervistano Drauf"
+                }
+              ]
+            },
+            {
+              "title": "Si va in scena: «Non sottovalutare i 40»",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Sabato è stato il nostro turno di salire sul palco con <i>Non sottovalutare i 40</i>, un brillante atto unico scritto da <i>Domenico Scotti di Carlo</i>. La commedia racconta di Dario, un uomo a un passo dal quarantesimo compleanno che preferirebbe dimenticarsi della ricorrenza. La sua famiglia ha però tutt'altri piani e decide di organizzare una sorpresa, riempiendo la giornata di richiami al fatidico numero tra cruciverba, scioglilingua, acquisti improbabili, equivoci e persino una febbre sospetta. Con un ritmo vivace e situazioni paradossali, il testo affronta con leggerezza e complicità il traguardo dei quarant'anni e le dinamiche quotidiane di famiglia.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1793278657784-3a0x-dalmolens_112.webp",
+                      "alt": "In scena con non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1793278659618-btba-dalmolens_113.webp",
+                      "alt": "In scena con non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1793278662819-d2hp-dalmolens_083.webp",
+                      "alt": "In scena con non sottovalutare i 40"
+                    },
+                    {
+                      "url": "/images/1793278664307-uhq1-dalmolens_098.webp",
+                      "alt": "In scena con non sottovalutare i 40"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>La scelta dello spettacolo si è rivelata in perfetta armonia con lo spirito della manifestazione. Il filo conduttore dell'intera rassegna era infatti proprio il numero quaranta, scelto per celebrare i quarant'anni dalla fondazione dell'associazione locale <i>Gruppa da teater Scuol</i>. Portare in scena una commedia incentrata esattamente su questa cifra ha creato un'intesa immediata con la sala, che ha risposto con grande partecipazione e risate sincere per tutta la durata dell'esibizione.</p>"
+                }
+              ],
+              "text": "<p>Sabato è stato il nostro turno di salire sul palco con <i>Non sottovalutare i 40</i>, un brillante atto unico scritto da <i>Domenico Scotti di Carlo</i>. La commedia racconta di Dario, un uomo a un passo dal quarantesimo compleanno che preferirebbe dimenticarsi della ricorrenza. La sua famiglia ha però tutt'altri piani e decide di organizzare una sorpresa, riempiendo la giornata di richiami al fatidico numero tra cruciverba, scioglilingua, acquisti improbabili, equivoci e persino una febbre sospetta. Con un ritmo vivace e situazioni paradossali, il testo affronta con leggerezza e complicità il traguardo dei quarant'anni e le dinamiche quotidiane di famiglia.</p>",
+              "images": [
+                {
+                  "url": "/images/1793278657784-3a0x-dalmolens_112.webp",
+                  "alt": "In scena con non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1793278659618-btba-dalmolens_113.webp",
+                  "alt": "In scena con non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1793278662819-d2hp-dalmolens_083.webp",
+                  "alt": "In scena con non sottovalutare i 40"
+                },
+                {
+                  "url": "/images/1793278664307-uhq1-dalmolens_098.webp",
+                  "alt": "In scena con non sottovalutare i 40"
+                }
+              ]
+            },
+            {
+              "title": "Il bilancio",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Torniamo a Zurigo con un bilancio ampiamente positivo e con l'energia di un'esperienza che ha arricchito ciascuno di noi, sia sul piano teatrale che umano. È stata un'iniziativa stimolante, vissuta con grande entusiasmo in ogni suo momento.</p>\n\n<p>Un ringraziamento sentito va agli organizzatori Anna, Dario, Flurin, Seraina e Urs e alla comunità di Scuol per l'accoglienza calorosa e la cura riservata all'evento. La Biennale guarda già avanti: tra due anni il testimone passerà alla federazione di teatro amatoriale della Svizzera tedesca. L'augurio per Gli Attomatti è di poter essere nuovamente presenti alla prossima edizione, pronti a portare sul palco un nuovo spettacolo e la stessa voglia di condividere emozioni.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794237016891-r96s-ZSC_6842.webp",
+                      "alt": "Foto di gruppo al termine della biennale"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<div style=\"\"><small>I video e le interviste realizzate a Scuol con le altre compagnie saranno condivisi nelle prossime settimane sulla nostra pagina <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a>.</small></div>"
+                }
+              ],
+              "text": "<p>Torniamo a Zurigo con un bilancio ampiamente positivo e con l'energia di un'esperienza che ha arricchito ciascuno di noi, sia sul piano teatrale che umano. È stata un'iniziativa stimolante, vissuta con grande entusiasmo in ogni suo momento.</p>\n\n<p>Un ringraziamento sentito va agli organizzatori Anna, Dario, Flurin, Seraina e Urs e alla comunità di Scuol per l'accoglienza calorosa e la cura riservata all'evento. La Biennale guarda già avanti: tra due anni il testimone passerà alla federazione di teatro amatoriale della Svizzera tedesca. L'augurio per Gli Attomatti è di poter essere nuovamente presenti alla prossima edizione, pronti a portare sul palco un nuovo spettacolo e la stessa voglia di condividere emozioni.</p>",
+              "images": [
+                {
+                  "url": "/images/1794237016891-r96s-ZSC_6842.webp",
+                  "alt": "Foto di gruppo al termine della biennale"
                 }
               ]
             }
@@ -1852,6 +2109,194 @@
           "utm_medium": "email",
           "utm_campaign": "la-regione-2026"
         }
+      },
+      {
+        "id": "manual",
+        "name": "Manual email",
+        "enabled": false,
+        "subject": "Correzione iscrizione al cineforum",
+        "preheader": "",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "b1",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "b4",
+            "type": "text",
+            "content": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per il cineforum ma ci siamo accorti di un errore nell'indirizzo email. Lo abbiamo corretto e dovresti aver ricevuto la mail di conferma per il cineforum.\n\nTi aspettiamo in sala!\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "b6",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "b7",
+            "type": "footer",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti • Zurigo, Svizzera",
+            "privacy_note": "Questa email è stata inviata manualmente.",
+            "show_privacy_link": true
+          }
+        ],
+        "field_mapping": {
+          "recipient_email_path": "{{email}}",
+          "recipient_name_path": "{{name}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti",
+          "from_email": "cineforum@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        }
+      },
+      {
+        "id": "reminder-cineforum",
+        "name": "Reminder Cineforum",
+        "enabled": true,
+        "theme": "cineforum",
+        "subject": "Reminder: Cineforum - Le Meraviglie - 14 novembre 2026, ore 18:00",
+        "preheader": "Ci vediamo questa sera",
+        "badge": "Cineforum",
+        "heading": "La tua prenotazione è confermata!",
+        "body": "Ciao {{name}},\n\nabbiamo ricevuto la tua registrazione per la serata cineforum con la proiezione di **{{event_title}}**.\n\nSiamo felici di averti con noi in sala! Se dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+        "event_date": "",
+        "event_location": "",
+        "cta_label": "Tutte le date del Cineforum",
+        "cta_url": "https://gliattomatti.ch/Iniziative/cineforum",
+        "field_mapping": {
+          "sample_payload_json": "{\n  \"eventId\": \"10356a55-a1ac-450c-9867-55796553770f\",\n  \"createdAt\": \"2026-10-04T14:14:04.897Z\",\n  \"data\": {\n    \"responseId\": \"a78e6b0c-dedd-48cb-9404-1b42c10dedd8\",\n    \"submissionId\": \"mZjPkB\",\n    \"respondentId\": \"w7XW2n\",\n    \"formId\": \"2EQGpV\",\n    \"formName\": \"Cineforum - I vitelloni - 16 Gennaio 2027, ore 18:00\",\n    \"createdAt\": \"2020-01-01T00:00:00.000Z\",\n    \"submissionPdfUrl\": \"https://api.tally.so/forms/2EQGpV/submissions/mZjPkB/pdf?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"submissionPreviewUrl\": \"https://tally.so/forms/2EQGpV/submissions/mZjPkB/preview?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWJtaXNzaW9uSWQiOiJtWmpQa0IiLCJmb3JtSWQiOiIyRVFHcFYiLCJpYXQiOjE3OTExMjMyNDR9.YJAEQrqFOefD7Ix6smlEB8BUdEWFFtsgg8VMfXtccu0&signature=e99538b28cb4e82026afb39a2ed919c19ed7c699fb1b1c354ee0a04e1035b658\",\n    \"fields\": [\n      {\n        \"key\": \"question_2xdg0e\",\n        \"label\": \"Nome e Cognome\",\n        \"type\": \"INPUT_TEXT\",\n        \"value\": \"example\"\n      },\n      {\n        \"key\": \"question_xNbLKd\",\n        \"label\": \"Email\",\n        \"type\": \"INPUT_EMAIL\",\n        \"value\": \"hello@acme.inc\"\n      },\n      {\n        \"key\": \"question_ZRkL0V\",\n        \"label\": \"Telefono\",\n        \"type\": \"INPUT_PHONE_NUMBER\",\n        \"value\": \"+32491234567\"\n      },\n      {\n        \"key\": \"question_V1Oy8g\",\n        \"label\": \"Numero di partecipanti\",\n        \"type\": \"INPUT_NUMBER\",\n        \"value\": 3\n      }\n    ]\n  }\n}",
+          "recipient_email_path": "{{email}}",
+          "recipient_name_path": "{{name}}"
+        },
+        "sender_profile": {
+          "from_name": "Gli Attomatti & UNITRE",
+          "from_email": "cineforum@mail.gliattomatti.ch",
+          "reply_to": "compagniateatralegliattomatti@gmail.com"
+        },
+        "subcases": [
+          {
+            "id": "cineforum-1",
+            "name": "Le Meraviglie (14 Novembre)",
+            "custom_fields": {
+              "event_title": "Le Meraviglie",
+              "event_date": "14 novembre 2026, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-2",
+            "name": "I vitelloni",
+            "custom_fields": {
+              "event_title": "I vitelloni",
+              "event_date": "16 gennaio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-3",
+            "name": "Pane e tulipani",
+            "custom_fields": {
+              "event_title": "Pane e tulipani",
+              "event_date": "20 febbraio 2027, ore 18:00"
+            }
+          },
+          {
+            "id": "cineforum-4",
+            "name": "Una storia vera",
+            "custom_fields": {
+              "event_title": "Una storia vera",
+              "event_date": "20 marzo 2027, ore 18:00"
+            }
+          }
+        ],
+        "blocks": [
+          {
+            "id": "block-header",
+            "type": "header",
+            "brand_name": "GLI ATTOMATTI & UNITRE",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791142683214",
+            "type": "image",
+            "image_url": "https://gli-attomatti.vercel.app/images/1790879545247-0-7hty-Gemini_Generated_Image_ynxt8vynxt8vynxt.webp",
+            "alt": "Locandina Evento",
+            "align": "full",
+            "full_width": true
+          },
+          {
+            "id": "block-1791126590992",
+            "type": "divider",
+            "style": "spacer",
+            "spacing": "md"
+          },
+          {
+            "id": "block-heading",
+            "type": "heading",
+            "text": "Ci vediamo questa sera!",
+            "level": "h1",
+            "align": "left"
+          },
+          {
+            "id": "block-body",
+            "type": "text",
+            "content": "Ciao {{name}},\n\nTi ricordiamo l'appuntamento di questa sera per il cineforum con la proiezione di \"Le Meraviglie\". Ci vediamo alle ore 18:00 nella nostra sala di Wollishofen.\n",
+            "align": "left"
+          },
+          {
+            "id": "block-1791142839814",
+            "type": "calendar",
+            "header_label": "",
+            "title": "Cineforum - Le Meraviglie",
+            "start_date": "14 novembre 2026, ore 18:00",
+            "end_date": "",
+            "location": "Balberstrasse 47, Zurigo (Wollishofen)",
+            "description": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1791126717083",
+            "type": "text",
+            "content": "Siamo felici di averti con noi in sala! Hai paura di non trovare la sala? Nessun problema: segui la nostra guida [qui](https://gliattomatti.ch/Location/sala-wollishofen)!\n\nSe dovessi avere un imprevisto o non potessi più partecipare, ti chiediamo la cortesia di comunicarcelo rispondendo direttamente a questa email, in modo da poter riassegnare il posto ad altri interessati.\n\nA presto!",
+            "align": "left"
+          },
+          {
+            "id": "block-button",
+            "type": "button",
+            "label": "Ulteriori informazioni",
+            "url": "https://gliattomatti.ch/landing/cineforum",
+            "align": "center",
+            "style": "pill"
+          },
+          {
+            "id": "block-divider",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "block-social",
+            "type": "social_links",
+            "instagram_url": "https://instagram.com/gliattomatti",
+            "website_url": "https://gliattomatti.ch",
+            "align": "center"
+          },
+          {
+            "id": "block-footer",
+            "type": "footer",
+            "legal_text": "Gli Attomatti & UNITRE • Zurigo, Svizzera",
+            "privacy_note": "Ricevi questa email in seguito a una registrazione o richiesta sul sito gliattomatti.ch",
+            "show_privacy_link": true
+          }
+        ],
+        "customColors": {
+          "muted": "#ffffff"
+        }
       }
     ]
   },
@@ -2106,16 +2551,31 @@
       },
       {
         "id": "sec-1794153028242",
-        "title": "Dicono di noi",
+        "title": "Le nostre storie",
         "visible": true
       },
       {
         "id": "sec-1794153425923",
+        "title": "Dicono di noi",
+        "visible": true
+      },
+      {
+        "id": "sec-1794306350250",
         "title": "Come trovarci",
         "visible": true
       }
     ],
     "links": [
+      {
+        "id": "link-1794306486255",
+        "title": "Gli Attomatti alla Biennale di Scuol",
+        "subtitle": "Il racconto della trasferta",
+        "url": "/Chi_Siamo/Blog/biennale-scuol",
+        "icon": "Theater",
+        "featured": false,
+        "visible": true,
+        "section_id": "sec-1794153028242"
+      },
       {
         "id": "link-1794154045659",
         "title": "Iscriviti alla newsletter",
@@ -2134,7 +2594,7 @@
         "icon": "Globe",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153028242"
+        "section_id": "sec-1794153425923"
       },
       {
         "id": "link-1794153533363",
@@ -2144,7 +2604,7 @@
         "icon": "Globe",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153028242"
+        "section_id": "sec-1794153425923"
       },
       {
         "id": "link-1794153042463",
@@ -2165,7 +2625,7 @@
         "icon": "MapPin",
         "featured": false,
         "visible": true,
-        "section_id": "sec-1794153425923"
+        "section_id": "sec-1794306350250"
       }
     ],
     "footer_text": "Gli Attomatti"
