@@ -7,15 +7,19 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   ClipboardList,
   CloudUpload,
   Loader2,
   RefreshCw,
   Search,
+  Sparkles,
+  User as UserIcon,
   Users,
   X
 } from "lucide-react";
+import { DEFAULT_MEMBERS } from "@/types/absence";
 import {
   CheckinBatchItem,
   MergedTallySubmission,
@@ -25,6 +29,7 @@ import {
 
 interface TallyCheckinClientProps {
   forms: TallyFormConfig[];
+  configuredMembers?: string[];
 }
 
 type FilterMode = "all" | "pending" | "checked_in";
@@ -67,9 +72,18 @@ function writeLocalDraft(formId: string, draft: LocalPendingMap) {
   }
 }
 
-export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
-  const [selectedFormId, setSelectedFormId] = useState<string>(forms[0]?.id || "");
-  const [activeMember] = useState<string>(() => {
+export default function TallyCheckinClient({
+  forms,
+  configuredMembers = []
+}: TallyCheckinClientProps) {
+  const members = useMemo(() => {
+    return (configuredMembers && configuredMembers.length > 0 ? configuredMembers : DEFAULT_MEMBERS)
+      .slice()
+      .sort((a, b) => a.localeCompare(b, "it"));
+  }, [configuredMembers]);
+
+  const [selectedFormId, setSelectedFormId] = useState<string>("");
+  const [activeMember, setActiveMember] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     try {
       return localStorage.getItem("attomatti_active_member") || "";
@@ -77,6 +91,8 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
       return "";
     }
   });
+  const [isSelectingMember, setIsSelectingMember] = useState<boolean>(false);
+  const [pendingToggleSub, setPendingToggleSub] = useState<MergedTallySubmission | null>(null);
 
   const [data, setData] = useState<TallySubmissionsResponse | null>(null);
   const [pendingMap, setPendingMap] = useState<LocalPendingMap>({});
@@ -93,7 +109,7 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
   } | null>(null);
 
   const selectedForm = useMemo(
-    () => forms.find((f) => f.id === selectedFormId) || forms[0] || null,
+    () => forms.find((f) => f.id === selectedFormId) || null,
     [forms, selectedFormId]
   );
 
@@ -153,7 +169,19 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
   }, [selectedFormId]);
 
   const handleSelectForm = (formId: string) => {
+    setIsLoading(true);
+    setData(null);
+    setStatusMsg(null);
+    setSearch("");
+    setFilterMode("all");
+    setExpandedIds({});
     setSelectedFormId(formId);
+  };
+
+  const handleBackToEvents = () => {
+    setSelectedFormId("");
+    setData(null);
+    setStatusMsg(null);
     setSearch("");
     setExpandedIds({});
   };
@@ -187,7 +215,7 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
     }
   };
 
-  const handleToggleCheckin = (sub: MergedTallySubmission) => {
+  const applyToggleCheckin = (sub: MergedTallySubmission, memberName: string) => {
     if (!selectedFormId) return;
     const currentChecked =
       pendingMap[sub.submissionId] !== undefined
@@ -203,12 +231,35 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
       nextPending[sub.submissionId] = {
         checkedIn: nextChecked,
         updatedAt: new Date().toISOString(),
-        checkedInBy: activeMember || undefined
+        checkedInBy: memberName || undefined
       };
     }
 
     setPendingMap(nextPending);
     writeLocalDraft(selectedFormId, nextPending);
+  };
+
+  const handleToggleCheckin = (sub: MergedTallySubmission) => {
+    if (!selectedFormId) return;
+    if (!activeMember) {
+      setPendingToggleSub(sub);
+      setIsSelectingMember(true);
+      return;
+    }
+    applyToggleCheckin(sub, activeMember);
+  };
+
+  const handleSelectMember = (name: string) => {
+    setActiveMember(name);
+    try {
+      localStorage.setItem("attomatti_active_member", name);
+    } catch {}
+    setIsSelectingMember(false);
+    if (pendingToggleSub) {
+      const subToToggle = pendingToggleSub;
+      setPendingToggleSub(null);
+      applyToggleCheckin(subToToggle, name);
+    }
   };
 
   const handleSyncCheckinsToBlob = async () => {
@@ -366,17 +417,80 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
     );
   }
 
+  if (!selectedFormId || !selectedForm) {
+    return (
+      <div className="max-w-3xl mx-auto px-3 sm:px-6 pb-20 space-y-6">
+        <div className="flex items-center justify-between pt-1">
+          <Link
+            href="/area-riservata"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground px-3 py-2 rounded-xl bg-muted/40 hover:bg-muted border border-muted/60 transition-all active:scale-95"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Area Riservata</span>
+          </Link>
+        </div>
+
+        <div className="space-y-1.5">
+          <span className="inline-block text-[11px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full">
+            Step 1 di 2
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+            Scegli l&apos;evento
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Seleziona il modulo Tally su cui vuoi consultare le iscrizioni o effettuare il check-in.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3">
+          {forms.map((f) => {
+            const draftCount = Object.keys(readLocalDraft(f.id)).length;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => handleSelectForm(f.id)}
+                className="w-full text-left p-4 sm:p-5 rounded-2xl bg-muted/40 hover:bg-muted/70 border border-muted hover:border-primary/40 transition-all active:scale-[0.99] flex items-center justify-between gap-4 group"
+              >
+                <div className="min-w-0 space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-base sm:text-lg font-extrabold text-foreground group-hover:text-primary transition-colors truncate">
+                      {f.name}
+                    </h2>
+                    {draftCount > 0 && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-accent/20 text-accent border border-accent/30">
+                        {draftCount} da sincronizzare
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {(f.allowedFields || []).length} campi configurati ·{" "}
+                    {f.participantsMode === "from_field"
+                      ? "Partecipanti da campo"
+                      : "1 partecipante / iscrizione"}
+                  </p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-6 pb-24 space-y-4">
       {/* Top navigation & Title */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <Link
-          href="/area-riservata"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground px-3 py-2 rounded-xl bg-muted/40 hover:bg-muted border border-muted/60 transition-all active:scale-95"
+        <button
+          type="button"
+          onClick={handleBackToEvents}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground px-3 py-2 rounded-xl bg-muted/40 hover:bg-muted border border-muted/60 transition-all active:scale-95 min-h-[40px]"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Area Riservata</span>
-        </Link>
+          <span>Cambia evento</span>
+        </button>
 
         <div className="flex items-center gap-2">
           <button
@@ -406,44 +520,69 @@ export default function TallyCheckinClient({ forms }: TallyCheckinClientProps) {
         </div>
       </div>
 
-      {/* Header & Form Selector */}
-      <div className="space-y-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            Iscrizioni & Check-in
-          </h1>
-          <p className="text-xs text-muted-foreground">
-            Ultimo sync da Tally: <strong>{formatDate(data?.syncedAt)}</strong>
-          </p>
+      {/* Header */}
+      <div className="space-y-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="inline-block text-[11px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full">
+            Step 2 di 2 · Check-in
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsSelectingMember(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border border-muted bg-muted/40 hover:bg-muted text-foreground transition-all active:scale-95"
+          >
+            <UserIcon className="w-3.5 h-3.5 text-primary" />
+            <span>{activeMember ? `${activeMember} (cambia)` : "Seleziona il tuo nome"}</span>
+          </button>
         </div>
+        <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+          {selectedForm.name}
+        </h1>
+        <p className="text-xs text-muted-foreground">
+          Ultimo sync da Tally: <strong>{formatDate(data?.syncedAt)}</strong>
+        </p>
+      </div>
 
-        {forms.length > 1 ? (
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {forms.map((f) => {
-              const active = f.id === selectedFormId;
-              return (
+      {/* Member Identification Modal */}
+      {isSelectingMember && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-muted/95 border border-muted rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-base text-foreground">Chi sta facendo il check-in?</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSelectingMember(false);
+                  setPendingToggleSub(null);
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
+              >
+                Chiudi
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Seleziona il tuo nome prima di registrare le presenze in sala.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-72 overflow-y-auto pr-1">
+              {members.map((mem) => (
                 <button
-                  key={f.id}
+                  key={mem}
                   type="button"
-                  onClick={() => handleSelectForm(f.id)}
-                  className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
-                    active
+                  onClick={() => handleSelectMember(mem)}
+                  className={`p-2.5 rounded-xl text-xs font-semibold border transition-all text-left flex items-center justify-between min-h-[42px] ${
+                    activeMember === mem
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-muted/40 text-foreground border-muted hover:bg-muted"
+                      : "bg-background/80 hover:bg-background text-foreground border-muted"
                   }`}
                 >
-                  {f.name}
+                  <span className="truncate">{mem}</span>
+                  {activeMember === mem && <Sparkles className="w-3 h-3 shrink-0" />}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        ) : (
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-            <ClipboardList className="w-3.5 h-3.5" />
-            <span>{selectedForm?.name}</span>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Status Message */}
       {statusMsg && (
