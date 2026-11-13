@@ -3665,5 +3665,26 @@
     ],
     "footer_text": "Gli Attomatti • Compagnia Teatrale Zurigo"
   },
-  "tally_checkin_forms": []
+  "tally_checkin_forms": [
+    {
+      "id": "Eky7ON",
+      "name": "Cineforum - Le Meraviglie",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "JkjZo4",
+          "label": "Nome e Cognome",
+          "type": "INPUT_TEXT"
+        },
+        {
+          "questionId": "rrMWlR",
+          "label": "Numero di partecipanti",
+          "type": "INPUT_NUMBER"
+        }
+      ],
+      "participantsMode": "from_field",
+      "primaryFieldId": "JkjZo4",
+      "participantsFieldId": "rrMWlR"
+    }
+  ]
 }
