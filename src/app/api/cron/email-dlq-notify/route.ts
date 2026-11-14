@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getContent } from "@/lib/data";
 import { listFailedEmails } from "@/lib/email/dlq";
+import { clearPendingResendBounces, listPendingResendBounces } from "@/lib/email/bounces";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 import { SITE_URL } from "@/lib/seo";
 import { escapeHtml } from "@/lib/email/blocks";
@@ -61,8 +62,11 @@ async function handleDlqNotification(req: NextRequest) {
   const url = new URL(req.url);
   const isForce = url.searchParams.get("force") === "true";
 
-  // Fetch current queue items
-  const queue = await listFailedEmails();
+  // Fetch current DLQ items and pending Resend bounce events
+  const [queue, bounces] = await Promise.all([
+    listFailedEmails(),
+    listPendingResendBounces()
+  ]);
   const content = await getContent();
   const settings = content?.emails?.settings || {};
 
@@ -78,42 +82,85 @@ async function handleDlqNotification(req: NextRequest) {
       success: true,
       skipped: true,
       reason: "Notifiche DLQ disattivate nelle impostazioni admin.",
-      queueCount: queue.length
+      queueCount: queue.length,
+      bounceCount: bounces.length
     });
   }
 
-  // If queue is empty and not forced for testing
-  if (queue.length === 0 && !isForce) {
+  // If both queues are empty and not forced for testing
+  if (queue.length === 0 && bounces.length === 0 && !isForce) {
     return NextResponse.json({
       success: true,
       skipped: true,
-      reason: "Nessuna email in coda di errore. Nessuna notifica necessaria.",
-      queueCount: 0
+      reason: "Nessuna email in coda di errore o rimbalzata. Nessuna notifica necessaria.",
+      queueCount: 0,
+      bounceCount: 0
     });
   }
 
   const count = queue.length;
+  const bounceCount = bounces.length;
   const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || SITE_URL || "https://gliattomatti.ch").replace(/\/$/, "");
   const adminUrl = `${baseUrl}/admin`;
 
   // Sample items for display (up to 10)
   const displayItems = queue.slice(0, 10);
+  const displayBounces = bounces.slice(0, 15);
 
-  // If forced test with empty queue, create a placeholder sample for demonstration
-  const sampleList = displayItems.length > 0 ? displayItems : [
-    {
-      id: "demo-sample-1",
-      recipient: { email: "mario.rossi@example.com", name: "Mario Rossi" },
-      subject: "Conferma Iscrizione: Serata Cineforum",
-      error: { message: "Resend: Daily quota limit of 100 emails exceeded" },
-      lastAttemptAt: new Date().toISOString(),
-      attempts: 1
-    }
-  ];
+  // If forced test with both queues empty, create a placeholder sample for demonstration
+  const sampleList =
+    displayItems.length > 0
+      ? displayItems
+      : bounceCount === 0
+        ? [
+            {
+              id: "demo-sample-1",
+              recipient: { email: "mario.rossi@example.com", name: "Mario Rossi" },
+              subject: "Conferma Iscrizione: Serata Cineforum",
+              error: { message: "Resend: Daily quota limit of 100 emails exceeded" },
+              lastAttemptAt: new Date().toISOString(),
+              attempts: 1
+            }
+          ]
+        : [];
 
-  const emailSubject = count > 0
-    ? `⚠️ [Gli Attomatti DLQ] ${count} email in coda di errore non consegnate`
-    : `🧪 [Test Notifica DLQ] Controllo Coda Email Eseguito con Successo`;
+  const subjectParts: string[] = [];
+  if (count > 0) subjectParts.push(`${count} in coda DLQ`);
+  if (bounceCount > 0) subjectParts.push(`${bounceCount} rimbalzate (Bounce)`);
+
+  const emailSubject =
+    subjectParts.length > 0
+      ? `⚠️ [Gli Attomatti] Report Email: ${subjectParts.join(" · ")}`
+      : `🧪 [Test Notifica DLQ] Controllo Coda Email Eseguito con Successo`;
+
+  const bounceRowsHtml = displayBounces
+    .map((b) => {
+      const formattedDate = new Date(b.timestamp).toLocaleString("it-IT", {
+        timeZone: "Europe/Zurich",
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const badge = b.eventType === "email.complained" ? "Spam/Complaint" : "Bounce";
+      return `
+        <tr>
+          <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 13px; color: #f8fafc; font-weight: 600;">
+            ${escapeHtml(b.email)}
+          </td>
+          <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 12px; color: #cbd5e1;">
+            ${escapeHtml(b.subject || "Nessun oggetto")}
+          </td>
+          <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #fbbf24; font-family: monospace;">
+            [${badge}] ${escapeHtml(b.reason || "Rimbalzo")}
+          </td>
+          <td style="padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; color: #94a3b8; text-align: right; white-space: nowrap;">
+            ${formattedDate}
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
 
   const rowsHtml = sampleList
     .map((item) => {
@@ -170,7 +217,11 @@ async function handleDlqNotification(req: NextRequest) {
                           GLI ATTOMATTI • NOTIFICA AMMINISTRATORE
                         </span>
                         <h1 style="margin: 4px 0 0 0; font-size: 20px; font-weight: 900; color: #f8fafc; letter-spacing: -0.02em;">
-                          ${count > 0 ? `⚠️ Rilevate ${count} email non consegnate in coda` : `✅ Nessuna email in coda (Test di Notifica)`}
+                          ${
+                            count > 0 || bounceCount > 0
+                              ? `⚠️ Report Email: ${subjectParts.join(" · ")}`
+                              : `✅ Nessuna email in coda (Test di Notifica)`
+                          }
                         </h1>
                       </td>
                     </tr>
@@ -214,13 +265,39 @@ async function handleDlqNotification(req: NextRequest) {
                       </tbody>
                     </table>
                   `
-                      : `
+                      : bounceCount === 0
+                        ? `
                     <div style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px;">
                       <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6ee7b7;">
                         Questa è una notifica di test inviata dal pannello di controllo. Attualmente non ci sono email bloccate o in errore nella coda DLQ. Tutte le email inviate sono state recapitate con successo!
                       </p>
                     </div>
                   `
+                        : ""
+                  }
+
+                  ${
+                    bounceCount > 0
+                      ? `
+                    <h2 style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #fbbf24; margin: 0 0 10px 0;">
+                      Email Rimbalzate / Segnalate (Resend Bounce: ${bounceCount > 15 ? `Prime 15 di ${bounceCount}` : bounceCount}):
+                    </h2>
+
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; overflow: hidden; background-color: rgba(255, 255, 255, 0.02); margin-bottom: 24px;">
+                      <thead>
+                        <tr style="background-color: rgba(251, 191, 36, 0.08);">
+                          <th align="left" style="padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #fcd34d;">Destinatario</th>
+                          <th align="left" style="padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #fcd34d;">Oggetto</th>
+                          <th align="left" style="padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #fcd34d;">Motivo</th>
+                          <th align="right" style="padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #fcd34d;">Orario</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${bounceRowsHtml}
+                      </tbody>
+                    </table>
+                  `
+                      : ""
                   }
 
                   <!-- CTA Button -->
@@ -255,14 +332,21 @@ async function handleDlqNotification(req: NextRequest) {
     </html>
   `;
 
-  const emailText = count > 0
-    ? `⚠️ GLI ATTOMATTI - NOTIFICA CODA EMAIL FALLITE (DLQ)\n\n` +
-      `Ci sono ${count} email non consegnate in attesa di essere reinviate.\n\n` +
-      `La quota giornaliera di Resend si ripristina a mezzanotte UTC. Puoi ora riprovare l'invio accedendo al pannello admin:\n` +
-      `${adminUrl}\n\n` +
-      `Dettagli:\n` +
-      sampleList.map((i) => `• ${i.recipient.email} - ${i.subject} (${i.error?.message})`).join("\n")
-    : `GLI ATTOMATTI - TEST NOTIFICA DLQ\n\nNessuna email bloccata in coda. Tutte le email sono state consegnate.\n${adminUrl}`;
+  const emailText =
+    count > 0 || bounceCount > 0
+      ? `⚠️ GLI ATTOMATTI - REPORT GIORNALIERO EMAIL\n\n` +
+        (count > 0
+          ? `--- CODA DLQ (${count} non consegnate) ---\n` +
+            sampleList.map((i) => `• ${i.recipient.email} - ${i.subject} (${i.error?.message})`).join("\n") +
+            "\n\n"
+          : "") +
+        (bounceCount > 0
+          ? `--- EMAIL RIMBALZATE / BOUNCE (${bounceCount}) ---\n` +
+            displayBounces.map((b) => `• ${b.email} - ${b.subject} [${b.eventType}: ${b.reason}]`).join("\n") +
+            "\n\n"
+          : "") +
+        `Pannello admin: ${adminUrl}`
+      : `GLI ATTOMATTI - TEST NOTIFICA DLQ\n\nNessuna email bloccata in coda. Tutte le email sono state consegnate.\n${adminUrl}`;
 
   // Send the notification email
   const fromEmail = settings.from_email || "no-reply@mail.gliattomatti.ch";
@@ -276,10 +360,17 @@ async function handleDlqNotification(req: NextRequest) {
     text: emailText
   });
 
+  if (sendResult.success && bounceCount > 0) {
+    await clearPendingResendBounces().catch((err) => {
+      console.warn("[DLQ Notify] Impossibile pulire bounce Redis:", err);
+    });
+  }
+
   return NextResponse.json({
     success: sendResult.success,
     notifiedTo: alertRecipient,
     queueCount: count,
+    bounceCount,
     emailId: sendResult.id,
     simulated: sendResult.simulated || false,
     error: sendResult.error

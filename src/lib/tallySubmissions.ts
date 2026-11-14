@@ -1,6 +1,14 @@
 import { put, get } from "@vercel/blob";
 import fs from "fs";
 import path from "path";
+import { isRedisConfigured } from "@/lib/redis";
+import {
+  applyRedisCheckinBatch,
+  clearFormDirtyInRedis,
+  ensureRedisSeeded,
+  getRedisCheckins,
+  isFormDirtyInRedis
+} from "@/lib/tallyLiveRedis";
 import {
   CheckinBatchItem,
   CheckinRecord,
@@ -424,20 +432,23 @@ export async function getMergedTallySubmissions(
   const cleanId = sanitizeFormId(formId);
   if (!cleanId) throw new Error("ID modulo Tally non valido.");
 
-  if (!bypassCache) {
+  if (!bypassCache && !isRedisConfigured()) {
     const cached = submissionsCache.get(cleanId);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
       return cached.data;
     }
   }
 
-  const [subRes, chkRes] = await Promise.all([
+  const [subRes, chkRes, redisLive] = await Promise.all([
     readJsonFile<StoredTallySubmissionsFile>(cleanId, "submissions.json"),
-    readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json")
+    readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json"),
+    getRedisCheckins(cleanId).catch(() => null)
   ]);
 
   const submissionsFile = subRes.data;
-  const checkinsMap: Record<string, CheckinRecord> = chkRes.data?.checkins || {};
+  const checkinsMap: Record<string, CheckinRecord> = redisLive
+    ? { ...(chkRes.data?.checkins || {}), ...redisLive.checkins }
+    : chkRes.data?.checkins || {};
   const manualGuests: ManualCheckinGuest[] = chkRes.data?.manualGuests || [];
 
   const rawSubs = submissionsFile?.submissions || [];
@@ -539,19 +550,34 @@ export async function getMergedTallySubmissions(
 }
 
 /**
- * Applies a batch of check-in changes in a single read+write operation,
- * using per-submissionId timestamp comparison (Last-Write-Wins) for multi-user safety.
+ * Applies a batch of check-in changes.
+ * In liveMode (with Upstash Redis configured), writes atomically to Redis only
+ * without consuming Vercel Blob writes. Otherwise persists directly to Blob.
  */
 export async function applyCheckinBatch(
   formId: string,
-  changes: CheckinBatchItem[]
+  changes: CheckinBatchItem[],
+  liveOnly = false
 ): Promise<{
   appliedCount: number;
   updatedAt: string;
-  storage: "vercel-blob" | "local-file";
+  storage: "vercel-blob" | "local-file" | "upstash-redis";
+  ver?: number;
 }> {
   const cleanId = sanitizeFormId(formId);
   if (!cleanId) throw new Error("ID modulo Tally non valido.");
+
+  if (liveOnly && isRedisConfigured()) {
+    const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
+    const res = await applyRedisCheckinBatch(cleanId, changes, existingFile?.checkins || {});
+    invalidateTallyCache(cleanId);
+    return {
+      appliedCount: res.appliedCount,
+      updatedAt: res.updatedAt,
+      storage: "upstash-redis",
+      ver: res.ver
+    };
+  }
 
   const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
   const checkins: Record<string, CheckinRecord> = { ...(existingFile?.checkins || {}) };
@@ -611,7 +637,79 @@ export async function applyCheckinBatch(
   const storage = await writeJsonFile(cleanId, "checkins.json", nextFile);
   invalidateTallyCache(cleanId);
 
+  if (isRedisConfigured()) {
+    await clearFormDirtyInRedis(cleanId).catch(() => {});
+  }
+
   return { appliedCount, updatedAt, storage };
+}
+
+/**
+ * Ensures Redis is seeded from Blob checkins.json when Live Check-in Mode starts.
+ */
+export async function activateRedisLiveSession(formId: string): Promise<{ seeded: boolean }> {
+  const cleanId = sanitizeFormId(formId);
+  if (!cleanId) throw new Error("ID modulo Tally non valido.");
+  if (!isRedisConfigured()) return { seeded: false };
+
+  const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
+  const seeded = await ensureRedisSeeded(cleanId, existingFile?.checkins || {});
+  return { seeded };
+}
+
+/**
+ * Flushes live check-in state from Upstash Redis to permanent Vercel Blob (checkins.json).
+ * Skips the Blob write if no changes occurred unless force=true.
+ */
+export async function flushRedisCheckinsToBlob(
+  formId: string,
+  force = false
+): Promise<{
+  flushed: boolean;
+  skipped?: boolean;
+  reason?: string;
+  updatedAt?: string;
+  storage?: "vercel-blob" | "local-file";
+}> {
+  const cleanId = sanitizeFormId(formId);
+  if (!cleanId) throw new Error("ID modulo Tally non valido.");
+
+  if (!isRedisConfigured()) {
+    return { flushed: false, skipped: true, reason: "Upstash Redis non configurato." };
+  }
+
+  if (!force) {
+    const dirty = await isFormDirtyInRedis(cleanId);
+    if (!dirty) {
+      return { flushed: false, skipped: true, reason: "Nessuna modifica in sospeso in Redis." };
+    }
+  }
+
+  const redisLive = await getRedisCheckins(cleanId);
+  if (!redisLive) {
+    await clearFormDirtyInRedis(cleanId).catch(() => {});
+    return { flushed: false, skipped: true, reason: "Nessuno stato check-in presente in Redis." };
+  }
+
+  const { data: existingFile } = await readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json");
+  const mergedCheckins: Record<string, CheckinRecord> = {
+    ...(existingFile?.checkins || {}),
+    ...redisLive.checkins
+  };
+
+  const updatedAt = new Date().toISOString();
+  const nextFile: StoredCheckinsFile = {
+    formId: cleanId,
+    updatedAt,
+    checkins: mergedCheckins,
+    ...(existingFile?.manualGuests ? { manualGuests: existingFile.manualGuests } : {})
+  };
+
+  const storage = await writeJsonFile(cleanId, "checkins.json", nextFile);
+  await clearFormDirtyInRedis(cleanId);
+  invalidateTallyCache(cleanId);
+
+  return { flushed: true, updatedAt, storage };
 }
 
 /**
