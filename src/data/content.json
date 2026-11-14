@@ -96,7 +96,7 @@
           "title": "Cineforum",
           "presenter": "Gli Attomatti e UNITRE presentano",
           "tagline": "Nel passo lento della meraviglia",
-          "date": "Prossimo appuntamento: 14 novembre",
+          "date": "Prossimo appuntamento: 16 gennaio",
           "location": "Balberstrasse 47, Zurigo (Wollishofen)",
           "location_href": "/Location/sala-wollishofen",
           "directions_badge_label": null,
@@ -511,13 +511,6 @@
           "detail_floating_cta_label": "Gli Appuntamenti",
           "dates": [
             {
-              "date": "Le Meraviglie - 14 novembre 2026, ore 18:00",
-              "location": "Balberstrasse 47, 8038 Zürich",
-              "ticket_label": "Registrati",
-              "ticket_href": "/Registrazioni/14-11-26",
-              "location_href": "/Location/sala-wollishofen"
-            },
-            {
               "date": "I vitelloni - 16 gennaio 2027, ore 18:00",
               "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "Registrati",
@@ -540,6 +533,13 @@
             },
             {
               "date": "Tempi moderni - 3 ottobre 2026, ore 18:00",
+              "location": "Balberstrasse 47, 8038 Zürich",
+              "ticket_label": "",
+              "ticket_href": "",
+              "location_href": "/Location/sala-wollishofen"
+            },
+            {
+              "date": "Le Meraviglie - 14 novembre 2026, ore 18:00",
               "location": "Balberstrasse 47, 8038 Zürich",
               "ticket_label": "",
               "ticket_href": "",
@@ -998,10 +998,6 @@
           "title": "I 5 Film in Programmazione",
           "items": [
             {
-              "question": "\"Le Meraviglie\" di Alice Rohrwacher — 14 novembre 2026, ore 18:00",
-              "answer": "In un casolare della campagna umbra, la quattordicenne Gelsomina vive un’estate di svolta tra il rigido isolamento rurale imposto dal padre apicoltore e l'irruzione della troupe di un bizzarro concorso televisivo condotto da una fata mediatica (Monica Bellucci). Un toccante racconto di formazione sospeso tra realismo e favola, premiato con il Grand Prix a Cannes."
-            },
-            {
               "question": "\"I vitelloni\" di Federico Fellini — 16 gennaio 2027, ore 18:00",
               "answer": "Il primo grande trionfo internazionale di Fellini. Il ritratto indimenticabile di cinque giovani sognatori nella provincia romagnola, sospesi tra l'ozio delle serate invernali, il desiderio di partire e la paura di crescere."
             },
@@ -1016,6 +1012,10 @@
             {
               "question": "\"Tempi moderni\" di Charlie Chaplin — 3 ottobre 2026, ore 18:00",
               "answer": "La satira più celebre e profonda sull'alienazione dei ritmi frenetici moderni. Charlot alle prese con gli ingranaggi della fabbrica in un inno imperituro alla dignità, alla tenerezza e alla risata liberatoria. Apertura ufficiale della rassegna."
+            },
+            {
+              "question": "\"Le Meraviglie\" di Alice Rohrwacher — 14 novembre 2026, ore 18:00",
+              "answer": "In un casolare della campagna umbra, la quattordicenne Gelsomina vive un’estate di svolta tra il rigido isolamento rurale imposto dal padre apicoltore e l'irruzione della troupe di un bizzarro concorso televisivo condotto da una fata mediatica (Monica Bellucci). Un toccante racconto di formazione sospeso tra realismo e favola, premiato con il Grand Prix a Cannes."
             }
           ]
         },
@@ -1025,7 +1025,7 @@
           "anchor": "dettagli",
           "title": "Prossimo appuntamento",
           "info_badge": "Prenotazione obbligatoria",
-          "date": "Sabato 14 novembre, ore 18:00",
+          "date": "Sabato 16 gennaio, ore 18:00",
           "location": "Balberstrasse 47, 8038 Zürich",
           "location_href": "/Location/sala-wollishofen",
           "price": "Offerta Libera",
@@ -1035,7 +1035,7 @@
         {
           "id": "b-1791100510424",
           "type": "gallery",
-          "title": "Alcune immagini del primo appuntamento",
+          "title": "Alcune immagini",
           "images": [
             {
               "url": "/images/1791099916565-cwdb-P00_7892.webp",
@@ -1088,7 +1088,7 @@
           "type": "tally",
           "title": "Registrati per il prossimo appuntamento",
           "subtitle": "",
-          "tally_url": "https://tally.so/r/Eky7ON",
+          "tally_url": "https://tally.so/r/2EQGpV",
           "fallback_label": "Apri il modulo",
           "show_privacy_note": true,
           "anchor": "registrazione"
@@ -1164,17 +1164,6 @@
     }
   },
   "registration_pages": [
-    {
-      "id": "reg-1790954268119",
-      "title": "Le Meraviglie",
-      "slug": "14-11-26",
-      "category": "Cineforum",
-      "description": "Riceverai un'email automatica di conferma con i dettagli dell'evento non appena inviato il modulo.",
-      "tally_url": "https://tally.so/r/Eky7ON",
-      "back_link_label": "Torna indietro",
-      "back_link_href": "/Iniziative/cineforum",
-      "active": true
-    },
     {
       "id": "reg-1790954967375",
       "title": "I vitelloni",
@@ -1445,14 +1434,6 @@
           "reply_to": "compagniateatralegliattomatti@gmail.com"
         },
         "subcases": [
-          {
-            "id": "cineforum-1",
-            "name": "Le Meraviglie (14 Novembre)",
-            "custom_fields": {
-              "event_title": "Le Meraviglie",
-              "event_date": "14 novembre 2026, ore 18:00"
-            }
-          },
           {
             "id": "cineforum-2",
             "name": "I vitelloni",
