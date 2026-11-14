@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const formId = typeof body?.formId === "string" ? body.formId.trim() : "";
     const changes: CheckinBatchItem[] = Array.isArray(body?.changes) ? body.changes : [];
+    const liveMode = Boolean(body?.liveMode);
 
     if (!formId) {
       return NextResponse.json(
@@ -47,7 +48,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const result = await applyCheckinBatch(formId, changes);
+    const result = await applyCheckinBatch(formId, changes, liveMode);
     return NextResponse.json({ success: true, formId, ...result });
   } catch (err: unknown) {
     console.error("[API Tally Checkin PATCH Error]", err);

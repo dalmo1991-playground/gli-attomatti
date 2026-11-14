@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -15,7 +15,9 @@ import {
   Loader2,
   Minus,
   Plus,
+  Radio,
   RefreshCw,
+  Save,
   Search,
   Sparkles,
   Trash2,
@@ -119,6 +121,33 @@ export default function TallyCheckinClient({
   const [isSyncingTally, setIsSyncingTally] = useState<boolean>(false);
   const [isSyncingCheckins, setIsSyncingCheckins] = useState<boolean>(false);
 
+  // Live Check-in Mode (30-min window, 5s polling when tab visible, QStash delayed Blob flush)
+  const LIVE_WINDOW_MS = 30 * 60 * 1000;
+  const [liveModeActive, setLiveModeActive] = useState<boolean>(false);
+  const [liveExpired, setLiveExpired] = useState<boolean>(false);
+  const [liveExpiresAt, setLiveExpiresAt] = useState<number | null>(null);
+  const [liveRemainingSec, setLiveRemainingSec] = useState<number>(0);
+  const [isActivatingLive, setIsActivatingLive] = useState<boolean>(false);
+  const [isFlushingBlob, setIsFlushingBlob] = useState<boolean>(false);
+  const [isTabVisible, setIsTabVisible] = useState<boolean>(true);
+  const liveVerRef = useRef<number | null>(null);
+  const optimisticCountsRef = useRef<Record<string, number>>({});
+  const liveDeltaBufferRef = useRef<
+    Record<
+      string,
+      {
+        delta: number;
+        maxCount: number;
+        checkedInCount: number;
+        updatedAt: string;
+        checkedInBy?: string;
+      }
+    >
+  >({});
+  const liveFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlightLivePatchesRef = useRef<number>(0);
+  const directRedisRef = useRef<{ url: string; token: string } | null>(null);
+
   const [search, setSearch] = useState<string>("");
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
@@ -194,6 +223,17 @@ export default function TallyCheckinClient({
     setSearch("");
     setFilterMode("all");
     setExpandedIds({});
+    setLiveModeActive(false);
+    setLiveExpired(false);
+    setLiveExpiresAt(null);
+    liveVerRef.current = null;
+    directRedisRef.current = null;
+    optimisticCountsRef.current = {};
+    liveDeltaBufferRef.current = {};
+    if (liveFlushTimerRef.current) {
+      clearTimeout(liveFlushTimerRef.current);
+      liveFlushTimerRef.current = null;
+    }
     setSelectedFormId(formId);
   };
 
@@ -203,7 +243,312 @@ export default function TallyCheckinClient({
     setStatusMsg(null);
     setSearch("");
     setExpandedIds({});
+    setLiveModeActive(false);
+    setLiveExpired(false);
+    setLiveExpiresAt(null);
+    liveVerRef.current = null;
+    directRedisRef.current = null;
+    optimisticCountsRef.current = {};
+    liveDeltaBufferRef.current = {};
+    if (liveFlushTimerRef.current) {
+      clearTimeout(liveFlushTimerRef.current);
+      liveFlushTimerRef.current = null;
+    }
   };
+
+  const pollLiveCheckins = useCallback(async (formId: string) => {
+    if (!formId) return;
+    // Skip poll if local taps are buffered or in-flight to avoid overwriting optimistic UI
+    if (
+      Object.keys(liveDeltaBufferRef.current).length > 0 ||
+      inFlightLivePatchesRef.current > 0
+    ) {
+      return;
+    }
+    try {
+      const applyLiveMap = (
+        liveMap: Record<
+          string,
+          { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
+        >
+      ) => {
+        setData((prev) => {
+          if (!prev) return prev;
+          const nextSubs = prev.submissions.map((sub) => {
+            const chk = liveMap[sub.submissionId];
+            if (!chk) return sub;
+            const maxCount = sub.participantsCount || 1;
+            const checkedInCount =
+              typeof chk.checkedInCount === "number"
+                ? Math.max(0, Math.min(maxCount, chk.checkedInCount))
+                : chk.checkedIn
+                  ? maxCount
+                  : 0;
+            optimisticCountsRef.current[sub.submissionId] = checkedInCount;
+            const isCheckedIn = checkedInCount > 0;
+            return {
+              ...sub,
+              checkedIn: isCheckedIn,
+              checkedInCount,
+              checkedInAt: isCheckedIn ? chk.updatedAt : undefined,
+              checkedInBy: isCheckedIn ? chk.checkedInBy : undefined
+            };
+          });
+          return { ...prev, submissions: nextSubs };
+        });
+      };
+
+      const direct = directRedisRef.current;
+      if (direct) {
+        try {
+          const verRes = await fetch(`${direct.url}/get/${encodeURIComponent(`checkin:ver:${formId}`)}`, {
+            headers: { Authorization: `Bearer ${direct.token}` },
+            cache: "no-store"
+          });
+          if (verRes.ok) {
+            const verJson = (await verRes.json()) as { result?: string | number | null };
+            const currentVer = verJson.result !== null && verJson.result !== undefined ? Number(verJson.result) : null;
+
+            if (
+              Object.keys(liveDeltaBufferRef.current).length > 0 ||
+              inFlightLivePatchesRef.current > 0
+            ) {
+              return;
+            }
+
+            if (currentVer !== null && liveVerRef.current !== null && currentVer === liveVerRef.current) {
+              return;
+            }
+
+            const pipeRes = await fetch(`${direct.url}/pipeline`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${direct.token}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify([
+                ["HGETALL", `checkin:counts:${formId}`],
+                ["HGETALL", `checkin:meta:${formId}`]
+              ]),
+              cache: "no-store"
+            });
+
+            if (pipeRes.ok) {
+              const pipeJson = (await pipeRes.json()) as Array<{ result?: unknown }>;
+              if (
+                Object.keys(liveDeltaBufferRef.current).length > 0 ||
+                inFlightLivePatchesRef.current > 0
+              ) {
+                return;
+              }
+
+              const parseFlatHash = (arr: unknown): Record<string, string> => {
+                const out: Record<string, string> = {};
+                if (Array.isArray(arr)) {
+                  for (let i = 0; i + 1 < arr.length; i += 2) {
+                    out[String(arr[i])] = String(arr[i + 1]);
+                  }
+                }
+                return out;
+              };
+
+              const countsHash = parseFlatHash(pipeJson?.[0]?.result);
+              const metaHash = parseFlatHash(pipeJson?.[1]?.result);
+              const allIds = new Set([...Object.keys(countsHash), ...Object.keys(metaHash)]);
+              const liveMap: Record<
+                string,
+                { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
+              > = {};
+
+              for (const subId of allIds) {
+                const count = Math.max(0, Number(countsHash[subId] ?? 0) || 0);
+                let parsedMeta: { updatedAt?: string; checkedInBy?: string } = {};
+                if (metaHash[subId]) {
+                  try {
+                    parsedMeta = JSON.parse(metaHash[subId]);
+                  } catch {
+                    parsedMeta = {};
+                  }
+                }
+                liveMap[subId] = {
+                  checkedIn: count > 0,
+                  checkedInCount: count,
+                  updatedAt: parsedMeta.updatedAt || new Date().toISOString(),
+                  ...(parsedMeta.checkedInBy ? { checkedInBy: parsedMeta.checkedInBy } : {})
+                };
+              }
+
+              if (currentVer !== null) {
+                liveVerRef.current = currentVer;
+              }
+              applyLiveMap(liveMap);
+              return;
+            }
+          }
+        } catch {
+          // Fall back to Vercel API route if direct Redis call fails
+        }
+      }
+
+      const qs = new URLSearchParams({ formId });
+      if (liveVerRef.current !== null) {
+        qs.set("ver", String(liveVerRef.current));
+      }
+      const res = await fetch(`/api/tally-submissions/live?${qs.toString()}`, {
+        cache: "no-store"
+      });
+      if (!res.ok) return;
+      const json = await res.json();
+      if (!json.success || !json.redisEnabled) return;
+
+      // Re-check after await in case user tapped while poll was in-flight
+      if (
+        Object.keys(liveDeltaBufferRef.current).length > 0 ||
+        inFlightLivePatchesRef.current > 0
+      ) {
+        return;
+      }
+
+      if (typeof json.ver === "number") {
+        liveVerRef.current = json.ver;
+      }
+
+      if (json.changed && json.checkins) {
+        applyLiveMap(
+          json.checkins as Record<
+            string,
+            { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
+          >
+        );
+      }
+    } catch {
+      // Silent background poll failure
+    }
+  }, []);
+
+  const handleActivateLiveMode = async () => {
+    if (!selectedFormId || isActivatingLive) return;
+    setIsActivatingLive(true);
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/tally-submissions/live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formId: selectedFormId })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Impossibile attivare la modalità Check-in Live.");
+      }
+      if (!json.redisEnabled) {
+        throw new Error("Upstash Redis non configurato sul server.");
+      }
+
+      directRedisRef.current =
+        json.directRead && json.directRead.url && json.directRead.token
+          ? { url: String(json.directRead.url), token: String(json.directRead.token) }
+          : null;
+
+      const expiresAt = Date.now() + LIVE_WINDOW_MS;
+      setLiveExpiresAt(expiresAt);
+      setLiveRemainingSec(Math.round(LIVE_WINDOW_MS / 1000));
+      setLiveExpired(false);
+      setLiveModeActive(true);
+      await pollLiveCheckins(selectedFormId);
+
+      setStatusMsg({
+        type: "success",
+        text: json.backupScheduled
+          ? "Modalità Check-in Live attiva per 30 minuti (sync ogni 5s). Backup automatico su Blob programmato tra 35 min."
+          : "Modalità Check-in Live attiva per 30 minuti (sync ogni 5s)."
+      });
+    } catch (err: unknown) {
+      setStatusMsg({
+        type: "error",
+        text: (err as Error)?.message || "Errore attivazione modalità Live."
+      });
+    } finally {
+      setIsActivatingLive(false);
+    }
+  };
+
+  const handleDeactivateLiveMode = () => {
+    setLiveModeActive(false);
+    setLiveExpiresAt(null);
+    setLiveRemainingSec(0);
+    directRedisRef.current = null;
+  };
+
+  const handleFlushToBlob = async () => {
+    if (!selectedFormId || isFlushingBlob) return;
+    setIsFlushingBlob(true);
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/tally-submissions/flush", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formId: selectedFormId, force: true })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Errore durante il salvataggio permanente su Blob.");
+      }
+      setStatusMsg({
+        type: "success",
+        text: json.flushed
+          ? "Snapshot permanente salvato su Vercel Blob."
+          : json.reason || "Nessuna modifica da salvare su Blob."
+      });
+    } catch (err: unknown) {
+      setStatusMsg({
+        type: "error",
+        text: (err as Error)?.message || "Errore durante il salvataggio su Blob."
+      });
+    } finally {
+      setIsFlushingBlob(false);
+    }
+  };
+
+  // Track tab visibility to pause polling when inactive
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const onVisibility = () => {
+      const visible = document.visibilityState === "visible";
+      setIsTabVisible(visible);
+      if (visible && liveModeActive && selectedFormId) {
+        pollLiveCheckins(selectedFormId);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [liveModeActive, selectedFormId, pollLiveCheckins]);
+
+  // 30-minute countdown timer
+  useEffect(() => {
+    if (!liveModeActive || !liveExpiresAt) return;
+    const timer = setInterval(() => {
+      const leftMs = liveExpiresAt - Date.now();
+      if (leftMs <= 0) {
+        setLiveModeActive(false);
+        setLiveExpiresAt(null);
+        setLiveRemainingSec(0);
+        setLiveExpired(true);
+        directRedisRef.current = null;
+        return;
+      }
+      setLiveRemainingSec(Math.ceil(leftMs / 1000));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [liveModeActive, liveExpiresAt]);
+
+  // 5-second live polling (only while liveModeActive AND tab is visible)
+  useEffect(() => {
+    if (!liveModeActive || !selectedFormId || !isTabVisible) return;
+    const interval = setInterval(() => {
+      pollLiveCheckins(selectedFormId);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [liveModeActive, selectedFormId, isTabVisible, pollLiveCheckins]);
 
   const handleSyncFromTally = async () => {
     if (!selectedFormId || isSyncingTally) return;
@@ -234,6 +579,58 @@ export default function TallyCheckinClient({
     }
   };
 
+  const flushLiveDeltaBuffer = useCallback(async (formId: string) => {
+    const buffered = liveDeltaBufferRef.current;
+    const entries = Object.entries(buffered).filter(([, v]) => v.delta !== 0);
+    liveDeltaBufferRef.current = {};
+    if (entries.length === 0 || !formId) return;
+
+    const changes: CheckinBatchItem[] = entries.map(([submissionId, item]) => ({
+      submissionId,
+      checkedIn: item.checkedInCount > 0,
+      checkedInCount: item.checkedInCount,
+      delta: item.delta,
+      maxCount: item.maxCount,
+      updatedAt: item.updatedAt,
+      checkedInBy: item.checkedInBy
+    }));
+
+    inFlightLivePatchesRef.current += 1;
+    try {
+      const res = await fetch("/api/tally-submissions/checkin", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formId, liveMode: true, changes })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Errore salvataggio live.");
+      }
+      if (typeof json.ver === "number") {
+        liveVerRef.current = json.ver;
+      }
+    } catch {
+      // Offline fallback: put failed deltas into local pendingMap
+      setPendingMap((prevPending) => {
+        const nextPending: LocalPendingMap = { ...prevPending };
+        for (const [subId, item] of entries) {
+          nextPending[subId] = {
+            checkedIn: item.checkedInCount > 0,
+            checkedInCount: item.checkedInCount,
+            delta: (prevPending[subId]?.delta || 0) + item.delta,
+            maxCount: item.maxCount,
+            updatedAt: item.updatedAt,
+            checkedInBy: item.checkedInBy
+          };
+        }
+        writeLocalDraft(formId, nextPending);
+        return nextPending;
+      });
+    } finally {
+      inFlightLivePatchesRef.current = Math.max(0, inFlightLivePatchesRef.current - 1);
+    }
+  }, []);
+
   const applyCheckinCount = (
     sub: MergedTallySubmission,
     targetCount: number,
@@ -242,22 +639,73 @@ export default function TallyCheckinClient({
     if (!selectedFormId) return;
     const maxCount = sub.participantsCount || 1;
     const clampedCount = Math.max(0, Math.min(maxCount, targetCount));
+    const currentOptimistic =
+      optimisticCountsRef.current[sub.submissionId] ??
+      data?.submissions.find((s) => s.submissionId === sub.submissionId)?.checkedInCount ??
+      sub.checkedInCount;
+    const delta = clampedCount - currentOptimistic;
+    const nowIso = new Date().toISOString();
+
+    if (liveModeActive) {
+      if (delta === 0) return;
+      optimisticCountsRef.current[sub.submissionId] = clampedCount;
+
+      // Optimistically update UI immediately
+      setData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          submissions: prev.submissions.map((s) =>
+            s.submissionId === sub.submissionId
+              ? {
+                  ...s,
+                  checkedIn: clampedCount > 0,
+                  checkedInCount: clampedCount,
+                  checkedInAt: clampedCount > 0 ? nowIso : undefined,
+                  checkedInBy: clampedCount > 0 ? memberName || undefined : undefined
+                }
+              : s
+          )
+        };
+      });
+
+      // Coalesce rapid taps on the same device into a single batched Redis delta (250ms debounce)
+      const prevBuf = liveDeltaBufferRef.current[sub.submissionId];
+      liveDeltaBufferRef.current[sub.submissionId] = {
+        delta: (prevBuf?.delta || 0) + delta,
+        maxCount,
+        checkedInCount: clampedCount,
+        updatedAt: nowIso,
+        checkedInBy: memberName || undefined
+      };
+
+      if (liveFlushTimerRef.current) {
+        clearTimeout(liveFlushTimerRef.current);
+      }
+      const targetFormId = selectedFormId;
+      liveFlushTimerRef.current = setTimeout(() => {
+        liveFlushTimerRef.current = null;
+        flushLiveDeltaBuffer(targetFormId);
+      }, 250);
+      return;
+    }
+
     const baseServerCount =
       data?.submissions.find((s) => s.submissionId === sub.submissionId)?.checkedInCount ??
       sub.checkedInCount;
-    const delta = clampedCount - baseServerCount;
+    const offlineDelta = clampedCount - baseServerCount;
 
     const nextPending: LocalPendingMap = { ...pendingMap };
     // If returning to the exact server state, remove from pending draft
-    if (delta === 0) {
+    if (offlineDelta === 0) {
       delete nextPending[sub.submissionId];
     } else {
       nextPending[sub.submissionId] = {
         checkedIn: clampedCount > 0,
         checkedInCount: clampedCount,
-        delta,
+        delta: offlineDelta,
         maxCount,
-        updatedAt: new Date().toISOString(),
+        updatedAt: nowIso,
         checkedInBy: memberName || undefined
       };
     }
@@ -274,6 +722,17 @@ export default function TallyCheckinClient({
       return;
     }
     applyCheckinCount(sub, targetCount, activeMember);
+  };
+
+  const handleStepCheckin = (sub: MergedTallySubmission, step: number) => {
+    const maxCount = sub.participantsCount || 1;
+    const current = liveModeActive
+      ? (optimisticCountsRef.current[sub.submissionId] ?? sub.checkedInCount)
+      : pendingMap[sub.submissionId] !== undefined
+        ? pendingMap[sub.submissionId].checkedInCount
+        : sub.checkedInCount;
+    const nextCount = Math.max(0, Math.min(maxCount, current + step));
+    handleSetCheckinCount(sub, nextCount);
   };
 
   const handleToggleCheckin = (sub: MergedTallySubmission) => {
@@ -678,6 +1137,44 @@ export default function TallyCheckinClient({
 
           <button
             type="button"
+            onClick={liveModeActive ? handleDeactivateLiveMode : handleActivateLiveMode}
+            disabled={isActivatingLive || !selectedFormId}
+            className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all active:scale-95 disabled:opacity-50 min-h-[40px] ${
+              liveModeActive
+                ? "bg-primary/15 border-primary/40 text-primary"
+                : "bg-muted/50 hover:bg-muted text-foreground border-muted"
+            }`}
+            title="Attiva sincronizzazione live tra dispositivi ogni 5s per 30 minuti"
+          >
+            {isActivatingLive ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Radio className={`w-3.5 h-3.5 ${liveModeActive ? "animate-pulse text-primary" : ""}`} />
+            )}
+            <span>
+              {liveModeActive
+                ? `Live ${Math.floor(liveRemainingSec / 60)}:${String(liveRemainingSec % 60).padStart(2, "0")}`
+                : "Check-in Live (30m)"}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleFlushToBlob}
+            disabled={isFlushingBlob || !selectedFormId}
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
+            title="Salva subito lo snapshot permanente su Vercel Blob"
+          >
+            {isFlushingBlob ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Save className="w-3.5 h-3.5" />
+            )}
+            <span>Salva ora su Blob</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleSyncFromTally}
             disabled={isSyncingTally || !selectedFormId}
             className="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-secondary text-secondary-foreground hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 min-h-[40px] shadow-sm"
@@ -714,6 +1211,75 @@ export default function TallyCheckinClient({
           Ultimo sync da Tally: <strong>{formatDate(data?.syncedAt)}</strong>
         </p>
       </div>
+
+      {/* Live Check-in Mode Active Banner */}
+      {liveModeActive && (
+        <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 text-xs">
+            <Radio className="w-4 h-4 text-primary animate-pulse shrink-0" />
+            <span className="text-foreground font-semibold">
+              Modalità Check-in Live attiva{" "}
+              <span className="text-primary font-black">
+                ({Math.floor(liveRemainingSec / 60)}:{String(liveRemainingSec % 60).padStart(2, "0")})
+              </span>
+              {!isTabVisible ? " · In pausa (scheda non attiva)" : " · Sync ogni 5s"}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleDeactivateLiveMode}
+            className="text-xs font-bold text-muted-foreground hover:text-foreground px-2.5 py-1 rounded-lg bg-background/60 border border-muted"
+          >
+            Disattiva Live
+          </button>
+        </div>
+      )}
+
+      {/* 30-Minute Live Window Expired Modal */}
+      {liveExpired && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-muted/95 border border-muted rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5">
+              <Radio className="w-5 h-5 text-primary shrink-0" />
+              <h3 className="font-bold text-base text-foreground">
+                Modalità Check-in Live terminata
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              La finestra di sincronizzazione live di 30 minuti è scaduta (per risparmiare risorse).
+              Vuoi riattivarla per altri 30 minuti?
+            </p>
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setLiveExpired(false)}
+                className="text-xs font-bold px-3.5 py-2 rounded-xl bg-background border border-muted text-muted-foreground hover:text-foreground"
+              >
+                Chiudi
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setLiveExpired(false);
+                  await handleFlushToBlob();
+                }}
+                className="text-xs font-bold px-3.5 py-2 rounded-xl bg-secondary text-secondary-foreground hover:opacity-90"
+              >
+                Salva ora su Blob
+              </button>
+              <button
+                type="button"
+                onClick={handleActivateLiveMode}
+                disabled={isActivatingLive}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {isActivatingLive && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>Riattiva per 30 min</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Manual Walk-in Guest Modal */}
       {isAddingManual && (
@@ -1135,7 +1701,7 @@ export default function TallyCheckinClient({
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleSetCheckinCount(sub, currentPresent - 1)}
+                        onClick={() => handleStepCheckin(sub, -1)}
                         disabled={currentPresent <= 0}
                         aria-label="Rimuovi un partecipante"
                         className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"
@@ -1147,7 +1713,7 @@ export default function TallyCheckinClient({
                       </span>
                       <button
                         type="button"
-                        onClick={() => handleSetCheckinCount(sub, currentPresent + 1)}
+                        onClick={() => handleStepCheckin(sub, 1)}
                         disabled={currentPresent >= maxParticipants}
                         aria-label="Aggiungi un partecipante"
                         className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"

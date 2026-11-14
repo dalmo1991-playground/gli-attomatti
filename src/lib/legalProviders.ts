@@ -138,10 +138,18 @@ export function getActiveLegalProviders(
     {
       id: "resend",
       name: "Resend Inc.",
-      role: "Invio di email transazionali, conferme e notifiche",
+      role: "Invio di email transazionali, conferme, notifiche e gestione webhook di mancato recapito (bounce)",
       location: "USA (DPA & SCC)",
       privacyUrl: "https://resend.com/legal/privacy-policy",
       privacyLabel: "resend.com/legal/privacy-policy",
+    },
+    {
+      id: "upstash",
+      name: "Upstash Inc.",
+      role: "Cache temporanea ad alte prestazioni (Redis) e code di elaborazione asincrone (QStash) per check-in e notifiche operative",
+      location: "Data center UE / USA (DPA & SCC)",
+      privacyUrl: "https://upstash.com/trust/privacy.pdf",
+      privacyLabel: "upstash.com/trust/privacy.pdf",
     },
     {
       id: "google_workspace",
