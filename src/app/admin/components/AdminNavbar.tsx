@@ -13,11 +13,13 @@ import {
   Loader2,
   Eye,
   PanelLeft,
-  BookOpen
+  BookOpen,
+  CalendarClock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "../context/AdminContext";
 import { DiffModal } from "./DiffModal";
+import { SchedulePublishModal } from "./SchedulePublishModal";
 
 interface AdminNavbarProps {
   onToggleSidebar: () => void;
@@ -42,6 +44,7 @@ export function AdminNavbar({
     setAdminSecret,
     handlePublish,
     isPublishing,
+    scheduledPublish,
     diffList,
     hasUnsavedChanges,
     activeBranch,
@@ -51,6 +54,7 @@ export function AdminNavbar({
   const [isSecretOpen, setIsSecretOpen] = useState(false);
   const [tempSecret, setTempSecret] = useState(adminSecret);
   const [isDiffOpen, setIsDiffOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
 
   const handleSaveSecret = () => {
     const trimmed = tempSecret.trim();
@@ -243,6 +247,39 @@ export function AdminNavbar({
             </div>
           )}
 
+          {/* Schedule Publish Button / Active Schedule Pill */}
+          <button
+            type="button"
+            onClick={() => setIsScheduleOpen(true)}
+            disabled={isPublishing}
+            title={
+              scheduledPublish
+                ? `Pubblicazione programmata per il ${new Date(scheduledPublish.publishAt).toLocaleString("it-IT", {
+                    dateStyle: "short",
+                    timeStyle: "short"
+                  })}`
+                : "Programma pubblicazione per una data futura"
+            }
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold transition-all border",
+              scheduledPublish
+                ? "bg-primary/15 text-primary border-primary/30 hover:bg-primary/25"
+                : "bg-muted/40 text-foreground/70 hover:text-foreground border-foreground/10 hover:border-foreground/20"
+            )}
+          >
+            <CalendarClock size={14} />
+            <span className="hidden md:inline">
+              {scheduledPublish
+                ? new Date(scheduledPublish.publishAt).toLocaleString("it-IT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  })
+                : "Programma"}
+            </span>
+          </button>
+
           {/* Publish Button */}
           <button
             onClick={handlePublish}
@@ -275,6 +312,9 @@ export function AdminNavbar({
 
       {/* Diff Inspector Modal */}
       <DiffModal isOpen={isDiffOpen} onClose={() => setIsDiffOpen(false)} />
+
+      {/* Schedule Publish Modal */}
+      {isScheduleOpen && <SchedulePublishModal onClose={() => setIsScheduleOpen(false)} />}
     </>
   );
 }

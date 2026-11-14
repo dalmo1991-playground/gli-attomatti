@@ -4,6 +4,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import contentData from "@/data/content.json";
 import { PublishStatus, DiffEntry, RecoverableDraft } from "../types";
 
+export interface ScheduledPublishInfo {
+  branch: "dev" | "main";
+  publishAt: string;
+  createdAt: string;
+  commitMessage: string;
+  qstashMessageId?: string;
+}
+
 interface AdminContextType {
   content: any;
   setContent: (content: any) => void;
@@ -14,6 +22,10 @@ interface AdminContextType {
   publishStatus: PublishStatus | null;
   setPublishStatus: (status: PublishStatus | null) => void;
   handlePublish: () => Promise<void>;
+  scheduledPublish: ScheduledPublishInfo | null;
+  isScheduling: boolean;
+  schedulePublish: (publishAtIso: string, commitMessage?: string) => Promise<boolean>;
+  cancelScheduledPublish: () => Promise<void>;
   diffList: DiffEntry[];
   hasUnsavedChanges: boolean;
   discardChanges: () => void;
@@ -75,6 +87,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   });
   const [recoverableDraft, setRecoverableDraft] = useState<RecoverableDraft | null>(null);
   const [lastDraftSavedAt, setLastDraftSavedAt] = useState<string | null>(null);
+  const [scheduledPublish, setScheduledPublish] = useState<ScheduledPublishInfo | null>(null);
+  const [isScheduling, setIsScheduling] = useState<boolean>(false);
 
   // The admin secret is kept ONLY in memory: it is never persisted, so it is
   // requested again at every page load. Remove any legacy stored copy.
@@ -142,6 +156,15 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       }
     }
     fetchLiveContent();
+
+    fetch("/api/content/schedule")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.scheduled) {
+          setScheduledPublish(data.scheduled);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const updateContent = useCallback((pathOrObject: string | Record<string, any>, value?: any) => {
@@ -405,6 +428,90 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   }, [adminSecret, content]);
 
+  const schedulePublish = useCallback(
+    async (publishAtIso: string, commitMessage?: string): Promise<boolean> => {
+      if (!adminSecret) {
+        alert("Per favore, inserisci la Password di Amministrazione in alto a destra per procedere.");
+        return false;
+      }
+
+      setIsScheduling(true);
+      setPublishStatus(null);
+      try {
+        const res = await fetch("/api/content/schedule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-secret": adminSecret
+          },
+          body: JSON.stringify({
+            content,
+            publishAt: publishAtIso,
+            commitMessage
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.scheduled) {
+          setScheduledPublish(data.scheduled);
+          const formatted = new Date(data.scheduled.publishAt).toLocaleString("it-IT", {
+            dateStyle: "short",
+            timeStyle: "short"
+          });
+          setPublishStatus({
+            type: "success",
+            msg: `Pubblicazione programmata su ${data.scheduled.branch} per il ${formatted}.`
+          });
+          return true;
+        }
+        setPublishStatus({
+          type: "error",
+          msg: `Errore: ${data.error || "Impossibile programmare la pubblicazione"}`
+        });
+        return false;
+      } catch (e) {
+        setPublishStatus({ type: "error", msg: `Errore di rete: ${(e as Error).message}` });
+        return false;
+      } finally {
+        setIsScheduling(false);
+      }
+    },
+    [adminSecret, content]
+  );
+
+  const cancelScheduledPublish = useCallback(async () => {
+    if (!adminSecret) {
+      alert("Per favore, inserisci la Password di Amministrazione in alto a destra per procedere.");
+      return;
+    }
+
+    setIsScheduling(true);
+    try {
+      const res = await fetch("/api/content/schedule", {
+        method: "DELETE",
+        headers: {
+          "x-admin-secret": adminSecret
+        }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setScheduledPublish(null);
+        setPublishStatus({
+          type: "success",
+          msg: "Pubblicazione programmata annullata."
+        });
+      } else {
+        setPublishStatus({
+          type: "error",
+          msg: `Errore: ${data.error || "Impossibile annullare la programmazione"}`
+        });
+      }
+    } catch (e) {
+      setPublishStatus({ type: "error", msg: `Errore di rete: ${(e as Error).message}` });
+    } finally {
+      setIsScheduling(false);
+    }
+  }, [adminSecret]);
+
   // Keyboard shortcut: Cmd+S / Ctrl+S to Publish
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -429,6 +536,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         publishStatus,
         setPublishStatus,
         handlePublish,
+        scheduledPublish,
+        isScheduling,
+        schedulePublish,
+        cancelScheduledPublish,
         diffList,
         hasUnsavedChanges,
         discardChanges,
