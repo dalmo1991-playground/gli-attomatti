@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
 import { FileText, Ticket, ShieldCheck, Clock, Ban, Scale, ClipboardList, Laptop, Camera, CalendarX, Accessibility, ShieldAlert, MessageSquare } from "lucide-react";
-import { getContent } from "@/lib/data";
 import { FormattedText } from "@/components/ui/FormattedText";
 import { LegalDocLayout, LegalDocCard } from "@/components/ui/LegalDocLayout";
-import { defaultText } from "@/lib/utils";
+import { TERMINI_CONTENT } from "@/lib/legalContent";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const content = await getContent();
-  const meta = content?.pages?.termini?.meta;
-  return {
-    title: defaultText(meta?.title, "Termini e Condizioni di Biglietteria e Iscrizioni") || undefined,
-    description: defaultText(meta?.description) || undefined,
-    alternates: {
-      canonical: "/Termini",
-    },
-  };
-}
+export const metadata: Metadata = {
+  title: TERMINI_CONTENT.meta.title,
+  description: TERMINI_CONTENT.meta.description,
+  alternates: {
+    canonical: "/Termini",
+  },
+};
 
 const sectionIcons: Record<string, { icon: React.ElementType; color: string }> = {
   scope: { icon: FileText, color: "bg-primary/10 text-primary" },
@@ -32,37 +27,44 @@ const sectionIcons: Record<string, { icon: React.ElementType; color: string }> =
   jurisdiction: { icon: Scale, color: "bg-emerald-500/10 text-emerald-400" },
 };
 
-export default async function TerminiPage() {
-  const content = await getContent();
-  const t = content?.pages?.termini;
-  const sections = t?.sections || [];
+export default function TerminiPage() {
+  const t = TERMINI_CONTENT;
 
   return (
     <LegalDocLayout
-      badge={defaultText(t?.badge)}
-      title={defaultText(t?.title, "Termini e Condizioni")}
-      description={defaultText(t?.description)}
+      badge={t.badge}
+      title={t.title}
+      description={t.description}
+      lastUpdated={t.last_updated}
       backHref="/"
-      backLabel={defaultText(t?.back_link, "Torna alla home")}
+      backLabel={t.back_link}
     >
-      {sections.map((section: any) => {
+      {t.sections.map((section) => {
         const iconConfig = sectionIcons[section.id];
         const Icon = iconConfig?.icon;
 
         return (
           <LegalDocCard
-            key={section.id || section.title}
-            title={defaultText(section.title)}
+            key={section.id}
+            title={section.title}
             icon={Icon}
             iconColorClass={iconConfig?.color}
           >
             <div className="space-y-4 text-foreground/80 leading-relaxed font-medium text-sm">
-              {section.intro && <p><FormattedText text={section.intro} /></p>}
-              {section.text && <p><FormattedText text={section.text} /></p>}
+              {section.intro && (
+                <p>
+                  <FormattedText text={section.intro} />
+                </p>
+              )}
+              {section.text && (
+                <p>
+                  <FormattedText text={section.text} />
+                </p>
+              )}
 
               {section.items && (
                 <ul className="list-disc pl-5 space-y-2 text-sm">
-                  {section.items.map((item: any, idx: number) => (
+                  {section.items.map((item, idx) => (
                     <li key={idx}>
                       {item.label && <strong>{item.label} </strong>}
                       <FormattedText text={item.text} />
@@ -72,13 +74,15 @@ export default async function TerminiPage() {
               )}
 
               {section.paragraphs &&
-                section.paragraphs.map((para: string, idx: number) => (
-                  <p key={idx}><FormattedText text={para} /></p>
+                section.paragraphs.map((para, idx) => (
+                  <p key={idx}>
+                    <FormattedText text={para} />
+                  </p>
                 ))}
 
               {section.cards && (
                 <div className="space-y-3 pt-2">
-                  {section.cards.map((card: any, idx: number) => (
+                  {section.cards.map((card, idx) => (
                     <div
                       key={idx}
                       className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 space-y-2"
@@ -104,7 +108,7 @@ export default async function TerminiPage() {
                       {section.notice_box.title}
                     </p>
                   )}
-                  {section.notice_box.paragraphs?.map((p: string, idx: number) => (
+                  {section.notice_box.paragraphs?.map((p, idx) => (
                     <p key={idx} className="text-sm">
                       <FormattedText text={p} />
                     </p>
