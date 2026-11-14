@@ -638,6 +638,12 @@ export async function applyCheckinBatch(
   invalidateTallyCache(cleanId);
 
   if (isRedisConfigured()) {
+    // Keep Redis in sync if a 14-day live session key already exists, and clear dirty flag
+    await applyRedisCheckinBatch(
+      cleanId,
+      changes.map((c) => ({ ...c, delta: undefined })),
+      checkins
+    ).catch(() => {});
     await clearFormDirtyInRedis(cleanId).catch(() => {});
   }
 

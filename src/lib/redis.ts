@@ -35,3 +35,14 @@ export function isRedisConfigured(): boolean {
       cleanEnv(process.env.UPSTASH_REDIS_REST_TOKEN)
   );
 }
+
+/**
+ * Returns the Upstash Redis REST URL and Read-Only Token for direct browser polling
+ * inside authenticated Area Riservata sessions. Never exposes the write token.
+ */
+export function getRedisReadOnlyConfig(): { url: string; token: string } | null {
+  const url = cleanEnv(process.env.UPSTASH_REDIS_REST_URL)?.replace(/\/$/, "");
+  const token = cleanEnv(process.env.UPSTASH_REDIS_REST_READONLY_TOKEN);
+  if (!url || !token) return null;
+  return { url, token };
+}

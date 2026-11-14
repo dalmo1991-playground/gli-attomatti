@@ -131,6 +131,22 @@ export default function TallyCheckinClient({
   const [isFlushingBlob, setIsFlushingBlob] = useState<boolean>(false);
   const [isTabVisible, setIsTabVisible] = useState<boolean>(true);
   const liveVerRef = useRef<number | null>(null);
+  const optimisticCountsRef = useRef<Record<string, number>>({});
+  const liveDeltaBufferRef = useRef<
+    Record<
+      string,
+      {
+        delta: number;
+        maxCount: number;
+        checkedInCount: number;
+        updatedAt: string;
+        checkedInBy?: string;
+      }
+    >
+  >({});
+  const liveFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlightLivePatchesRef = useRef<number>(0);
+  const directRedisRef = useRef<{ url: string; token: string } | null>(null);
 
   const [search, setSearch] = useState<string>("");
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
@@ -211,6 +227,13 @@ export default function TallyCheckinClient({
     setLiveExpired(false);
     setLiveExpiresAt(null);
     liveVerRef.current = null;
+    directRedisRef.current = null;
+    optimisticCountsRef.current = {};
+    liveDeltaBufferRef.current = {};
+    if (liveFlushTimerRef.current) {
+      clearTimeout(liveFlushTimerRef.current);
+      liveFlushTimerRef.current = null;
+    }
     setSelectedFormId(formId);
   };
 
@@ -224,31 +247,31 @@ export default function TallyCheckinClient({
     setLiveExpired(false);
     setLiveExpiresAt(null);
     liveVerRef.current = null;
+    directRedisRef.current = null;
+    optimisticCountsRef.current = {};
+    liveDeltaBufferRef.current = {};
+    if (liveFlushTimerRef.current) {
+      clearTimeout(liveFlushTimerRef.current);
+      liveFlushTimerRef.current = null;
+    }
   };
 
   const pollLiveCheckins = useCallback(async (formId: string) => {
     if (!formId) return;
+    // Skip poll if local taps are buffered or in-flight to avoid overwriting optimistic UI
+    if (
+      Object.keys(liveDeltaBufferRef.current).length > 0 ||
+      inFlightLivePatchesRef.current > 0
+    ) {
+      return;
+    }
     try {
-      const qs = new URLSearchParams({ formId });
-      if (liveVerRef.current !== null) {
-        qs.set("ver", String(liveVerRef.current));
-      }
-      const res = await fetch(`/api/tally-submissions/live?${qs.toString()}`, {
-        cache: "no-store"
-      });
-      if (!res.ok) return;
-      const json = await res.json();
-      if (!json.success || !json.redisEnabled) return;
-
-      if (typeof json.ver === "number") {
-        liveVerRef.current = json.ver;
-      }
-
-      if (json.changed && json.checkins) {
-        const liveMap = json.checkins as Record<
+      const applyLiveMap = (
+        liveMap: Record<
           string,
           { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
-        >;
+        >
+      ) => {
         setData((prev) => {
           if (!prev) return prev;
           const nextSubs = prev.submissions.map((sub) => {
@@ -261,6 +284,7 @@ export default function TallyCheckinClient({
                 : chk.checkedIn
                   ? maxCount
                   : 0;
+            optimisticCountsRef.current[sub.submissionId] = checkedInCount;
             const isCheckedIn = checkedInCount > 0;
             return {
               ...sub,
@@ -272,6 +296,130 @@ export default function TallyCheckinClient({
           });
           return { ...prev, submissions: nextSubs };
         });
+      };
+
+      const direct = directRedisRef.current;
+      if (direct) {
+        try {
+          const verRes = await fetch(`${direct.url}/get/${encodeURIComponent(`checkin:ver:${formId}`)}`, {
+            headers: { Authorization: `Bearer ${direct.token}` },
+            cache: "no-store"
+          });
+          if (verRes.ok) {
+            const verJson = (await verRes.json()) as { result?: string | number | null };
+            const currentVer = verJson.result !== null && verJson.result !== undefined ? Number(verJson.result) : null;
+
+            if (
+              Object.keys(liveDeltaBufferRef.current).length > 0 ||
+              inFlightLivePatchesRef.current > 0
+            ) {
+              return;
+            }
+
+            if (currentVer !== null && liveVerRef.current !== null && currentVer === liveVerRef.current) {
+              return;
+            }
+
+            const pipeRes = await fetch(`${direct.url}/pipeline`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${direct.token}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify([
+                ["HGETALL", `checkin:counts:${formId}`],
+                ["HGETALL", `checkin:meta:${formId}`]
+              ]),
+              cache: "no-store"
+            });
+
+            if (pipeRes.ok) {
+              const pipeJson = (await pipeRes.json()) as Array<{ result?: unknown }>;
+              if (
+                Object.keys(liveDeltaBufferRef.current).length > 0 ||
+                inFlightLivePatchesRef.current > 0
+              ) {
+                return;
+              }
+
+              const parseFlatHash = (arr: unknown): Record<string, string> => {
+                const out: Record<string, string> = {};
+                if (Array.isArray(arr)) {
+                  for (let i = 0; i + 1 < arr.length; i += 2) {
+                    out[String(arr[i])] = String(arr[i + 1]);
+                  }
+                }
+                return out;
+              };
+
+              const countsHash = parseFlatHash(pipeJson?.[0]?.result);
+              const metaHash = parseFlatHash(pipeJson?.[1]?.result);
+              const allIds = new Set([...Object.keys(countsHash), ...Object.keys(metaHash)]);
+              const liveMap: Record<
+                string,
+                { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
+              > = {};
+
+              for (const subId of allIds) {
+                const count = Math.max(0, Number(countsHash[subId] ?? 0) || 0);
+                let parsedMeta: { updatedAt?: string; checkedInBy?: string } = {};
+                if (metaHash[subId]) {
+                  try {
+                    parsedMeta = JSON.parse(metaHash[subId]);
+                  } catch {
+                    parsedMeta = {};
+                  }
+                }
+                liveMap[subId] = {
+                  checkedIn: count > 0,
+                  checkedInCount: count,
+                  updatedAt: parsedMeta.updatedAt || new Date().toISOString(),
+                  ...(parsedMeta.checkedInBy ? { checkedInBy: parsedMeta.checkedInBy } : {})
+                };
+              }
+
+              if (currentVer !== null) {
+                liveVerRef.current = currentVer;
+              }
+              applyLiveMap(liveMap);
+              return;
+            }
+          }
+        } catch {
+          // Fall back to Vercel API route if direct Redis call fails
+        }
+      }
+
+      const qs = new URLSearchParams({ formId });
+      if (liveVerRef.current !== null) {
+        qs.set("ver", String(liveVerRef.current));
+      }
+      const res = await fetch(`/api/tally-submissions/live?${qs.toString()}`, {
+        cache: "no-store"
+      });
+      if (!res.ok) return;
+      const json = await res.json();
+      if (!json.success || !json.redisEnabled) return;
+
+      // Re-check after await in case user tapped while poll was in-flight
+      if (
+        Object.keys(liveDeltaBufferRef.current).length > 0 ||
+        inFlightLivePatchesRef.current > 0
+      ) {
+        return;
+      }
+
+      if (typeof json.ver === "number") {
+        liveVerRef.current = json.ver;
+      }
+
+      if (json.changed && json.checkins) {
+        applyLiveMap(
+          json.checkins as Record<
+            string,
+            { checkedIn: boolean; checkedInCount?: number; updatedAt: string; checkedInBy?: string }
+          >
+        );
       }
     } catch {
       // Silent background poll failure
@@ -295,6 +443,11 @@ export default function TallyCheckinClient({
       if (!json.redisEnabled) {
         throw new Error("Upstash Redis non configurato sul server.");
       }
+
+      directRedisRef.current =
+        json.directRead && json.directRead.url && json.directRead.token
+          ? { url: String(json.directRead.url), token: String(json.directRead.token) }
+          : null;
 
       const expiresAt = Date.now() + LIVE_WINDOW_MS;
       setLiveExpiresAt(expiresAt);
@@ -323,6 +476,7 @@ export default function TallyCheckinClient({
     setLiveModeActive(false);
     setLiveExpiresAt(null);
     setLiveRemainingSec(0);
+    directRedisRef.current = null;
   };
 
   const handleFlushToBlob = async () => {
@@ -379,6 +533,7 @@ export default function TallyCheckinClient({
         setLiveExpiresAt(null);
         setLiveRemainingSec(0);
         setLiveExpired(true);
+        directRedisRef.current = null;
         return;
       }
       setLiveRemainingSec(Math.ceil(leftMs / 1000));
@@ -424,6 +579,58 @@ export default function TallyCheckinClient({
     }
   };
 
+  const flushLiveDeltaBuffer = useCallback(async (formId: string) => {
+    const buffered = liveDeltaBufferRef.current;
+    const entries = Object.entries(buffered).filter(([, v]) => v.delta !== 0);
+    liveDeltaBufferRef.current = {};
+    if (entries.length === 0 || !formId) return;
+
+    const changes: CheckinBatchItem[] = entries.map(([submissionId, item]) => ({
+      submissionId,
+      checkedIn: item.checkedInCount > 0,
+      checkedInCount: item.checkedInCount,
+      delta: item.delta,
+      maxCount: item.maxCount,
+      updatedAt: item.updatedAt,
+      checkedInBy: item.checkedInBy
+    }));
+
+    inFlightLivePatchesRef.current += 1;
+    try {
+      const res = await fetch("/api/tally-submissions/checkin", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formId, liveMode: true, changes })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Errore salvataggio live.");
+      }
+      if (typeof json.ver === "number") {
+        liveVerRef.current = json.ver;
+      }
+    } catch {
+      // Offline fallback: put failed deltas into local pendingMap
+      setPendingMap((prevPending) => {
+        const nextPending: LocalPendingMap = { ...prevPending };
+        for (const [subId, item] of entries) {
+          nextPending[subId] = {
+            checkedIn: item.checkedInCount > 0,
+            checkedInCount: item.checkedInCount,
+            delta: (prevPending[subId]?.delta || 0) + item.delta,
+            maxCount: item.maxCount,
+            updatedAt: item.updatedAt,
+            checkedInBy: item.checkedInBy
+          };
+        }
+        writeLocalDraft(formId, nextPending);
+        return nextPending;
+      });
+    } finally {
+      inFlightLivePatchesRef.current = Math.max(0, inFlightLivePatchesRef.current - 1);
+    }
+  }, []);
+
   const applyCheckinCount = (
     sub: MergedTallySubmission,
     targetCount: number,
@@ -432,14 +639,18 @@ export default function TallyCheckinClient({
     if (!selectedFormId) return;
     const maxCount = sub.participantsCount || 1;
     const clampedCount = Math.max(0, Math.min(maxCount, targetCount));
-    const baseServerCount =
+    const currentOptimistic =
+      optimisticCountsRef.current[sub.submissionId] ??
       data?.submissions.find((s) => s.submissionId === sub.submissionId)?.checkedInCount ??
       sub.checkedInCount;
-    const delta = clampedCount - baseServerCount;
+    const delta = clampedCount - currentOptimistic;
     const nowIso = new Date().toISOString();
 
-    if (liveModeActive && delta !== 0) {
-      // Optimistically update server snapshot in UI and push immediately to Redis
+    if (liveModeActive) {
+      if (delta === 0) return;
+      optimisticCountsRef.current[sub.submissionId] = clampedCount;
+
+      // Optimistically update UI immediately
       setData((prev) => {
         if (!prev) return prev;
         return {
@@ -458,62 +669,41 @@ export default function TallyCheckinClient({
         };
       });
 
-      fetch("/api/tally-submissions/checkin", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          formId: selectedFormId,
-          liveMode: true,
-          changes: [
-            {
-              submissionId: sub.submissionId,
-              checkedIn: clampedCount > 0,
-              checkedInCount: clampedCount,
-              delta,
-              maxCount,
-              updatedAt: nowIso,
-              checkedInBy: memberName || undefined
-            }
-          ]
-        })
-      })
-        .then((res) => res.json().then((json) => ({ ok: res.ok, json })))
-        .then(({ ok, json }) => {
-          if (!ok || !json.success) {
-            throw new Error(json.error || "Errore salvataggio live.");
-          }
-          if (typeof json.ver === "number") {
-            liveVerRef.current = json.ver;
-          }
-        })
-        .catch(() => {
-          // Offline fallback: store in local pendingMap
-          const nextPending: LocalPendingMap = {
-            ...pendingMap,
-            [sub.submissionId]: {
-              checkedIn: clampedCount > 0,
-              checkedInCount: clampedCount,
-              delta,
-              maxCount,
-              updatedAt: nowIso,
-              checkedInBy: memberName || undefined
-            }
-          };
-          setPendingMap(nextPending);
-          writeLocalDraft(selectedFormId, nextPending);
-        });
+      // Coalesce rapid taps on the same device into a single batched Redis delta (250ms debounce)
+      const prevBuf = liveDeltaBufferRef.current[sub.submissionId];
+      liveDeltaBufferRef.current[sub.submissionId] = {
+        delta: (prevBuf?.delta || 0) + delta,
+        maxCount,
+        checkedInCount: clampedCount,
+        updatedAt: nowIso,
+        checkedInBy: memberName || undefined
+      };
+
+      if (liveFlushTimerRef.current) {
+        clearTimeout(liveFlushTimerRef.current);
+      }
+      const targetFormId = selectedFormId;
+      liveFlushTimerRef.current = setTimeout(() => {
+        liveFlushTimerRef.current = null;
+        flushLiveDeltaBuffer(targetFormId);
+      }, 250);
       return;
     }
 
+    const baseServerCount =
+      data?.submissions.find((s) => s.submissionId === sub.submissionId)?.checkedInCount ??
+      sub.checkedInCount;
+    const offlineDelta = clampedCount - baseServerCount;
+
     const nextPending: LocalPendingMap = { ...pendingMap };
     // If returning to the exact server state, remove from pending draft
-    if (delta === 0) {
+    if (offlineDelta === 0) {
       delete nextPending[sub.submissionId];
     } else {
       nextPending[sub.submissionId] = {
         checkedIn: clampedCount > 0,
         checkedInCount: clampedCount,
-        delta,
+        delta: offlineDelta,
         maxCount,
         updatedAt: nowIso,
         checkedInBy: memberName || undefined
@@ -532,6 +722,17 @@ export default function TallyCheckinClient({
       return;
     }
     applyCheckinCount(sub, targetCount, activeMember);
+  };
+
+  const handleStepCheckin = (sub: MergedTallySubmission, step: number) => {
+    const maxCount = sub.participantsCount || 1;
+    const current = liveModeActive
+      ? (optimisticCountsRef.current[sub.submissionId] ?? sub.checkedInCount)
+      : pendingMap[sub.submissionId] !== undefined
+        ? pendingMap[sub.submissionId].checkedInCount
+        : sub.checkedInCount;
+    const nextCount = Math.max(0, Math.min(maxCount, current + step));
+    handleSetCheckinCount(sub, nextCount);
   };
 
   const handleToggleCheckin = (sub: MergedTallySubmission) => {
@@ -1500,7 +1701,7 @@ export default function TallyCheckinClient({
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleSetCheckinCount(sub, currentPresent - 1)}
+                        onClick={() => handleStepCheckin(sub, -1)}
                         disabled={currentPresent <= 0}
                         aria-label="Rimuovi un partecipante"
                         className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"
@@ -1512,7 +1713,7 @@ export default function TallyCheckinClient({
                       </span>
                       <button
                         type="button"
-                        onClick={() => handleSetCheckinCount(sub, currentPresent + 1)}
+                        onClick={() => handleStepCheckin(sub, 1)}
                         disabled={currentPresent >= maxParticipants}
                         aria-label="Aggiungi un partecipante"
                         className="min-h-[38px] min-w-[38px] rounded-xl bg-background border border-muted flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-35 active:scale-95 transition-all"

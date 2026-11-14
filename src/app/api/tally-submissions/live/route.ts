@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAreaRiservataAuthenticated } from "@/app/actions/areaRiservataAuth";
-import { isRedisConfigured } from "@/lib/redis";
+import { getRedisReadOnlyConfig, isRedisConfigured } from "@/lib/redis";
 import {
   getPendingBackupMessageId,
   getRedisCheckins,
@@ -139,7 +139,8 @@ export async function POST(req: NextRequest) {
       success: true,
       redisEnabled,
       backupScheduled,
-      backupDelayMinutes: 35
+      backupDelayMinutes: 35,
+      directRead: getRedisReadOnlyConfig()
     });
   } catch (err: unknown) {
     console.error("[API Tally Live POST Error]", err);
