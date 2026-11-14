@@ -1777,8 +1777,8 @@
             {
               "date": "Le vacanze di Monsieur Hulot - 14 novembre 2026, ore 18:00",
               "location": "Balberstrasse 47, 8038 Zürich",
-              "ticket_label": "Registrati",
-              "ticket_href": "/Registrazioni/14-11-26",
+              "ticket_label": "",
+              "ticket_href": "",
               "location_href": "/Location/sala-wollishofen"
             },
             {
