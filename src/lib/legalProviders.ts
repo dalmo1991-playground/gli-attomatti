@@ -45,11 +45,6 @@ interface LegalContentShape {
       pixel_id?: string;
     };
   };
-  pages?: {
-    privacy?: {
-      youtube?: unknown;
-    };
-  };
   shows?: MediaEntity[];
   initiatives?: MediaEntity[];
   landing_pages?: MediaEntity[];
@@ -81,23 +76,21 @@ export function getActiveIntegrationsState(
   content: LegalContentShape | null | undefined
 ): ActiveIntegrationsState {
   const integrations = content?.integrations || {};
-  const p = content?.pages?.privacy;
 
   const isGaActive = Boolean(
     integrations?.google_analytics?.enabled &&
-      integrations?.google_analytics?.measurement_id?.trim()
+    integrations?.google_analytics?.measurement_id?.trim()
   );
 
   const isMetaActive = Boolean(
     integrations?.meta_pixel?.enabled &&
-      integrations?.meta_pixel?.pixel_id?.trim()
+    integrations?.meta_pixel?.pixel_id?.trim()
   );
 
   const isYouTubeActive = Boolean(
-    p?.youtube ||
-      content?.shows?.some(hasYouTubeInEntity) ||
-      content?.initiatives?.some(hasYouTubeInEntity) ||
-      content?.landing_pages?.some(hasYouTubeInEntity)
+    content?.shows?.some(hasYouTubeInEntity) ||
+    content?.initiatives?.some(hasYouTubeInEntity) ||
+    content?.landing_pages?.some(hasYouTubeInEntity)
   );
 
   return {
