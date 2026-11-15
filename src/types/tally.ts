@@ -10,6 +10,8 @@ export interface TallyFormConfig {
   id: string;
   name: string;
   enabled: boolean;
+  /** If false, form is shown in read-only / survey mode without check-in or participant counting. Defaults to true. */
+  isCheckin?: boolean;
   allowedFields: TallyFormFieldConfig[];
   primaryFieldId?: string;
   secondaryFieldId?: string;

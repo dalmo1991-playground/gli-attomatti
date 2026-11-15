@@ -161,6 +161,8 @@ export default function TallyCheckinClient({
     [forms, selectedFormId]
   );
 
+  const isCheckinMode = selectedForm?.isCheckin !== false;
+
   const loadSubmissions = useCallback(async (formId: string, bypassCache = false) => {
     if (!formId) return;
     setIsLoading(true);
@@ -566,7 +568,9 @@ export default function TallyCheckinClient({
       }
       setStatusMsg({
         type: "success",
-        text: `Sincronizzate ${json.syncedSubmissions} iscrizioni (${json.totalParticipants} partecipanti) da Tally.`
+        text: isCheckinMode
+          ? `Sincronizzate ${json.syncedSubmissions} iscrizioni (${json.totalParticipants} partecipanti) da Tally.`
+          : `Sincronizzate ${json.syncedSubmissions} risposte da Tally.`
       });
       await loadSubmissions(selectedFormId, true);
     } catch (err: unknown) {
@@ -1054,7 +1058,8 @@ export default function TallyCheckinClient({
 
         <div className="grid grid-cols-1 gap-3">
           {forms.map((f) => {
-            const draftCount = Object.keys(readLocalDraft(f.id)).length;
+            const isFormCheckin = f.isCheckin !== false;
+            const draftCount = isFormCheckin ? Object.keys(readLocalDraft(f.id)).length : 0;
             return (
               <button
                 key={f.id}
@@ -1067,6 +1072,11 @@ export default function TallyCheckinClient({
                     <h2 className="text-base sm:text-lg font-extrabold text-foreground group-hover:text-primary transition-colors truncate">
                       {f.name}
                     </h2>
+                    {!isFormCheckin && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-secondary/20 text-secondary border border-secondary/30">
+                        Survey
+                      </span>
+                    )}
                     {draftCount > 0 && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-accent/20 text-accent border border-accent/30">
                         {draftCount} da sincronizzare
@@ -1075,9 +1085,11 @@ export default function TallyCheckinClient({
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {(f.allowedFields || []).length} campi configurati ·{" "}
-                    {f.participantsMode === "from_field"
-                      ? "Partecipanti da campo"
-                      : "1 partecipante / iscrizione"}
+                    {!isFormCheckin
+                      ? "Risultati Survey"
+                      : f.participantsMode === "from_field"
+                        ? "Partecipanti da campo"
+                        : "1 partecipante / iscrizione"}
                   </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -1103,75 +1115,79 @@ export default function TallyCheckinClient({
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={handleOpenAddManual}
-            disabled={!selectedFormId}
-            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 min-h-[40px] shadow-sm"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Aggiungi ospite</span>
-          </button>
+          {isCheckinMode && (
+            <>
+              <button
+                type="button"
+                onClick={handleOpenAddManual}
+                disabled={!selectedFormId}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 min-h-[40px] shadow-sm"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Aggiungi ospite</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={handleExportPdf}
-            disabled={!selectedForm || effectiveSubmissions.length === 0}
-            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
-            title="Esporta report PDF con tutti i partecipanti"
-          >
-            <FileDown className="w-3.5 h-3.5" />
-            <span>Esporta PDF</span>
-          </button>
+              <button
+                type="button"
+                onClick={handleExportPdf}
+                disabled={!selectedForm || effectiveSubmissions.length === 0}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
+                title="Esporta report PDF con tutti i partecipanti"
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                <span>Esporta PDF</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => loadSubmissions(selectedFormId, true)}
-            disabled={isLoading}
-            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
-            title="Ricarica dati dal server"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Aggiorna check-in</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => loadSubmissions(selectedFormId, true)}
+                disabled={isLoading}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
+                title="Ricarica dati dal server"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+                <span>Aggiorna check-in</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={liveModeActive ? handleDeactivateLiveMode : handleActivateLiveMode}
-            disabled={isActivatingLive || !selectedFormId}
-            className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all active:scale-95 disabled:opacity-50 min-h-[40px] ${
-              liveModeActive
-                ? "bg-primary/15 border-primary/40 text-primary"
-                : "bg-muted/50 hover:bg-muted text-foreground border-muted"
-            }`}
-            title="Attiva sincronizzazione live tra dispositivi ogni 5s per 30 minuti"
-          >
-            {isActivatingLive ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Radio className={`w-3.5 h-3.5 ${liveModeActive ? "animate-pulse text-primary" : ""}`} />
-            )}
-            <span>
-              {liveModeActive
-                ? `Live ${Math.floor(liveRemainingSec / 60)}:${String(liveRemainingSec % 60).padStart(2, "0")}`
-                : "Check-in Live (30m)"}
-            </span>
-          </button>
+              <button
+                type="button"
+                onClick={liveModeActive ? handleDeactivateLiveMode : handleActivateLiveMode}
+                disabled={isActivatingLive || !selectedFormId}
+                className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition-all active:scale-95 disabled:opacity-50 min-h-[40px] ${
+                  liveModeActive
+                    ? "bg-primary/15 border-primary/40 text-primary"
+                    : "bg-muted/50 hover:bg-muted text-foreground border-muted"
+                }`}
+                title="Attiva sincronizzazione live tra dispositivi ogni 5s per 30 minuti"
+              >
+                {isActivatingLive ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Radio className={`w-3.5 h-3.5 ${liveModeActive ? "animate-pulse text-primary" : ""}`} />
+                )}
+                <span>
+                  {liveModeActive
+                    ? `Live ${Math.floor(liveRemainingSec / 60)}:${String(liveRemainingSec % 60).padStart(2, "0")}`
+                    : "Check-in Live (30m)"}
+                </span>
+              </button>
 
-          <button
-            type="button"
-            onClick={handleFlushToBlob}
-            disabled={isFlushingBlob || !selectedFormId}
-            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
-            title="Salva subito lo snapshot permanente su Vercel Blob"
-          >
-            {isFlushingBlob ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Save className="w-3.5 h-3.5" />
-            )}
-            <span>Salva ora su Blob</span>
-          </button>
+              <button
+                type="button"
+                onClick={handleFlushToBlob}
+                disabled={isFlushingBlob || !selectedFormId}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground border border-muted transition-all active:scale-95 disabled:opacity-50 min-h-[40px]"
+                title="Salva subito lo snapshot permanente su Vercel Blob"
+              >
+                {isFlushingBlob ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Save className="w-3.5 h-3.5" />
+                )}
+                <span>Salva ora su Blob</span>
+              </button>
+            </>
+          )}
 
           <button
             type="button"
@@ -1184,7 +1200,13 @@ export default function TallyCheckinClient({
             ) : (
               <CloudUpload className="w-3.5 h-3.5" />
             )}
-            <span>{isSyncingTally ? "Aggiornamento..." : "Aggiorna iscrizioni"}</span>
+            <span>
+              {isSyncingTally
+                ? "Sincronizzazione..."
+                : isCheckinMode
+                  ? "Aggiorna iscrizioni"
+                  : "Sincronizza con Tally"}
+            </span>
           </button>
         </div>
       </div>
@@ -1193,16 +1215,18 @@ export default function TallyCheckinClient({
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="inline-block text-[11px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full">
-            Step 2 di 2 · Check-in
+            {isCheckinMode ? "Step 2 di 2 · Check-in" : "Step 2 di 2 · Risultati Survey"}
           </span>
-          <button
-            type="button"
-            onClick={() => setIsSelectingMember(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border border-muted bg-muted/40 hover:bg-muted text-foreground transition-all active:scale-95"
-          >
-            <UserIcon className="w-3.5 h-3.5 text-primary" />
-            <span>{activeMember ? `${activeMember} (cambia)` : "Seleziona il tuo nome"}</span>
-          </button>
+          {isCheckinMode && (
+            <button
+              type="button"
+              onClick={() => setIsSelectingMember(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border border-muted bg-muted/40 hover:bg-muted text-foreground transition-all active:scale-95"
+            >
+              <UserIcon className="w-3.5 h-3.5 text-primary" />
+              <span>{activeMember ? `${activeMember} (cambia)` : "Seleziona il tuo nome"}</span>
+            </button>
+          )}
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
           {selectedForm.name}
@@ -1213,7 +1237,7 @@ export default function TallyCheckinClient({
       </div>
 
       {/* Live Check-in Mode Active Banner */}
-      {liveModeActive && (
+      {isCheckinMode && liveModeActive && (
         <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 text-xs">
             <Radio className="w-4 h-4 text-primary animate-pulse shrink-0" />
@@ -1236,7 +1260,7 @@ export default function TallyCheckinClient({
       )}
 
       {/* 30-Minute Live Window Expired Modal */}
-      {liveExpired && (
+      {isCheckinMode && liveExpired && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-muted/95 border border-muted rounded-3xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center gap-2.5">
@@ -1282,7 +1306,7 @@ export default function TallyCheckinClient({
       )}
 
       {/* Add Manual Walk-in Guest Modal */}
-      {isAddingManual && (
+      {isCheckinMode && isAddingManual && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleSaveManualGuest}
@@ -1372,7 +1396,7 @@ export default function TallyCheckinClient({
       )}
 
       {/* Member Identification Modal */}
-      {isSelectingMember && (
+      {isCheckinMode && isSelectingMember && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-muted/95 border border-muted rounded-3xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
@@ -1466,41 +1490,58 @@ export default function TallyCheckinClient({
       )}
 
       {/* Clear Participant & Submission Stats */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
-        <div className="rounded-2xl bg-muted/40 border border-muted p-3.5 sm:p-4">
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-            <Users className="w-3.5 h-3.5 text-primary" />
-            <span>Partecipanti</span>
+      {isCheckinMode ? (
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+          <div className="rounded-2xl bg-muted/40 border border-muted p-3.5 sm:p-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              <Users className="w-3.5 h-3.5 text-primary" />
+              <span>Partecipanti</span>
+            </div>
+            <div className="mt-1 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-black text-primary">
+                {stats.checkedInParticipants}
+              </span>
+              <span className="text-sm sm:text-base font-bold text-muted-foreground">
+                / {stats.totalParticipants} presenti
+              </span>
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-3xl font-black text-primary">
-              {stats.checkedInParticipants}
-            </span>
-            <span className="text-sm sm:text-base font-bold text-muted-foreground">
-              / {stats.totalParticipants} presenti
-            </span>
+
+          <div className="rounded-2xl bg-muted/40 border border-muted p-3.5 sm:p-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              <CheckCircle2 className="w-3.5 h-3.5 text-secondary" />
+              <span>Iscrizioni</span>
+            </div>
+            <div className="mt-1 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-black text-foreground">
+                {stats.checkedInSubmissions}
+              </span>
+              <span className="text-sm sm:text-base font-bold text-muted-foreground">
+                / {stats.totalSubmissions} totali
+              </span>
+            </div>
           </div>
         </div>
-
+      ) : (
         <div className="rounded-2xl bg-muted/40 border border-muted p-3.5 sm:p-4">
           <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-            <CheckCircle2 className="w-3.5 h-3.5 text-secondary" />
-            <span>Iscrizioni</span>
+            <ClipboardList className="w-3.5 h-3.5 text-secondary" />
+            <span>Risposte raccolte</span>
           </div>
           <div className="mt-1 flex items-baseline gap-1.5">
             <span className="text-2xl sm:text-3xl font-black text-foreground">
-              {stats.checkedInSubmissions}
+              {stats.totalSubmissions}
             </span>
             <span className="text-sm sm:text-base font-bold text-muted-foreground">
-              / {stats.totalSubmissions} totali
+              totali
             </span>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Sticky Search + Filter + Explicit Sync Check-in Button */}
       <div className="sticky top-2 z-20 space-y-2.5 bg-background/95 backdrop-blur-md p-3 rounded-2xl border border-muted shadow-lg">
-        {pendingCount > 0 && (
+        {isCheckinMode && pendingCount > 0 && (
           <button
             type="button"
             onClick={handleSyncCheckinsToBlob}
@@ -1541,38 +1582,42 @@ export default function TallyCheckinClient({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {(
-            [
-              { id: "all", label: `Tutti (${stats.totalSubmissions})` },
-              {
-                id: "pending",
-                label: `Da fare (${stats.totalSubmissions - stats.checkedInSubmissions})`
-              },
-              { id: "checked_in", label: `Presenti (${stats.checkedInSubmissions})` }
-            ] as const
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setFilterMode(tab.id)}
-              className={`flex-1 py-2 px-2 rounded-xl text-xs font-bold transition-all active:scale-95 ${
-                filterMode === tab.id
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-muted/40 text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {isCheckinMode && (
+          <div className="flex items-center gap-1.5">
+            {(
+              [
+                { id: "all", label: `Tutti (${stats.totalSubmissions})` },
+                {
+                  id: "pending",
+                  label: `Da fare (${stats.totalSubmissions - stats.checkedInSubmissions})`
+                },
+                { id: "checked_in", label: `Presenti (${stats.checkedInSubmissions})` }
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilterMode(tab.id)}
+                className={`flex-1 py-2 px-2 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                  filterMode === tab.id
+                    ? "bg-foreground text-background shadow-sm"
+                    : "bg-muted/40 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Submissions List */}
       {isLoading && !data ? (
         <div className="py-12 text-center space-y-2 text-muted-foreground">
           <Loader2 className="w-7 h-7 animate-spin mx-auto text-primary" />
-          <p className="text-xs font-semibold">Caricamento iscrizioni...</p>
+          <p className="text-xs font-semibold">
+            {isCheckinMode ? "Caricamento iscrizioni..." : "Caricamento risposte..."}
+          </p>
         </div>
       ) : filteredSubmissions.length === 0 ? (
         <div className="rounded-3xl border border-muted bg-muted/20 p-8 text-center space-y-2">
@@ -1583,7 +1628,11 @@ export default function TallyCheckinClient({
           </p>
           {effectiveSubmissions.length === 0 && (
             <p className="text-xs text-muted-foreground">
-              Premi <strong>&quot;Aggiorna iscrizioni&quot;</strong> in alto per importare le iscrizioni nel Blob Storage.
+              Premi{" "}
+              <strong>
+                &quot;{isCheckinMode ? "Aggiorna iscrizioni" : "Sincronizza con Tally"}&quot;
+              </strong>{" "}
+              in alto per importare i dati nel Blob Storage.
             </p>
           )}
         </div>
@@ -1599,10 +1648,12 @@ export default function TallyCheckinClient({
             const isExpanded = Boolean(expandedIds[sub.submissionId]);
             const maxParticipants = sub.participantsCount || 1;
             const currentPresent = sub.checkedInCount || 0;
-            const isFullCheckin = currentPresent >= maxParticipants;
-            const isPartialCheckin = currentPresent > 0 && currentPresent < maxParticipants;
+            const isFullCheckin = isCheckinMode && currentPresent >= maxParticipants;
+            const isPartialCheckin =
+              isCheckinMode && currentPresent > 0 && currentPresent < maxParticipants;
             const showParticipantsBadge =
-              maxParticipants > 1 || selectedForm?.participantsMode === "from_field";
+              isCheckinMode &&
+              (maxParticipants > 1 || selectedForm?.participantsMode === "from_field");
 
             return (
               <div
@@ -1627,12 +1678,12 @@ export default function TallyCheckinClient({
                           {currentPresent > 0 ? `${currentPresent}/${maxParticipants}` : maxParticipants}
                         </span>
                       )}
-                      {sub.isManual && (
+                      {isCheckinMode && sub.isManual && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-secondary/20 text-secondary border border-secondary/30">
                           In sala (extra)
                         </span>
                       )}
-                      {sub.isPendingSync && (
+                      {isCheckinMode && sub.isPendingSync && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-accent/20 text-accent border border-accent/30">
                           Da sincronizzare
                         </span>
@@ -1647,12 +1698,12 @@ export default function TallyCheckinClient({
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground/80">
                       <span>{sub.isManual ? "Aggiunto" : "Inviato"}: {formatDate(sub.submittedAt)}</span>
-                      {sub.checkedIn && sub.checkedInBy && (
+                      {isCheckinMode && sub.checkedIn && sub.checkedInBy && (
                         <span className="text-primary font-semibold">
                           Check-in: {sub.checkedInBy}
                         </span>
                       )}
-                      {sub.isManual && (
+                      {isCheckinMode && sub.isManual && (
                         <button
                           type="button"
                           onClick={() => handleRemoveManualGuest(sub)}
@@ -1666,34 +1717,36 @@ export default function TallyCheckinClient({
                   </div>
 
                   {/* Large Touch-Friendly Main Check-in Button (Totale) */}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleCheckin(sub)}
-                    className={`shrink-0 min-h-[44px] min-w-[116px] px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
-                      isFullCheckin
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : isPartialCheckin
-                          ? "bg-secondary text-secondary-foreground shadow-sm"
-                          : "bg-background hover:bg-muted text-foreground border border-muted"
-                    }`}
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>
-                      {isFullCheckin
-                        ? maxParticipants > 1
-                          ? `Presenti (${maxParticipants}/${maxParticipants})`
-                          : "Presente"
-                        : isPartialCheckin
-                          ? `Completa (${currentPresent}/${maxParticipants})`
-                          : maxParticipants > 1
-                            ? `Check-in (${maxParticipants})`
-                            : "Check-in"}
-                    </span>
-                  </button>
+                  {isCheckinMode && (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleCheckin(sub)}
+                      className={`shrink-0 min-h-[44px] min-w-[116px] px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                        isFullCheckin
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : isPartialCheckin
+                            ? "bg-secondary text-secondary-foreground shadow-sm"
+                            : "bg-background hover:bg-muted text-foreground border border-muted"
+                      }`}
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>
+                        {isFullCheckin
+                          ? maxParticipants > 1
+                            ? `Presenti (${maxParticipants}/${maxParticipants})`
+                            : "Presente"
+                          : isPartialCheckin
+                            ? `Completa (${currentPresent}/${maxParticipants})`
+                            : maxParticipants > 1
+                              ? `Check-in (${maxParticipants})`
+                              : "Check-in"}
+                      </span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Partial Check-in Stepper (when > 1 participant) */}
-                {maxParticipants > 1 && (
+                {isCheckinMode && maxParticipants > 1 && (
                   <div className="mt-3 pt-2.5 border-t border-muted/50 flex items-center justify-between gap-2">
                     <span className="text-xs font-bold text-muted-foreground">
                       Check-in parziale:
