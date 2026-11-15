@@ -20,6 +20,7 @@ import {
   TallyApiFormSummary,
   TallyApiQuestion,
   TallyFormConfig,
+  TallyParticipantsMode,
   TallySubmissionsResponse
 } from "@/types/tally";
 
@@ -314,6 +315,79 @@ function parseParticipantsCount(rawValue: string | undefined): number {
   return parsed;
 }
 
+interface RawTallySubmission {
+  id?: string;
+  respondentId?: string;
+  isCompleted?: boolean;
+  submittedAt?: string;
+  createdAt?: string;
+  responses?: Array<{ questionId?: string; answer?: unknown }>;
+}
+
+/**
+ * Fetches all completed submissions for a Tally form across paginated responses.
+ */
+async function fetchAllCompletedTallySubmissions(cleanId: string): Promise<RawTallySubmission[]> {
+  const collected: RawTallySubmission[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore && page <= 50) {
+    const data = await tallyFetch<{
+      submissions?: RawTallySubmission[];
+      hasMore?: boolean;
+    }>(`/forms/${cleanId}/submissions?page=${page}&limit=100`);
+
+    const batch = data.submissions || [];
+    for (const sub of batch) {
+      if (!sub?.id || sub.isCompleted === false) continue;
+      collected.push(sub);
+    }
+
+    hasMore = Boolean(data.hasMore) && batch.length > 0;
+    page += 1;
+  }
+
+  return collected;
+}
+
+/**
+ * Resolves checked-in count and boolean status from a CheckinRecord.
+ */
+function resolveSubmissionCheckinState(
+  chk: CheckinRecord | undefined,
+  maxCount: number
+): { checkedInCount: number; isCheckedIn: boolean } {
+  let checkedInCount = 0;
+  if (chk) {
+    if (typeof chk.checkedInCount === "number") {
+      checkedInCount = Math.max(0, Math.min(maxCount, chk.checkedInCount));
+    } else if (chk.checkedIn) {
+      checkedInCount = maxCount;
+    }
+  }
+  return { checkedInCount, isCheckedIn: checkedInCount > 0 };
+}
+
+/**
+ * Loads check-in state in read-only mode, merging Blob/local checkins.json with live Redis if active.
+ */
+async function loadMergedCheckinsMap(cleanId: string): Promise<{
+  chkRes: { data: StoredCheckinsFile | null; storage: "vercel-blob" | "local-file" };
+  checkinsMap: Record<string, CheckinRecord>;
+}> {
+  const [chkRes, redisLive] = await Promise.all([
+    readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json"),
+    getRedisCheckins(cleanId).catch(() => null)
+  ]);
+
+  const checkinsMap: Record<string, CheckinRecord> = redisLive
+    ? { ...(chkRes.data?.checkins || {}), ...redisLive.checkins }
+    : chkRes.data?.checkins || {};
+
+  return { chkRes, checkinsMap };
+}
+
 /**
  * Syncs completed submissions from Tally API to Vercel Blob (or local fallback),
  * strictly filtering responses to ONLY the configured allowedFields (privacy).
@@ -336,63 +410,40 @@ export async function syncTallyFormToBlob(formConfig: TallyFormConfig): Promise<
   const participantsMode = formConfig.participantsMode || "one_per_submission";
   const participantsFieldId = formConfig.participantsFieldId;
 
+  const rawSubmissions = await fetchAllCompletedTallySubmissions(cleanId);
   const collected: StoredTallySubmission[] = [];
-  let page = 1;
-  let hasMore = true;
 
-  while (hasMore && page <= 50) {
-    const data = await tallyFetch<{
-      submissions?: Array<{
-        id?: string;
-        respondentId?: string;
-        isCompleted?: boolean;
-        submittedAt?: string;
-        createdAt?: string;
-        responses?: Array<{ questionId?: string; answer?: unknown }>;
-      }>;
-      hasMore?: boolean;
-    }>(`/forms/${cleanId}/submissions?page=${page}&limit=100`);
+  for (const sub of rawSubmissions) {
+    const responses = Array.isArray(sub.responses) ? sub.responses : [];
+    const extractedFields: Record<string, string> = {};
+    let rawParticipantsVal: string | undefined;
 
-    const batch = data.submissions || [];
-    for (const sub of batch) {
-      if (!sub?.id) continue;
-      // Only include completed submissions
-      if (sub.isCompleted === false) continue;
+    for (const resp of responses) {
+      const qId = String(resp?.questionId || "");
+      if (!qId) continue;
 
-      const responses = Array.isArray(sub.responses) ? sub.responses : [];
-      const extractedFields: Record<string, string> = {};
-      let rawParticipantsVal: string | undefined;
-
-      for (const resp of responses) {
-        const qId = String(resp?.questionId || "");
-        if (!qId) continue;
-
-        if (participantsMode === "from_field" && participantsFieldId && qId === participantsFieldId) {
-          rawParticipantsVal = formatTallyAnswer(resp.answer);
-        }
-
-        if (allowedIds.has(qId)) {
-          const formatted = formatTallyAnswer(resp.answer);
-          if (formatted) {
-            extractedFields[qId] = formatted;
-          }
-        }
+      if (participantsMode === "from_field" && participantsFieldId && qId === participantsFieldId) {
+        rawParticipantsVal = formatTallyAnswer(resp.answer);
       }
 
-      const participantsCount =
-        participantsMode === "from_field" ? parseParticipantsCount(rawParticipantsVal) : 1;
-
-      collected.push({
-        submissionId: String(sub.id),
-        respondentId: sub.respondentId ? String(sub.respondentId) : undefined,
-        submittedAt: String(sub.submittedAt || sub.createdAt || new Date().toISOString()),
-        participantsCount,
-        fields: extractedFields
-      });
+      if (allowedIds.has(qId)) {
+        const formatted = formatTallyAnswer(resp.answer);
+        if (formatted) {
+          extractedFields[qId] = formatted;
+        }
+      }
     }
 
-    hasMore = Boolean(data.hasMore) && batch.length > 0;
-    page += 1;
+    const participantsCount =
+      participantsMode === "from_field" ? parseParticipantsCount(rawParticipantsVal) : 1;
+
+    collected.push({
+      submissionId: String(sub.id),
+      respondentId: sub.respondentId ? String(sub.respondentId) : undefined,
+      submittedAt: String(sub.submittedAt || sub.createdAt || new Date().toISOString()),
+      participantsCount,
+      fields: extractedFields
+    });
   }
 
   // Sort newest first
@@ -439,16 +490,12 @@ export async function getMergedTallySubmissions(
     }
   }
 
-  const [subRes, chkRes, redisLive] = await Promise.all([
+  const [subRes, { chkRes, checkinsMap }] = await Promise.all([
     readJsonFile<StoredTallySubmissionsFile>(cleanId, "submissions.json"),
-    readJsonFile<StoredCheckinsFile>(cleanId, "checkins.json"),
-    getRedisCheckins(cleanId).catch(() => null)
+    loadMergedCheckinsMap(cleanId)
   ]);
 
   const submissionsFile = subRes.data;
-  const checkinsMap: Record<string, CheckinRecord> = redisLive
-    ? { ...(chkRes.data?.checkins || {}), ...redisLive.checkins }
-    : chkRes.data?.checkins || {};
   const manualGuests: ManualCheckinGuest[] = chkRes.data?.manualGuests || [];
 
   const rawSubs = submissionsFile?.submissions || [];
@@ -458,17 +505,8 @@ export async function getMergedTallySubmissions(
   const merged: MergedTallySubmission[] = rawSubs.map((sub) => {
     const chk = checkinsMap[sub.submissionId];
     const maxCount = sub.participantsCount || 1;
-    let checkedInCount = 0;
+    const { checkedInCount, isCheckedIn } = resolveSubmissionCheckinState(chk, maxCount);
 
-    if (chk) {
-      if (typeof chk.checkedInCount === "number") {
-        checkedInCount = Math.max(0, Math.min(maxCount, chk.checkedInCount));
-      } else if (chk.checkedIn) {
-        checkedInCount = maxCount;
-      }
-    }
-
-    const isCheckedIn = checkedInCount > 0;
     if (isCheckedIn) {
       checkedInSubmissions += 1;
       checkedInParticipants += checkedInCount;
@@ -783,4 +821,145 @@ export async function removeManualCheckinGuest(
 
   return { removed: nextGuests.length < currentGuests.length, storage };
 }
+
+export type TallyCheckinFilter = "all" | "checked_in" | "not_checked_in";
+
+export interface TallyDistributionField {
+  questionId: string;
+  columnName: string;
+}
+
+export interface TallyDistributionListResult {
+  headers: string[];
+  rows: Record<string, string>[];
+  detectedEmailField: string;
+  totalScanned: number;
+  totalMatched: number;
+  skippedInvalidEmail: number;
+  skippedDuplicateEmail: number;
+}
+
+/**
+ * Builds an ephemeral, in-memory distribution list directly from Tally API submissions
+ * cross-referenced in read-only mode with existing check-in records (Blob + Redis live).
+ * Nothing is persisted to disk, Blob, or Redis.
+ */
+export async function buildTallyDistributionList(params: {
+  formId: string;
+  emailQuestionId: string;
+  emailColumnName?: string;
+  selectedFields: TallyDistributionField[];
+  checkinFilter: TallyCheckinFilter;
+  participantsMode?: TallyParticipantsMode;
+  participantsFieldId?: string;
+  includeCheckinMeta?: boolean;
+}): Promise<TallyDistributionListResult> {
+  const cleanId = sanitizeFormId(params.formId);
+  if (!cleanId) throw new Error("ID modulo Tally non valido.");
+  if (!params.emailQuestionId) throw new Error("Campo email Tally non selezionato.");
+
+  const emailCol = (params.emailColumnName || "email").trim() || "email";
+  const usedHeaders = new Set<string>([emailCol]);
+  const extraFields: Array<{ questionId: string; columnName: string }> = [];
+
+  for (const field of params.selectedFields || []) {
+    if (!field?.questionId || field.questionId === params.emailQuestionId) continue;
+    let col = (field.columnName || field.questionId).trim() || field.questionId;
+    let suffix = 2;
+    while (usedHeaders.has(col)) {
+      col = `${field.columnName}_${suffix}`;
+      suffix += 1;
+    }
+    usedHeaders.add(col);
+    extraFields.push({ questionId: field.questionId, columnName: col });
+  }
+
+  const headers: string[] = [emailCol, ...extraFields.map((f) => f.columnName)];
+  if (params.includeCheckinMeta) {
+    if (!usedHeaders.has("stato_checkin")) headers.push("stato_checkin");
+    if (!usedHeaders.has("partecipanti_checkin")) headers.push("partecipanti_checkin");
+  }
+
+  const [rawSubmissions, { checkinsMap }] = await Promise.all([
+    fetchAllCompletedTallySubmissions(cleanId),
+    loadMergedCheckinsMap(cleanId)
+  ]);
+
+  // Sort newest first so deduplication keeps the latest submission for an email
+  rawSubmissions.sort((a, b) =>
+    String(b.submittedAt || b.createdAt || "").localeCompare(
+      String(a.submittedAt || a.createdAt || "")
+    )
+  );
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const seenEmails = new Set<string>();
+  const rows: Record<string, string>[] = [];
+  let skippedInvalidEmail = 0;
+  let skippedDuplicateEmail = 0;
+
+  for (const sub of rawSubmissions) {
+    const responses = Array.isArray(sub.responses) ? sub.responses : [];
+    const answersByQuestion = new Map<string, string>();
+
+    for (const resp of responses) {
+      const qId = String(resp?.questionId || "");
+      if (!qId) continue;
+      const formatted = formatTallyAnswer(resp.answer);
+      if (formatted) {
+        answersByQuestion.set(qId, formatted);
+      }
+    }
+
+    const participantsCount =
+      params.participantsMode === "from_field" && params.participantsFieldId
+        ? parseParticipantsCount(answersByQuestion.get(params.participantsFieldId))
+        : 1;
+
+    const { checkedInCount, isCheckedIn } = resolveSubmissionCheckinState(
+      checkinsMap[String(sub.id)],
+      participantsCount
+    );
+
+    if (params.checkinFilter === "checked_in" && !isCheckedIn) continue;
+    if (params.checkinFilter === "not_checked_in" && isCheckedIn) continue;
+
+    const rawEmail = (answersByQuestion.get(params.emailQuestionId) || "").trim();
+    if (!rawEmail || !emailRegex.test(rawEmail)) {
+      skippedInvalidEmail += 1;
+      continue;
+    }
+
+    const normalizedEmail = rawEmail.toLowerCase();
+    if (seenEmails.has(normalizedEmail)) {
+      skippedDuplicateEmail += 1;
+      continue;
+    }
+    seenEmails.add(normalizedEmail);
+
+    const row: Record<string, string> = {
+      [emailCol]: rawEmail
+    };
+    for (const field of extraFields) {
+      row[field.columnName] = answersByQuestion.get(field.questionId) || "";
+    }
+    if (params.includeCheckinMeta) {
+      row["stato_checkin"] = isCheckedIn ? "Presente" : "Assente";
+      row["partecipanti_checkin"] = `${checkedInCount}/${participantsCount}`;
+    }
+
+    rows.push(row);
+  }
+
+  return {
+    headers,
+    rows,
+    detectedEmailField: emailCol,
+    totalScanned: rawSubmissions.length,
+    totalMatched: rows.length,
+    skippedInvalidEmail,
+    skippedDuplicateEmail
+  };
+}
+
 

@@ -57,8 +57,10 @@ import {
   Target,
   Link2
 } from "lucide-react";
-import { parseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
+import { getRelativeLuminance } from "@/lib/devTheme";
+import { parseCsv, unparseCsv, ParsedCsvResult } from "@/lib/email/csvParser";
 import { CsvTableEditor } from "@/components/admin/email/CsvTableEditor";
+import { TallyApiFormSummary, TallyApiQuestion, TallyFormConfig } from "@/types/tally";
 import { useAdmin } from "../context/AdminContext";
 import { AdminSection } from "../components/ui/AdminSection";
 import { FormField } from "../components/ui/FormField";
@@ -138,6 +140,7 @@ const BLOCK_DEFINITIONS: { type: EmailBlockType; label: string; desc: string; ic
   { type: "badge", label: "Badge Pillola", desc: "Etichetta decorativa di categoria", icon: Tag },
   { type: "heading", label: "Titolo Principale", desc: "H1 / H2 con allineamento e colore", icon: Type },
   { type: "text", label: "Paragrafo / Testo Ricco", desc: "Testo formattato con markdown, grassetto e link", icon: FileText },
+  { type: "highlight", label: "Box in Evidenza (Highlight)", desc: "Contenuto evidenziato con sfondo, padding e colori personalizzati", icon: Sparkles },
   { type: "info_box", label: "Card Info Evento", desc: "Box dettagli per Data, Ora, Luogo e Posti", icon: Info },
   { type: "calendar", label: "Appuntamento Calendario", desc: "Box 'Aggiungi al Calendario' (Google, Apple iCal, Outlook) con download .ics", icon: Calendar },
   { type: "image", label: "Immagine / Locandina", desc: "Foto o locandina con didascalia e link", icon: ImageIcon },
@@ -185,7 +188,8 @@ export function EmailTab() {
   const [copiedCustomSnippet, setCopiedCustomSnippet] = useState(false);
   const [copiedSubcaseSnippet, setCopiedSubcaseSnippet] = useState<string | null>(null);
 
-  // Mass Send CSV state
+  // Mass Send CSV / Tally state
+  const [massSource, setMassSource] = useState<"csv" | "tally">("csv");
   const [csvRawText, setCsvRawText] = useState<string>("");
   const [parsedCsvData, setParsedCsvData] = useState<ParsedCsvResult | null>(null);
   const [selectedEmailCol, setSelectedEmailCol] = useState<string>("");
@@ -200,6 +204,26 @@ export function EmailTab() {
     results: Array<{ to: string; success: boolean; id?: string; error?: string; simulated?: boolean }>;
   } | null>(null);
   const [showMassConfirmModal, setShowMassConfirmModal] = useState<boolean>(false);
+
+  // Mass Send Tally + Check-in state
+  const [tallyFormsList, setTallyFormsList] = useState<TallyApiFormSummary[]>([]);
+  const [isLoadingTallyForms, setIsLoadingTallyForms] = useState<boolean>(false);
+  const [tallyError, setTallyError] = useState<string | null>(null);
+  const [selectedTallyFormId, setSelectedTallyFormId] = useState<string>("");
+  const [tallyQuestions, setTallyQuestions] = useState<TallyApiQuestion[]>([]);
+  const [isLoadingTallyQuestions, setIsLoadingTallyQuestions] = useState<boolean>(false);
+  const [tallyEmailQuestionId, setTallyEmailQuestionId] = useState<string>("");
+  const [tallySelectedFields, setTallySelectedFields] = useState<Record<string, boolean>>({});
+  const [tallyFieldAliases, setTallyFieldAliases] = useState<Record<string, string>>({});
+  const [tallyCheckinFilter, setTallyCheckinFilter] = useState<"all" | "checked_in" | "not_checked_in">("all");
+  const [tallyIncludeCheckinMeta, setTallyIncludeCheckinMeta] = useState<boolean>(false);
+  const [isBuildingTallyList, setIsBuildingTallyList] = useState<boolean>(false);
+  const [tallyListSummary, setTallyListSummary] = useState<{
+    totalScanned: number;
+    totalMatched: number;
+    skippedInvalidEmail: number;
+    skippedDuplicateEmail: number;
+  } | null>(null);
 
   // DLQ (Dead Letter Queue) state
   const [queueItems, setQueueItems] = useState<FailedEmailRecord[]>([]);
@@ -846,6 +870,18 @@ export function EmailTab() {
       case "text":
         newBlock = { id: newId, type: "text", content: "Ciao {{name}},\n\nquesto è un paragrafo di esempio. Puoi usare il **grassetto** e inserire [link personalizzati](https://gliattomatti.ch).", align: "left" };
         break;
+      case "highlight":
+        newBlock = {
+          id: newId,
+          type: "highlight",
+          title: "Nota Importante",
+          content: "Questo contenuto è messo in evidenza con **sfondo e colori personalizzati**.",
+          align: "left",
+          bg_color: "#fef3c7",
+          text_color: "#78350f",
+          border_color: "#f59e0b"
+        };
+        break;
       case "button":
         newBlock = { id: newId, type: "button", label: "Scopri i Dettagli", url: "https://gliattomatti.ch", align: "center", style: "pill" };
         break;
@@ -1082,6 +1118,171 @@ export function EmailTab() {
       }
     };
     reader.readAsText(file, "UTF-8");
+  };
+
+  const configuredTallyForms: TallyFormConfig[] = useMemo(
+    () => (Array.isArray(content?.tally_checkin_forms) ? content.tally_checkin_forms : []),
+    [content?.tally_checkin_forms]
+  );
+
+  const slugifyTallyColumnName = (raw: string): string => {
+    const cleaned = raw
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    return cleaned || "campo";
+  };
+
+  const loadTallyFormsForMass = async (force = false) => {
+    if (!force && tallyFormsList.length > 0) return;
+    const secret = ensureAdminSecret();
+    setIsLoadingTallyForms(true);
+    setTallyError(null);
+    try {
+      const res = await fetch("/api/admin/tally/forms", {
+        headers: { "x-admin-secret": secret || "" }
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setTallyError(data.error || "Impossibile caricare i moduli Tally.");
+      } else {
+        setTallyFormsList(Array.isArray(data.forms) ? data.forms : []);
+      }
+    } catch (err: unknown) {
+      setTallyError((err as Error)?.message || "Errore di rete nel caricamento moduli Tally.");
+    } finally {
+      setIsLoadingTallyForms(false);
+    }
+  };
+
+  const handleSelectTallyForm = async (formId: string) => {
+    setSelectedTallyFormId(formId);
+    setTallyQuestions([]);
+    setTallyEmailQuestionId("");
+    setTallySelectedFields({});
+    setTallyFieldAliases({});
+    setTallyListSummary(null);
+    setTallyError(null);
+
+    if (!formId) return;
+
+    const secret = ensureAdminSecret();
+    setIsLoadingTallyQuestions(true);
+    try {
+      const res = await fetch(`/api/admin/tally/forms/${encodeURIComponent(formId)}/questions`, {
+        headers: { "x-admin-secret": secret || "" }
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setTallyError(data.error || "Impossibile caricare i campi del modulo Tally.");
+        return;
+      }
+
+      const questions: TallyApiQuestion[] = Array.isArray(data.questions) ? data.questions : [];
+      setTallyQuestions(questions);
+
+      const detectedEmail =
+        questions.find((q) => q.type === "INPUT_EMAIL") ||
+        questions.find((q) => /email|e-mail|mail/i.test(q.title));
+      const emailQId = detectedEmail?.id || questions[0]?.id || "";
+      setTallyEmailQuestionId(emailQId);
+
+      const formCfg = configuredTallyForms.find((f) => f.id === formId);
+      const allowedSet = new Set((formCfg?.allowedFields || []).map((f) => f.questionId));
+      const selectedMap: Record<string, boolean> = {};
+      const aliasMap: Record<string, string> = {};
+
+      for (const q of questions) {
+        aliasMap[q.id] = slugifyTallyColumnName(q.title);
+        if (q.id === emailQId) {
+          selectedMap[q.id] = false;
+        } else if (allowedSet.size > 0) {
+          selectedMap[q.id] = allowedSet.has(q.id);
+        } else {
+          selectedMap[q.id] = true;
+        }
+      }
+
+      setTallySelectedFields(selectedMap);
+      setTallyFieldAliases(aliasMap);
+    } catch (err: unknown) {
+      setTallyError((err as Error)?.message || "Errore di rete nel caricamento dei campi.");
+    } finally {
+      setIsLoadingTallyQuestions(false);
+    }
+  };
+
+  const handleBuildTallyDistributionList = async () => {
+    if (!selectedTallyFormId || !tallyEmailQuestionId) {
+      setTallyError("Seleziona un modulo Tally e il campo Email.");
+      return;
+    }
+
+    const secret = ensureAdminSecret();
+    setIsBuildingTallyList(true);
+    setTallyError(null);
+    setMassSendReport(null);
+
+    try {
+      const selectedFields = tallyQuestions
+        .filter((q) => q.id !== tallyEmailQuestionId && tallySelectedFields[q.id])
+        .map((q) => ({
+          questionId: q.id,
+          columnName: (tallyFieldAliases[q.id] || slugifyTallyColumnName(q.title)).trim()
+        }));
+
+      const res = await fetch("/api/admin/tally/distribution-list", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": secret || ""
+        },
+        body: JSON.stringify({
+          formId: selectedTallyFormId,
+          emailQuestionId: tallyEmailQuestionId,
+          emailColumnName: "email",
+          selectedFields,
+          checkinFilter: tallyCheckinFilter,
+          includeCheckinMeta: tallyIncludeCheckinMeta
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setTallyError(data.error || "Errore nella generazione della distribution list.");
+        return;
+      }
+
+      const headers: string[] = Array.isArray(data.headers) ? data.headers : [];
+      const rows: Record<string, string>[] = Array.isArray(data.rows) ? data.rows : [];
+      const detectedEmailField: string = data.detectedEmailField || headers[0] || "email";
+
+      setParsedCsvData({
+        headers,
+        rows,
+        detectedEmailField,
+        totalRows: rows.length,
+        errors:
+          rows.length === 0
+            ? ["Nessun destinatario trovato con i criteri di filtro selezionati."]
+            : []
+      });
+      setSelectedEmailCol(detectedEmailField);
+      setCsvRawText(rows.length > 0 ? unparseCsv(headers, rows) : "");
+      setMassPreviewRowIndex(0);
+      setTallyListSummary({
+        totalScanned: Number(data.totalScanned || 0),
+        totalMatched: Number(data.totalMatched || rows.length),
+        skippedInvalidEmail: Number(data.skippedInvalidEmail || 0),
+        skippedDuplicateEmail: Number(data.skippedDuplicateEmail || 0)
+      });
+    } catch (err: unknown) {
+      setTallyError((err as Error)?.message || "Errore di connessione durante l'importazione.");
+    } finally {
+      setIsBuildingTallyList(false);
+    }
   };
 
   // Calcolo delle variabili attuali per la riga selezionata nel CSV
@@ -1455,7 +1656,7 @@ export function EmailTab() {
                   className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-2 ${activeTabSection === "mass" ? "border-primary text-primary font-bold" : "border-transparent text-foreground/60 hover:text-foreground"
                     }`}
                 >
-                  <Users size={15} /> Invio Massivo (CSV)
+                  <Users size={15} /> Invio Massivo (CSV / Tally)
                   {parsedCsvData && parsedCsvData.totalRows > 0 && (
                     <span className="px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 text-[10px] font-black">
                       {parsedCsvData.totalRows}
@@ -3077,7 +3278,7 @@ export function EmailTab() {
                                         helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
                                         autocompleteTags={allAvailableTags}
                                       />
-                                      <FormField
+                                        <FormField
                                         label="Allineamento"
                                         value={block.align || "left"}
                                         onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
@@ -3087,6 +3288,151 @@ export function EmailTab() {
                                           { label: "Centrato", value: "center" }
                                         ]}
                                       />
+                                    </div>
+                                  )}
+
+                                  {/* Highlight Box Block Properties */}
+                                  {block.type === "highlight" && (
+                                    <div className="space-y-4">
+                                      <FormField
+                                        label="Titolo Box (Opzionale)"
+                                        value={block.title || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { title: v })}
+                                        placeholder="es. Avviso Importante"
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Contenuto in Evidenza"
+                                        value={block.content || ""}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { content: v })}
+                                        type="textarea"
+                                        rows={4}
+                                        helpText="Supporta Markdown: **grassetto**, [link](https://...) e variabili {{name}}."
+                                        autocompleteTags={allAvailableTags}
+                                      />
+                                      <FormField
+                                        label="Allineamento Testo"
+                                        value={block.align || "left"}
+                                        onChange={(v) => handleUpdateSingleBlock(block.id, { align: v })}
+                                        type="select"
+                                        options={[
+                                          { label: "A Sinistra", value: "left" },
+                                          { label: "Centrato", value: "center" }
+                                        ]}
+                                      />
+                                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                          <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 block mb-1">
+                                            Sfondo Box
+                                          </label>
+                                          <div className="flex items-center gap-2">
+                                            <input
+                                              type="color"
+                                              value={/^#[0-9a-fA-F]{6}$/.test(block.bg_color || "") ? block.bg_color : "#fef3c7"}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { bg_color: e.target.value })}
+                                              className="w-9 h-9 rounded-lg border border-foreground/15 bg-transparent cursor-pointer shrink-0"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={block.bg_color || ""}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { bg_color: e.target.value })}
+                                              placeholder="Default tema"
+                                              className="w-full px-2.5 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                            />
+                                            {block.bg_color && (
+                                              <button
+                                                type="button"
+                                                onClick={() => handleUpdateSingleBlock(block.id, { bg_color: "" })}
+                                                title="Ripristina default tema"
+                                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground cursor-pointer"
+                                              >
+                                                <RotateCcw size={12} />
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                          <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 block mb-1">
+                                            Colore Testo
+                                          </label>
+                                          <div className="flex items-center gap-2">
+                                            <input
+                                              type="color"
+                                              value={/^#[0-9a-fA-F]{6}$/.test(block.text_color || "") ? block.text_color : "#78350f"}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { text_color: e.target.value })}
+                                              className="w-9 h-9 rounded-lg border border-foreground/15 bg-transparent cursor-pointer shrink-0"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={block.text_color || ""}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { text_color: e.target.value })}
+                                              placeholder="Default tema"
+                                              className="w-full px-2.5 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                            />
+                                            {block.text_color && (
+                                              <button
+                                                type="button"
+                                                onClick={() => handleUpdateSingleBlock(block.id, { text_color: "" })}
+                                                title="Ripristina default tema"
+                                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground cursor-pointer"
+                                              >
+                                                <RotateCcw size={12} />
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        <div>
+                                          <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/70 block mb-1">
+                                            Bordo (Opzionale)
+                                          </label>
+                                          <div className="flex items-center gap-2">
+                                            <input
+                                              type="color"
+                                              value={/^#[0-9a-fA-F]{6}$/.test(block.border_color || "") ? block.border_color : "#f59e0b"}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { border_color: e.target.value })}
+                                              className="w-9 h-9 rounded-lg border border-foreground/15 bg-transparent cursor-pointer shrink-0"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={block.border_color || ""}
+                                              onChange={(e) => handleUpdateSingleBlock(block.id, { border_color: e.target.value })}
+                                              placeholder="Default tema"
+                                              className="w-full px-2.5 py-1.5 rounded-xl bg-background/50 border border-foreground/10 text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                                            />
+                                            {block.border_color && (
+                                              <button
+                                                type="button"
+                                                onClick={() => handleUpdateSingleBlock(block.id, { border_color: "" })}
+                                                title="Ripristina default tema"
+                                                className="p-1.5 rounded-lg text-foreground/50 hover:text-foreground cursor-pointer"
+                                              >
+                                                <RotateCcw size={12} />
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {(() => {
+                                        const bg = (block.bg_color || "").trim();
+                                        const fg = (block.text_color || "").trim();
+                                        if (/^#[0-9a-fA-F]{6}$/.test(bg) && /^#[0-9a-fA-F]{6}$/.test(fg)) {
+                                          const l1 = getRelativeLuminance(bg);
+                                          const l2 = getRelativeLuminance(fg);
+                                          const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+                                          if (ratio < 4.5) {
+                                            return (
+                                              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-400 text-[11px] flex items-center gap-2">
+                                                <AlertTriangle size={13} className="shrink-0" />
+                                                <span>Contrasto basso ({ratio.toFixed(1)}:1). Consigliato almeno 4.5:1 per una buona leggibilità.</span>
+                                              </div>
+                                            );
+                                          }
+                                        }
+                                        return null;
+                                      })()}
                                     </div>
                                   )}
 
@@ -4288,19 +4634,19 @@ export function EmailTab() {
                     </div>
                   </div>
 
-                  {/* SECTION: INVIO MASSIVO (CSV / NEWSLETTER) */}
+                  {/* SECTION: INVIO MASSIVO (CSV / TALLY / NEWSLETTER) */}
                   {activeTabSection === "mass" && (
                     <div className="space-y-6">
-                      {/* Card 1: Caricamento File CSV & Configurazione Colonne */}
+                      {/* Card 1: Sorgente Dati (CSV o Tally + Check-in) & Configurazione Colonne */}
                       <div className="p-6 md:p-8 rounded-3xl bg-muted/20 border border-foreground/5 space-y-6 glass">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-4 gap-3">
                           <div>
                             <h4 className="text-base font-black uppercase tracking-tight text-foreground flex items-center gap-2">
                               <Users size={18} className="text-primary" />
-                              Invio Massivo Newsletter & Comunicazioni Commerciali
+                              Invio Massivo Newsletter &amp; Comunicazioni
                             </h4>
                             <p className="text-xs text-foreground/60 mt-0.5">
-                              Invia questo template ad una lista di contatti da file CSV. Le colonne del file possono essere usate come variabili personalizzate (es. &#123;&#123;nome&#125;&#125;).
+                              Invia questo template ad una lista temporanea in memoria da file CSV oppure da un modulo Tally incrociato con lo stato di check-in.
                             </p>
                           </div>
 
@@ -4312,46 +4658,272 @@ export function EmailTab() {
                           )}
                         </div>
 
+                        {/* Selettore Sorgente Contatti */}
+                        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-background/40 border border-foreground/10 w-fit">
+                          <button
+                            type="button"
+                            onClick={() => setMassSource("csv")}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                              massSource === "csv"
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-foreground/70 hover:text-foreground"
+                            }`}
+                          >
+                            <Upload size={14} />
+                            <span>File / Testo CSV</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMassSource("tally");
+                              loadTallyFormsForMass();
+                            }}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                              massSource === "tally"
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-foreground/70 hover:text-foreground"
+                            }`}
+                          >
+                            <Database size={14} />
+                            <span>Modulo Tally &amp; Check-in</span>
+                          </button>
+                        </div>
+
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          {/* Caricamento File o Incolla */}
-                          <div className="space-y-4">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
-                              1. Carica File CSV o Incolla Dati
-                            </label>
-
-                            <div className="flex items-center gap-3">
-                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all">
-                                <Upload size={14} />
-                                <span>Scegli File CSV</span>
-                                <input
-                                  type="file"
-                                  accept=".csv,text/csv,text/plain"
-                                  onChange={handleCsvFileUpload}
-                                  className="hidden"
-                                />
+                          {/* Colonna 1: Caricamento CSV oppure Importazione Tally + Check-in */}
+                          {massSource === "csv" ? (
+                            <div className="space-y-4">
+                              <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                                1. Carica File CSV o Incolla Dati
                               </label>
-                              <span className="text-xs text-foreground/40">oppure incolla qui sotto:</span>
-                            </div>
 
-                            <textarea
-                              value={csvRawText}
-                              onChange={(e) => handleProcessCsvText(e.target.value)}
-                              placeholder={"Email,Nome,Posto,Citta\nmario.rossi@example.com,Mario,Fila 3,Zurigo\nlaura.bianchi@example.com,Laura,Fila 4,Berna"}
-                              rows={6}
-                              className="w-full px-3 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground font-mono text-xs focus:outline-none focus:border-primary resize-y"
-                            />
-
-                            {parsedCsvData?.errors && parsedCsvData.errors.length > 0 && (
-                              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-1">
-                                {parsedCsvData.errors.map((err, i) => (
-                                  <div key={i} className="flex items-center gap-2">
-                                    <AlertTriangle size={13} className="shrink-0" />
-                                    <span>{err}</span>
-                                  </div>
-                                ))}
+                              <div className="flex items-center gap-3">
+                                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all">
+                                  <Upload size={14} />
+                                  <span>Scegli File CSV</span>
+                                  <input
+                                    type="file"
+                                    accept=".csv,text/csv,text/plain"
+                                    onChange={handleCsvFileUpload}
+                                    className="hidden"
+                                  />
+                                </label>
+                                <span className="text-xs text-foreground/40">oppure incolla qui sotto:</span>
                               </div>
-                            )}
-                          </div>
+
+                              <textarea
+                                value={csvRawText}
+                                onChange={(e) => handleProcessCsvText(e.target.value)}
+                                placeholder={"Email,Nome,Posto,Citta\nmario.rossi@example.com,Mario,Fila 3,Zurigo\nlaura.bianchi@example.com,Laura,Fila 4,Berna"}
+                                rows={6}
+                                className="w-full px-3 py-2.5 rounded-xl bg-background/50 border border-foreground/10 text-foreground font-mono text-xs focus:outline-none focus:border-primary resize-y"
+                              />
+
+                              {parsedCsvData?.errors && parsedCsvData.errors.length > 0 && (
+                                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-1">
+                                  {parsedCsvData.errors.map((err, i) => (
+                                    <div key={i} className="flex items-center gap-2">
+                                      <AlertTriangle size={13} className="shrink-0" />
+                                      <span>{err}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <label className="block text-xs font-bold uppercase tracking-wider text-foreground/70">
+                                  1. Seleziona Modulo Tally &amp; Filtro Check-in
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => loadTallyFormsForMass(true)}
+                                  disabled={isLoadingTallyForms}
+                                  className="text-[11px] font-bold text-primary hover:underline cursor-pointer flex items-center gap-1"
+                                >
+                                  <RotateCcw size={11} />
+                                  <span>{isLoadingTallyForms ? "Aggiornamento..." : "Aggiorna moduli"}</span>
+                                </button>
+                              </div>
+
+                              <div className="space-y-3 p-4 rounded-2xl bg-background/40 border border-foreground/10">
+                                <div>
+                                  <span className="block text-xs font-semibold text-foreground/80 mb-1">
+                                    Modulo Tally:
+                                  </span>
+                                  <select
+                                    value={selectedTallyFormId}
+                                    onChange={(e) => handleSelectTallyForm(e.target.value)}
+                                    disabled={isLoadingTallyForms}
+                                    className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                                  >
+                                    <option value="">
+                                      {isLoadingTallyForms ? "Caricamento moduli Tally..." : "-- Seleziona un modulo --"}
+                                    </option>
+                                    {tallyFormsList.map((f) => {
+                                      const hasCheckinConfig = configuredTallyForms.some((cf) => cf.id === f.id);
+                                      return (
+                                        <option key={f.id} value={f.id}>
+                                          {f.name}
+                                          {hasCheckinConfig ? " [Check-in attivo]" : ""}
+                                          {typeof f.numberOfSubmissions === "number" ? ` (${f.numberOfSubmissions} iscritti)` : ""}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+                                </div>
+
+                                {isLoadingTallyQuestions && (
+                                  <div className="text-xs text-foreground/60 py-2">
+                                    Caricamento domande del modulo in corso...
+                                  </div>
+                                )}
+
+                                {!isLoadingTallyQuestions && tallyQuestions.length > 0 && (
+                                  <>
+                                    <div>
+                                      <span className="block text-xs font-semibold text-foreground/80 mb-1">
+                                        Campo Email (Destinatario):
+                                      </span>
+                                      <select
+                                        value={tallyEmailQuestionId}
+                                        onChange={(e) => setTallyEmailQuestionId(e.target.value)}
+                                        className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-foreground text-xs font-bold focus:outline-none focus:border-primary cursor-pointer"
+                                      >
+                                        {tallyQuestions.map((q) => (
+                                          <option key={q.id} value={q.id}>
+                                            {q.title} ({q.type})
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+
+                                    <div>
+                                      <span className="block text-xs font-semibold text-foreground/80 mb-1.5">
+                                        Campi Tally da importare come variabili:
+                                      </span>
+                                      <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
+                                        {tallyQuestions
+                                          .filter((q) => q.id !== tallyEmailQuestionId)
+                                          .map((q) => {
+                                            const checked = Boolean(tallySelectedFields[q.id]);
+                                            return (
+                                              <label
+                                                key={q.id}
+                                                className="flex items-center justify-between gap-2 p-2 rounded-xl bg-background/50 border border-foreground/10 text-xs cursor-pointer hover:border-primary/40"
+                                              >
+                                                <span className="flex items-center gap-2 min-w-0">
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={(e) =>
+                                                      setTallySelectedFields((prev) => ({
+                                                        ...prev,
+                                                        [q.id]: e.target.checked
+                                                      }))
+                                                    }
+                                                    className="rounded border-foreground/30 accent-primary"
+                                                  />
+                                                  <span className="truncate text-foreground/90">{q.title}</span>
+                                                </span>
+                                                {checked && (
+                                                  <input
+                                                    type="text"
+                                                    value={tallyFieldAliases[q.id] || ""}
+                                                    onChange={(e) =>
+                                                      setTallyFieldAliases((prev) => ({
+                                                        ...prev,
+                                                        [q.id]: e.target.value
+                                                      }))
+                                                    }
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    placeholder="nome_variabile"
+                                                    className="w-32 shrink-0 px-2 py-1 rounded-lg bg-background border border-foreground/15 font-mono text-[11px] text-primary focus:outline-none focus:border-primary"
+                                                  />
+                                                )}
+                                              </label>
+                                            );
+                                          })}
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <span className="block text-xs font-semibold text-foreground/80 mb-1.5">
+                                        Incrocio con Check-in:
+                                      </span>
+                                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        {(
+                                          [
+                                            { id: "all", label: "Tutti gli iscritti" },
+                                            { id: "checked_in", label: "Solo Check-in fatto" },
+                                            { id: "not_checked_in", label: "Solo NON Check-in" }
+                                          ] as const
+                                        ).map((opt) => (
+                                          <button
+                                            key={opt.id}
+                                            type="button"
+                                            onClick={() => setTallyCheckinFilter(opt.id)}
+                                            className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                                              tallyCheckinFilter === opt.id
+                                                ? "bg-primary/15 border-primary text-primary"
+                                                : "bg-background/50 border-foreground/10 text-foreground/70 hover:text-foreground"
+                                            }`}
+                                          >
+                                            {opt.label}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    <label className="flex items-center gap-2 text-xs text-foreground/75 cursor-pointer pt-1">
+                                      <input
+                                        type="checkbox"
+                                        checked={tallyIncludeCheckinMeta}
+                                        onChange={(e) => setTallyIncludeCheckinMeta(e.target.checked)}
+                                        className="rounded border-foreground/30 accent-primary"
+                                      />
+                                      <span>Includi colonne stato check-in (&#123;&#123;stato_checkin&#125;&#125;, &#123;&#123;partecipanti_checkin&#125;&#125;)</span>
+                                    </label>
+
+                                    <button
+                                      type="button"
+                                      disabled={isBuildingTallyList || !tallyEmailQuestionId}
+                                      onClick={handleBuildTallyDistributionList}
+                                      className="w-full px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider shadow-md hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                                    >
+                                      <Users size={14} />
+                                      <span>
+                                        {isBuildingTallyList
+                                          ? "Generazione lista in memoria..."
+                                          : "Carica Distribution List in Memoria"}
+                                      </span>
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+
+                              {tallyError && (
+                                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2">
+                                  <AlertTriangle size={13} className="shrink-0" />
+                                  <span>{tallyError}</span>
+                                </div>
+                              )}
+
+                              {tallyListSummary && (
+                                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs space-y-0.5">
+                                  <div className="font-bold">
+                                    Distribution list caricata: {tallyListSummary.totalMatched} destinatari su {tallyListSummary.totalScanned} iscrizioni Tally.
+                                  </div>
+                                  {(tallyListSummary.skippedInvalidEmail > 0 || tallyListSummary.skippedDuplicateEmail > 0) && (
+                                    <div className="text-[11px] text-foreground/70">
+                                      Escluse automaticamente: {tallyListSummary.skippedInvalidEmail} senza email valida, {tallyListSummary.skippedDuplicateEmail} email duplicate.
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
 
                           {/* Configurazione Mappatura Colonne */}
                           <div className="space-y-4">
@@ -4759,6 +5331,8 @@ export function EmailTab() {
                       return b.text || "Titolo";
                     case "text":
                       return (b.content || "").replace(/\n/g, " ").slice(0, 75);
+                    case "highlight":
+                      return `${b.title ? `${b.title}: ` : ""}${(b.content || "").replace(/\n/g, " ").slice(0, 65)}`;
                     case "button":
                       return `${b.label || "Pulsante"} → ${b.url || ""}`;
                     case "badge":
@@ -4898,7 +5472,7 @@ export function EmailTab() {
 
             <div className="p-4 rounded-2xl bg-background/50 border border-foreground/10 text-xs text-foreground/80 space-y-2">
               <p>
-                Stai per inviare l&apos;email a <strong>{parsedCsvData.rows.length} destinatari</strong> dal file CSV caricato.
+                Stai per inviare l&apos;email a <strong>{parsedCsvData.rows.length} destinatari</strong> dalla distribution list caricata in memoria.
               </p>
               <p>
                 Template in uso: <strong className="text-primary">{activeTemplate?.name || activeTemplate?.id}</strong>.

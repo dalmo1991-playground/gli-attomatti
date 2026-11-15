@@ -16,6 +16,7 @@ export type EmailBlockType =
   | "badge"
   | "heading"
   | "text"
+  | "highlight"
   | "button"
   | "info_box"
   | "calendar"
@@ -60,6 +61,16 @@ export interface TextBlock extends BaseEmailBlock {
   type: "text";
   content: string; // Markdown supported (bold, links, newlines)
   align?: "left" | "center" | "right";
+}
+
+export interface HighlightBlock extends BaseEmailBlock {
+  type: "highlight";
+  title?: string;
+  content: string; // Markdown supported (bold, links, newlines)
+  align?: "left" | "center";
+  bg_color?: string;
+  text_color?: string;
+  border_color?: string;
 }
 
 export interface ButtonBlock extends BaseEmailBlock {
@@ -143,6 +154,7 @@ export type EmailBlock =
   | BadgeBlock
   | HeadingBlock
   | TextBlock
+  | HighlightBlock
   | ButtonBlock
   | InfoBoxBlock
   | CalendarBlock
@@ -630,6 +642,40 @@ export function renderEmailBlocksHtml({
             <tr>
               <td align="${align}" style="padding: ${pt} 32px ${pb} 32px; font-size: 15px; line-height: 1.6; color: ${textColor}; opacity: 0.95;">
                 ${bodyHtml}
+              </td>
+            </tr>
+          `;
+        }
+
+        case "highlight": {
+          const content = r(block.content);
+          const title = r(block.title || "");
+          if (!content && !title) return "";
+          const align = block.align || "left";
+          const boxBg = block.bg_color?.trim() || bubbleBg;
+          const boxText = block.text_color?.trim() || textColor;
+          const boxBorder = block.border_color?.trim()
+            ? `1px solid ${block.border_color.trim()}`
+            : bubbleBorder;
+          const boxLinkColor = block.text_color?.trim() ? boxText : primaryColor;
+          const bodyHtml = content ? formatMarkdown(content, boxLinkColor) : "";
+          const pt = isFirst ? "36px" : "8px";
+          const pb = isLast ? "36px" : "20px";
+          return `
+            <tr>
+              <td style="padding: ${pt} 32px ${pb} 32px;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: ${boxBg}; border: ${boxBorder}; border-radius: 14px;">
+                  <tr>
+                    <td align="${align}" style="padding: 18px 22px; font-size: 15px; line-height: 1.6; color: ${boxText};">
+                      ${title ? `
+                        <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: ${boxText}; margin-bottom: ${bodyHtml ? "8px" : "0"};">
+                          ${escapeHtml(title)}
+                        </div>
+                      ` : ""}
+                      ${bodyHtml}
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
           `;
@@ -1163,6 +1209,16 @@ export function renderEmailBlocksText({
         }
         case "text": {
           out += `${r(block.content)}\n\n`;
+          break;
+        }
+        case "highlight": {
+          const title = block.title ? r(block.title) : "";
+          const content = r(block.content);
+          if (title || content) {
+            if (title) out += `[${title.toUpperCase()}]\n`;
+            if (content) out += `${content}\n`;
+            out += `\n`;
+          }
           break;
         }
         case "button": {
