@@ -1404,29 +1404,54 @@
           "year": "2026",
           "date": "16 novembre 2026",
           "timestamp": "2026-11-16T09:00:00.000Z",
-          "short_description": "C’è un momento preciso in cui uno spettacolo smette di essere solo un’idea nella testa del regista e comincia a prendere fiato: è la sera in cui il gruppo si ritrova intorno allo stesso tavolo, con un fascicolo ancora intonso tra le mani.",
+          "short_description": "Ritrovarsi attorno a un tavolo, tra dolci, risate e un copione tutto nuovo che profuma di primavera, di Shakespeare e della nostra storia.",
           "visible": true,
           "content_sections": [
             {
               "title": "",
               "blocks": [
                 {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794777199038-0-d8rz-DSD04512.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
                   "type": "text",
-                  "text": "<p>C’è sempre un’elettricità speciale nell’aria quando si riparte. È un misto curioso di emozione, domande senza risposta e quella leggera tensione che accompagna ogni partenza, proprio come quando si apre la prima pagina di un romanzo senza sapere ancora dove porterà la storia.</p><p>Dopo gli ultimi applausi e il tempo necessario per riprendere fiato, sentivamo il bisogno di ritrovarci tutti insieme.</p><p>Non per salire subito su un palco, ma per compiere il primo passo di ogni viaggio teatrale: la lettura del nuovo copione.</p>"
+                  "text": "<p>C’è un momento preciso, nella vita di una compagnia teatrale, in cui l’emozione di ciò che è stato lascia spazio al brivido di ciò che deve ancora cominciare. È l’istante esatto in cui ci si guarda negli occhi, si fa un respiro profondo e si apre la prima pagina di un nuovo copione.</p>\n<p>In questi giorni ci siamo ritrovati tutti insieme proprio per questo: la prima lettura del prossimo spettacolo che porteremo in scena in primavera.</p>\n<p>L’aria era quella delle grandi occasioni, fatta di curiosità, un pizzico di sana tensione e quella gioia immediata di ritrovarsi nello stesso posto, con la stessa voglia di mettersi in gioco. Bastano pochi minuti insieme perché la timidezza iniziale si sciolga in risate, battute al volo e sguardi complici di chi sa che sta per partire una nuova avventura.</p>"
                 }
               ],
-              "text": "<p>C’è sempre un’elettricità speciale nell’aria quando si riparte. È un misto curioso di emozione, domande senza risposta e quella leggera tensione che accompagna ogni partenza, proprio come quando si apre la prima pagina di un romanzo senza sapere ancora dove porterà la storia.</p><p>Dopo gli ultimi applausi e il tempo necessario per riprendere fiato, sentivamo il bisogno di ritrovarci tutti insieme.</p><p>Non per salire subito su un palco, ma per compiere il primo passo di ogni viaggio teatrale: la lettura del nuovo copione.</p>",
-              "images": []
+              "text": "<p>C’è un momento preciso, nella vita di una compagnia teatrale, in cui l’emozione di ciò che è stato lascia spazio al brivido di ciò che deve ancora cominciare. È l’istante esatto in cui ci si guarda negli occhi, si fa un respiro profondo e si apre la prima pagina di un nuovo copione.</p>\n<p>In questi giorni ci siamo ritrovati tutti insieme proprio per questo: la prima lettura del prossimo spettacolo che porteremo in scena in primavera.</p>\n<p>L’aria era quella delle grandi occasioni, fatta di curiosità, un pizzico di sana tensione e quella gioia immediata di ritrovarsi nello stesso posto, con la stessa voglia di mettersi in gioco. Bastano pochi minuti insieme perché la timidezza iniziale si sciolga in risate, battute al volo e sguardi complici di chi sa che sta per partire una nuova avventura.</p>",
+              "images": [
+                {
+                  "url": "/images/1794777199038-0-d8rz-DSD04512.webp",
+                  "alt": "Foto articolo"
+                }
+              ]
             },
             {
-              "title": "Il rito della prima lettura",
+              "title": "Un rito che sa di casa",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Come da tradizione consolidata in casa Attomatti, anche questa volta i copioni si leggono tutti da Carla.</p>\n<p>Perché certi riti non si cambiano: ci si siede intorno al tavolo, si chiacchiera per recuperare il tempo passato dall’ultimo incontro, si distribuiscono i fogli e, quasi senza accorgersene, le voci cominciano a cercare un ritmo comune. All’inizio si legge con prudenza, studiando le battute e sbirciando le reazioni degli altri; poi scatta la prima risata, arriva una pausa carica di attesa e i personaggi iniziano timidamente a farsi spazio nella stanza.</p>\n<p>A quel punto succede sempre la stessa magia: si comincia già a immaginare come suonerà quella scena in piedi, quali sguardi si incroceranno e quali pasticci combineremo alle prime prove.</p>"
+                  "text": "<p>Come ogni tradizione che si rispetti, anche questo nuovo capitolo non poteva che aprirsi a casa di Carla.</p>\n<p>Attorno al suo tavolo, ormai diventato il nostro porto sicuro per le prime letture, c’erano computer e iPad e un’infinità di dolci a fare da cornice. Perché per noi il teatro passa prima di tutto dallo stare bene insieme, dal condividere il tempo senza fretta e dal trasformare una serata di lavoro sul testo in una piccola festa di famiglia.</p>\n<p>E proprio al centro di quel tavolo, quasi a voler dare il benvenuto alla storia, c’erano anche i due simboli scelti per rappresentare questo nuovo spettacolo:&nbsp;</p>\n<p style=\"text-align: center;\"><mark><i><span class=\"text-lg\">Un limone e una pizza</span></i></mark></p>\n<p>Ma non sveliamo di più.</p>"
                 }
               ],
-              "text": "<p>Come da tradizione consolidata in casa Attomatti, anche questa volta i copioni si leggono tutti da Carla.</p>\n<p>Perché certi riti non si cambiano: ci si siede intorno al tavolo, si chiacchiera per recuperare il tempo passato dall’ultimo incontro, si distribuiscono i fogli e, quasi senza accorgersene, le voci cominciano a cercare un ritmo comune. All’inizio si legge con prudenza, studiando le battute e sbirciando le reazioni degli altri; poi scatta la prima risata, arriva una pausa carica di attesa e i personaggi iniziano timidamente a farsi spazio nella stanza.</p>\n<p>A quel punto succede sempre la stessa magia: si comincia già a immaginare come suonerà quella scena in piedi, quali sguardi si incroceranno e quali pasticci combineremo alle prime prove.</p>",
+              "text": "<p>Come ogni tradizione che si rispetti, anche questo nuovo capitolo non poteva che aprirsi a casa di Carla.</p>\n<p>Attorno al suo tavolo, ormai diventato il nostro porto sicuro per le prime letture, c’erano computer e iPad e un’infinità di dolci a fare da cornice. Perché per noi il teatro passa prima di tutto dallo stare bene insieme, dal condividere il tempo senza fretta e dal trasformare una serata di lavoro sul testo in una piccola festa di famiglia.</p>\n<p>E proprio al centro di quel tavolo, quasi a voler dare il benvenuto alla storia, c’erano anche i due simboli scelti per rappresentare questo nuovo spettacolo:&nbsp;</p>\n<p style=\"text-align: center;\"><mark><i><span class=\"text-lg\">Un limone e una pizza</span></i></mark></p>\n<p>Ma non sveliamo di più.</p>",
+              "images": []
+            },
+            {
+              "title": "Shakespeare tra le righe della nostra storia",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Il copione porta la firma di Domenico Scotti Di Carlo ed è nato in un momento speciale, scritto mentre eravamo immersi nelle prove di Una Cenerentola.</p>\n\n<p>Sulla carta prende ispirazione dal mondo di William Shakespeare, con chiari riferimenti alle sue opere.</p>\n\n<p>Eppure, pagina dopo pagina, ci siamo accorti di una cosa sorprendente:</p>\n<p style=\"text-align: center;\"><mark><i><span class=\"text-lg\">Quel testo parla di noi!</span></i></mark></p>\n\n<p>Dentro quelle battute Domenico ha intrecciato frammenti della nostra vita, ricordi condivisi, sfumature dei nostri caratteri e pezzi del percorso fatto finora come gruppo. Leggendolo ad alta voce, ognuno di noi ha potuto riconoscersi nei personaggi, ritrovare un gesto familiare, una fragilità o una risata vissuta insieme, rivivendo in qualche modo tutto quello che siamo stati fino a oggi.</p>"
+                }
+              ],
+              "text": "<p>Il copione porta la firma di Domenico Scotti Di Carlo ed è nato in un momento speciale, scritto mentre eravamo immersi nelle prove di Una Cenerentola.</p>\n\n<p>Sulla carta prende ispirazione dal mondo di William Shakespeare, con chiari riferimenti alle sue opere.</p>\n\n<p>Eppure, pagina dopo pagina, ci siamo accorti di una cosa sorprendente:</p>\n<p style=\"text-align: center;\"><mark><i><span class=\"text-lg\">Quel testo parla di noi!</span></i></mark></p>\n\n<p>Dentro quelle battute Domenico ha intrecciato frammenti della nostra vita, ricordi condivisi, sfumature dei nostri caratteri e pezzi del percorso fatto finora come gruppo. Leggendolo ad alta voce, ognuno di noi ha potuto riconoscersi nei personaggi, ritrovare un gesto familiare, una fragilità o una risata vissuta insieme, rivivendo in qualche modo tutto quello che siamo stati fino a oggi.</p>",
               "images": []
             },
             {
@@ -1434,14 +1459,14 @@
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Cosa bollirà in pentola questa volta? Per adesso non possiamo svelare troppo.</p>\n<p>Quello che possiamo dirti è che si tratta di una nuova produzione pensata per la primavera, una storia tutta da costruire passo dopo passo, tra prove, intuizioni, qualche cambio di rotta e la solita voglia di divertirci insieme prima ancora di far divertire chi ci guarderà dalla platea.</p>\n<p>Nei prossimi mesi ci chiuderemo in sala prove per dare corpo, voce e carattere a questa nuova avventura. Perché il bello del teatro è proprio questo: partire da parole scritte su un foglio bianco e trasformarle, incontro dopo incontro, in qualcosa di vivo da condividere con voi.</p>\n<p>Noi abbiamo appena voltato la prima pagina. Voi restate sintonizzati: molto presto cominceremo a raccontarvi qualcosa in più.</p>"
+                  "text": "<p>È una nuova produzione pensata per la primavera, ma il viaggio è già cominciato da questa serata attorno al tavolo. C’è ancora tanto da scoprire, da provare e da costruire insieme prima di aprire il sipario, e la curiosità di vedere come queste pagine prenderanno vita in sala prove è già altissima.</p>\n<p>Non possiamo ancora svelarvi troppo, ma una cosa è certa: ne vedrete delle belle. Restate sintonizzati sul nostro sito e sui nostri canali social per scoprire tutti i dettagli e seguire passo dopo passo questa nuova avventura!</p>"
                 },
                 {
                   "type": "text",
                   "text": "Continuate a seguirci qui sul sito e sulla nostra pagina <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a>: il bello, come sempre, deve ancora venire!"
                 }
               ],
-              "text": "<p>Cosa bollirà in pentola questa volta? Per adesso non possiamo svelare troppo.</p>\n<p>Quello che possiamo dirti è che si tratta di una nuova produzione pensata per la primavera, una storia tutta da costruire passo dopo passo, tra prove, intuizioni, qualche cambio di rotta e la solita voglia di divertirci insieme prima ancora di far divertire chi ci guarderà dalla platea.</p>\n<p>Nei prossimi mesi ci chiuderemo in sala prove per dare corpo, voce e carattere a questa nuova avventura. Perché il bello del teatro è proprio questo: partire da parole scritte su un foglio bianco e trasformarle, incontro dopo incontro, in qualcosa di vivo da condividere con voi.</p>\n<p>Noi abbiamo appena voltato la prima pagina. Voi restate sintonizzati: molto presto cominceremo a raccontarvi qualcosa in più.</p>",
+              "text": "<p>È una nuova produzione pensata per la primavera, ma il viaggio è già cominciato da questa serata attorno al tavolo. C’è ancora tanto da scoprire, da provare e da costruire insieme prima di aprire il sipario, e la curiosità di vedere come queste pagine prenderanno vita in sala prove è già altissima.</p>\n<p>Non possiamo ancora svelarvi troppo, ma una cosa è certa: ne vedrete delle belle. Restate sintonizzati sul nostro sito e sui nostri canali social per scoprire tutti i dettagli e seguire passo dopo passo questa nuova avventura!</p>",
               "images": []
             }
           ]
