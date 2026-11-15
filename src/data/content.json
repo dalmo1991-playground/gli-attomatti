@@ -1397,6 +1397,54 @@
               "images": []
             }
           ]
+        },
+        {
+          "slug": "lettura-copione-gs",
+          "title": "Un nuovo inizio",
+          "year": "2026",
+          "date": "16 novembre 2026",
+          "timestamp": "2026-11-16T09:00:00.000Z",
+          "short_description": "C’è un momento preciso in cui uno spettacolo smette di essere solo un’idea nella testa del regista e comincia a prendere fiato: è la sera in cui il gruppo si ritrova intorno allo stesso tavolo, con un fascicolo ancora intonso tra le mani.",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>C’è sempre un’elettricità speciale nell’aria quando si riparte. È un misto curioso di emozione, domande senza risposta e quella leggera tensione che accompagna ogni partenza, proprio come quando si apre la prima pagina di un romanzo senza sapere ancora dove porterà la storia.</p><p>Dopo gli ultimi applausi e il tempo necessario per riprendere fiato, sentivamo il bisogno di ritrovarci tutti insieme.</p><p>Non per salire subito su un palco, ma per compiere il primo passo di ogni viaggio teatrale: la lettura del nuovo copione.</p>"
+                }
+              ],
+              "text": "<p>C’è sempre un’elettricità speciale nell’aria quando si riparte. È un misto curioso di emozione, domande senza risposta e quella leggera tensione che accompagna ogni partenza, proprio come quando si apre la prima pagina di un romanzo senza sapere ancora dove porterà la storia.</p><p>Dopo gli ultimi applausi e il tempo necessario per riprendere fiato, sentivamo il bisogno di ritrovarci tutti insieme.</p><p>Non per salire subito su un palco, ma per compiere il primo passo di ogni viaggio teatrale: la lettura del nuovo copione.</p>",
+              "images": []
+            },
+            {
+              "title": "Il rito della prima lettura",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Come da tradizione consolidata in casa Attomatti, anche questa volta i copioni si leggono tutti da Carla.</p>\n<p>Perché certi riti non si cambiano: ci si siede intorno al tavolo, si chiacchiera per recuperare il tempo passato dall’ultimo incontro, si distribuiscono i fogli e, quasi senza accorgersene, le voci cominciano a cercare un ritmo comune. All’inizio si legge con prudenza, studiando le battute e sbirciando le reazioni degli altri; poi scatta la prima risata, arriva una pausa carica di attesa e i personaggi iniziano timidamente a farsi spazio nella stanza.</p>\n<p>A quel punto succede sempre la stessa magia: si comincia già a immaginare come suonerà quella scena in piedi, quali sguardi si incroceranno e quali pasticci combineremo alle prime prove.</p>"
+                }
+              ],
+              "text": "<p>Come da tradizione consolidata in casa Attomatti, anche questa volta i copioni si leggono tutti da Carla.</p>\n<p>Perché certi riti non si cambiano: ci si siede intorno al tavolo, si chiacchiera per recuperare il tempo passato dall’ultimo incontro, si distribuiscono i fogli e, quasi senza accorgersene, le voci cominciano a cercare un ritmo comune. All’inizio si legge con prudenza, studiando le battute e sbirciando le reazioni degli altri; poi scatta la prima risata, arriva una pausa carica di attesa e i personaggi iniziano timidamente a farsi spazio nella stanza.</p>\n<p>A quel punto succede sempre la stessa magia: si comincia già a immaginare come suonerà quella scena in piedi, quali sguardi si incroceranno e quali pasticci combineremo alle prime prove.</p>",
+              "images": []
+            },
+            {
+              "title": "Verso la primavera",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Cosa bollirà in pentola questa volta? Per adesso non possiamo svelare troppo.</p>\n<p>Quello che possiamo dirti è che si tratta di una nuova produzione pensata per la primavera, una storia tutta da costruire passo dopo passo, tra prove, intuizioni, qualche cambio di rotta e la solita voglia di divertirci insieme prima ancora di far divertire chi ci guarderà dalla platea.</p>\n<p>Nei prossimi mesi ci chiuderemo in sala prove per dare corpo, voce e carattere a questa nuova avventura. Perché il bello del teatro è proprio questo: partire da parole scritte su un foglio bianco e trasformarle, incontro dopo incontro, in qualcosa di vivo da condividere con voi.</p>\n<p>Noi abbiamo appena voltato la prima pagina. Voi restate sintonizzati: molto presto cominceremo a raccontarvi qualcosa in più.</p>"
+                },
+                {
+                  "type": "text",
+                  "text": "Continuate a seguirci qui sul sito e sulla nostra pagina <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a>: il bello, come sempre, deve ancora venire!"
+                }
+              ],
+              "text": "<p>Cosa bollirà in pentola questa volta? Per adesso non possiamo svelare troppo.</p>\n<p>Quello che possiamo dirti è che si tratta di una nuova produzione pensata per la primavera, una storia tutta da costruire passo dopo passo, tra prove, intuizioni, qualche cambio di rotta e la solita voglia di divertirci insieme prima ancora di far divertire chi ci guarderà dalla platea.</p>\n<p>Nei prossimi mesi ci chiuderemo in sala prove per dare corpo, voce e carattere a questa nuova avventura. Perché il bello del teatro è proprio questo: partire da parole scritte su un foglio bianco e trasformarle, incontro dopo incontro, in qualcosa di vivo da condividere con voi.</p>\n<p>Noi abbiamo appena voltato la prima pagina. Voi restate sintonizzati: molto presto cominceremo a raccontarvi qualcosa in più.</p>",
+              "images": []
+            }
+          ]
         }
       ]
     },
