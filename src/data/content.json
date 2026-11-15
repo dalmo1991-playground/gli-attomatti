@@ -2468,7 +2468,8 @@
           "type": "TEXTAREA"
         }
       ],
-      "participantsMode": "one_per_submission"
+      "participantsMode": "one_per_submission",
+      "isCheckin": false
     }
   ]
 }
