@@ -3353,7 +3353,9 @@
             "type": "heading",
             "text": "Cosa è successo nel frattempo? ",
             "level": "h3",
-            "align": "left"
+            "align": "left",
+            "starred": true,
+            "custom_name": "Cosa è successo nel frattempo?"
           },
           {
             "id": "block-1794224487991",
@@ -3361,7 +3363,9 @@
             "col1_title": "Cineforum",
             "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti",
             "col2_title": "Non sottovalutare il 40",
-            "col2_text": "Ci siamo esibiti alla Biennale di teatro amatoriale svizzero. Scopri qui il video dello spettacolo"
+            "col2_text": "Ci siamo esibiti alla Biennale di teatro amatoriale svizzero. Scopri qui il video dello spettacolo",
+            "starred": true,
+            "custom_name": "Cineforum & Non sottovalutare il 40"
           },
           {
             "id": "div-foot-lng0bec",
@@ -3376,7 +3380,9 @@
             "show_instagram": true,
             "instagram_url": "https://www.instagram.com/gliattomatti/",
             "show_website": true,
-            "website_url": "https://gliattomatti.ch"
+            "website_url": "https://gliattomatti.ch",
+            "starred": true,
+            "custom_name": "Canali Social"
           },
           {
             "id": "ftr-7b41kg7",
@@ -3384,7 +3390,9 @@
             "enabled": true,
             "custom_text": "Ricevi questa email perché ti sei registrato agli eventi o alle novità de Gli Attomatti. Per non ricevere più queste comunicazioni, invia semplicemente una mail a compagniateatralegliattomatti@gmail.com.",
             "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti",
-            "privacy_note": "Ricevi questa email in seguito alla tua registrazione alla nostra newsletter. Per disiscriverti, rispondi a questa email o scrivici a compagniateatralegliattomatti@gmail.com"
+            "privacy_note": "Ricevi questa email in seguito alla tua registrazione alla nostra newsletter. Per disiscriverti, rispondi a questa email o scrivici a compagniateatralegliattomatti@gmail.com",
+            "starred": true,
+            "custom_name": "Piè di Pagina & nLPD"
           }
         ],
         "field_mapping": {
@@ -3396,6 +3404,123 @@
           "from_name": "Gli Attomatti",
           "from_email": "newsletter@mail.gliattomatti.ch"
         }
+      },
+      {
+        "id": "newsletter-lettura-copione-gs",
+        "name": "Newsletter: Un nuovo inizio",
+        "enabled": false,
+        "subject": "Un nuovo inizio",
+        "preheader": "C’è un momento preciso in cui uno spettacolo smette di essere solo un’idea nella testa del regista e comincia a prendere fiato: è la sera in cui il gruppo si ritrova intorno allo stesso tavolo, con un fascicolo ancora intonso tra le mani.",
+        "theme": "default",
+        "blocks": [
+          {
+            "id": "hdr-upozca2",
+            "type": "header",
+            "enabled": true,
+            "brand_name": "GLI ATTOMATTI",
+            "tagline": "",
+            "align": "center"
+          },
+          {
+            "id": "block-1794735814830",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "hdg-qsb9a6u",
+            "type": "heading",
+            "enabled": true,
+            "text": "Un nuovo inizio",
+            "level": "h1",
+            "align": "center"
+          },
+          {
+            "id": "desc-cpo954j",
+            "type": "text",
+            "enabled": true,
+            "content": "**C’è un momento preciso in cui uno spettacolo smette di essere solo un’idea nella testa del regista e comincia a prendere fiato: è la sera in cui il gruppo si ritrova intorno allo stesso tavolo, con un fascicolo ancora intonso tra le mani.**",
+            "align": "center"
+          },
+          {
+            "id": "div-gu8r3ki",
+            "type": "divider",
+            "enabled": true
+          },
+          {
+            "id": "txt-up21wg6",
+            "type": "text",
+            "enabled": true,
+            "content": "Ciao {{name}},\n\nC’è sempre un’elettricità speciale nell’aria quando si riparte. È un misto curioso di emozione, domande senza risposta e quella leggera tensione che accompagna ogni partenza, proprio come quando si apre la prima pagina di un romanzo senza sapere ancora dove porterà la storia.\n\nIeri sera Gli Attomatti si sono ritrovati per leggere il copione della nuova commedia che porteranno in scena la prossima primavera.",
+            "align": "left"
+          },
+          {
+            "id": "btn-ioa08lq",
+            "type": "button",
+            "enabled": true,
+            "label": "Leggi l'articolo completo",
+            "url": "https://gliattomatti.ch/Chi_Siamo/Blog/lettura-copione-gs",
+            "align": "center",
+            "style": "pill"
+          },
+          {
+            "id": "block-1794735958164",
+            "type": "text",
+            "content": "Ti auguriamo una buona lettura.\nGli Attomatti.",
+            "align": "left"
+          },
+          {
+            "id": "div-foot-xv7efb8",
+            "type": "divider",
+            "enabled": true
+          },
+          {
+            "id": "block-1794736063931",
+            "type": "heading",
+            "text": "Cosa è successo nel frattempo? ",
+            "level": "h3",
+            "align": "left",
+            "starred": false,
+            "custom_name": "Cosa è successo nel frattempo?"
+          },
+          {
+            "id": "block-1794736068616",
+            "type": "two_column",
+            "col1_title": "Cineforum",
+            "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti",
+            "col2_title": "Non sottovalutare il 40",
+            "col2_text": "Ci siamo esibiti alla Biennale di teatro amatoriale svizzero. Scopri qui il video dello spettacolo",
+            "starred": false,
+            "custom_name": "Cineforum & Non sottovalutare il 40"
+          },
+          {
+            "id": "block-1794736087998",
+            "type": "divider",
+            "style": "gradient",
+            "spacing": "md"
+          },
+          {
+            "id": "block-1794736104231",
+            "type": "social_links",
+            "enabled": true,
+            "show_instagram": true,
+            "instagram_url": "https://www.instagram.com/gliattomatti/",
+            "show_website": true,
+            "website_url": "https://gliattomatti.ch",
+            "starred": false,
+            "custom_name": "Canali Social"
+          },
+          {
+            "id": "block-1794736107949",
+            "type": "footer",
+            "enabled": true,
+            "custom_text": "Ricevi questa email perché ti sei registrato agli eventi o alle novità de Gli Attomatti. Per non ricevere più queste comunicazioni, invia semplicemente una mail a compagniateatralegliattomatti@gmail.com.",
+            "legal_text": "Compagnia Teatrale Amatoriale Gli Attomatti",
+            "privacy_note": "Ricevi questa email in seguito alla tua registrazione alla nostra newsletter. Per disiscriverti, rispondi a questa email o scrivici a compagniateatralegliattomatti@gmail.com",
+            "starred": false,
+            "custom_name": "Piè di Pagina & nLPD"
+          }
+        ]
       }
     ]
   },
