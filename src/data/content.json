@@ -1993,7 +1993,7 @@
           {
             "id": "block-body",
             "type": "text",
-            "content": "Ciao {{name}},\n\ngrazie di cuore per essere stato con noi al cineforum. Le serate più belle nascono sempre dalle persone e dalle chiacchiere che si intrecciano dopo i titoli di coda.\n\nLa tua opinione per noi è preziosa per continuare a migliorare questo spazio: se hai due minuti, puoi lasciarci il tuo feedback [qui](/Registrazioni/feedback-cineforum).\n\nVisto che non ci fermiamo mai a lungo, cogliamo l'occasione per invitarti già al prossimo appuntamento, sabato 16 gennaio. Le iscrizioni sono aperte!",
+            "content": "Ciao {{name}},\n\ngrazie di cuore per essere stato con noi al cineforum. Le serate più belle nascono sempre dalle persone e dalle chiacchiere che si intrecciano dopo i titoli di coda.\n\nLa tua opinione per noi è preziosa per continuare a migliorare questo spazio: se hai due minuti, puoi lasciarci il tuo feedback [qui](https://gliattomatti.ch/Registrazioni/feedback-cineforum).\n\nVisto che non ci fermiamo mai a lungo, cogliamo l'occasione per invitarti già al prossimo appuntamento, sabato 16 gennaio. Le iscrizioni sono aperte!",
             "align": "left"
           },
           {
@@ -2456,6 +2456,19 @@
       "participantsMode": "from_field",
       "primaryFieldId": "LMxqly",
       "participantsFieldId": "arMEBW"
+    },
+    {
+      "id": "je6Kp6",
+      "name": "Cineforum - Le Meraviglie - Feedback",
+      "enabled": true,
+      "allowedFields": [
+        {
+          "questionId": "745kd2",
+          "label": "Feedback",
+          "type": "TEXTAREA"
+        }
+      ],
+      "participantsMode": "one_per_submission"
     }
   ]
 }
