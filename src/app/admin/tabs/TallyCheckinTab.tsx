@@ -92,6 +92,7 @@ export function TallyCheckinTab() {
       id: cleanId,
       name: name.trim() || `Modulo ${cleanId}`,
       enabled: true,
+      isCheckin: true,
       allowedFields: [],
       participantsMode: "one_per_submission"
     };
@@ -308,7 +309,13 @@ export function TallyCheckinTab() {
                     onDelete={() => removeForm(idx)}
                     title={form.name || form.id}
                     subtitle={`ID: ${form.id} · ${(form.allowedFields || []).length} campi estratti`}
-                    badge={form.enabled !== false ? "Attivo" : "Disattivato"}
+                    badge={
+                      form.enabled !== false
+                        ? form.isCheckin !== false
+                          ? "Attivo · Check-in"
+                          : "Attivo · Survey"
+                        : "Disattivato"
+                    }
                     defaultOpen={idx === 0}
                   >
                     <div className="space-y-5">
@@ -330,6 +337,23 @@ export function TallyCheckinTab() {
                             className="w-4 h-4 accent-primary cursor-pointer"
                           />
                         </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-background/50 border border-foreground/10">
+                        <div>
+                          <div className="text-xs font-bold text-foreground">
+                            Modalità Check-in & Conteggio Partecipanti
+                          </div>
+                          <div className="text-[11px] text-foreground/60">
+                            Se disattivato, il modulo viene mostrato come Survey (solo lettura e sync con Tally).
+                          </div>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={form.isCheckin !== false}
+                          onChange={(e) => updateForm(idx, { isCheckin: e.target.checked })}
+                          className="w-4 h-4 accent-primary cursor-pointer shrink-0"
+                        />
                       </div>
 
                       {/* Privacy Field Selection */}
@@ -450,73 +474,75 @@ export function TallyCheckinTab() {
                         </div>
                       )}
 
-                      {/* Participants Calculation */}
-                      <div className="p-4 rounded-2xl bg-background/40 border border-foreground/10 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Users size={15} className="text-secondary" />
-                          <span className="text-xs font-bold text-foreground">
-                            Conteggio Partecipanti
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/60">
-                              Modalità di calcolo
-                            </label>
-                            <select
-                              value={form.participantsMode || "one_per_submission"}
-                              onChange={(e) =>
-                                updateForm(idx, {
-                                  participantsMode: e.target.value as TallyParticipantsMode
-                                })
-                              }
-                              className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
-                            >
-                              <option value="one_per_submission">
-                                1 partecipante per sottomissione
-                              </option>
-                              <option value="from_field">
-                                Da un campo numerico del modulo
-                              </option>
-                            </select>
+                      {/* Participants Calculation (only in Check-in mode) */}
+                      {form.isCheckin !== false && (
+                        <div className="p-4 rounded-2xl bg-background/40 border border-foreground/10 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Users size={15} className="text-secondary" />
+                            <span className="text-xs font-bold text-foreground">
+                              Conteggio Partecipanti
+                            </span>
                           </div>
 
-                          {form.participantsMode === "from_field" && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="space-y-1.5">
                               <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/60">
-                                Campo Numero Partecipanti
+                                Modalità di calcolo
                               </label>
-                              {availableQuestions.length > 0 ? (
-                                <select
-                                  value={form.participantsFieldId || ""}
-                                  onChange={(e) =>
-                                    updateForm(idx, { participantsFieldId: e.target.value })
-                                  }
-                                  className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
-                                >
-                                  <option value="">Seleziona campo...</option>
-                                  {availableQuestions.map((q) => (
-                                    <option key={q.id} value={q.id}>
-                                      {q.title}
-                                    </option>
-                                  ))}
-                                </select>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={form.participantsFieldId || ""}
-                                  onChange={(e) =>
-                                    updateForm(idx, { participantsFieldId: e.target.value })
-                                  }
-                                  placeholder="ID domanda Tally (carica i campi sopra)"
-                                  className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
-                                />
-                              )}
+                              <select
+                                value={form.participantsMode || "one_per_submission"}
+                                onChange={(e) =>
+                                  updateForm(idx, {
+                                    participantsMode: e.target.value as TallyParticipantsMode
+                                  })
+                                }
+                                className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
+                              >
+                                <option value="one_per_submission">
+                                  1 partecipante per sottomissione
+                                </option>
+                                <option value="from_field">
+                                  Da un campo numerico del modulo
+                                </option>
+                              </select>
                             </div>
-                          )}
+
+                            {form.participantsMode === "from_field" && (
+                              <div className="space-y-1.5">
+                                <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/60">
+                                  Campo Numero Partecipanti
+                                </label>
+                                {availableQuestions.length > 0 ? (
+                                  <select
+                                    value={form.participantsFieldId || ""}
+                                    onChange={(e) =>
+                                      updateForm(idx, { participantsFieldId: e.target.value })
+                                    }
+                                    className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
+                                  >
+                                    <option value="">Seleziona campo...</option>
+                                    {availableQuestions.map((q) => (
+                                      <option key={q.id} value={q.id}>
+                                        {q.title}
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : (
+                                  <input
+                                    type="text"
+                                    value={form.participantsFieldId || ""}
+                                    onChange={(e) =>
+                                      updateForm(idx, { participantsFieldId: e.target.value })
+                                    }
+                                    placeholder="ID domanda Tally (carica i campi sopra)"
+                                    className="w-full px-3 py-2 rounded-xl bg-background border border-foreground/15 text-xs text-foreground"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="flex justify-end">
                         <Link
