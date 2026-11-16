@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-src 'self' https://eventfrog.ch https://www.instagram.com https://tally.so https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self';",
+            value: "frame-src 'self' https://eventfrog.ch https://embed.eventfrog.ch https://www.instagram.com https://tally.so https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self';",
           },
         ],
       },

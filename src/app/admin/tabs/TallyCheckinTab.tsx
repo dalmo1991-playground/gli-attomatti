@@ -293,10 +293,10 @@ export function TallyCheckinTab() {
                   loadedQuestions.length > 0
                     ? loadedQuestions
                     : (form.allowedFields || []).map((af) => ({
-                        id: af.questionId,
-                        title: af.label,
-                        type: af.type || "TEXT"
-                      }));
+                      id: af.questionId,
+                      title: af.label,
+                      type: af.type || "TEXT"
+                    }));
 
                 const qError = questionsError[form.id];
                 const isLoadingQ = loadingQuestionsId === form.id;
@@ -402,11 +402,10 @@ export function TallyCheckinTab() {
                                   key={q.id}
                                   type="button"
                                   onClick={() => toggleAllowedField(idx, q)}
-                                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition-all ${
-                                    checked
+                                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition-all ${checked
                                       ? "bg-primary/10 border-primary/30 text-foreground"
                                       : "bg-background/40 border-foreground/10 text-foreground/60 hover:text-foreground"
-                                  }`}
+                                    }`}
                                 >
                                   {checked ? (
                                     <CheckSquare

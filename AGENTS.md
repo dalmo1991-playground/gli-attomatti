@@ -24,12 +24,17 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ---
 
 ## 2. Architettura Dati & Headless CMS
-- **Unica fonte di verità**: `src/data/content.json` (nessun database SQL/NoSQL).
+- **Contenuti editoriali (unica fonte di verità)**: `src/data/content.json` (nessun database SQL/NoSQL per i contenuti del sito).
 - **Lettura dati**: `getContent()` da `src/lib/data.ts`.
 - **Pubblicazione & Commit**: `/admin` effettua commit via GitHub REST API (`src/lib/github.ts`).
   - Deploy `dev` ➔ target branch `dev`.
   - Deploy produzione (`main`) ➔ target branch `main`.
+  - Pubblicazione programmata (`/api/content/schedule` + `SchedulePublishModal.tsx`): salva uno snapshot su Vercel Blob (`scheduled-content/<branch>.json`) e pianifica un callback one-shot su Upstash QStash verso `/api/cron/publish-scheduled` (limite piano gratuito QStash: **max 7 giorni**).
 - **Upload immagini**: `POST /api/upload` comprime in `.webp` (max 1920px) e scrive in `public/images/`.
+- **Dati operativi e code (Vercel Blob + Upstash)**:
+  - **Vercel Blob** (`@vercel/blob`, fallback locale `.data/` in dev): snapshot permanenti Tally (`tally-submissions/<formId>/submissions.json` e `checkins.json`), pubblicazioni programmate (`scheduled-content/<branch>.json`), Dead Letter Queue email (`src/lib/email/dlq.ts`) e bounce Resend (`src/lib/email/bounces.ts`).
+  - **Upstash Redis** (`src/lib/redis.ts`, `src/lib/tallyLiveRedis.ts`): stato live del check-in (`checkin:counts:<formId>`, `checkin:meta:<formId>`, `checkin:seeded:<formId>`, `checkin:ver:<formId>`, `checkin:dirty`, `checkin:backup-msg:<formId>`, TTL 14 giorni). Il polling browser in `/area-riservata/check-in` usa `UPSTASH_REDIS_REST_READONLY_TOKEN` su `checkin:ver:<formId>`.
+  - **Upstash QStash** (`src/lib/qstash.ts`): callback differiti one-shot per pubblicazione programmata e flush Redis→Blob (`/api/tally-submissions/flush`), autenticati con `CRON_SECRET` (`Upstash-Forward-Authorization`).
 
 ---
 
@@ -52,8 +57,35 @@ Prio 3: Fallback hardcoded nel codice (es. "Guida fotografica")
 
 ---
 
-## 4. Conformità Legale Svizzera (nLPD / revFADP)
-Ogni volta che modifichi strumenti esterni, flussi dati o acquisti, **verifica e aggiorna la documentazione legale**:
+## 4. Infrastruttura & Servizi Esterni
+- **Vercel**:
+  - **Team**: `dalmo1991's projects` (`team_T6mttwla6PJsAjRKYX8LZmA4`, slug `dalmo1991s-projects`)
+  - **Progetto**: `gli-attomatti` (`prj_CDQERihdUJ6lH65vSjA8WfEqVwLG`), Next.js `16.2.11` / React `19.2.4` / Node `24.x`
+  - **Domini & Branch**:
+    - Produzione (`main`): `https://gliattomatti.ch`
+    - Preview/Dev (`dev`): `https://gli-attomatti.vercel.app` (protetto da `DEV_GATE_PASSWORD` quando `NEXT_PUBLIC_IS_DEV_SITE=true`)
+  - **Vercel Cron** (`vercel.json`): `GET /api/cron/email-dlq-notify` (`10 0 * * *`, ogni giorno alle 00:10 UTC).
+- **Upstash**:
+  - **Redis DB**: `Attomatti checkin` (`a4ed9ea3-c4a1-4c06-a95d-a55cf5438114`), region `global` (primary `eu-central-1`), endpoint `shining-wildcat-97102.upstash.io`.
+  - **QStash**: job differiti su `/api/cron/publish-scheduled` e `/api/tally-submissions/flush` con `Upstash-Forward-Authorization: Bearer <CRON_SECRET>` (e opzionale `VERCEL_AUTOMATION_BYPASS_SECRET`).
+- **Tally**:
+  - **Workspace**: `My workspace` (`wdQAMV`). I singoli form sono gestiti come contenuto dinamico su Tally / `content.json` (fatta eccezione per il redirect QR permanente `/Saalvermietung` in `next.config.ts`).
+  - **Integrazione**: `src/lib/tallySubmissions.ts` sincronizza le submission via API Tally (`TALLY_API_KEY`) su Vercel Blob con cache in memoria di 45s; supporta check-in live (`/area-riservata/check-in` e `/admin` `TallyCheckinTab.tsx`), export PDF (`checkinPdfExport.ts`) e invio email massivo agli iscritti.
+- **Resend & Sistema Email**:
+  - `src/lib/email/` (`blocks.ts`, `template.ts`, `blogToEmail.ts`, `calendar.ts`, `csvParser.ts`, `resend.ts`, `dlq.ts`, `bounces.ts`), invio massivo da Tally (`/api/email/mass-send`), webhook `/api/webhooks/resend` e gestione in `/admin` (`EmailTab.tsx`).
+- **Area Riservata**:
+  - `/area-riservata` (`appuntamenti`, `assenze`, `check-in`) protetta da `AREA_RISERVATA_PIN` (`src/app/actions/areaRiservataAuth.ts`).
+- **Variabili d'ambiente su Vercel** (solo nomi; mai salvare valori o segreti nei file):
+  - Auth/Security: `ADMIN_SECRET`, `AREA_RISERVATA_PIN`, `DEV_GATE_PASSWORD`, `CRON_SECRET`, `EMAIL_API_SECRET`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`, `RECAPTCHA_SECRET_KEY`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+  - GitHub CMS: `GITHUB_TOKEN`, `GITHUB_REPO`, `GITHUB_BRANCH`
+  - Vercel Blob: `BLOB_READ_WRITE_TOKEN`, `BLOB_STORE_ID`, `BLOB_WEBHOOK_PUBLIC_KEY`
+  - Upstash: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `UPSTASH_REDIS_REST_READONLY_TOKEN`, `QSTASH_TOKEN`, `QSTASH_URL`
+  - Tally & Resend: `TALLY_API_KEY`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_WEBHOOK_SECRET`
+
+---
+
+## 5. Conformità Legale Svizzera (nLPD / revFADP)
+Lo stato dei provider opzionali (`google_analytics`, `meta_pixel`, `YouTube`) è determinato dinamicamente da `content.json` tramite `src/lib/legalProviders.ts` e `src/lib/legalContent.ts`, mantenendo allineate `Privacy`, `Impressum` e `Termini`. Ogni volta che modifichi strumenti esterni, flussi dati o acquisti, **verifica e aggiorna la documentazione legale**:
 
 | Trigger | Azione Richiesta |
 | :--- | :--- |
