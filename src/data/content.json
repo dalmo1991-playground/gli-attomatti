@@ -2428,7 +2428,7 @@
             "id": "desc-5u2yvvx",
             "type": "text",
             "enabled": true,
-            "content": "**Ritrovarsi attorno a un tavolo, tra dolci, risate e un copione tutto nuovo che profuma di primavera, di Shakespeare e della nostra storia.**",
+            "content": "**Ritrovarsi attorno ad un tavolo, tra dolci, risate e un copione tutto nuovo che profuma di primavera, di Shakespeare e della nostra storia.**",
             "align": "center"
           },
           {
@@ -2440,7 +2440,7 @@
             "id": "txt-vwvrn3v",
             "type": "text",
             "enabled": true,
-            "content": "Ciao {{name}},\n\nC’è un momento preciso, nella vita di una compagnia teatrale, in cui l’emozione di ciò che è stato lascia spazio al brivido di ciò che deve ancora cominciare. È l’istante esatto in cui ci si guarda negli occhi, si fa un respiro profondo e si apre la prima pagina di un nuovo copione.\n\nGli Attomatti si sono riuniti attorno ad un tavolo per la prima lettura del copione della prossima commedia. Scopri come è andata!",
+            "content": "Ciao {{name}},\n\nC’è un momento preciso, nella vita di una compagnia teatrale, in cui l’emozione di ciò che è stato lascia spazio al brivido di ciò che deve ancora cominciare. È l’istante esatto in cui ci si guarda negli occhi, si fa un respiro profondo e si apre la prima pagina di un nuovo copione.\n\nGli Attomatti si sono riuniti per la prima lettura del copione della prossima commedia. Scopri come è andata!",
             "align": "left"
           },
           {
@@ -2475,7 +2475,7 @@
             "id": "block-1794224487991",
             "type": "two_column",
             "col1_title": "Cineforum",
-            "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti",
+            "col1_text": "Il nostro cineforum è partito. Scopri tutti gli appuntamenti.",
             "col2_title": "Lo sapevi che abbiamo portato in scena \"Una Cenerentola\"?",
             "col2_text": "Leggi la storia di come è andata!",
             "col1_url": "/Iniziative/cineforum",
