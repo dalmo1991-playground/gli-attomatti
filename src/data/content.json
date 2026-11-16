@@ -2868,7 +2868,19 @@
       "privacy_link": "Informativa Privacy"
     }
   },
-  "ticketing_pages": [],
+  "ticketing_pages": [
+    {
+      "id": "cassa-1794852189124",
+      "title": "Test show",
+      "slug": "test-show",
+      "category": "Spettacolo Teatrale",
+      "description": "",
+      "eventfrog_url": "https://eventfrog.ch/en/p/theatre-stage/theatre/test-show-zuerich-7528153897262684910.html",
+      "back_link_label": "Torna indietro",
+      "back_link_href": "/",
+      "active": true
+    }
+  ],
   "registration_hub": {
     "active": true,
     "title": "Registrazioni",
