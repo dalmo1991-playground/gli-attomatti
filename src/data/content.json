@@ -1300,11 +1300,142 @@
           "visible": true,
           "content_sections": [
             {
-              "title": "Capitolo 1",
+              "title": "",
               "blocks": [
                 {
                   "type": "text",
-                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                  "text": "<p>Una delle prime cose che abbiamo costruito insieme non è stata una scena.</p>\n<p>È stato un cartellone. Rispetto. Assenza di giudizio. Leggerezza. Spontaneità. Sincerità. Complicità. Fiducia. Ascoltarsi. Incoraggiarsi e sostenersi. Accoglienza. Migliorarsi.Contest-tiramisù!</p>\n<p>Parole scelte insieme per raccontare il gruppo che avremmo voluto essere.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794945346580-p4kg-907403434_17944070769388724_8130498395935421985_n.webp",
+                      "alt": "Il gruppo che vogliamo essere"
+                    },
+                    {
+                      "url": "/images/1794945353203-5btp-WhatsApp_Image_2026-11-17_at_20.09.38__2_.webp",
+                      "alt": "Il gruppo che vogliamo essere"
+                    },
+                    {
+                      "url": "/images/1790877903475-mbpr-ZSC_5779.webp",
+                      "alt": "La realizzazione del cartellone"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Siamo ancora all’inizio del nostro percorso, eppure qualcosa di quelle parole comincia già a vedersi.</p>\n<p>Siamo arrivati in questa sala da vite, età, esperienze, caratteri e storie diverse. Alcuni avevano già incontrato il teatro, altri quasi per niente. Ci siamo messi in cerchio, abbiamo camminato, giocato, improvvisato, riso, sbagliato. Ci siamo osservati, ascoltati, messi alla prova.</p>\n<p style=\"text-align: center;\"><mark><span class=\"text-lg\"><i>E piano piano abbiamo cominciato a fidarci.</i></span></mark></p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1791565354643-spoe-CorsoTeatro.webp",
+                      "alt": "Giochi in sala"
+                    },
+                    {
+                      "url": "/images/1790877901700-vn3m-ZSC_5769.webp",
+                      "alt": "Giochi in sala"
+                    },
+                    {
+                      "url": "/images/1794945357713-0agj-WhatsApp_Image_2026-11-17_at_20.09.38.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Nel frattempo è arrivato anche lui, Shakespeare.</p>\n<p>Lo abbiamo letto, discusso, smontato, fatto a pezzi letteralmente e interrogato. Abbiamo riempito la sala delle sue parole e poi abbiamo provato a restituirgli un corpo, una voce, uno spazio.</p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794945354939-5pfr-WhatsApp_Image_2026-11-17_at_20.09.38__1_.webp",
+                      "alt": "Dipinto di Shakespeare"
+                    },
+                    {
+                      "url": "/images/1794945344672-oeil-901955722_17944070850388724_967933190350203693_n.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Fino a Otello.</p>\n\n<p>Cinque gruppi, cinque atti, cinque modi diversi di entrare nella stessa storia. E vedere quelle persone incontrarsi anche fuori dal corso, preparare insieme un lavoro, discutere, scegliere, costruire scene, indossare costumi e poi salire sul palco è stata forse una delle cose più belle di questa prima parte del viaggio.</p>\n\n<p style=\"text-align: center;\"><i><span class=\"text-lg\"><mark>Perché il teatro insegna, certo. Ma prima ancora mette insieme.</mark></span></i></p>\n\n<p>Persone che probabilmente, fuori da quella sala, non si sarebbero mai incontrate diventano compagni di scena. Imparano a guardarsi, ad aspettarsi, a sostenersi. E qualche volta, quasi senza accorgersene, diventano semplicemente un gruppo.</p>\n\n<p>Noi proviamo a dare strumenti, esercizi, testi, indicazioni.</p>\n\n<p>Ma poi succede qualcosa che non si può insegnare.</p>\n\n<p style=\"text-align: center;\"><span class=\"text-lg\"><i><mark>Nasce la complicità.</mark></i></span></p>"
+                },
+                {
+                  "type": "gallery",
+                  "images": [
+                    {
+                      "url": "/images/1794945351633-onyo-WhatsApp_Image_2026-11-17_at_20.09.38__3_.webp",
+                      "alt": "Foto articolo"
+                    },
+                    {
+                      "url": "/images/1794945348695-ufn0-WhatsApp_Image_2026-11-17_at_20.09.39.webp",
+                      "alt": "Foto articolo"
+                    },
+                    {
+                      "url": "/images/1794945350257-d32y-WhatsApp_Image_2026-11-17_at_20.09.38__4_.webp",
+                      "alt": "Foto articolo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Siamo solo all’inizio.</p>\n<p>Abbiamo ancora tantissimo da scoprire, da imparare, da sbagliare e da costruire.</p>\n<p>E forse, senza accorgercene, stiamo già diventando “il gruppo che vogliamo essere”.</p>\n<p>Questo è solo un piccolo pezzo di quello che stiamo costruendo.</p>"
+                },
+                {
+                  "type": "text",
+                  "text": "<p>Restate sintonizzati qui sul nostro sito e su <a href=\"https://www.instagram.com/gliattomatti/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline font-bold\">Instagram</a> seguire passo dopo passo questa avventura!</p>"
+                }
+              ],
+              "text": "<p>Una delle prime cose che abbiamo costruito insieme non è stata una scena.</p>\n<p>È stato un cartellone. Rispetto. Assenza di giudizio. Leggerezza. Spontaneità. Sincerità. Complicità. Fiducia. Ascoltarsi. Incoraggiarsi e sostenersi. Accoglienza. Migliorarsi.Contest-tiramisù!</p>\n<p>Parole scelte insieme per raccontare il gruppo che avremmo voluto essere.</p>",
+              "images": [
+                {
+                  "url": "/images/1794945346580-p4kg-907403434_17944070769388724_8130498395935421985_n.webp",
+                  "alt": "Il gruppo che vogliamo essere"
+                },
+                {
+                  "url": "/images/1794945353203-5btp-WhatsApp_Image_2026-11-17_at_20.09.38__2_.webp",
+                  "alt": "Il gruppo che vogliamo essere"
+                },
+                {
+                  "url": "/images/1790877903475-mbpr-ZSC_5779.webp",
+                  "alt": "La realizzazione del cartellone"
+                },
+                {
+                  "url": "/images/1791565354643-spoe-CorsoTeatro.webp",
+                  "alt": "Giochi in sala"
+                },
+                {
+                  "url": "/images/1790877901700-vn3m-ZSC_5769.webp",
+                  "alt": "Giochi in sala"
+                },
+                {
+                  "url": "/images/1794945357713-0agj-WhatsApp_Image_2026-11-17_at_20.09.38.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1794945354939-5pfr-WhatsApp_Image_2026-11-17_at_20.09.38__1_.webp",
+                  "alt": "Dipinto di Shakespeare"
+                },
+                {
+                  "url": "/images/1794945344672-oeil-901955722_17944070850388724_967933190350203693_n.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1794945351633-onyo-WhatsApp_Image_2026-11-17_at_20.09.38__3_.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1794945348695-ufn0-WhatsApp_Image_2026-11-17_at_20.09.39.webp",
+                  "alt": "Foto articolo"
+                },
+                {
+                  "url": "/images/1794945350257-d32y-WhatsApp_Image_2026-11-17_at_20.09.38__4_.webp",
+                  "alt": "Foto articolo"
                 }
               ]
             }
