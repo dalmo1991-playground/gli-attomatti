@@ -1289,6 +1289,26 @@
               "images": []
             }
           ]
+        },
+        {
+          "slug": "il-gruppo-che-vogliamo-essere",
+          "title": "Il gruppo che vogliamo essere",
+          "year": "2026",
+          "date": "17 novembre 2026",
+          "timestamp": "2026-11-17T20:00:00.000Z",
+          "short_description": "Un cartellone appeso in sala, i primi esercizi in cerchio e le parole di Shakespeare smontate pezzo dopo pezzo. Vi raccontiamo i primi passi del laboratorio degli Attomatti e di come, quasi senza accorgercene, stiamo diventando «il gruppo che vogliamo essere».",
+          "visible": true,
+          "content_sections": [
+            {
+              "title": "Capitolo 1",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "<p>Inizia a scrivere qui il tuo racconto...</p>"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
